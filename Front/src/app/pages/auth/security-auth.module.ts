@@ -14,7 +14,6 @@ import { IconsProviderModule } from 'src/app/icons-provider.module';
 import { SecurityAuthService } from './security-auth.service';
 import {NzAvatarModule} from 'ng-zorro-antd/avatar';
 import { NzLayoutModule } from 'ng-zorro-antd/layout';
-import { ReCaptchaV3Service, RECAPTCHA_LANGUAGE, RECAPTCHA_V3_SITE_KEY } from 'ng-recaptcha';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
@@ -42,7 +41,7 @@ import { NzDividerModule } from 'ng-zorro-antd/divider';
   ],
   declarations: [LoginComponent],
   providers: [
-    SecurityAuthService,ReCaptchaV3Service
+    SecurityAuthService
   ]
 })
 export class SecurityAuthModule { }
