@@ -1,0 +1,11 @@
+.sticky {
+margin-bottom: 10px;
+position: sticky;
+top: 65px;
+display: inline-block;
+width:  100%;
+background-color: #f6f6f6;
+padding: 10px;
+z-index: 101;
+box-shadow: -1px 1px 5px 1px #a3a1a3;
+}

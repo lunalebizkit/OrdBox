@@ -1,0 +1,68 @@
+<nz-layout class="app-layout">
+  <nz-sider class="menu-sidebar" nzCollapsible nzWidth="256px" nzBreakpoint="md" [(nzCollapsed)]="isCollapsed"
+    [nzTrigger]="null">
+    <div class="sidebar-logo">
+      <img src="../../../assets/img/logoSideBar.png" alt="logo">
+      <h1>Gestion de Stock</h1>
+    </div>
+    <ul nz-menu nzTheme="dark" nzMode="inline" [nzInlineCollapsed]="isCollapsed">
+      <li nz-submenu nzOpen nzTitle="Persona" nzIcon="user">
+        <ul>
+          <li nz-menu-item nzMatchRouter>
+            <a routerLink="/home/customers">Clientes</a>
+          </li>
+          <li nz-menu-item nzMatchRouter>
+            <a routerLink="/home/entity">Vendedores</a>
+          </li>
+          <li nz-menu-item nzMatchRouter>
+            <a routerLink="/home/suppliers">Proveedores</a>
+          </li>
+        </ul>
+
+      </li>
+      <li nz-submenu nzOpen nzTitle="Dashboard" nzIcon="dashboard">
+        <ul>
+          <li nz-menu-item nzMatchRouter>
+            <a routerLink="/home/users">Usuarios</a>
+          </li>
+          <li nz-menu-item nzMatchRouter>
+            <a routerLink="/home/products">Productos</a>
+          </li>
+          <li nz-menu-item nzMatchRouter>
+            <a routerLink="/home/categories">Categorias</a>
+          </li>
+          <li nz-menu-item nzMatchRouter>
+            <a routerLink="/home/brands">Marcas</a>
+          </li>
+        </ul>
+      </li>
+     
+      <li nz-submenu nzOpen nzTitle="Mi perfil" nzIcon="user">
+        <ul>
+          <li nz-menu-item (click)="logOut()" nzIcon="logout">
+             Salir del Sistema
+          </li>
+        </ul>
+      </li>
+
+    </ul>
+    <ul class="version" nz-menu>
+      <li>
+        ©{{getYear()}}
+      </li>
+    </ul>
+  </nz-sider>
+  <nz-layout>
+    <nz-header>
+      <div class="app-header">
+        <span class="header-trigger" (click)="isCollapsed = !isCollapsed">
+          <i class="trigger" nz-icon [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'"></i>
+        </span>
+      </div>
+
+    </nz-header>
+    <nz-content>
+      <router-outlet></router-outlet>
+    </nz-content>
+  </nz-layout>
+</nz-layout>

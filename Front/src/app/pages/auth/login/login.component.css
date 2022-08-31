@@ -1,0 +1,84 @@
+:host {
+  width: 100%;
+  height: 100%;
+}
+
+
+.login{
+	height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.card{
+  max-width: 70%;
+  border-radius: 12px;
+  box-shadow: 0 4px 25px 0 rgba(0,173,181);
+}
+.login-sidebar {
+  text-align: center;
+} 
+  .overlay {
+    /* border-right: 1px solid rgba($primary-color, 0.2); */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 10%;
+  }
+
+    img{
+      margin: auto 0;
+    }
+    
+    .copyright {
+      color:rgb(226, 234, 241);
+      font-size: 0.85rem;
+    }
+  
+
+  @media only screen and (max-width: 1000px) {
+    .overlay {
+        display: none;
+    }
+  }
+
+
+.login-container{
+  margin: auto 0;
+  padding: 10vmin;
+}
+  h1{
+    font-size: 1.5rem;
+    /* color: $color-title-login; */
+  }
+
+  h3{
+    font-size: 0.95rem;
+    font-weight: 10;
+    /* color: $color-title-login; */
+  }
+  
+  .form{
+    margin-top: 15px;
+    display: grid;
+  }
+    button{
+      margin: auto;
+    }
+  
+
+  .logo-container{
+    display: flex;
+    justify-content: center;
+  }
+    .logo {
+      width: 75%;
+      margin-top: -20%;
+      margin-bottom: -12%;
+    }
+
+    @media only screen and (min-width: 1000px) {
+      .logo {
+          display: none;
+      }
+    }

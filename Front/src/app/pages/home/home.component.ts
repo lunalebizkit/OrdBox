@@ -1,0 +1,35 @@
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { AuthService } from 'src/app/common/auth/interceptors/auth.service';
+import { RolesConst } from '../auth/permission/permission-rol.enum';
+
+@Component({
+  selector: 'app-home',
+  templateUrl: './home.component.html',
+  styleUrls: ['./home.component.css']
+})
+export class HomeComponent implements OnInit {
+
+  isCollapsed = false;
+
+  constRol: RolesConst = new RolesConst();
+
+  constructor(public token: AuthService,
+    private router: Router,
+    private route: ActivatedRoute,
+    // public permission: PermissionService
+    ) { }
+
+  ngOnInit() {
+
+  }
+
+  getYear() {
+    return new Date().getFullYear();
+  }
+
+  logOut() {
+    this.token.logout();
+    this.router.navigate(['/auth/login'], { relativeTo: this.route });
+  }
+}

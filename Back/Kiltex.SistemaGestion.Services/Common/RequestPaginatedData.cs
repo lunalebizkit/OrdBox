@@ -1,0 +1,18 @@
+﻿using System;
+
+namespace Kiltex.SistemaGestion.Services.Common
+{
+    public class RequestPaginatedData<T>
+    {
+        public T Filter { get; set; }
+        public int Page { get; set; }
+
+        int? _pageSize = default;
+        public int PageSize { get => _pageSize ?? 1000; set => _pageSize = value; }
+    }
+    public class UserFilter
+    {
+        public string Query { get; set; }
+        public long[] Rol { get; set; }
+    }
+}

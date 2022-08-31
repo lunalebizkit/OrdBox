@@ -1,0 +1,88 @@
+<app-header-op-buttons #header [btnCancelText]="'Cancelar'" [btnSaveText]="'Guardar'" [title]="'Usuarios'"
+[showSpinner]="isSaving" [iconBack]="'rollback'" [iconSave]="'save'" [iconTitle]="'user'"
+(onSaveClick)="save()">
+</app-header-op-buttons>
+<nz-spin [nzSpinning]="isLoading">
+    <nz-collapse>
+        <nz-collapse-panel nzHeader="General" [nzActive]="true">
+            <form nz-form [formGroup]="form" style="margin-top: 16px">
+                <!--Nombre-->
+                <nz-form-item>
+                    <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="firstName">Nombre </nz-form-label>
+                    <nz-form-control [nzSm]="14" [nzXs]="24">
+                        <input formControlName="firstName" nz-input id="firstName" maxlength="250" />
+                    </nz-form-control>
+                </nz-form-item>
+        
+                <!--LastName-->
+                <nz-form-item>
+                    <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="lastName">Apellido</nz-form-label>
+                    <nz-form-control [nzSm]="14" [nzXs]="24">
+                        <input formControlName="lastName" nz-input id="lastName" maxlength="250" />
+                    </nz-form-control>
+                </nz-form-item>
+        
+                  <!--Username-->
+                  <nz-form-item>
+                    <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="userName">Usuario</nz-form-label>
+                    <nz-form-control [nzSm]="14" [nzXs]="24">
+                        <input formControlName="userName" nz-input id="userName" maxlength="250" />
+                    </nz-form-control>
+                </nz-form-item>
+        
+                <!--Email-->
+                <nz-form-item>
+                    <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="email">Dirección de e-mail</nz-form-label>
+                    <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="Ingrese una dirección de email válida">
+                        <input formControlName="email" nz-input id="email" type="email" maxlength="250" />
+                    </nz-form-control>
+                </nz-form-item>
+        
+                <!--Contraseña-->
+                <nz-form-item *ngIf="showPasswordChange">
+                    <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="password" nzRequired>Contraseña</nz-form-label>
+                    <nz-form-control [nzSm]="14" [nzXs]="24">
+                        <input nz-input type="password" id="password" formControlName="password" maxlength="250"
+                            (ngModelChange)="updateConfirmValidator()" />
+                    </nz-form-control>
+                </nz-form-item>
+        
+                <!--Repetir Contraseña-->
+                <nz-form-item *ngIf="showPasswordChange">
+                    <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="checkpassword" nzRequired>Confirmar Contraseña</nz-form-label>
+                    <nz-form-control [nzSm]="14" [nzXs]="24" [nzErrorTip]="errorTpl">
+                        <input nz-input type="password" formControlName="checkpassword" id="checkpassword" maxlength="250"
+                            (ngModelChange)="updateConfirmValidator()" />
+                        <ng-template #errorTpl let-control>
+                            <ng-container>
+                                Las contraseñas ingresadas no coinciden
+                            </ng-container>
+                        </ng-template>
+                    </nz-form-control>
+                </nz-form-item>
+        
+                <!--Cambiar contraseña boton-->
+                <nz-form-item *ngIf="!showPasswordChange">
+                    <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="resetPassword">Contraseña</nz-form-label>
+                    <nz-form-control [nzSm]="14" [nzXs]="24">
+                        <button nz-button nzType="primary" (click)="showPasswordChangeBox()">
+                            Cambiar contraseña <i nz-icon nzType="lock" nzTheme="outline"></i>
+                        </button>
+                    </nz-form-control>
+                </nz-form-item>
+        
+                <!--Rol-->
+                <nz-form-item>
+                    <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="roleId">Rol</nz-form-label>
+                    <nz-form-control [nzSm]="14" [nzXs]="24">
+                        <nz-spin [nzSpinning]="!isLoadingRoles">
+                            <input formControlName=roleId nz-input id="roleId" type="text" maxlength="250" />
+                        </nz-spin>
+                    </nz-form-control>
+                </nz-form-item>
+            </form>
+        </nz-collapse-panel>
+      
+    </nz-collapse>
+
+</nz-spin>

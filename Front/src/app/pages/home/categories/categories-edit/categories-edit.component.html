@@ -1,0 +1,24 @@
+<app-header-op-buttons #header [btnCancelText]="'Cancelar'" [btnSaveText]="'Guardar'" [title]="'Categorias'"
+[showSpinner]="isSaving" [iconBack]="'rollback'" [iconSave]="'save'" [iconTitle]="'tags'"
+(onSaveClick)="save()">
+</app-header-op-buttons>
+<nz-spin [nzSpinning]="isLoading">
+
+
+    
+    <nz-collapse>
+        <nz-collapse-panel nzHeader="General" [nzActive]="true">
+    <form nz-form [formGroup]="form" style="margin-top: 16px">
+        <!--Nombre-->
+        <nz-form-item>
+            <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="description">Descripcion </nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="24">
+                <input formControlName="description" nz-input id="description" maxlength="250" />
+            </nz-form-control>
+        </nz-form-item>     
+      
+    </form>
+        </nz-collapse-panel>
+    </nz-collapse>
+
+</nz-spin>

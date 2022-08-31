@@ -1,0 +1,42 @@
+
+<div class="login">
+    <div nz-row class="card">
+      <div nz-col class="login-sidebar" nzLg="12"> <!-- nzXs="0" -->
+        <div class="overlay">
+          <img src="../../../../assets/img/logoStock.png" alt="logo"/>
+          <p class="copyright">
+            <a href="http://kiltex.com.ar" target="_blank" rel="noreferrer">
+                Gestion de Stock ©{{getYear()}} 
+            </a>
+          </p>
+        </div>
+      </div>
+      <div nz-col class="login-container" nzXs="24" nzLg="12">
+        <!-- <div class="logo-container">
+            <nz-avatar [nzSize]="36" nzIcon="user"></nz-avatar>
+        </div> -->
+        <div>
+          <h1>Bienvenido</h1>
+          <h3>Por favor, inicie sesión en su cuenta.</h3>
+          <form nz-form [formGroup]="form" class="form" name="login" >
+            <nz-form-item>
+              <nz-form-control nzErrorTip="Debe ingresar el nombre de usuario.">
+                <nz-input-group nzPrefixIcon="user">
+                  <input type="text" nz-input formControlName="userName" placeholder="Nombre de usuario" required/>
+                </nz-input-group>
+              </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+              <nz-form-control nzErrorTip="Debe ingresar la contraseña.">
+                <nz-input-group nzPrefixIcon="lock">
+                  <input type="password" nz-input formControlName="password" placeholder="Contraseña" required/>
+                </nz-input-group>
+              </nz-form-control>
+            </nz-form-item>
+            <button nz-button nzType="primary"  (click)="executeImportantAction()"
+            [disabled]="form.invalid" [nzLoading]="isSaving">Iniciar sesión</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>

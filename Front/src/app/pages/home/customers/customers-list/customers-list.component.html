@@ -1,0 +1,74 @@
+<nz-layout>
+    <nz-page-header class="list-header">
+      <nz-page-header-title>Listado de Clientes</nz-page-header-title>
+      <nz-page-header-extra>
+        <a routerLink="/home/customers/new"> <button nz-tooltip nzTooltipTitle="Nuevo" nz-button nzType="primary"
+            nzShape="circle"><i nz-icon nzType="plus" nzTheme="outline"></i></button></a>
+      </nz-page-header-extra>
+    </nz-page-header>
+  
+    <nz-content>  
+         <nz-collapse>
+          <nz-collapse-panel nzSize="small" nzHeader="Filtros">
+            <form nz-form (ngSubmit)="search()">
+              <div nz-row [nzGutter]="[8,1]">
+  
+                <div nz-col nzSpan="24">
+                  <nz-form-item>
+                    <nz-form-label>Búsqueda</nz-form-label>
+                    <nz-form-control>                  
+                      <nz-input-group [nzSuffix]="clearQuery">
+                        <input [ngModelOptions]="{standalone: true}" type="text" placeholder="Ingrese Nombre o CUIT-DNI" nz-input
+                          (keydown.enter)="search()" [(ngModel)]="queryParams.filter" />
+                      </nz-input-group>
+                      
+                      <ng-template #clearQuery>
+                        <i nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle"
+                          *ngIf="queryParams.filter" (click)="queryParams.filter = ''; search()"></i>
+                      </ng-template>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+  
+              </div>
+  
+            </form>
+          </nz-collapse-panel>
+        </nz-collapse> 
+  
+        <!-- Tabla -->
+     
+      <div>
+        <nz-table nzShowSizeChanger [nzData]="entityList" nzBordered=true [nzSize]="'small'" [nzLoading]="loading"
+          [nzTotal]="totalItems" [nzPageSize]="queryParams.pageSize" [nzPageIndex]="1" [nzFrontPagination]="false"
+          [nzPaginationType]="'small'" (nzQueryParams)="onQueryParamsChange($event)">
+          <thead>
+            <tr>                     
+              <th>Nombre</th>
+              <th>Dni</th>
+              <th>Cuit</th>
+              <th>Direccion</th>          
+              <th>Telefono/s</th>       
+              <th>Email/s</th>       
+              <th>Accion</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let data of entityList" class="small-text">          
+              <td>{{data.name}}</td>
+              <td>{{data.dni}}</td>
+              <td>{{data.cuit}}</td>
+              <td>{{data.address}}</td> 
+              <td>{{data.phoneEntity}}</td>
+              <td>{{data.emailEntity}}</td>                      
+              <td style="text-align: center;">
+                  <a routerLink="/home/customers/edit/{{data.id}}">
+                    <i nz-icon nzType="edit" nzTheme="outline"></i>
+                  </a>                  
+                </td>        
+            </tr>
+          </tbody>
+        </nz-table>
+      </div>
+    </nz-content>
+  </nz-layout>

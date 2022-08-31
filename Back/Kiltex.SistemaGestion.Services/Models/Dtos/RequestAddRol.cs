@@ -1,0 +1,23 @@
+﻿
+using Kiltex.SistemaGestion.Services.Models.Dtos;
+using System.ComponentModel.DataAnnotations;
+
+
+namespace Kiltex.SistemaGestion.Services.Dtos
+{
+    public class RequestAddRol
+    {
+        [Required]
+        public long Id { get; set; }
+
+        [Required]
+        [MaxLength(100)]
+        public string Name { get; set; }       
+
+        [Required]
+        [MaxLength(100)]
+        public string Key { get; set; }
+        
+
+    }
+}

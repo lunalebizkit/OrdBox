@@ -1,0 +1,5 @@
+export enum eRol {
+  Administrador = 1,
+  Proveedor = 2, 
+  Cliente = 3
+}

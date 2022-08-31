@@ -1,0 +1,70 @@
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+
+namespace Kiltex.SistemaGestion.Domain.Model
+{
+    [Table("product")]
+    public class Product : BaseModel
+    {
+        [Required]
+        [Column("description")]
+        public string? Description { get; set; }
+
+        [Column("code")]
+        public int? Code { get; set; }
+
+        [Column("category_id")]
+        public long CategoryId { get; set; }
+
+        [ForeignKey("CategoryId")]
+        public Category Category { get; set; }
+
+        [Column("brand_id")]
+        public long BrandId { get; set; }
+
+        [ForeignKey("BrandId")]
+        public Brand Brand { get; set; }
+
+        [Column("is_deleted")]
+        public bool IsDeleted { get; set; }
+
+        [Column("quantity")]
+        public int Quantity { get; set; } //cantidad
+
+        [Column("purchase_price")]
+        public decimal PurchasePrice { get; set; } //precio de compra
+
+        [Column("sale_price")]
+        public decimal SalePrice { get; set; } //precio de venta
+
+        [Column("sale_percentage")]
+        public int SalePercentage { get; set; } //porcentaje de venta
+
+        [Column("card_sale_price")]
+        public decimal CardSalePrice { get; set; } //precio con tarjeta
+
+        [Column("card_sale_percentage")]
+        public int CardSalePercentage { get; set; } //porcentaje de venta
+
+        [Column("cash_sale_price")]
+        public decimal CashSalePrice { get; set; } //precio con contado
+
+        [Column("cash_sale_percentage")]
+        public int CashSalePercentage { get; set; } //porcentaje de contado
+
+        [Column("point_order")]
+        public int PointOrder { get; set; } //punto de pedido
+
+        [Column("observation")]
+        public string Observation { get; set; } //Observaciones
+
+        [Column("entity_id")]
+        public long EntityId { get; set; }
+
+        [ForeignKey("EntityId")]
+        public Supplier Supplier { get; set; }
+
+
+    }
+}
