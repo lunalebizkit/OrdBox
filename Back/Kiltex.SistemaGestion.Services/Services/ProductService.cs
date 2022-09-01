@@ -79,7 +79,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                 CashSalePrice = model.CashSalePrice,
                 CashSalePercentage = model.CashSalePercentage,
                 PointOrder= model.PointOrder,
-                EntityId= model.Supplier,
+                SupplierId= model.Supplier,
                 Observation= model.Observation,
                 IsDeleted = false,
                 //ImageUrl = model.ImageUrl,

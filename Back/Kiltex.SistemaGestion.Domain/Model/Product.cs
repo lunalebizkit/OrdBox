@@ -57,12 +57,12 @@ namespace Kiltex.SistemaGestion.Domain.Model
         public int PointOrder { get; set; } //punto de pedido
 
         [Column("observation")]
-        public string Observation { get; set; } //Observaciones
+        public string? Observation { get; set; } //Observaciones
 
-        [Column("entity_id")]
-        public long EntityId { get; set; }
+        [Column("supplier_id")]
+        public long SupplierId { get; set; }
 
-        [ForeignKey("EntityId")]
+        [ForeignKey(nameof(SupplierId))]
         public Supplier Supplier { get; set; }
 
 

@@ -47,11 +47,13 @@ namespace Kiltex.SistemaGestion.Services.Services
         public async Task<OperationResponse<DtoPagination<DtoEntityList>>> ListSupplier(RequestPaginatedData<string> request)
         {
             var query = _contextSql
-                                .Entities.OfType<Supplier>()
+                                .Suppliers
                                 .AsNoTracking()
                                 .Include(p => p.EmailEntities)
                                 .Include(p => p.PhoneEntities)
-                                .Where(p => p.Name.ToLower().Contains(request.Filter ?? "") || p.Dni.ToString().Contains(request.Filter ?? "") || p.Cuit.ToLower().Contains(request.Filter ?? ""));
+                                .Where(p => p.Name.ToLower().Contains(request.Filter ?? "") || 
+                                   (!p.Dni.HasValue || p.Dni.ToString().Contains(request.Filter ?? "")) ||
+                                   p.Cuit.ToLower().Contains(request.Filter ?? ""));
 
             var count = await query.CountAsync().ConfigureAwait(false);
 

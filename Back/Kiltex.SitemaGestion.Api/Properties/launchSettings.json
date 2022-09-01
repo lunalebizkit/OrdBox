@@ -9,7 +9,7 @@
     }
   },
   "profiles": {
-    "Kiltex.SitemaGestion.Api": {
+    "Kiltex.SistemaGestion.Api": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,
