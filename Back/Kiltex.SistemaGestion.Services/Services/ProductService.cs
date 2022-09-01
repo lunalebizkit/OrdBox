@@ -32,25 +32,7 @@ namespace Kiltex.SistemaGestion.Services.Services
 
                 return new OperationResponse<DtoProduct>(null, false, new OperationExceptions("000", $"Producto no encontrado {id}"));
 
-            var result = new DtoProduct()
-            {
-                Id = id,
-                Description = producto.Description,
-                Code = producto.Code,
-                CategoryName = producto.Category.Description,
-                BrandName = producto.Brand.Description,
-                Quantity = producto.Quantity,
-                PointOrder = producto.PointOrder,
-                PurchasePrice = producto.PurchasePrice,
-                SalePrice = producto.SalePrice,
-                SalePercentage = producto.SalePercentage,
-                CardSalePercentage = producto.CardSalePercentage,
-                CardSalePrice = producto.CardSalePrice,
-                CashSalePercentage= producto.CashSalePercentage,
-                CashSalePrice = producto.CashSalePrice,
-                SupplierName = producto.Supplier.Name,
-                Observation = producto.Observation,
-            };
+            var result= _mapper.Map<DtoProduct>(producto);
 
             return new OperationResponse<DtoProduct>(result);
         }
@@ -63,28 +45,8 @@ namespace Kiltex.SistemaGestion.Services.Services
         public async Task<OperationResponse<IdResponse<long>>> AddOrUpdate(DtoAddProduct model, CancellationToken ct = default)
         {
             
-            var productModel = new Product()
-            {
-                Id = model.Id,
-                Description = model.Description,
-                Code = model.Code,
-                CategoryId = model.Category,
-                BrandId = model.Brand,
-                Quantity = model.Quantity,
-                PurchasePrice = model.PurchasePrice,
-                SalePrice = model.SalePrice,
-                SalePercentage = model.SalePercentage,
-                CardSalePrice = model.CardSalePrice,
-                CardSalePercentage = model.CardSalePercentage,
-                CashSalePrice = model.CashSalePrice,
-                CashSalePercentage = model.CashSalePercentage,
-                PointOrder= model.PointOrder,
-                SupplierId= model.Supplier,
-                Observation= model.Observation,
-                IsDeleted = false,
-                //ImageUrl = model.ImageUrl,
-                
-            };
+            var productModel = _mapper.Map<Product>(model);
+        
             if (productModel.Id == 0)
             {
                 await _contextSql.Products.AddAsync(productModel, ct).ConfigureAwait(false);
@@ -112,7 +74,8 @@ namespace Kiltex.SistemaGestion.Services.Services
                                 .Include(p => p.Category)
                                 .Include(p => p.Brand)
                                 .Include(p => p.Supplier)
-                                .Where(p => (p.Description.ToLower().Contains(request.Filter ?? "") ||                      p.Category.Description.ToLower().Contains(request.Filter ?? "") ||              p.Supplier.Name.ToLower().Contains(request.Filter ?? "") ||
+                                .Where(p => (p.Description.ToLower().Contains(request.Filter ?? "") ||
+                                p.Category.Description.ToLower().Contains(request.Filter ?? "") ||              p.Supplier.Name.ToLower().Contains(request.Filter ?? "") ||
                                 p.Brand.Description.ToLower().Contains(request.Filter ?? "")));
 
             var count = await query.CountAsync().ConfigureAwait(false);
@@ -125,14 +88,7 @@ namespace Kiltex.SistemaGestion.Services.Services
 
 
             var dto = _mapper.Map<List<DtoProduct>>(list);
-
-            //var dto = list.Select(p => new DtoProduct()
-            //{
-            //    Id = p.Id,
-            //    Description = p.Description,
-            //    CategoryName = p.Category.Description,
-
-            //});
+    
 
             return new OperationResponse<DtoPagination<DtoProduct>>(new DtoPagination<DtoProduct>
             {

@@ -117,7 +117,6 @@ export class CustomersEditComponent extends BaseComponent implements OnInit {
         if(!this.isValidForm(this.form)) return;          
             const model = this.form.getRawValue();
             this.isSaving = true;
-            console.log(model)
             this.service.saveEntity(model).subscribe({
                 next: (r) => {
                     this.showNotificationSuccess(
