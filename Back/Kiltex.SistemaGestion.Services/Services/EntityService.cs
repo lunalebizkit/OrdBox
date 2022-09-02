@@ -47,11 +47,13 @@ namespace Kiltex.SistemaGestion.Services.Services
         public async Task<OperationResponse<DtoPagination<DtoEntityList>>> ListSupplier(RequestPaginatedData<string> request)
         {
             var query = _contextSql
-                                .Entities.OfType<Supplier>()
+                                .Suppliers
                                 .AsNoTracking()
                                 .Include(p => p.EmailEntities)
                                 .Include(p => p.PhoneEntities)
-                                .Where(p => p.Name.ToLower().Contains(request.Filter ?? "") || p.Dni.ToString().Contains(request.Filter ?? "") || p.Cuit.ToLower().Contains(request.Filter ?? ""));
+                                .Where(p => p.Name.ToLower().Contains(request.Filter ?? "") || 
+                                   (!p.Dni.HasValue || p.Dni.ToString().Contains(request.Filter ?? "")) ||
+                                   p.Cuit.ToLower().Contains(request.Filter ?? ""));
 
             var count = await query.CountAsync().ConfigureAwait(false);
 
@@ -74,6 +76,10 @@ namespace Kiltex.SistemaGestion.Services.Services
         public async Task<OperationResponse<IdResponse<long>>> AddSupplier(DtoSupplier model, CancellationToken ct = default)
         {
             model.Id = 0;
+            if (String.IsNullOrEmpty(model.Address) || String.IsNullOrEmpty(model.Cuit) || String.IsNullOrEmpty(model.Name))
+            {
+                return Error<IdResponse<long>>("000", "Datos incompletos");
+            }
             return await AddOrUpdateSupplier(model, ct).ConfigureAwait(false);
         }
 
@@ -83,6 +89,11 @@ namespace Kiltex.SistemaGestion.Services.Services
             {
                 return Error<IdResponse<long>>("000", "El proveedor no tiene ID");
             }
+            if (String.IsNullOrEmpty(model.Address) || String.IsNullOrEmpty(model.Cuit) || String.IsNullOrEmpty(model.Name))
+            {
+                return Error<IdResponse<long>>("000", "Datos incompletos");
+            }
+
             return await AddOrUpdateSupplier(model, ct).ConfigureAwait(false);
         }
         public async Task<OperationResponse<IdResponse<long>>> AddOrUpdateSupplier(DtoSupplier model, CancellationToken ct = default)
@@ -92,7 +103,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             {
                 Id = model.Id,
                 Observation = model.Observation,
-                Dni = model.Dni,
+                Dni = (model.Dni == 0 ? null : model.Dni),
                 Cuit = model.Cuit,
                 Name = model.Name,
                 Address = model.Address
@@ -234,6 +245,10 @@ namespace Kiltex.SistemaGestion.Services.Services
         public async Task<OperationResponse<IdResponse<long>>> Add(DtoEntity model, CancellationToken ct = default)
         {
             model.Id = 0;
+            if (String.IsNullOrEmpty(model.Address) || String.IsNullOrEmpty(model.Cuit) || String.IsNullOrEmpty(model.Name))
+            {
+                return Error<IdResponse<long>>("000", "Datos incompletos");
+            }
             return await AddOrUpdate(model, ct).ConfigureAwait(false);
         }
 
@@ -243,11 +258,11 @@ namespace Kiltex.SistemaGestion.Services.Services
             var entityModel = new Customer()
             {
                 Id = model.Id,
-                Dni = model.Dni,
+                Dni =  (model.Dni == 0 ? null : model.Dni),
                 Cuit = model.Cuit,
                 Name = model.Name,
-                Address = model.Address
-              
+                Address = model.Name,
+
             };
             var email = new EmailEntity();
             var phones= new PhoneEntity();
@@ -382,9 +397,13 @@ namespace Kiltex.SistemaGestion.Services.Services
         }
         public async Task<OperationResponse<IdResponse<long>>> Update(DtoEntity model, CancellationToken ct = default)
         {
-            if (model.Id == 0)
+            if (model.Id == 0 )
             {
                 return Error<IdResponse<long>>("000", "El cliente no tiene ID");
+            }
+            if ( String.IsNullOrEmpty(model.Address) || String.IsNullOrEmpty(model.Cuit) || String.IsNullOrEmpty(model.Name))
+            {
+                return Error<IdResponse<long>>("001", "Datos incompletos");
             }
             return await AddOrUpdate(model, ct).ConfigureAwait(false);
         }
