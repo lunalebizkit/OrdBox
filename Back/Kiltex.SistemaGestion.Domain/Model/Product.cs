@@ -36,16 +36,16 @@ namespace Kiltex.SistemaGestion.Domain.Model
         public decimal PurchasePrice { get; set; } //precio de compra
 
         [Column("sale_price")]
-        public decimal SalePrice { get; set; } //precio de venta
+        public decimal SalePrice { get; set; } //precio de venta (lista)
 
         [Column("sale_percentage")]
-        public int SalePercentage { get; set; } //porcentaje de venta
+        public int SalePercentage { get; set; } //porcentaje de venta (lista)
 
         [Column("card_sale_price")]
         public decimal CardSalePrice { get; set; } //precio con tarjeta
 
         [Column("card_sale_percentage")]
-        public int CardSalePercentage { get; set; } //porcentaje de venta
+        public int CardSalePercentage { get; set; } //porcentaje de tarjeta
 
         [Column("cash_sale_price")]
         public decimal CashSalePrice { get; set; } //precio con contado
