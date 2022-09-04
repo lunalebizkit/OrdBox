@@ -115,10 +115,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                 return Error<IdResponse<long>>("000", "El producto no tiene Id");
             }
 
-
-
             List<Product> productos = new List<Product>();
-            List<Product> productosActualizados = new List<Product>();
 
             foreach (var item in model.Id)
             {
@@ -173,13 +170,53 @@ namespace Kiltex.SistemaGestion.Services.Services
                          _contextSql.Products.Update(productoUpdated);
                     }
                     await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
-                    return Ok(new IdResponse<long>(10)); 
-                   
+                    return Ok(new IdResponse<long>(10));            
 
                    
             
                 case ((int)ePriceProduct.Percentage):
-                    return Error<IdResponse<long>>("000", "El producto no tiene Id"); 
+                    foreach (var item in productos)
+                    {
+                        var productoUpdated = new Product()
+                        {
+                            Id = item.Id,
+
+                            Description = item.Description,
+
+                            Code = item.Code,
+
+                            CategoryId = item.CategoryId,
+
+                            BrandId = item.BrandId,
+
+                            Quantity = item.Quantity,
+
+                            PointOrder = item.PointOrder,
+                            
+                            Observation = item.Observation,
+                            
+                            SupplierId = item.SupplierId,
+
+                            PurchasePrice =item.PurchasePrice + (item.PurchasePrice * model.Value /100),
+
+                            SalePercentage = item.SalePercentage,
+
+                            SalePrice =(( item.PurchasePrice + (item.PurchasePrice * model.Value / 100)) +  ((item.PurchasePrice + (item.PurchasePrice * model.Value / 100)) * item.SalePercentage / 100)),
+
+                            CashSalePercentage = item.CashSalePercentage,
+
+                            CashSalePrice = ((item.PurchasePrice + (item.PurchasePrice * model.Value / 100)) + ((item.PurchasePrice + (item.PurchasePrice * model.Value / 100)) * item.CashSalePercentage / 100)),
+
+                            CardSalePercentage = item.CardSalePercentage,
+
+                            CardSalePrice = ((item.PurchasePrice + (item.PurchasePrice * model.Value / 100)) + ((item.PurchasePrice + (item.PurchasePrice * model.Value / 100)) * item.CardSalePercentage / 100)),
+
+                        };
+
+                        _contextSql.Products.Update(productoUpdated);
+                    }
+                    await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
+                    return Ok(new IdResponse<long>(11));
             }
             
             return Ok(new IdResponse<long>(1));
