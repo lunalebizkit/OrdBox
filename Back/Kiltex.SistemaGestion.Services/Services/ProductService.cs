@@ -1,12 +1,14 @@
 ﻿
 using AutoMapper;
 using Kiltex.SistemaGestion.Domain;
+using Kiltex.SistemaGestion.Domain.Enum;
 using Kiltex.SistemaGestion.Domain.Model;
 using Kiltex.SistemaGestion.SDK;
 using Kiltex.SistemaGestion.SDK.Error;
 using Kiltex.SistemaGestion.Services.Common;
 using Kiltex.SistemaGestion.Services.Models.Dtos;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 
 namespace Kiltex.SistemaGestion.Services.Services
 {
@@ -32,73 +34,35 @@ namespace Kiltex.SistemaGestion.Services.Services
 
                 return new OperationResponse<DtoProduct>(null, false, new OperationExceptions("000", $"Producto no encontrado {id}"));
 
-            var result = new DtoProduct()
-            {
-                Id = id,
-                Description = producto.Description,
-                Code = producto.Code,
-                CategoryName = producto.Category.Description,
-                BrandName = producto.Brand.Description,
-                Quantity = producto.Quantity,
-                PointOrder = producto.PointOrder,
-                PurchasePrice = producto.PurchasePrice,
-                SalePrice = producto.SalePrice,
-                SalePercentage = producto.SalePercentage,
-                CardSalePercentage = producto.CardSalePercentage,
-                CardSalePrice = producto.CardSalePrice,
-                CashSalePercentage= producto.CashSalePercentage,
-                CashSalePrice = producto.CashSalePrice,
-                SupplierName = producto.Supplier.Name,
-                Observation = producto.Observation,
-            };
+            var result = _mapper.Map<DtoProduct>(producto);
 
             return new OperationResponse<DtoProduct>(result);
         }
-        public async Task<OperationResponse<IdResponse<long>>> Add(DtoAddProduct model, CancellationToken ct= default)
+        public async Task<OperationResponse<IdResponse<long>>> Add(DtoAddProduct model, CancellationToken ct = default)
         {
-             model.Id = 0;
+            model.Id = 0;
             return await AddOrUpdate(model, ct).ConfigureAwait(false);
         }
 
         public async Task<OperationResponse<IdResponse<long>>> AddOrUpdate(DtoAddProduct model, CancellationToken ct = default)
         {
-            
-            var productModel = new Product()
-            {
-                Id = model.Id,
-                Description = model.Description,
-                Code = model.Code,
-                CategoryId = model.Category,
-                BrandId = model.Brand,
-                Quantity = model.Quantity,
-                PurchasePrice = model.PurchasePrice,
-                SalePrice = model.SalePrice,
-                SalePercentage = model.SalePercentage,
-                CardSalePrice = model.CardSalePrice,
-                CardSalePercentage = model.CardSalePercentage,
-                CashSalePrice = model.CashSalePrice,
-                CashSalePercentage = model.CashSalePercentage,
-                PointOrder= model.PointOrder,
-                EntityId= model.Supplier,
-                Observation= model.Observation,
-                IsDeleted = false,
-                //ImageUrl = model.ImageUrl,
-                
-            };
+
+            var productModel = _mapper.Map<Product>(model);
+
             if (productModel.Id == 0)
             {
                 await _contextSql.Products.AddAsync(productModel, ct).ConfigureAwait(false);
             }
             else
             {
-                var oldProduct= await _contextSql
+                var oldProduct = await _contextSql
                                 .Products
                                 .AsNoTracking()
                                 .FirstAsync(p => p.Id == productModel.Id)
                                 .ConfigureAwait(false);
                 _contextSql.Products.Update(productModel);
             }
-           
+
             await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
 
             return Ok(new IdResponse<long>(productModel.Id));
@@ -112,7 +76,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                                 .Include(p => p.Category)
                                 .Include(p => p.Brand)
                                 .Include(p => p.Supplier)
-                                .Where(p => (p.Description.ToLower().Contains(request.Filter ?? "") ||                      p.Category.Description.ToLower().Contains(request.Filter ?? "") ||              p.Supplier.Name.ToLower().Contains(request.Filter ?? "") ||
+                                .Where(p => (p.Description.ToLower().Contains(request.Filter ?? "") || p.Category.Description.ToLower().Contains(request.Filter ?? "") || p.Supplier.Name.ToLower().Contains(request.Filter ?? "") ||
                                 p.Brand.Description.ToLower().Contains(request.Filter ?? "")));
 
             var count = await query.CountAsync().ConfigureAwait(false);
@@ -125,14 +89,6 @@ namespace Kiltex.SistemaGestion.Services.Services
 
 
             var dto = _mapper.Map<List<DtoProduct>>(list);
-
-            //var dto = list.Select(p => new DtoProduct()
-            //{
-            //    Id = p.Id,
-            //    Description = p.Description,
-            //    CategoryName = p.Category.Description,
-
-            //});
 
             return new OperationResponse<DtoPagination<DtoProduct>>(new DtoPagination<DtoProduct>
             {
@@ -148,6 +104,83 @@ namespace Kiltex.SistemaGestion.Services.Services
                 return Error<IdResponse<long>>("000", "El prodcuto no tiene ID");
             }
             return await AddOrUpdate(model, ct).ConfigureAwait(false);
+        }
+
+        public async Task<OperationResponse<IdResponse<long>>> UpdatePriceProduct(DtoUpdatePriceProduct model, CancellationToken ct = default)
+        {
+            if (model == null)
+            {
+                return Error<IdResponse<long>>("000", "El producto no tiene Id");
+            }
+
+
+
+            List<Product> productos = new List<Product>();
+            List<Product> productosActualizados = new List<Product>();
+
+            foreach (var item in model.Id)
+            {
+                var producto =await _contextSql
+                          .Products
+                          .AsNoTracking()
+                          .FirstAsync(p => p.Id == item)
+                          .ConfigureAwait(false);
+                if (producto != null)
+                {
+                    productos.Add(producto);
+                }
+            }
+            switch (model.IdPrice)
+            {
+                case ((int)ePriceProduct.PurchasePrice):
+
+                    foreach (var item in productos)
+                    {
+                        var productoUpdated = new Product()
+                        {
+                            Id = item.Id,
+
+                            Description = item.Description,
+
+                            Code = item.Code,
+
+                            CategoryId = item.CategoryId,
+
+                            BrandId = item.BrandId,
+
+                            Quantity = item.Quantity,
+                            PointOrder = item.PointOrder,
+                            Observation = item.Observation,
+                            SupplierId = item.SupplierId,
+
+                            PurchasePrice = item.PurchasePrice + model.Value,
+
+                            SalePercentage = item.SalePercentage,
+
+                            SalePrice = item.PurchasePrice + model.Value + ((item.PurchasePrice + model.Value) * item.SalePercentage / 100),
+
+                            CashSalePercentage = item.CashSalePercentage,
+
+                            CashSalePrice = item.PurchasePrice + model.Value + ((item.PurchasePrice + model.Value) * item.CashSalePercentage / 100),
+
+                            CardSalePercentage = item.CardSalePercentage,
+                            CardSalePrice = item.PurchasePrice + model.Value + ((item.PurchasePrice + model.Value) * item.CardSalePercentage / 100)
+
+                        };
+
+                         _contextSql.Products.Update(productoUpdated);
+                    }
+                    await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
+                    return Ok(new IdResponse<long>(10)); 
+                   
+
+                   
+            
+                case ((int)ePriceProduct.Percentage):
+                    return Error<IdResponse<long>>("000", "El producto no tiene Id"); 
+            }
+            
+            return Ok(new IdResponse<long>(1));
         }
     }
 }
