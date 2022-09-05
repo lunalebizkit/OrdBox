@@ -26,7 +26,7 @@ export class EntityService {
    * @param id
    * @returns
    */
-  public getSupplierById(id: string | number): Observable<any> {
+  public getSupplierById(id: number): Observable<any> {
     return this.api.get(`supplier?id=${id}`, false);
   }
 

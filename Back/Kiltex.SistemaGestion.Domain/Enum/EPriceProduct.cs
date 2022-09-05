@@ -6,16 +6,7 @@ using System.Threading.Tasks;
 
 namespace Kiltex.SistemaGestion.Domain.Enum
 {
-    public class EPriceProduct
-    {
-        public const string PurchasePrice = "PurchasePrice";
-        public const string Percentage = "Percentage";
-        public const string CashSalePercentage = "CashSalePercentage";
-        public const string CardSalePercentage = "CardSalePercentage";
-        public const string SalePercentage = "SalePercentage";
-    }
-
-    public enum ePriceProduct
+ public enum ePriceProduct
     {
         PurchasePrice = 1, //Se suma solo al costo y se calcula todo
         Percentage = 2, // Se suma el porcentaje al costo y se calcula todo

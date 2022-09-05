@@ -15,8 +15,8 @@ namespace Kiltex.SistemaGestion.Services.Mapper
                  .ForMember(i => i.SupplierName, u => u.MapFrom(a => a.Supplier.Name));
                  
             CreateMap<DtoProduct, Product>();
-            CreateMap<DtoAddProduct, Product>()
-                .ForMember( x => x.Supplier, o => o.MapFrom(y => y.Supplier));
+            CreateMap<DtoAddProduct, Product>().ReverseMap();
+            
         }
     }
 }

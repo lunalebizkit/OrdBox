@@ -46,9 +46,8 @@ namespace Kiltex.SistemaGestion.Services.Services
 
         public async Task<OperationResponse<IdResponse<long>>> AddOrUpdate(DtoAddProduct model, CancellationToken ct = default)
         {
-            
-            var productModel = _mapper.Map<Product>(model);
-        
+            var productModel= _mapper.Map<Product>(model);
+
             if (productModel.Id == 0)
             {
                 await _contextSql.Products.AddAsync(productModel, ct).ConfigureAwait(false);
@@ -77,7 +76,8 @@ namespace Kiltex.SistemaGestion.Services.Services
                                 .Include(p => p.Brand)
                                 .Include(p => p.Supplier)
                                 .Where(p => (p.Description.ToLower().Contains(request.Filter ?? "") ||
-                                p.Category.Description.ToLower().Contains(request.Filter ?? "") ||              p.Supplier.Name.ToLower().Contains(request.Filter ?? "") ||
+                                p.Category.Description.ToLower().Contains(request.Filter ?? "") ||              
+                                p.Supplier.Name.ToLower().Contains(request.Filter ?? "") ||
                                 p.Brand.Description.ToLower().Contains(request.Filter ?? "")));
 
             var count = await query.CountAsync().ConfigureAwait(false);
@@ -108,20 +108,20 @@ namespace Kiltex.SistemaGestion.Services.Services
             return await AddOrUpdate(model, ct).ConfigureAwait(false);
         }
 
-        public async Task<OperationResponse<IdResponse<long>>> UpdatePriceProduct(DtoUpdatePriceProduct model, CancellationToken ct = default)
+        public async Task<OperationResponse<bool>> UpdatePriceProduct(DtoUpdatePriceProduct model, CancellationToken ct = default)
         {
             if (model == null)
             {
-                return Error<IdResponse<long>>("000", "El producto no tiene Id");
+                return Error<bool>("000", "El producto no tiene Id");
             }
 
             List<Product> productos = new List<Product>();
+            List<Product> listproductos = new List<Product>();
 
             foreach (var item in model.Id)
             {
                 var producto =await _contextSql
                           .Products
-                          .AsNoTracking()
                           .FirstAsync(p => p.Id == item)
                           .ConfigureAwait(false);
                 if (producto != null)
@@ -129,97 +129,113 @@ namespace Kiltex.SistemaGestion.Services.Services
                     productos.Add(producto);
                 }
             }
-            switch (model.IdPrice)
-            {
-                case ((int)ePriceProduct.PurchasePrice):
+            foreach (var item in productos) {
+                switch (model.IdPrice)
+                {
+                    case (int)ePriceProduct.PurchasePrice:
+                    case (int)ePriceProduct.Percentage:
+                        item.UpdateSalePrice(model.Value, model.IdPrice == (int)ePriceProduct.Percentage);
+                        break;
+                    case (int)ePriceProduct.CardSalePercentage:
+                    case (int)ePriceProduct.CashSalePercentage:
+                        item.UpdatePrecentage(model.Value, model.IdPrice);
+                        break;
+                }
+                    
+                //case ((int)ePriceProduct.PurchasePrice):
 
-                    foreach (var item in productos)
-                    {
-                        var productoUpdated = new Product()
-                        {
-                            Id = item.Id,
+                    //    foreach (var item in productos)
+                    //    {
+                    //        item.SalePrice
+                    //        var productoUpdated = new Product()
+                    //        {
+                    //            Id = item.Id,
 
-                            Description = item.Description,
+                    //            Description = item.Description,
 
-                            Code = item.Code,
+                    //            Code = item.Code,
 
-                            CategoryId = item.CategoryId,
+                    //            CategoryId = item.CategoryId,
 
-                            BrandId = item.BrandId,
+                    //            BrandId = item.BrandId,
 
-                            Quantity = item.Quantity,
-                            PointOrder = item.PointOrder,
-                            Observation = item.Observation,
-                            SupplierId = item.SupplierId,
+                    //            Quantity = item.Quantity,
+                    //            PointOrder = item.PointOrder,
+                    //            Observation = item.Observation,
+                    //            SupplierId = item.SupplierId,
 
-                            PurchasePrice = item.PurchasePrice + model.Value,
+                    //            PurchasePrice = item.PurchasePrice + model.Value,
 
-                            SalePercentage = item.SalePercentage,
+                    //            SalePercentage = item.SalePercentage,
 
-                            SalePrice = item.PurchasePrice + model.Value + ((item.PurchasePrice + model.Value) * item.SalePercentage / 100),
+                    //            SalePrice = item.PurchasePrice + model.Value + ((item.PurchasePrice + model.Value) * item.SalePercentage / 100),
 
-                            CashSalePercentage = item.CashSalePercentage,
+                    //            CashSalePercentage = item.CashSalePercentage,
 
-                            CashSalePrice = item.PurchasePrice + model.Value + ((item.PurchasePrice + model.Value) * item.CashSalePercentage / 100),
+                    //            CashSalePrice = item.PurchasePrice + model.Value + ((item.PurchasePrice + model.Value) * item.CashSalePercentage / 100),
 
-                            CardSalePercentage = item.CardSalePercentage,
-                            CardSalePrice = item.PurchasePrice + model.Value + ((item.PurchasePrice + model.Value) * item.CardSalePercentage / 100)
+                    //            CardSalePercentage = item.CardSalePercentage,
+                    //            CardSalePrice = item.PurchasePrice + model.Value + ((item.PurchasePrice + model.Value) * item.CardSalePercentage / 100)
 
-                        };
+                    //        };
 
-                         _contextSql.Products.Update(productoUpdated);
-                    }
-                    await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
-                    return Ok(new IdResponse<long>(10));            
+                    //         _contextSql.Products.Update(productoUpdated);
+                    //    }
+                    //    await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
+                    //    break;
 
-                   
-            
-                case ((int)ePriceProduct.Percentage):
-                    foreach (var item in productos)
-                    {
-                        var productoUpdated = new Product()
-                        {
-                            Id = item.Id,
 
-                            Description = item.Description,
+                    //case ((int)ePriceProduct.Percentage):
+                    //    foreach (var item in productos)
+                    //    {
+                    //        var productoUpdated = new Product()
+                    //        {
+                    //            Id = item.Id,
 
-                            Code = item.Code,
+                    //            Description = item.Description,
 
-                            CategoryId = item.CategoryId,
+                    //            Code = item.Code,
 
-                            BrandId = item.BrandId,
+                    //            CategoryId = item.CategoryId,
 
-                            Quantity = item.Quantity,
+                    //            BrandId = item.BrandId,
 
-                            PointOrder = item.PointOrder,
-                            
-                            Observation = item.Observation,
-                            
-                            SupplierId = item.SupplierId,
+                    //            Quantity = item.Quantity,
 
-                            PurchasePrice =item.PurchasePrice + (item.PurchasePrice * model.Value /100),
+                    //            PointOrder = item.PointOrder,
 
-                            SalePercentage = item.SalePercentage,
+                    //            Observation = item.Observation,
 
-                            SalePrice =(( item.PurchasePrice + (item.PurchasePrice * model.Value / 100)) +  ((item.PurchasePrice + (item.PurchasePrice * model.Value / 100)) * item.SalePercentage / 100)),
+                    //            SupplierId = item.SupplierId,
 
-                            CashSalePercentage = item.CashSalePercentage,
+                    //            PurchasePrice =item.PurchasePrice + (item.PurchasePrice * model.Value /100),
 
-                            CashSalePrice = ((item.PurchasePrice + (item.PurchasePrice * model.Value / 100)) + ((item.PurchasePrice + (item.PurchasePrice * model.Value / 100)) * item.CashSalePercentage / 100)),
+                    //            SalePercentage = item.SalePercentage,
 
-                            CardSalePercentage = item.CardSalePercentage,
+                    //            SalePrice =(( item.PurchasePrice + (item.PurchasePrice * model.Value / 100)) +  ((item.PurchasePrice + (item.PurchasePrice * model.Value / 100)) * item.SalePercentage / 100)),
 
-                            CardSalePrice = ((item.PurchasePrice + (item.PurchasePrice * model.Value / 100)) + ((item.PurchasePrice + (item.PurchasePrice * model.Value / 100)) * item.CardSalePercentage / 100)),
+                    //            CashSalePercentage = item.CashSalePercentage,
 
-                        };
+                    //            CashSalePrice = ((item.PurchasePrice + (item.PurchasePrice * model.Value / 100)) + ((item.PurchasePrice + (item.PurchasePrice * model.Value / 100)) * item.CashSalePercentage / 100)),
 
-                        _contextSql.Products.Update(productoUpdated);
-                    }
-                    await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
-                    return Ok(new IdResponse<long>(11));
+                    //            CardSalePercentage = item.CardSalePercentage,
+
+                    //            CardSalePrice = ((item.PurchasePrice + (item.PurchasePrice * model.Value / 100)) + ((item.PurchasePrice + (item.PurchasePrice * model.Value / 100)) * item.CardSalePercentage / 100)),
+
+                    //        };
+                    //        //listproductos.Add(productoUpdated);
+                    //        _contextSql.Products.Update(productoUpdated);
+
+                    //    }
+                    //     //_contextSql.Products.Update(listproductos);
+                    //    await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
+                    //    break;
+                    //    //return Ok(new IdResponse<long>(11));
             }
-            
-            return Ok(new IdResponse<long>(1));
+            await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
+            return Ok<bool>(true);
         }
+
+       
     }
 }
