@@ -9,6 +9,9 @@
       <li nz-submenu nzOpen nzTitle="Persona" nzIcon="user">
         <ul>
           <li nz-menu-item nzMatchRouter>
+            <a routerLink="/home/users">Usuarios</a>
+          </li>
+          <li nz-menu-item nzMatchRouter>
             <a routerLink="/home/customers">Clientes</a>
           </li>
           <li nz-menu-item nzMatchRouter>
@@ -22,17 +25,26 @@
       </li>
       <li nz-submenu nzOpen nzTitle="Dashboard" nzIcon="dashboard">
         <ul>
-          <li nz-menu-item nzMatchRouter>
-            <a routerLink="/home/users">Usuarios</a>
-          </li>
-          <li nz-menu-item nzMatchRouter>
-            <a routerLink="/home/products">Productos</a>
-          </li>
-          <li nz-menu-item nzMatchRouter>
+         
+         <li nz-menu-item nzMatchRouter>
             <a routerLink="/home/categories">Categorias</a>
           </li>
           <li nz-menu-item nzMatchRouter>
             <a routerLink="/home/brands">Marcas</a>
+          </li>
+        </ul>
+      </li>
+      <li nz-submenu nzOpen nzTitle="Productos" nzIcon="tag">
+        <ul>
+         
+          <li nz-menu-item nzMatchRouter>
+            <a routerLink="/home/products">Productos</a>
+          </li>
+          <li nz-menu-item nzMatchRouter>
+            <a routerLink="#">Actualizar Precio</a>
+          </li>
+          <li nz-menu-item nzMatchRouter>
+            <a routerLink="#">Productos Debajo PP</a>
           </li>
         </ul>
       </li>

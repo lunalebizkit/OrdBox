@@ -12,9 +12,9 @@ namespace Kiltex.SistemaGestion.Services.Models.Dtos
 
         public int? Code { get; set; }
 
-        public long Category { get; set; }
+        public long CategoryId { get; set; }
 
-       public long Brand { get; set; }
+       public long BrandId { get; set; }
 
         public int Quantity { get; set; }
 
@@ -22,21 +22,21 @@ namespace Kiltex.SistemaGestion.Services.Models.Dtos
 
         public decimal SalePrice { get; set; }
 
-        public int SalePercentage { get; set; }
+        public decimal SalePercentage { get; set; }
 
         public decimal CardSalePrice { get; set; }
 
-        public int CardSalePercentage { get; set; }
+        public decimal CardSalePercentage { get; set; }
 
         public decimal CashSalePrice { get; set; }
 
-        public int CashSalePercentage { get; set; }
+        public decimal CashSalePercentage { get; set; }
 
         public int PointOrder { get; set; }
 
         public string Observation { get; set; }
 
-        public long Supplier { get; set; }
+        public long SupplierId { get; set; }
 
         public bool IsDeleted { get; set; }
     }

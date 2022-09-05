@@ -163,8 +163,8 @@ export class ProductsEditComponent extends BaseComponent implements OnInit {
         id: this.id !== undefined ? this.id : 0,
         description: this.form.controls['description'].value,
         code: this.form.controls['code'].value,
-        category: this.form.controls['category'].value,
-        brand: this.form.controls['brand'].value,
+        categoryid: this.form.controls['category'].value,
+        brandid: this.form.controls['brand'].value,
         cashSalePrice: this.form.controls['cashSalePrice'].value,
         cashSalePercentage: this.form.controls['cashSalePercentage'].value,      
         quantity: this.form.controls['quantity'].value,
@@ -175,7 +175,7 @@ export class ProductsEditComponent extends BaseComponent implements OnInit {
         cardSalePercentage: this.form.controls['cardSalePercentage'].value,
         pointOrder: this.form.controls['pointOrder'].value,
         observation: this.form.controls['observation'].value,
-        supplier: this.form.controls['supplier'].value
+        supplierid: this.form.controls['supplier'].value
       };
       this.isSaving = true;
       this.service.saveProduct(model).subscribe({
@@ -195,7 +195,7 @@ export class ProductsEditComponent extends BaseComponent implements OnInit {
     }
   }
   queryData = {
-    filter!: '',
+    filter: '',
     page: 0,
     pageSize: 10,
   }
