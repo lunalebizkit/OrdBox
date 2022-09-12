@@ -39,7 +39,7 @@
       <!-- Tabla -->
    
     <div>
-      <nz-table nzShowSizeChanger [nzData]="productList" nzBordered=true [nzSize]="'middle'" [nzLoading]="loading"
+      <nz-table nzShowSizeChanger [nzData]="productList" nzBordered=true [nzSize]="'small'" [nzLoading]="loading"
         [nzTotal]="totalItems" [nzPageSize]="queryParams.pageSize" [nzPageIndex]="1" [nzFrontPagination]="false"
         [nzPaginationType]="'small'" (nzQueryParams)="onQueryParamsChange($event)">
         <thead>
