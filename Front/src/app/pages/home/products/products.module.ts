@@ -4,6 +4,7 @@ import { CommonModule } from "@angular/common";
 import { ProductsRoutingMoudule } from "./products-routing.module";
 import { ProductsListComponent } from "./products-list/products-list.component";
 import { ProductsEditComponent } from './products-edit/products-edit.component';
+import { UpdatePriceProductsComponent } from "./update-price-product/update-price-products.component";
 
 import { NzLayoutModule } from "ng-zorro-antd/layout";
 import { NzPageHeaderModule } from 'ng-zorro-antd/page-header';
@@ -19,6 +20,8 @@ import { AppCommonModule } from "src/app/common/app.common.module";
 import { NzSpaceModule } from "ng-zorro-antd/space";
 import { NzImageModule } from "ng-zorro-antd/image";
 import { NzUploadModule } from 'ng-zorro-antd/upload';
+import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { NzIconModule } from "ng-zorro-antd/icon";
 
 @NgModule({
     imports: [CommonModule,
@@ -31,23 +34,21 @@ import { NzUploadModule } from 'ng-zorro-antd/upload';
     NzSelectModule,
     CommonModule,
     AppCommonModule,
-    // CategoryModule,
+    NzIconModule,
     NzTableModule,
     NzGridModule,
     NzSwitchModule,
     NzPaginationModule,
-    // NzDatePickerModule,
+    NzDividerModule,
     NzInputNumberModule,
     NzCollapseModule,
     NzUploadModule,
     // AttributeModule,
     NzSpaceModule,
-    // AngularEditorModule,
-    // NzTreeSelectModule,
     NzImageModule,
   
     // NzDescriptionsModule
     ],
-    declarations:[ ProductsListComponent, ProductsEditComponent]
+    declarations:[ ProductsListComponent, ProductsEditComponent, UpdatePriceProductsComponent]
 })
 export class ProductsModule {}

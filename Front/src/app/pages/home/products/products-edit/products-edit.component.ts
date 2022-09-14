@@ -130,16 +130,7 @@ export class ProductsEditComponent extends BaseComponent implements OnInit {
         this.form.controls['cashSalePrice'].setValue(r.cashSalePrice);
         this.form.controls['cashSalePercentage'].setValue(r.cashSalePercentage);
         this.form.controls['pointOrder'].setValue(r.pointOrder);
-        this.form.controls['observation'].setValue(r.observation);
-        console.log(r.brandName);
-        // this.brandSelectedChange(this.allBrands.find(({value, label}) => { 
-        //   label == r.brandName }
-        // ) && this.allBrands[0]);
-        let datos:any= this.allBrands.find(({value, label}) => { 
-          return label == r.brandName }
-         ) ;
-         
-       this.brandSelectedChange(datos.value);
+        this.form.controls['observation'].setValue(r.observation);   
         this.isLoading = false
       },
       error: () => { this.isLoading = false; }
@@ -189,7 +180,7 @@ export class ProductsEditComponent extends BaseComponent implements OnInit {
         },
         error: () => {
           this.isSaving = false;
-          this.showMessageError('No se pudo Guardar la Categoria')
+          this.showMessageError('No se pudo Guardar el Producto')
         }
       })
     }

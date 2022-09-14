@@ -25,21 +25,21 @@ export class ProductService {
   }
 
   /**
-   * Obtiene los productos por categoría
+   *Actualiza los precios de los productos 
    * @param queryParams
    * @returns
    */
-  public getProductsByCategory(queryParams: any) : Observable<any> {
-    return this.api.post(`products/byCategory`, queryParams, false);
+  public UpdatePriceProduct(queryParams: any) : Observable<any> {
+    return this.api.put(`updatepriceproduct/updatepriceproduct`, queryParams, false);
   }
 
   /**
-   * Obtiene los productos por categoría
+   * Obtiene los productos por consulta de actualizacion
    * @param queryParams
    * @returns
    */
-   public getProductsByCampaign(queryParams: any) : Observable<any> {
-    return this.api.post(`products/byCampaign`, queryParams, false);
+   public getProductsByUpdatePrice(queryParams: any) : Observable<any> {
+    return this.api.post(`updatepriceproduct/list`, queryParams, false);
   }
 
   /**

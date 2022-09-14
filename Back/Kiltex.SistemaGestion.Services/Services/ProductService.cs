@@ -99,6 +99,41 @@ namespace Kiltex.SistemaGestion.Services.Services
                 TotalCount = count
             });
         }
+        public async Task<OperationResponse<DtoPagination<DtoProduct>>> ListProduct(RequestPaginatedData<ProductFilter> request)
+        {
+            var query = _contextSql
+                                .Products
+                                .AsNoTracking()
+                                .Include(p => p.Category)
+                                .Include(p => p.Brand)
+                                .Include(p => p.Supplier)
+                                .Where(p => (!String.IsNullOrEmpty(request.Filter.Product) ? p.Description.ToLower().Contains(request.Filter.Product) : true)
+                                &&
+                                ((request.Filter.Brand.HasValue && request.Filter.Brand != 0) ? p.BrandId == request.Filter.Brand : true)
+                                &&
+                                 ((request.Filter.Category.HasValue && request.Filter.Category != 0) ? p.CategoryId == request.Filter.Category : true)
+                                &&
+                                 (request.Filter.Supplier.Count > 0  ? request.Filter.Supplier.Contains(p.SupplierId) : true) );
+
+            var count = await query.CountAsync().ConfigureAwait(false);
+
+            var list = await query.OrderBy(p => p.Id)
+                                  .Skip(request.Page * request.PageSize)
+                                  .Take(request.PageSize)
+                                  .ToListAsync()
+                                  .ConfigureAwait(false);
+
+
+            var dto = _mapper.Map<List<DtoProduct>>(list);
+
+
+            return new OperationResponse<DtoPagination<DtoProduct>>(new DtoPagination<DtoProduct>
+            {
+                Data = dto,
+                PageSize = request.PageSize,
+                TotalCount = count
+            });
+        }
         public async Task<OperationResponse<IdResponse<long>>> Update(DtoAddProduct model, CancellationToken ct = default)
         {
             if (model.Id == 0)
@@ -114,21 +149,32 @@ namespace Kiltex.SistemaGestion.Services.Services
             {
                 return Error<bool>("000", "El producto no tiene Id");
             }
+            var productos = _contextSql
+                               .Products                               
+                               .Include(p => p.Category)
+                               .Include(p => p.Brand)
+                               .Include(p => p.Supplier)
+                               .Where(p => (!String.IsNullOrEmpty(model.Product) ? p.Description.ToLower().Contains(model.Product) : true)
+                               &&
+                               ((model.Brand.HasValue && model.Brand != 0) ? p.BrandId == model.Brand : true)
+                               &&
+                                ((model.Category.HasValue && model.Category != 0) ? p.CategoryId == model.Category : true)
+                               &&
+                                (model.Supplier.Count > 0 ? model.Supplier.Contains(p.SupplierId) : true));
 
-            List<Product> productos = new List<Product>();
-            List<Product> listproductos = new List<Product>();
+            //List<Product> productos = new List<Product>();
 
-            foreach (var item in model.Id)
-            {
-                var producto =await _contextSql
-                          .Products
-                          .FirstAsync(p => p.Id == item)
-                          .ConfigureAwait(false);
-                if (producto != null)
-                {
-                    productos.Add(producto);
-                }
-            }
+            //foreach (var item in model.Id)
+            //{
+            //    var producto =await _contextSql
+            //              .Products
+            //              .FirstAsync(p => p.Id == item)
+            //              .ConfigureAwait(false);
+            //    if (producto != null)
+            //    {
+            //        productos.Add(producto);
+            //    }
+            //}
             foreach (var item in productos) {
                 switch (model.IdPrice)
                 {
