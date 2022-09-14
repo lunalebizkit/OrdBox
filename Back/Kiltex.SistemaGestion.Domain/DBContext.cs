@@ -26,6 +26,8 @@ namespace Kiltex.SistemaGestion.Domain
         public virtual DbSet<Supplier> Suppliers { get; set; }
         public virtual DbSet<EmailEntity> EmailEntities { get; set; }
         public virtual DbSet<PhoneEntity> PhoneEntities { get; set; }
+        public virtual DbSet<SupplierOrder> SupplierOrders { get; set; }
+        public virtual DbSet<SupplierOrderDetail> SupplierOrderDetails { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -41,5 +43,6 @@ namespace Kiltex.SistemaGestion.Domain
         //        }
         //    );
         //}; 
+       
     }
 }

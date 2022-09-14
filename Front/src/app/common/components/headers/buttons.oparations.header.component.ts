@@ -35,12 +35,18 @@ export class HeaderOperationsButtonsComponent implements OnInit {
     }
     else {
       this.route.params.subscribe(p => {
-        if (p['id']) {
-          this.router.navigate(['../../'], { relativeTo: this.route });
+        if (this.router.routerState.snapshot.url.split('home/', 2)[1].split('/')[0] == 'products'){
+          this.router.navigate(['/home/products/list'])     
         }
-        else {
-          this.router.navigate(['../'], { relativeTo: this.route });
+        else{
+          if (p['id']) {
+            this.router.navigate(['../../'], { relativeTo: this.route });
+          }
+          else {
+            this.router.navigate(['../'], { relativeTo: this.route });
+          }
         }
+       
       } );
     }
    }
