@@ -41,7 +41,7 @@
     
     <!-- Tabla -->
     <div>
-      <nz-table #filterTable [nzData]="categoryList" nzBordered=true [nzLoading]="loading" [nzTotal]="totalItems" [nzPageIndex]="1" [nzPageSize]="queryData.pageSize"
+      <nz-table class="table-list" #filterTable [nzData]="categoryList" nzBordered=true [nzLoading]="loading" [nzTotal]="totalItems" [nzPageIndex]="1" [nzPageSize]="queryData.pageSize"
         [nzPaginationType]="'small'" [nzFrontPagination]="false" (nzQueryParams)="onQueryParamsChange($event)" >
         <!--  nzShowSizeChanger 
             
@@ -49,8 +49,8 @@
         <thead>
           <tr>
             <th>#</th>
-            <th>Descripcion</th>
-            <th nzWidth="100px">Acciones</th>
+            <th style="text-align: center;">Descripcion</th>
+            <th style="text-align: center;">Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -63,11 +63,11 @@
                   <nz-divider nzType="vertical"></nz-divider>
                 </ng-template>
                 <a *nzSpaceItem routerLink="/home/categories/edit/{{category.id}}">
-                  <i nz-tooltip nzTooltipTitle="Editar" nz-icon nzType="edit"></i>
+                  <i nz-tooltip nzTooltipTitle="Editar" nz-icon nzType="edit" style="font-size: 16px;"></i>
                 </a>
                 <a *nzSpaceItem (click)="popup.showDeleteConfirmation(category.id)">
                   <i nz-tooltip nzTooltipTitle="Eliminar" nz-icon nzType="delete" [nzTheme]="'twotone'"
-                    [nzTwotoneColor]="'#FF0000'"></i>
+                    [nzTwotoneColor]="'#FF0000'" style="font-size: 16px;"></i>
                 </a>
               </nz-space>
             </td>

@@ -145,3 +145,10 @@ nz-content {
     background: #fff;
     height: 100%;
   }
+   .table-list{
+    table-layout:fixed;
+    overflow:auto;
+  } 
+  nz-footer {
+    text-align: center;
+  }
