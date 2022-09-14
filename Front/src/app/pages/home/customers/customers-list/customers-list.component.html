@@ -8,7 +8,7 @@
     </nz-page-header>
   
     <nz-content>  
-         <nz-collapse>
+        <nz-collapse>
           <nz-collapse-panel nzSize="small" nzHeader="Filtros">
             <form nz-form (ngSubmit)="search()">
               <div nz-row [nzGutter]="[8,1]">
@@ -39,7 +39,7 @@
         <!-- Tabla -->
      
       <div>
-        <nz-table nzShowSizeChanger [nzData]="entityList" nzBordered=true [nzSize]="'small'" [nzLoading]="loading"
+        <nz-table #dynamicTable class="table-list" nzShowSizeChanger [nzData]="entityList" nzBordered=false [nzSize]="'small'" [nzLoading]="loading"
           [nzTotal]="totalItems" [nzPageSize]="queryParams.pageSize" [nzPageIndex]="1" [nzFrontPagination]="false"
           [nzPaginationType]="'small'" (nzQueryParams)="onQueryParamsChange($event)">
           <thead>

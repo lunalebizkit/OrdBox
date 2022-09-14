@@ -2,8 +2,24 @@
   position: relative;
   height: 64px;
   padding: 10px;
-  background: #fff;
-
+  background: rgb(253, 252, 252);
   box-shadow: -1px 1px 5px 1px #a3a1a3;
   margin-bottom: 10px;
 }
+.table-list{
+  /* width: 100%; */
+  overflow:auto;
+  /* table-layout: fixed; */
+}
+
+th{
+  font-size: 10px;
+}
+td{
+  font-size: 10px;
+  
+}
+table{
+  border-collapse: collapse;
+}
+
