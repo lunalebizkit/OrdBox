@@ -1,4 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { style } from '@angular/animations';
+import { Component, OnInit, HostListener} from '@angular/core';
+import { EventManager } from '@angular/platform-browser';
+import { RouterLinkWithHref } from '@angular/router';
+import { id_ID } from 'ng-zorro-antd/i18n';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { CommonResponse, DtoPagination } from 'src/app/common/models/commonResponse.model';
 import { environment } from 'src/environments/environment';
@@ -11,7 +15,8 @@ import { ProductService } from '../product.service';
   styleUrls: ['./products-list.component.css']
 })
 export class ProductsListComponent implements OnInit {
-
+  /* selectedRow = 0; */
+  
 /*
   ** Listado de los productos
   */
@@ -101,8 +106,56 @@ export class ProductsListComponent implements OnInit {
     this.queryParams.page = 0;
     this.getData(this.queryParams);
   }
+  
+  selectedRowIndex:number = 0;
+ 
+    UP_ARROW: number =38;
+    DOWN_ARROW: number = 40;
 
-
-
-
+  index : number=0;
+  highlight(index:number){ 
+    this.selectedRowIndex= this.index;
+    console.log( this.index--) 
 }
+  highlight1(index:number){ 
+    this.selectedRowIndex = this.index;
+    console.log( this.index ++) 
+}
+}
+/*  export enum KEY_CODE {
+  UP_ARROW = 38,
+  DOWN_ARROW = 40
+} 
+@Component({
+  template: ''
+}) 
+export class desplazar {
+  id = 0;
+  constructor() {}
+
+
+  @HostListener('window:keydown', ['$event'])
+  keyEvent(event: KeyboardEvent) {
+    console.log(event);
+
+    if (event.code=== KEY_CODE.DOWN_ARROW) {
+      this.increment();
+    }
+
+    if (KEY_CODE === KEY_CODE.UP_ARROW) {
+      this.decrement();
+    }
+  }
+
+  increment() {
+    this.id++;
+  }
+
+  decrement() {
+    this.id --;
+  }
+
+ 
+}
+
+ */

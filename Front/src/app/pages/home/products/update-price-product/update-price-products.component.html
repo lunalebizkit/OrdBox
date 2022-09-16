@@ -1,13 +1,15 @@
 <nz-layout>
-  <nz-page-header class="list-header">
-    <nz-page-header-title>Actualización de Productos</nz-page-header-title>
-    <nz-page-header-extra>
-      <button id="actualizarbutton" nz-tooltip nzTooltipTitle="Actualizar" nz-button style="background-color:#24ce41;" (click)="update()">
-        <i nz-icon nzType="check" nzTheme="outline"></i>
-        <span>Actualizar</span>
-      </button>
-    </nz-page-header-extra>
-  </nz-page-header>
+  <div class="sticky">
+    <nz-page-header class="list-header">
+      <nz-page-header-title>Actualización de Productos</nz-page-header-title>
+      <nz-page-header-extra>
+        <button id="actualizarbutton" nz-tooltip nzTooltipTitle="Actualizar" nz-button style="background-color:#24ce41;" (click)="update()">
+          <i nz-icon nzType="check" nzTheme="outline"></i>
+          <span>Actualizar</span>
+        </button>
+      </nz-page-header-extra>
+    </nz-page-header>
+  </div>
 
   <nz-content>
     <nz-collapse>
@@ -15,7 +17,7 @@
         <form nz-form [formGroup]="formSearch">
           <div nz-row nzJustify="space-between">
 
-            <div nz-col nzSpan="6" class="mb-2">
+            <div nz-col  nzSpan="5" >
               <nz-form-item>
                 <nz-form-label>Producto</nz-form-label>
                 <nz-form-control>
@@ -32,9 +34,9 @@
               </nz-form-item>
             </div>
 
-            <div nz-col nzSpan="6" >
+            <div nz-col nzSpan="5" >
               <nz-form-item >
-                <nz-form-label >Marca</nz-form-label>
+                <nz-form-label>Marca</nz-form-label>
                 <nz-form-control>
                   <nz-select  id="brand" nzShowSearch nzAllowClear formControlName="brand"                    
                   (ngModelChange)="brandSelectedChange($event)" [nzOptions]="allBrands" >
@@ -73,7 +75,7 @@
                 </nz-form-control>
               </nz-form-item>
             </div>
-            <div nz-col nzSpan="6" class="mb-2">
+            <div nz-col nzSpan="5" >
               <nz-form-item>
                 <nz-form-label nzFor="category">Categoria </nz-form-label>
                 <nz-form-control [nzSm]="14" [nzXs]="24">
@@ -93,7 +95,7 @@
            
           </div>
           <div nz-row nzJustify="end">
-            <div nz-col nzSpan="4" >
+            <div >
               <button nz-button nzType="primary" (click)="search()">
                 <i nz-icon nzType="search"></i>
                 Buscar</button>
@@ -124,7 +126,7 @@
     <!-- Tabla -->
 
     <div>
-      <nz-table nzShowSizeChanger [nzData]="productList" nzBordered=true [nzSize]="'small'" [nzLoading]="loading"
+      <nz-table class="table-list" nzShowSizeChanger [nzData]="productList" nzBordered=true [nzSize]="'small'" [nzLoading]="loading"
         [nzTotal]="totalItems" [nzPageSize]="queryParams.pageSize" [nzPageIndex]="1" [nzFrontPagination]="false"
         [nzPaginationType]="'small'" >
         <thead>
@@ -149,10 +151,10 @@
             <td nzLeft>{{data.brandName}}</td>
             <td nzLeft>{{data.supplierName}}</td>
             <td>{{data.code}}</td>
-            <td>$ {{data.purchasePrice}}</td>
-            <td>$ {{data.salePrice}}</td>
-            <td>$ {{data.cardSalePrice}}</td>
-            <td>$ {{data.cashSalePrice}}</td>
+            <td style="color:blue; text-align:right" >$ {{data.purchasePrice}}</td>
+            <td style="color:green ; text-align:right">$ {{data.salePrice}}</td>
+            <td style="color:red ; text-align:right ">$ {{data.cardSalePrice}}</td>
+            <td style="text-align:right ">$ {{data.cashSalePrice}}</td>
           </tr>
         </tbody>
       </nz-table>

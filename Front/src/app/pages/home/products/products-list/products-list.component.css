@@ -7,19 +7,21 @@
   margin-bottom: 10px;
 }
 .table-list{
-  /* width: 100%; */
   overflow:auto;
-  /* table-layout: fixed; */
 }
 
 th{
   font-size: 10px;
 }
 td{
-  font-size: 10px;
+  font-size: 10px; 
   
 }
+
 table{
   border-collapse: collapse;
 }
+
+
+
 
