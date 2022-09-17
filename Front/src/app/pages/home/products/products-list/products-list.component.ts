@@ -106,7 +106,7 @@ export class ProductsListComponent implements OnInit {
     this.queryParams.page = 0;
     this.getData(this.queryParams);
   }
-  /*  imprime por consola el index y se maneja con las flechas */
+  /*  imprime por consola el index y se maneja con las flechas, se suma o se resta */
   selectedRowIndex:number = 0;
  
     UP_ARROW: number =38;
