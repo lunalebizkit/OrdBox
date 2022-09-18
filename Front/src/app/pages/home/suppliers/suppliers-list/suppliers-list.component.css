@@ -16,11 +16,4 @@ td{
 th{
   font-size: 11px;
 }
-.table tbody tr:hover {
-  background-color: blue;
-}
 
-.table tbody tr:focus {
-  background-color: red;
-  outline: 0; /*remove outline*/
-}

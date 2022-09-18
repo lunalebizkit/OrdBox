@@ -106,56 +106,19 @@ export class ProductsListComponent implements OnInit {
     this.queryParams.page = 0;
     this.getData(this.queryParams);
   }
-  /*  imprime por consola el index y se maneja con las flechas, se suma o se resta */
-  selectedRowIndex:number = 0;
+   /*  imprime por consola el index y se maneja con las flechas, se suma o se resta */
+   selectedRowIndex:number = 0;
  
-    UP_ARROW: number =38;
-    DOWN_ARROW: number = 40;
+   UP_ARROW: number =38;
+   DOWN_ARROW: number = 40;
 
-  index : number=0;
-  highlight(index:number){ 
-    this.selectedRowIndex= this.index;
-    console.log( this.index--) 
+ index : number=0;
+ highlight(index:number){ 
+   this.selectedRowIndex= this.index;
+   console.log( this.index--) 
 }
-  highlight1(index:number){ 
-    this.selectedRowIndex = this.index;
-    console.log( this.index ++) 
+ highlight1(index:number){ 
+   this.selectedRowIndex = this.index;
+   console.log( this.index ++) 
 }
 }
-/*  export enum KEY_CODE {
-  UP_ARROW = 38,
-  DOWN_ARROW = 40
-} 
-@Component({
-  template: ''
-}) 
-export class desplazar {
-  id = 0;
-  constructor() {}
-
-
-  @HostListener('window:keydown', ['$event'])
-  keyEvent(event: KeyboardEvent) {
-    console.log(event);
-
-    if (event.code=== KEY_CODE.DOWN_ARROW) {
-      this.increment();
-    }
-
-    if (KEY_CODE === KEY_CODE.UP_ARROW) {
-      this.decrement();
-    }
-  }
-
-  increment() {
-    this.id++;
-  }
-
-  decrement() {
-    this.id --;
-  }
-
- 
-}
-
- */
