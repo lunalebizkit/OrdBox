@@ -4,6 +4,7 @@ using Kiltex.SistemaGestion.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Kiltex.SistemaGestion.Domain.Migrations
 {
     [DbContext(typeof(DBContext))]
-    partial class DBContextModelSnapshot : ModelSnapshot
+    [Migration("20220919122137_invoice-invoiceDetail")]
+    partial class invoiceinvoiceDetail
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -186,8 +188,8 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("invoice_id");
 
-                    b.Property<decimal>("Iva")
-                        .HasColumnType("decimal(18,2)")
+                    b.Property<int>("Iva")
+                        .HasColumnType("int")
                         .HasColumnName("iva");
 
                     b.Property<decimal>("Price")
@@ -569,7 +571,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.InvoiceDetail", b =>
                 {
                     b.HasOne("Kiltex.SistemaGestion.Domain.Model.Invoice", "Invoice")
-                        .WithMany("InvoiceDetails")
+                        .WithMany()
                         .HasForeignKey("InvocieId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -706,11 +708,6 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                     b.Navigation("EmailEntities");
 
                     b.Navigation("PhoneEntities");
-                });
-
-            modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.Invoice", b =>
-                {
-                    b.Navigation("InvoiceDetails");
                 });
 
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.Permission", b =>

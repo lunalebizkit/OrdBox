@@ -1,0 +1,54 @@
+<form nz-form [formGroup]="formSearch">
+    <nz-content>  
+        <nz-collapse class="list-header">
+           <form nz-form (ngSubmit)="search()">           
+ 
+               <div nz-col nzSpan="24" style="margin-bottom: -20px;">
+                 <nz-form-item>
+                   <nz-form-label>Búsqueda</nz-form-label>
+                   <nz-form-control>                  
+                     <nz-input-group [nzSuffix]="clearQuery">
+                       <input [ngModelOptions]="{standalone: true}" type="text" placeholder="Ingrese Marca, Categoria o Producto" nz-input
+                         (keydown.enter)="search()" [(ngModel)]="queryParams.filter" />
+                     </nz-input-group>
+                     
+                     <ng-template #clearQuery>
+                       <i nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle"
+                         *ngIf="queryParams.filter" (click)="queryParams.filter = ''; search()"></i>
+                     </ng-template>
+                   </nz-form-control>
+                 </nz-form-item>
+               </div>            
+ 
+           </form>
+       </nz-collapse> 
+ 
+       <!-- Tabla -->
+    
+     <div>
+       <nz-table class="tablaProduct" nzShowSizeChanger [nzData]="productList" nzBordered=true [nzSize]="'small'" [nzLoading]="loading"
+         [nzTotal]="totalItems" [nzPageSize]="queryParams.pageSize" [nzPageIndex]="1" [nzFrontPagination]="false"
+         [nzPaginationType]="'small'"  (nzQueryParams)="onQueryParamsChange($event)">
+         <thead>
+           <tr> 
+            <th>Codigo</th> 
+             <th>Marca</th>
+             <th>Proveedor</th>            
+             <th>Stock</th>
+             <th >Precio Costo</th>        
+           </tr>
+         </thead>
+         <tbody>
+           <tr *ngFor="let data of productList" class="small-text" id="{{data.id}}" (click)="selecccion($event)" >
+            <td >{{data.code}}</td>
+            <td >{{data.brandName}}</td> 
+             <td nzBreakWord>{{data.description}}</td>             
+             <td>{{data.quantity}}</td>
+             <td>$ {{data.purchasePrice}}</td>                      
+                   
+           </tr>
+         </tbody>
+       </nz-table>
+     </div>
+   </nz-content>
+</form>

@@ -3,7 +3,6 @@ import { ApiService } from './../../../common/services/api.base.service';
 import { Observable } from 'rxjs';
 import { ProductsModel } from './model/product.model';
 import { ProductAddModel } from './model/product.add.model';
-// import { ProductModel } from './model/edit.product.model';
 
 @Injectable({
   providedIn: 'root'

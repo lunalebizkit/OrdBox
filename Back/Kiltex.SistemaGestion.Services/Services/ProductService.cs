@@ -162,19 +162,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                                &&
                                 (model.Supplier.Count > 0 ? model.Supplier.Contains(p.SupplierId) : true));
 
-            //List<Product> productos = new List<Product>();
-
-            //foreach (var item in model.Id)
-            //{
-            //    var producto =await _contextSql
-            //              .Products
-            //              .FirstAsync(p => p.Id == item)
-            //              .ConfigureAwait(false);
-            //    if (producto != null)
-            //    {
-            //        productos.Add(producto);
-            //    }
-            //}
+            
             foreach (var item in productos) {
                 switch (model.IdPrice)
                 {

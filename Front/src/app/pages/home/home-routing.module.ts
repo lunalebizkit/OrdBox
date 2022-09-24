@@ -40,6 +40,11 @@ const routes: Routes = [
                 path: 'customers',
                 loadChildren: () => import('./customers/customers.module')
                     .then(m => m.CustomerModule)
+            }, 
+             {
+                path: 'invoices',
+                loadChildren: () => import('./invoices/invoices.module')
+                    .then(m => m.InvoicesModule)
             }
         ]
     },

@@ -26,11 +26,7 @@ namespace Kiltex.SistemaGestion.Services.Services
 
                 return new OperationResponse<DtoBrand>(null, false, new OperationExceptions("000", $"Marca no encontrada {id}"));
 
-            var result = new DtoBrand()
-            {
-                Id = id,
-                Description = marca.Description
-            };
+            var result = _mapper.Map<DtoBrand>(marca);
 
             return new OperationResponse<DtoBrand>(result);
         }
@@ -50,11 +46,8 @@ namespace Kiltex.SistemaGestion.Services.Services
                 return Error<IdResponse<long>>(ErrorsCodes.C_009_ERROR_DUPLICATE, "Ya existe una marca con ese nombre");
             }
 
-            var brandModel = new Brand()
-            {
-                Id = model.Id,
-                Description = model.Description
-            };
+            var brandModel = _mapper.Map<Brand>(model);
+            
             if (brandModel.Id == 0)
             {
                 await _contextSql.Brands.AddAsync(brandModel, ct).ConfigureAwait(false);
