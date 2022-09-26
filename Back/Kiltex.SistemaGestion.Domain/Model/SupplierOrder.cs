@@ -26,8 +26,10 @@ namespace Kiltex.SistemaGestion.Domain.Model
         [Column("status_id")]
         public long StatusId { get; set; }
 
+        public ICollection<SupplierOrderDetail> SupplierOrderDetail { get; set; } = new HashSet<SupplierOrderDetail>();
+
         [NotMapped]
-        public ESupplierOrderDetailsStatuses Status { get => (ESupplierOrderDetailsStatuses)StatusId; }
+        public ESupplierOrderStatuses Status { get => (ESupplierOrderStatuses)StatusId; }
 
 
     }

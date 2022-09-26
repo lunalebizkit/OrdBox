@@ -35,6 +35,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                 Id = id,
                 Dni = proveedor.Dni,
                 Cuit = proveedor.Cuit,
+
                 Name = proveedor.Name,
                 Address = proveedor.Address,
                 Observation = proveedor.Observation,
