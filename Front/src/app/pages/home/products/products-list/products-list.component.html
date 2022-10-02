@@ -1,4 +1,4 @@
-<nz-layout> 
+ <nz-layout> 
     <nz-page-header class="list-header">
       <nz-page-header-title>Listado de Productos</nz-page-header-title>
       <nz-page-header-extra>
@@ -6,85 +6,20 @@
             nzShape="circle"><i nz-icon nzType="plus" nzTheme="outline"></i></button></a>
       </nz-page-header-extra>
     </nz-page-header> 
-  <nz-content>  
-       <nz-collapse>
-          <nz-collapse-panel nzSize="small" nzHeader="Filtros">
-            <form nz-form (ngSubmit)="search()">
-              <div nz-row [nzGutter]="[8,1]" >
+   </nz-layout> 
+  <ag-grid-angular #MyGrid class="ag-theme-alpine" style="width: 100%; height: 100%; font-size: 10px;"
+   domLayout="normal" [columnDefs]="columnDefs" [rowHeight]="rowHeight"  
+ [defaultColDef]="defaultColDef" (gridReady)="onGridReady($event)" [paginationPageSize]="paginationPageSize" 
+ [rowBuffer]="rowBuffer"  [alwaysShowVerticalScroll]="true"
+ [rowModelType]="rowModelType"
+[cacheBlockSize]="cacheBlockSize"
+[gridOptions]="gridOptions" [cacheOverflowSize]="cacheOverflowSize"
+[maxBlocksInCache]="maxBlocksInCache"
+[infiniteInitialRowCount]="infiniteInitialRowCount"
+[maxConcurrentDatasourceRequests]="maxConcurrentDatasourceRequests"
+ [debounceVerticalScrollbar]="true" 
+> 
+</ag-grid-angular>
 
-                <div nz-col nzSpan="24">
-                 <nz-form-item>
-                    <nz-form-label>Búsqueda</nz-form-label>
-                    <nz-form-control>                  
-                      <nz-input-group [nzSuffix]="clearQuery">
-                        <input [ngModelOptions]="{standalone: true}" type="text" placeholder="Ingrese Marca, Categoria o Producto" nz-input
-                        (keydown.enter)="search()" [(ngModel)]="queryParams.filter" />
-                      </nz-input-group>
-                    
-                      <ng-template #clearQuery>
-                       <i nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle"
-                        *ngIf="queryParams.filter" (click)="queryParams.filter = ''; search()"></i>
-                      </ng-template>
-                    </nz-form-control>
-                  </nz-form-item>
-                </div>
 
-              </div>
 
-            </form>
-        </nz-collapse-panel>
-      </nz-collapse> 
-
-      <!-- Tabla -->
-   
-    <div  class="table">
-      <nz-table #dynamicTable
-      nzShowSizeChanger class="table-list "  nzShowSizeChanger [nzData]="productList" nzBordered=false [nzSize]="'small'" [nzLoading]="loading"
-        [nzTotal]="totalItems" [nzPageSize]="queryParams.pageSize" [nzPageIndex]="1" [nzFrontPagination]="false" 
-        [nzPaginationType]="'small'" (nzQueryParams)="onQueryParamsChange($event)">
-        <thead >
-          <tr>
-            <!-- <th nzLeft></th>           -->
-            <th >Producto</th>           
-            <th >Categoria</th>
-            <th >Marca</th>
-            <th >Proveedor</th>
-            <th >Código</th>
-            <th >Cantidad</th>
-            <th style="color:blue">Precio Costo</th>
-            <th style="color:green">Precio Lista</th>
-            <th style="color:red " >Precio Contado</th>
-            <th >Precio Tarjeta</th>
-            <th >Punto Pedido</th>
-            <th >Obervación</th>            
-            <th >Acción</th>
-          </tr>
-        </thead>
-        <tbody >
-          <tr *ngFor="let data of productList" class="small-text" aria-activedescendant="Productos" tabindex="0" >                
-           <!-- <td nzLeft> <img width="60px" height="60px" 
-            src="../../../../../assets/img/no-image.png" alt="" /></td> -->
-            <td nzWidth style="text-align:left " >{{data.description}}</td>            
-            <td nzLeft style="text-align:left " >{{data.categoryName}}</td>
-            <td nzLeft style="text-align:left " >{{data.brandName}}</td> 
-            <td nzLeft style="text-align:left " >{{data.supplierName}}</td>
-            <td style="text-align:right " >{{data.code}}</td>
-            <td style="text-align:right " >{{data.quantity}}</td>
-            <td style="color:blue; text-align:right"  >${{data.purchasePrice}}</td>
-            <td style="color:green ; text-align:right" >${{data.salePrice}}</td>
-            <td style="color:red ; text-align:right " >${{data.cashSalePrice}}</td>
-            <td style="text-align:right "  >${{data.cardSalePrice}}</td>
-         
-            <td style="text-align:right " >{{data.pointOrder}}</td>
-            <td style="text-align:left " >{{data.observation}}</td>                         
-            <td style="text-align: center;" nzRight >
-                <a routerLink="/home/products/edit/{{data.id}}">
-                  <i nz-icon nzType="edit" nzTheme="outline"></i>
-                </a>
-            </td>        
-          </tr>
-        </tbody>
-      </nz-table>
-    </div>
-  </nz-content>
-</nz-layout> 

@@ -21,6 +21,7 @@ import { NzSpaceModule } from "ng-zorro-antd/space";
 import { NzImageModule } from "ng-zorro-antd/image";
 import { NzUploadModule } from 'ng-zorro-antd/upload';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { AgGridModule } from 'ag-grid-angular';
 import { NzIconModule } from "ng-zorro-antd/icon";
 
 @NgModule({
@@ -46,6 +47,7 @@ import { NzIconModule } from "ng-zorro-antd/icon";
     // AttributeModule,
     NzSpaceModule,
     NzImageModule,
+    AgGridModule
   
     // NzDescriptionsModule
     ],

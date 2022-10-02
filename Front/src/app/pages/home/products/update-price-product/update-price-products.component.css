@@ -1,7 +1,7 @@
 .list-header {
-  position: relative;
-  height: 64px;
-  padding: 10px;
+  /* position: relative; */
+  /* height: 64px;
+  padding: 10px; */
   background: #fff;
 
   box-shadow: -1px 1px 5px 1px #a3a1a3;
@@ -15,9 +15,32 @@
   background-color: #4CAF50 /* Green */ !important;
   color: white;
   border-color: white;
+  overflow: auto;
 }
 #actualizarbutton:focus {
   background-color: #4CAF50 /* Green */ !important;
   color: white;
   border-color: white;
 }
+.sticky {
+  margin-bottom: 10px;
+  position: sticky; 
+  top: 65px;
+  display: inline-block;
+  width:  100%;
+  background-color: #f6f6f6;
+  padding: 10px;
+  z-index: 101;
+  /* box-shadow: -1px 1px 5px 1px #a3a1a3; */
+  }
+  .table-list{
+    overflow: auto;
+    table-layout: fixed;
+  }
+  th{
+    font-size: 10px;
+  }
+  td{
+    font-size: 10px;
+    
+  }
