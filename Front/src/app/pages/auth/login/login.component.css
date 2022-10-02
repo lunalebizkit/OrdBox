@@ -29,6 +29,9 @@
     img{
       margin: auto 0;
     }
+    img.logo1{
+      display: none;
+    }
     
     .copyright {
       color:rgb(226, 234, 241);
@@ -38,9 +41,33 @@
 
   @media only screen and (max-width: 1000px) {
     .overlay {
-        display: none;
+        display: flex; 
+        position: absolute;
+        opacity: 0.2;
+    }
+    img{
+      display: none;
+    }
+    img.logo1{
+      display: flex;
+      overflow: auto;
+      margin: 0;
+      width: 320px;
+      height: auto;
+      margin-left: 35px;
+    }
+
+  }
+  @media (max-width:500px){
+    img.logo1{
+      width: 250px;
+      height: auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
   }
+ 
 
 
 .login-container{
@@ -49,6 +76,7 @@
 }
   h1{
     font-size: 1.5rem;
+    text-align: center;
     /* color: $color-title-login; */
   }
 
@@ -75,10 +103,15 @@
       width: 75%;
       margin-top: -20%;
       margin-bottom: -12%;
+      display: none;
     }
-
+    
+/* 
     @media only screen and (min-width: 1000px) {
       .logo {
           display: none;
       }
-    }
+      img.logo1{
+        display: flex;
+      }
+    } */

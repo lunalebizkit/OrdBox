@@ -18,7 +18,7 @@ export class BrandsListComponent implements OnInit {
     this.getBrand(this.queryData)
   }
   queryData= {
-    filter!: '',
+    filter: '',
     page: 0,
     pageSize: 10,
   }

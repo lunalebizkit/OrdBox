@@ -8,8 +8,12 @@ import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { IconsProviderModule } from 'src/app/icons-provider.module';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
-
+import { AgGridModule } from 'ag-grid-angular';
 import { UsuariosModule } from './users/users.module';
+import { ModuleRegistry } from '@ag-grid-community/core';
+import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model';
+
+ModuleRegistry.registerModules([InfiniteRowModelModule]);
 
 @NgModule({
   declarations: [
@@ -25,7 +29,8 @@ import { UsuariosModule } from './users/users.module';
     NzMenuModule,
     IconsProviderModule,    
     NzDividerModule,
-    UsuariosModule
+    UsuariosModule,
+    AgGridModule,
   ],
   exports: [HomeComponent]
 })
