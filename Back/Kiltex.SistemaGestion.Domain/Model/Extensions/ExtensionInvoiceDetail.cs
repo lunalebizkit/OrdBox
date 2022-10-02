@@ -6,13 +6,13 @@ namespace Kiltex.SistemaGestion.Domain.Model
     {
         public void IvaPrice(decimal value, decimal iva, int quantity)
         {
-            decimal newPriceTotal = 0;
+            decimal newIvaTotal = 0;
             
             if (iva != 0)
             {
-                newPriceTotal += (value * (1 + iva / 100.0m)) * quantity;
+                newIvaTotal += (value * (1 + iva / 100.0m)) * quantity;
             }
-            this.Total += newPriceTotal;
+            this.IvaTotal += newIvaTotal;
         }
     }
 }

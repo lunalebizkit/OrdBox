@@ -19,7 +19,7 @@
                     <nz-form-item>
                         <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="code">Codigo </nz-form-label>
                         <nz-form-control [nzSm]="14" [nzXs]="24">
-                            <input formControlName="code" nz-input id="code" maxlength="250" />
+                            <nz-input-number formControlName="code" nz-input id="code" [nzMin]="0"></nz-input-number>
                         </nz-form-control>
                     </nz-form-item>
 
@@ -76,13 +76,13 @@
                     <nz-form-item>
                         <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="pointOrder">Punto Pedido
                         </nz-form-label>
-                        <nz-input-number formControlName="pointOrder" id="pointOrder"></nz-input-number>
+                        <nz-input-number formControlName="pointOrder" id="pointOrder" [nzMin]="0"></nz-input-number>
 
                     </nz-form-item>
                     <nz-form-item>
                         <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="quantity">Cantidad
                         </nz-form-label>
-                        <nz-input-number formControlName="quantity" id="quantity"></nz-input-number>
+                        <nz-input-number formControlName="quantity" id="quantity" [nzMin]="0"></nz-input-number>
 
                         <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="purchasePrice">Precio Costo
                         </nz-form-label>
@@ -99,7 +99,7 @@
 
                         <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="salePercentage">Porcentaje
                         </nz-form-label>
-                        <nz-input-number formControlName="salePercentage" id="salePercentage"
+                        <nz-input-number formControlName="salePercentage" id="salePercentage" [nzMin]="0"
                             (ngModelChange)="valuechange($event)" [nzFormatter]="formatterPorcentaje">
                         </nz-input-number>
                     </nz-form-item>

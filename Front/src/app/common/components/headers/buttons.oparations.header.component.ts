@@ -35,7 +35,7 @@ export class HeaderOperationsButtonsComponent implements OnInit {
     }
     else {
       this.route.params.subscribe(p => {
-        if (this.router.routerState.snapshot.url.split('home/', 2)[1].split('/')[0] == 'products'){
+        if (this.router.routerState.snapshot.url.split('home/', 2)[1].split('/')[0] == 'products' || this.router.routerState.snapshot.url.split('home/', 2)[1].split('/')[0] == 'invoices'){
           this.router.navigate(['/home/products/list'])     
         }
         else{

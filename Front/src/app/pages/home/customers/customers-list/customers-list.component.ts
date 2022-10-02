@@ -69,7 +69,7 @@ import { CustomerModel } from '../model/customer.model';
  
   getData(params: any): void {
     this.loading = true;
-    this.service.getEntities(params).subscribe({
+    this.service.getCustomers(params).subscribe({
       next: (r)=>{
         this.entityList= r.data;
         this.totalItems = r.totalCount;

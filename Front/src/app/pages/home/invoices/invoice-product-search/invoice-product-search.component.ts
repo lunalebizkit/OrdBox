@@ -5,7 +5,7 @@ import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { ProductsModel } from '../../products/model/product.model';
 import { ProductService } from '../../products/product.service';
 import { InvoiceProductSearchQuantityComponent } from '../invoice-product-search-quantity/invoice-product-search-quantity.component';
-import { InvoiceDetails } from '../model/invoice.model';
+import { InvoiceDetailList, InvoiceDetails } from '../model/invoice.model';
 
 @Component({
   selector: 'app-invoice-product-search',
@@ -22,6 +22,7 @@ export class InvoiceProductSearchComponent implements OnInit {
   invoiceDetail!: InvoiceDetails;
   timeout!: any;
   quantity!: number;
+  productId!: number;
 
   formSearch!: FormGroup;
   /*
@@ -49,26 +50,16 @@ export class InvoiceProductSearchComponent implements OnInit {
     private service: ProductService,
     private fb: FormBuilder) {
     this.formSearch = this.fb.group({
-      supplier: [[],],
+      supplier: ['',],
     })
   }
 
   ngOnInit(): void {
     this.getData(this.queryParams);
+    
   }
-
   close(): void {
-    const model: InvoiceDetails ={
-      id: 0,
-      invocieId: 0,
-      productCode: this.product.code,
-      productId: this.product.id,
-      productName: this.product.description,
-      quantity: this.quantity,
-      price: this.product.purchasePrice,
-      iva: 0,
-    };
-    this.drawerRef.close(model);
+    this.drawerRef.close(this.product);
   }
 
 
@@ -78,15 +69,10 @@ export class InvoiceProductSearchComponent implements OnInit {
   }
 
 
-
-  supplierSelectedChange(id: any): void {
-    console.log("este es id ", id)
-
-
-  }
   selecccion(dato: any) {
-    if ( dato.path[1].id != null ||  dato.path[1].id != undefined) {
-     this.product= this.productList.filter( t => t.id == dato.path[1].id)[0];
+    if ( dato.composedPath()[1].id != null ||  dato.composedPath()[1].id != undefined) {
+      this.productId= dato.composedPath()[1].id; 
+     this.product= this.productList.filter( t => t.id == this.productId)[0];
      this.openComponentQuantity()
     }
    }
@@ -100,7 +86,8 @@ export class InvoiceProductSearchComponent implements OnInit {
 
     drawerRefProductQuantity.afterClose.subscribe(data => {
       if (data != undefined) {
-        this.quantity = data;
+        this.product.quantity= data;
+        // this.quantity = data;
         this.close();
       }
     }

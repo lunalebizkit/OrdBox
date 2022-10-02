@@ -10,13 +10,13 @@ namespace Kiltex.SistemaGestion.Services.Models.Dtos
     {
         public long Id { get; set; }
 
-        public long InvocieId { get; set; }
+        public long InvoiceId { get; set; }
 
         public long ProductId { get; set; }
 
         public string? ProductName { get; set; }
 
-        public string ProductCode { get; set; }
+        public int ProductCode { get; set; }
 
         public int Quantity { get; set; }
 

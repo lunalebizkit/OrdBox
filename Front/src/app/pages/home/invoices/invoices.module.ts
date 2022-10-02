@@ -11,10 +11,8 @@ import { AppCommonModule } from "src/app/common/app.common.module";
 import { NzIconModule } from "ng-zorro-antd/icon";
 import { NzTableModule } from "ng-zorro-antd/table";
 import { NzSwitchModule } from "ng-zorro-antd/switch";
-import { NzImageModule } from "ng-zorro-antd/image";
 import { NzSpaceModule } from "ng-zorro-antd/space";
-import { NzCollapseModule } from "ng-zorro-antd/collapse";
-import { NzUploadModule } from "ng-zorro-antd/upload";
+import { NzCollapseModule } from 'ng-zorro-antd/collapse';
 import { NzPaginationModule } from "ng-zorro-antd/pagination";
 import { NzDividerModule } from "ng-zorro-antd/divider";
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
@@ -52,9 +50,7 @@ import { InvoiceProductSearchQuantityComponent } from "./invoice-product-search-
         NzDividerModule,
         NzInputNumberModule,
         NzCollapseModule,
-        NzUploadModule,
         NzSpaceModule,
-        NzImageModule,
         NzDatePickerModule,
         NzDescriptionsModule,
         

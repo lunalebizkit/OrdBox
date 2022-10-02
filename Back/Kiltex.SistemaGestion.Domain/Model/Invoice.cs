@@ -43,8 +43,11 @@ namespace Kiltex.SistemaGestion.Domain.Model
         [Column("total")]
         public decimal Total { get; set; }
 
+        [Column("iva_total")]
+        public decimal IvaTotal { get; set; }
+
         [Column("type")]
-        public long Type { get; set; }
+        public int Type { get; set; }
 
         public ICollection<InvoiceDetail> InvoiceDetails { get; set; } = new HashSet<InvoiceDetail>();
     }

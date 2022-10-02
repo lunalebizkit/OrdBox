@@ -74,62 +74,18 @@ namespace Kiltex.SistemaGestion.Services.Services
         {
 
             var invoiceModel = _mapper.Map<Invoice>(model);
-          
             
             var invoiceDetail = new InvoiceDetail();
            
             if (invoiceModel.Id == 0)
             {
-                //if (model.InvoiceDetails != null)
-                //{
-                //    foreach (var newDetail in model.InvoiceDetails)
-                //    {
-
-                //        //var details = _mapper.Map<InvoiceDetail>(newDetail);
-                //       invoiceModel.IvaPrice(newDetail.Price, newDetail.Iva, newDetail.Quantity);
-
-                //        //invoiceModel.InvoiceDetails.Add(details);
-
-                //    }
-
-                //}
+             
 
                 await _contextSql.Invoices.AddAsync(invoiceModel, ct).ConfigureAwait(false);
                 await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
 
             }
-            else
-            {
-                var oldInvoice = await _contextSql
-                                .Invoices
-                                .AsNoTracking()
-                                .Include(p => p.InvoiceDetails)
-                                .FirstAsync(p => p.Id == model.Id)
-                                .ConfigureAwait(false);
-                _contextSql.Invoices.Update(invoiceModel);
-
-
-                var oldInvoiceDetail = await _contextSql.InvoiceDetails.Where(p => p.InvocieId == model.Id).ToListAsync(cancellationToken: ct);
-
-                _contextSql.InvoiceDetails.RemoveRange(oldInvoiceDetail);           
-
-                if (model.InvoiceDetails != null)
-                {
-                    foreach (var newDetail in model.InvoiceDetails)
-                    {
-
-                        var details = _mapper.Map<InvoiceDetail>(newDetail);
-                        invoiceModel.IvaPrice(newDetail.Price, newDetail.Iva, newDetail.Quantity);
-
-                        invoiceModel.InvoiceDetails.Add(details);
-
-                    }
-                }
-                
-
-
-                await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
-            }
+         
 
             return Ok(new IdResponse<long>(invoiceModel.Id));
         }

@@ -12,3 +12,19 @@
     margin: 20px;
    padding-bottom: 3px;
   }
+  
+  #actualizarbutton {
+    transition-duration: 0.4s !important;
+    color: white;
+  }
+  
+  #actualizarbutton:hover {
+    background-color: #4CAF50 /* Green */ !important;
+    color: white;
+    border-color: white;
+  }
+  #actualizarbutton:focus {
+    background-color: #4CAF50 /* Green */ !important;
+    color: white;
+    border-color: white;
+  }

@@ -17,7 +17,7 @@ export class InvoiceCustomerSearchComponent implements OnInit {
   customer! : CustomerModel;
   
   formSearch!: FormGroup;
-  queryData = {
+  queryParams = {
     filter: '',
     page: 0,
     pageSize: 20
@@ -25,14 +25,14 @@ export class InvoiceCustomerSearchComponent implements OnInit {
   totalItems = 0;
   isLoading = false;
   loading = false;
-  customerId: any;
+  customerId!: number;
   
   constructor(
     private drawerRef: NzDrawerRef<string>,
     private serviceEntity: EntityService,
     private fb: FormBuilder) {
       this.formSearch = this.fb.group({          
-        supplier: [[], ],            
+                    
       })
     } 
 
@@ -46,28 +46,28 @@ export class InvoiceCustomerSearchComponent implements OnInit {
   /*
 ** Evento de busqueda datos en el server
 */
-  onSearch(value: string): void {
+  onSearch(): void {
     clearTimeout(this.timeout);
     this.timeout = setTimeout(() => {
 
-      if (value.length > 2) {
+      if (this.queryParams.filter.length > 2) {
         this.allCustomer = [];
-        this.queryData.filter = value;
         this.getAllCustomer();
-      }
+      }      
+      
     }, 1000);
   }
  /*
   ** Evento que se ejecuta ante algun cambio en la grillas (sorting,paging or filtering)
   */
   onQueryParamsChange(params: NzTableQueryParams): void {
-    this.queryData.page = params.pageIndex -1;
-    this.queryData.pageSize = params.pageSize;
+    this.queryParams.page = params.pageIndex -1;
+    this.queryParams.pageSize = params.pageSize;
     this.getAllCustomer();
   }
 
   getAllCustomer(): void {
-    this.serviceEntity.getEntities(this.queryData).subscribe({
+    this.serviceEntity.getCustomers(this.queryParams).subscribe({
       next: (r) => {
         this.allCustomer = r.data;
         this.totalItems= r.totalCount;
@@ -80,8 +80,8 @@ export class InvoiceCustomerSearchComponent implements OnInit {
 
 
  selecccion(dato: any){  
- this.customerId= dato.path[1].id;
-  this.customer=this.allCustomer.filter(id => id.id == dato.path[1].id)[0];  
+ this.customerId= dato.composedPath()[1].id;
+  this.customer=this.allCustomer.filter(id => id.id == this.customerId)[0];  
   this.close();
  }
 }

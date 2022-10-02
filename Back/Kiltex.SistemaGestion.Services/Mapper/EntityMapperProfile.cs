@@ -12,8 +12,18 @@ namespace Kiltex.SistemaGestion.Services.Mapper
             CreateMap<Customer, DtoEntity>()
             .ForMember(x => x.EmailEntity, o => o.MapFrom(x => x.EmailEntities))
             .ForMember(x => x.PhoneEntity, o => o.MapFrom(x => x.PhoneEntities));
-            CreateMap<DtoEntity, Customer>();
-            CreateMap<DtoSupplier, Supplier>().ReverseMap();
+            CreateMap<DtoEntity, Customer>()
+                .AfterMap((o, d, c) =>
+                {
+                    d.Cuit = o.Cuit == String.Empty ? null : o.Cuit.Trim();
+                    d.Dni = o.Dni == 0 ? null : o.Dni;
+                });
+            CreateMap<DtoSupplier, Supplier>()
+                .AfterMap((o, d, c) =>
+                {
+                    d.Cuit = o.Cuit == String.Empty ? null : o.Cuit.Trim();
+                    d.Dni = o.Dni == 0 ? null : o.Dni;
+                }).ReverseMap();
             CreateMap<Supplier,DtoEntityList>()
                  .ForMember(x => x.EmailEntity, o => o.MapFrom(x => x.EmailsStrings))
                  .ForMember(x => x.PhoneEntity, o => o.MapFrom(x => x.PhoneString));
