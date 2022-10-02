@@ -28,6 +28,8 @@ namespace Kiltex.SistemaGestion.Domain
         public virtual DbSet<PhoneEntity> PhoneEntities { get; set; }
         public virtual DbSet<SupplierOrder> SupplierOrders { get; set; }
         public virtual DbSet<SupplierOrderDetail> SupplierOrderDetails { get; set; }
+        public virtual DbSet<Invoice> Invoices { get; set; }
+        public virtual DbSet<InvoiceDetail> InvoiceDetails { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

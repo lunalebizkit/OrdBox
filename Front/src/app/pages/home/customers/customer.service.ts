@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ApiService } from '../../../common/services/api.base.service';
 import { Observable } from 'rxjs';
-import { CustomerModel } from './model/customer.model';
 import { CustomerAddModel } from './model/customer.add.model';
 
 @Injectable({
@@ -43,17 +42,17 @@ export class EntityService {
       }
     }
   /**
-   * Obtiene todas las entidades
+   * Obtiene todos los Clientes
    * @param queryParams
    * @returns
    */
-  public getEntities(queryParams: any): Observable<any> {
+  public getCustomers(queryParams: any): Observable<any> {
     return this.api.post(`Customer/list`, queryParams, false);
   }
   
 
   /**
-   * Obtiene una entidad por Id
+   * Obtiene un Cliente por Id
    * @param id
    * @returns
    */
@@ -61,14 +60,22 @@ export class EntityService {
     return this.api.get(`Customer?id=${id}`, false);
   }
 
-  
+   /**
+   * Obtiene un Cliente por Cuit
+   * @param cuit
+   * @returns
+   */
+    public getByCuit(cuit: string | number): Observable<any> {
+      return this.api.get(`Customer/GetCustomerByCuit?cuit=${cuit}`, false);    
+    }
+ 
 
   /**
-   * Guarda una Entidad
+   * Guarda un Cliente
    * @param model
    * @returns
    */
-  public saveEntity(model: CustomerAddModel): Observable<any> {
+  public saveCustomer(model: CustomerAddModel): Observable<any> {
     if (model.id === 0) {
       return this.api.post(`Customer`, model, false);
     } else {

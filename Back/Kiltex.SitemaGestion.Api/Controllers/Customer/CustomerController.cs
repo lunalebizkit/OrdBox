@@ -19,6 +19,13 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Customer
         {
             return Return(await _service.GetById(id).ConfigureAwait(false));
         }
+        [HttpGet]
+        [Route("[action]")]
+        //[AllowAccess(Rols = new string[] { ERol.Admin })]
+        public async Task<IActionResult> GetCustomerByCuit([FromQuery] string cuit)
+        {
+            return Return(await _service.GetCustomerByCuit(cuit).ConfigureAwait(false));
+        }
         [HttpPost]
         [Route("[action]")]
         //[AllowAccess(Rols = new string[] { ERol.Admin })]
@@ -33,7 +40,7 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Customer
         }
         [HttpPut]
         //[AllowAccess(Rols = new string[] { ERol.Admin })]
-        public async Task<IActionResult> Edit([FromBody] DtoSupplier model)
+        public async Task<IActionResult> Edit([FromBody] DtoEntity model)
         {
             return Return(await _service.Update(model).ConfigureAwait(false));
         }

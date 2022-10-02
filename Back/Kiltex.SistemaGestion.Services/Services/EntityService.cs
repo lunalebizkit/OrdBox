@@ -100,16 +100,8 @@ namespace Kiltex.SistemaGestion.Services.Services
         public async Task<OperationResponse<IdResponse<long>>> AddOrUpdateSupplier(DtoSupplier model, CancellationToken ct = default)
         {
 
-            var entityModel = new Supplier()
-            {
-                Id = model.Id,
-                Observation = model.Observation,
-                Dni = (model.Dni == 0 ? null : model.Dni),
-                Cuit = model.Cuit,
-                Name = model.Name,
-                Address = model.Address
-
-            };
+            var entityModel = _mapper.Map<Supplier>(model);
+            
             var email = new EmailEntity();
             var phones = new PhoneEntity();
             if (entityModel.Id == 0)
@@ -240,6 +232,22 @@ namespace Kiltex.SistemaGestion.Services.Services
             };
 
             return new OperationResponse<DtoEntity>(result);
+        }       
+        public async Task<OperationResponse<DtoEntity>> GetCustomerByCuit(string cuit)
+        {
+            var entidad = await _contextSql
+                                .Customers                                
+                                .AsNoTracking()                           
+                                .FirstOrDefaultAsync(p => p.Cuit == cuit)
+                                .ConfigureAwait(false);
+            if (entidad == null)
+
+                return new OperationResponse<DtoEntity>(null, false, new OperationExceptions("000", $"Cliente no encontrado {cuit}"));
+
+            var result = _mapper.Map<DtoEntity>(entidad);
+          
+
+            return new OperationResponse<DtoEntity>(result);
         }
 
       
@@ -255,16 +263,9 @@ namespace Kiltex.SistemaGestion.Services.Services
 
         public async Task<OperationResponse<IdResponse<long>>> AddOrUpdate(DtoEntity model, CancellationToken ct = default)
         {
-            
-            var entityModel = new Customer()
-            {
-                Id = model.Id,
-                Dni =  (model.Dni == 0 ? null : model.Dni),
-                Cuit = model.Cuit,
-                Name = model.Name,
-                Address = model.Name,
 
-            };
+            var entityModel = _mapper.Map<Customer>(model);
+           
             var email = new EmailEntity();
             var phones= new PhoneEntity();
             if (entityModel.Id == 0)
@@ -273,16 +274,12 @@ namespace Kiltex.SistemaGestion.Services.Services
                 {
                     foreach (var newEmail in model.EmailEntity)
                     {
-
                         var emails = new EmailEntity()
                         {
                             Email = newEmail,
                             Entity = entityModel
                         };
-
-
                         entityModel.EmailEntities.Add(emails);
-
 
                     }
 
@@ -360,8 +357,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                             entityModel.PhoneEntities.Add(phones);
                         }
                     }
-                }
-                        
+                }                        
                
                 await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
             }          

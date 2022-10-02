@@ -3,12 +3,9 @@ import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@ang
 import { ActivatedRoute } from '@angular/router';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
-import { elementAt } from 'rxjs';
 import { BaseComponent } from 'src/app/common/components/base/base.component';
 import { HeaderOperationsButtonsComponent } from 'src/app/common/components/headers/buttons.oparations.header.component';
-import { eRol } from '../../users/model/rol.enum';
 import { EntityService } from '../customer.service';
-import { CustomerAddModel } from '../model/customer.add.model';
 
 
 @Component({
@@ -44,18 +41,19 @@ export class CustomersEditComponent extends BaseComponent implements OnInit {
 
     get phoneNumberArray() {
         return this.form.controls['phoneEntity'] as FormArray;
-    }
+    };
 
     get phoneNumberControls() {
         return this.phoneNumberArray.controls as FormControl[]
-    }
+    };
+
     get emailsArray() {
         return this.form.controls['emailEntity'] as FormArray;
-    }
+    };
 
     get emailsControls() {
         return this.emailsArray.controls as FormControl[]
-    }
+    };
 
     constructor(
         private service: EntityService,
@@ -79,7 +77,7 @@ export class CustomersEditComponent extends BaseComponent implements OnInit {
             },
             error: () => { }
         })
-    }
+    };
 
     createForm(id: number){
         this.form = this.fb.group({
@@ -91,7 +89,7 @@ export class CustomersEditComponent extends BaseComponent implements OnInit {
             phoneEntity: new FormArray([]),
             emailEntity: new FormArray([])
         })
-    }
+    };
 
     getEntity(id: number): void {
         this.service.getById(id).subscribe({
@@ -110,29 +108,27 @@ export class CustomersEditComponent extends BaseComponent implements OnInit {
             },
             error: () => { this.isLoading = false; }
         })
-
-    }
+    };
 
     save(): void {        
         if(!this.isValidForm(this.form)) return;          
             const model = this.form.getRawValue();
             this.isSaving = true;
-            this.service.saveEntity(model).subscribe({
+            this.service.saveCustomer(model).subscribe({
                 next: (r) => {
                     this.showNotificationSuccess(
                         'Guardado correcto',
-                        `Se guardo correctamente el Proveedor ${model.name}`
+                        `Se guardo correctamente el Cliente ${model.name}`
                     );
                     this.isSaving = false;
                     this.headerComponent.goBack();
                 },
                 error: () => {
                     this.isSaving = false;
-                    this.showMessageError('No se pudo Guardar el Proveedor')
+                    this.showMessageError('No se pudo Guardar el Cliente')
                 }
-            })
-        
-    }
+            })        
+    };
 
     addPhoneField(e?: MouseEvent): void {
         if (e) {
@@ -141,30 +137,24 @@ export class CustomersEditComponent extends BaseComponent implements OnInit {
    
         let phoneNumberForm = this.form.controls['phoneEntity'] as FormArray;
         phoneNumberForm.push(new FormControl(''));
-    
+    };
 
-    }
     addEmailField(e?: MouseEvent): void {
         if (e) {
             e.preventDefault();
-        }
-   
+        }   
         let emailForm = this.form.controls['emailEntity'] as FormArray;
-        emailForm.push(new FormControl(''));
-      
-    
-
-    }
+        emailForm.push(new FormControl(''));  
+    };
 
     removeEmailField( e: MouseEvent, index: number): void {
         e.preventDefault();
-
         this.emailsArray.removeAt(index);   
-    }
+    };
+
     removePhoneField( e: MouseEvent, index: number): void {
         e.preventDefault();
         this.phoneNumberArray.removeAt(index);   
-    }
-
+    };
 
 }

@@ -4,6 +4,7 @@ using Kiltex.SistemaGestion.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Kiltex.SistemaGestion.Domain.Migrations
 {
     [DbContext(typeof(DBContext))]
-    partial class DBContextModelSnapshot : ModelSnapshot
+    [Migration("20220927123342_edit InvoiceDetail")]
+    partial class editInvoiceDetail
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -149,10 +151,6 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("invoice_number");
 
-                    b.Property<decimal>("IvaTotal")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("iva_total");
-
                     b.Property<string>("Observation")
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("observation");
@@ -161,8 +159,8 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                         .HasColumnType("decimal(18,2)")
                         .HasColumnName("total");
 
-                    b.Property<int>("Type")
-                        .HasColumnType("int")
+                    b.Property<long>("Type")
+                        .HasColumnType("bigint")
                         .HasColumnName("type");
 
                     b.Property<long>("UserId")
@@ -199,8 +197,8 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                         .HasColumnType("decimal(18,2)")
                         .HasColumnName("price");
 
-                    b.Property<int>("ProductCode")
-                        .HasColumnType("int")
+                    b.Property<string>("ProductCode")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("product_code");
 
                     b.Property<long>("ProductId")

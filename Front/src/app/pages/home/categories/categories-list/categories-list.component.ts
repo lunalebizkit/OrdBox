@@ -50,7 +50,7 @@ export class CategoriesListComponent implements OnInit {
     }
 });}
 queryData= {
-  filter!: '',
+  filter: '',
   page: 0,
   pageSize: 10,
 }

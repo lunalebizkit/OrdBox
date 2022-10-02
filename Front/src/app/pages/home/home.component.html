@@ -14,9 +14,9 @@
           <li nz-menu-item nzMatchRouter>
             <a routerLink="/home/customers">Clientes</a>
           </li>
-          <li nz-menu-item nzMatchRouter>
+          <!-- <li nz-menu-item nzMatchRouter>
             <a routerLink="#">Vendedores</a>
-          </li>
+          </li> -->
           <li nz-menu-item nzMatchRouter>
             <a routerLink="/home/suppliers">Proveedores</a>
           </li>
@@ -48,7 +48,15 @@
           </li>
         </ul>
       </li>
-     
+      <li nz-submenu nzOpen nzTitle="Comprobantes" nzIcon="file-excel">
+        <ul>
+         
+          <li nz-menu-item nzMatchRouter>
+            <a routerLink="/home/invoices/new">Comprobantes</a>
+          </li>    
+         
+        </ul>
+      </li>
       <li nz-submenu nzOpen nzTitle="Mi perfil" nzIcon="user">
         <ul>
           <li nz-menu-item (click)="logOut()" nzIcon="logout">

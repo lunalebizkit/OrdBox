@@ -4,6 +4,7 @@ using Kiltex.SistemaGestion.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Kiltex.SistemaGestion.Domain.Migrations
 {
     [DbContext(typeof(DBContext))]
-    partial class DBContextModelSnapshot : ModelSnapshot
+    [Migration("20220919175950_editarInvoice")]
+    partial class editarInvoice
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -132,8 +134,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("customer_cuit");
 
-                    b.Property<long?>("CustomerId")
-                        .IsRequired()
+                    b.Property<long>("CustomerId")
                         .HasColumnType("bigint")
                         .HasColumnName("customer_id");
 
@@ -149,10 +150,6 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("invoice_number");
 
-                    b.Property<decimal>("IvaTotal")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("iva_total");
-
                     b.Property<string>("Observation")
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("observation");
@@ -161,8 +158,8 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                         .HasColumnType("decimal(18,2)")
                         .HasColumnName("total");
 
-                    b.Property<int>("Type")
-                        .HasColumnType("int")
+                    b.Property<long>("Type")
+                        .HasColumnType("bigint")
                         .HasColumnName("type");
 
                     b.Property<long>("UserId")
@@ -198,10 +195,6 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)")
                         .HasColumnName("price");
-
-                    b.Property<int>("ProductCode")
-                        .HasColumnType("int")
-                        .HasColumnName("product_code");
 
                     b.Property<long>("ProductId")
                         .HasColumnType("bigint")

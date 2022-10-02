@@ -3,12 +3,10 @@ import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@ang
 import { ActivatedRoute } from '@angular/router';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
-import { observable } from 'rxjs';
 import { BaseComponent } from 'src/app/common/components/base/base.component';
 import { HeaderOperationsButtonsComponent } from 'src/app/common/components/headers/buttons.oparations.header.component';
 import { EntityService } from '../../customers/customer.service';
-import { CustomerAddModel } from '../../customers/model/customer.add.model';
-import { eRol } from '../../users/model/rol.enum';
+
 
 
 @Component({
