@@ -16,7 +16,7 @@ namespace Kiltex.SistemaGestion.Services.Models.Dtos
 
         public string? ProductName { get; set; }
 
-        public int ProductCode { get; set; }
+        public int? ProductCode { get; set; }
 
         public int Quantity { get; set; }
 

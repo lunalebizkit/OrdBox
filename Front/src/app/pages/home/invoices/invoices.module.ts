@@ -25,7 +25,6 @@ import { InvoicesRoutingMoudule } from "./invoices-routing.module";
 import { InvoicesEditComponent } from "./invoices-edit/invoices-edit.component";
 import { InvoiceCustomerSearchComponent } from './invoice-customer-search/invoice-customer-search.component';
 import { InvoiceProductSearchComponent } from "./invoice-product-search/invoice-product-search.component";
-import { InvoiceProductSearchQuantityComponent } from "./invoice-product-search-quantity/invoice-product-search-quantity.component";
 
 
 @NgModule({
@@ -58,7 +57,7 @@ import { InvoiceProductSearchQuantityComponent } from "./invoice-product-search-
     ],
     declarations: [InvoicesEditComponent,
          InvoiceCustomerSearchComponent, 
-         InvoiceProductSearchComponent, 
-         InvoiceProductSearchQuantityComponent]
+         InvoiceProductSearchComponent 
+         ]
 })
 export class InvoicesModule { }

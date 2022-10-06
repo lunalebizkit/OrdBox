@@ -35,10 +35,6 @@
                                     <nz-select id="type" formControlName="type" [nzOptions]="type"
                                         (ngModelChange)="typeSelectedChange($event)">
                                     </nz-select>
-                                    <ng-template #clearQuery>
-                                        <i nz-icon class="ant-input-clear-icon" nzTheme="fill"
-                                            nzType="close-circle"></i>
-                                    </ng-template>
                                 </nz-form-control>
                             </nz-form-item>
                         </div>
@@ -50,10 +46,6 @@
                                     <nz-select id="payment" formControlName="payment" [nzOptions]="payment"
                                         (ngModelChange)="paymentSelectedChange($event)">
                                     </nz-select>
-                                    <ng-template #clearQuery>
-                                        <i nz-icon class="ant-input-clear-icon" nzTheme="fill"
-                                            nzType="close-circle"></i>
-                                    </ng-template>
                                 </nz-form-control>
                             </nz-form-item>
                         </div>
@@ -103,23 +95,36 @@
 
                     <!-- Buscador de Productos -->
                     <nz-divider nzText="Producto" nzOrientation="left"></nz-divider>
+                    
+                        <div nz-row nzJustify="start" nzAlign="middle">
+                            <form nz-form [formGroup]="formProductSearch" col nzSpan="12">
+                                <div >
+                                        <nz-form-item>
+                                            <nz-form-label [nzSm]="12" [nzXs]="24">Búsqueda de Producto</nz-form-label>
+                                            <nz-form-control [nzSm]="14" [nzXs]="24">               
+                                            <nz-input-group [nzSuffix]="clearQuery">
+                                                <input nzSize="small" type="text" formControlName="productSearchFilter"
+                                                placeholder="Ingrese Marca, Código, Categoria o Producto" nz-input (keydown.enter)="searchProduct(); this.formProductSearch.controls['productSearchFilter'].setValue('') ;" />
+                                            </nz-input-group>
+                                            
+                                            <ng-template #clearQuery>
+                                                <i nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle"
+                                                *ngIf="this.formProductSearch.controls['productSearchFilter'].value !=='' "  (click)="this.formProductSearch.controls['productSearchFilter'].setValue('') ;"></i>
+                                            </ng-template>
+                                            </nz-form-control>
+                                        </nz-form-item>
+                                </div>
+                            </form>
+                                <div nz-col style="margin: 3px;">
+                                        <button nz-button nzSize="small" nzType="primary" (click)="openComponentProduct()">
+                                            <i nz-icon nzType="search" nzTheme="outline"></i> Buscar
+                                        </button>
+                                   
+                                </div>
+                         
+                        </div>
+                   
 
-                    <div nz-row nzJustify="start">
-                        <nz-form-item>
-                            <nz-form-label [nzSm]="14" [nzXs]="24" nzRequired>Busque un Producto
-                            </nz-form-label>
-                            <nz-form-control [nzSm]="14" [nzXs]="24">
-                                <form nz-form [formGroup]="formProductSearch">
-                                    <div style="margin: 4px;">
-                                        <button nz-button nzSize="small" nzType="primary"
-                                            (click)="openComponentProduct()"><i nz-icon nzType="search"
-                                                nzTheme="outline"></i>Buscar</button>
-                                    </div>
-                                </form>
-                            </nz-form-control>
-
-                        </nz-form-item>
-                    </div>
                 </nz-content>
             </nz-collapse-panel>
         </nz-collapse>
@@ -128,48 +133,8 @@
     </form>
 
     <nz-collapse>
-        <!--  <nz-collapse-panel nzHeader="Producto" [nzActive]="true" [nzShowArrow]="false">
-                    <nz-content>
-                    
-                            
-        
-                                 <div nz-col class="gutter-row" [nzSpan]="8"> 
-                                     <nz-form-item>
-                                   
-                                        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="code">Código </nz-form-label>
-                                        <nz-form-control [nzSm]="14" [nzXs]="24">
-                                            <nz-input-number formControlName="code" nz-input id="code" [nzMin]="0"
-                                            (keydown.enter)="searchProduct()"></nz-input-number>
-                                        </nz-form-control>
-
-                                    </nz-form-item>
-                                </div>
-                                <div nz-col class="gutter-row" [nzSpan]="8">
-                                    <nz-form-item>
-                                        <nz-form-label>Descripcion</nz-form-label>
-                                        <nz-form-control>
-                                            <input type="text" id="description" nz-input                                                formControlName="description">
-                                        </nz-form-control>
-                                    </nz-form-item>
-                                </div> 
-
-                                <div nz-col class="gutter-row" [nzSpan]="8">
-
-                                        <nz-form-item>
-                                            <nz-form-label [nzSm]="8" nzFor="quantity">Cantidad
-                                            </nz-form-label>
-                                            <nz-input-number formControlName="quantity" id="quantity" [nzMin]="0" [nzMax]="100000"></nz-input-number>
-                                          </nz-form-item> 
-
-                                      
-                                    
-                                </div>
-                            </div>
-                        
-                    </nz-content>
-                </nz-collapse-panel> -->
+     
     </nz-collapse>
-    <!-- </form> -->
     <!-- Tabla Detalle -->
     <nz-collapse>
         <nz-collapse-panel nzHeader="Detalle" [nzActive]="true" [nzShowArrow]="false">
@@ -185,7 +150,7 @@
                             <th>Cantidad</th>
                             <th>Precio Unidad</th>
                             <th>SubTotal</th>
-                            <th>Iva</th>
+                            <th nzWidth="90px">Iva</th>
                             <th>Accion</th>
                         </tr>
                     </thead>
@@ -193,11 +158,21 @@
                         <tr *ngFor="let data of invoiceDetailsList" class="small-text">
                             <td>{{data.code}}</td>
                             <td>{{data.ownCode}}</td>
-                            <td>{{data.productName}}</td>
-                            <td>{{data.quantity}}</td>
+                            <td nzBreakWord>{{data.productName}}</td>
+                            <td>
+                                <div class="editable-cell" [hidden]="editId === data.ownCode" (click)="startEdit(data.ownCode)">
+                                 {{data.quantity}}
+                                  </div>
+                                  <nz-input-number [hidden]="editId !== data.ownCode"  [nzMin]="1" [nzMax]="10000" [(ngModel)]="data.quantity" (nzBlur)="stopEdit()"  (ngModelChange)="changeQuantity($event)" ></nz-input-number>
+                                </td>
                             <td> {{this.currencyFormat(data.price) }}</td>
                             <td> {{ this.currencyFormat(data.subTotal) }}</td>
-                            <td> {{data.iva}}</td>
+                            <td><div class="editable-cell" [hidden]="editIdIva === data.ownCode" (click)="startEditIva(data.ownCode)">
+                                 {{data.iva}}
+                                  </div>
+                                  <nz-input-number [hidden]="editIdIva !== data.ownCode" [nzMin]="1" [nzMax]="100" [(ngModel)]="data.iva" (nzBlur)="stopEditIva()"  
+                                  (ngModelChange)="changeIvaValue($event)" ></nz-input-number>
+                                </td>
                             <td style="text-align: center;">
                                 <nz-space [nzSplit]="spaceSplit">
                                     <ng-template #spaceSplit>
@@ -215,7 +190,7 @@
                         <tr>
                             <td colspan="2" *ngIf="invoiceA; else elseBlock"> <b>Iva </b><b style="color: red;">{{
                                     this.currencyFormat(this.ivaTotal) }}</b> </td>
-                            <td colspan="2"><b>SubTotal </b><b style="color: red;">{{ this.currencyFormat(this.subtotal)
+                            <td colspan="2" *ngIf="invoiceA; else elseBlock"><b>SubTotal </b><b style="color: red;">{{ this.currencyFormat(this.subtotal)
                                     }}</b></td>
                             <td colspan="2"><b>Total </b><b style="color: red;">{{ this.currencyFormat(this.total)
                                     }}</b></td>

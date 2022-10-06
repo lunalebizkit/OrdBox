@@ -41,7 +41,8 @@
     
     <!-- Tabla -->
     <div>
-      <nz-table class="table-list" #filterTable [nzData]="categoryList" nzBordered=true [nzLoading]="loading" [nzTotal]="totalItems" [nzPageIndex]="1" [nzPageSize]="queryData.pageSize"
+      <nz-table class="table-list" #filterTable [nzData]="categoryList" nzBordered=true [nzLoading]="loading" [nzTotal]="totalItems" 
+      [nzPageIndex]="queryData.page + 1" [nzPageSize]="queryData.pageSize"
         [nzPaginationType]="'small'" [nzFrontPagination]="false" (nzQueryParams)="onQueryParamsChange($event)" >
         <!--  nzShowSizeChanger 
             

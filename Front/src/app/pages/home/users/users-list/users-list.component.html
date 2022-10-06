@@ -36,7 +36,7 @@
     <!-- Tabla -->
     <div>
       <nz-table #colSpanTable class="table-list"  nzShowSizeChanger [nzData]="userList" nzBordered=false [nzSize]="'small'" [nzLoading]="loading"
-        [nzTotal]="totalItems" [nzPageSize]="queryData.pageSize" [nzPageIndex]="1" [nzFrontPagination]="false"
+        [nzTotal]="totalItems" [nzPageSize]="queryData.pageSize" [nzPageIndex]="queryData.page + 1" [nzFrontPagination]="false"
         [nzPaginationType]="'small'" (nzQueryParams)="onQueryParamsChange($event)" >
         <thead>
           <tr>

@@ -19,7 +19,7 @@ export interface InvoiceDetails {
     invoiceId: number;
     productId: number;
     productName: string;
-    productCode:number;
+    productCode:number | null;
     quantity: number;
     price: number;
     iva: number;

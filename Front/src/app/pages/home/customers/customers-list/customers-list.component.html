@@ -40,7 +40,7 @@
      
       <div>
         <nz-table #dynamicTable class="table-list" nzShowSizeChanger [nzData]="entityList" nzBordered=false [nzSize]="'small'" [nzLoading]="loading"
-          [nzTotal]="totalItems" [nzPageSize]="queryParams.pageSize" [nzPageIndex]="1" [nzFrontPagination]="false"
+          [nzTotal]="totalItems" [nzPageSize]="queryParams.pageSize" [nzPageIndex]="queryParams.page + 1" [nzFrontPagination]="false"
           [nzPaginationType]="'small'" (nzQueryParams)="onQueryParamsChange($event)">
           <thead>
             <tr>                     

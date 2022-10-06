@@ -19,6 +19,7 @@ import { ePayment } from "../model/invoice-payment.Enum";
 import { InvoiceType } from "../model/invoice-type.Enum";
 import { formatCurrency } from '@angular/common';
 import { Inject, LOCALE_ID } from '@angular/core';
+import { ProductService } from "../../products/product.service";
 @Component({
   selector: 'app-invoices-edit',
   templateUrl: './invoices-edit.component.html',
@@ -30,6 +31,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
   @ViewChild('header') headerComponent!: HeaderOperationsButtonsComponent;
 
   @ViewChild('drawerTemplate', { static: false }) drawerTemplate?: TemplateRef<{
+    $implicit: { filter: string },
     drawerRef: NzDrawerRef<string>;
   }>;
 
@@ -61,30 +63,43 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
   payment: { value: string; label: string }[] = Object.entries(ePayment).map(([value, label]) => ({ value, label }))
   /*
  ** Lista de Productos
- */
-  productList: ProductsModel[] = [];
+ */  
   customer: CustomerModel[] = [];
   invoiceDetailsList: InvoiceDetailList[] = [];
   invoiceDetails: InvoiceDetails[] = [];
+
+  /*
+  **Variables de la tabla detalle
+  */
+  editId: number | null = null;
+  editIdIva: number | null = null;
   /*
 ** Parametros de busqueda
 */
+ 
+  paymentSelected: any;
+  cuit!: string;
+  product!: string;
+  customerId!: number;
+  typeSelectedId!: number;
+  ivaTotal: number=0;
+  invoiceA: boolean= true;
+
+    /*
+  ** Parametros de busqueda
+  */
   queryParams = {
     filter: '',
     page: 0,
     pageSize: 10
   };
-  paymentSelected: any;
-  cuit!: string;
-  customerId!: number;
-  typeSelectedId!: number;
-  ivaTotal: number=0;
-  invoiceA: boolean= false;
+
 
   constructor(
     private fb: FormBuilder,
     notificacionService: NzNotificationService,
     private serviceEntity: EntityService,
+    private serviceProduct: ProductService,
     private serviceInvoice: InvoiceService,
     el: ElementRef,
     private router: Router,
@@ -95,7 +110,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
     super(notificacionService, el, message);
     this.formInvoice = this.fb.group({
       dateTime: [new Date(this.startDate), Validators.required],
-      type: ['', Validators.required],
+      type: [1, Validators.required],
       payment: ['', Validators.required],
       address: ['', Validators.required],
       customerCuit: ['', Validators.required],
@@ -104,11 +119,13 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
     });
    
     this.formCustomerSearch = this.fb.group({})
-    this.formProductSearch = this.fb.group({})
+    this.formProductSearch = this.fb.group({
+      productSearchFilter: ['']
+    })
   }
 
   ngOnInit(): void {
-    this.invoiceDetailsList = [];
+    
   }
 
   typeSelectedChange(id: any): void {
@@ -149,10 +166,13 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
 
   openComponentProduct(): void {
     if (this.isValidForm(this.formInvoice)) {
-      const drawerRefProduct = this.drawerService.create<InvoiceProductSearchComponent, {}, ProductsModel>({
+      const drawerRefProduct = this.drawerService.create<InvoiceProductSearchComponent, { filter: string }, ProductsModel>({
         nzTitle: 'Productos',
         nzContent: InvoiceProductSearchComponent,
         nzSize: 'large',
+        nzContentParams: {
+          filter: this.formProductSearch.controls['productSearchFilter'].value
+        },
         nzClosable: false
       });
 
@@ -212,7 +232,57 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
         error: () => {this.showMessageError('No se encontro Cliente'); }
       });
     }
+  };
 
+  searchProduct():void {
+    this.product= this.formProductSearch.controls['productSearchFilter'].value;
+    this.queryParams.filter= this.product;
+    if (this.product.length > 0) {
+      this.serviceProduct.getProducts(this.queryParams).subscribe({
+        next: (r) => {          
+          if (r.data.length == 1) {
+            const model : ProductsModel= r.data[0];            
+            if (this.invoiceDetails.find(item => item.productId == model.id)) {
+              /*Actualizo la lista que envio al back */
+                 this.invoiceDetails.filter(item => item.productId == model.id)[0]
+                .quantity += 1;                        
+
+                 /*Actualizo la lista de la tabla */
+                this.invoiceDetailsList.filter(item => item.ownCode == model.id)[0]
+                .quantity += 1;
+
+                this.invoiceDetailsList.filter(item => item.ownCode == model.id)[0]
+                .subTotal +=  this.bindPrice(model) * model.quantity ;
+                this.totalCalculate();
+
+              }else {
+             const product: ProductsModel= r.data[0];
+             product.quantity= 1; 
+            const model: InvoiceDetails = {
+              id: 0,
+              invoiceId: 0,
+              productId: product.id,
+              productName: product.description,
+              productCode: product.code,
+              quantity: product.quantity,
+              price: this.bindPrice(product),
+              iva: this.iva                        
+            };
+            
+            this.invoiceDetailListMapper(product);
+            this.invoiceDetails.push(model);              
+          
+          this.totalCalculate();
+              }
+            
+          }else{
+            this.openComponentProduct();
+          }
+          
+        },
+        error: () => { }
+      })
+    }
   };
 
   totalCalculate(): void {    
@@ -221,11 +291,11 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
     this.ivaTotal = 0;
     try {
       this.invoiceDetailsList.forEach(detail => {
-        this.subtotal +=  detail.price * detail.quantity;                
+        this.subtotal +=  ( detail.price * detail.quantity - this.ivaCalculate(detail.price * detail.quantity, detail.iva) ) ;         
       });
       this.invoiceDetailsList.forEach( dato => {
-        this.ivaTotal +=  this.ivaCalculate(dato.price)  * dato.quantity ;
-       this.total +=   (dato.price + this.ivaCalculate(dato.price))  * dato.quantity ;     
+        this.ivaTotal +=  this.ivaCalculate(dato.price  * dato.quantity, dato.iva);
+       this.total +=   dato.price  * dato.quantity ;     
       })
     } catch (error) {
       console.log(error)
@@ -263,8 +333,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
     }
   };
 
-  ivaCalculate(data: number): number {
-    const iva:number = this.iva;      
+  ivaCalculate(data: number, iva:number): number {         
     return (data * iva / 100); 
   }
 
@@ -275,7 +344,12 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
       this.invoiceDetails= this.invoiceDetails.
       filter(element => element.productId != this.popupComponent.elementSelectedToDelete);
     this.popupComponent.isDeleteConfirmationVisible = false;
-    this.invoiceDetailsList = this.invoiceListTest;
+    if (this.invoiceListTest.length == 0){
+      this.invoiceDetailsList= []
+    } else{
+      this.invoiceDetailsList = this.invoiceListTest;
+    }
+   
     this.totalCalculate();
     } catch (error) {
       console.log(error);
@@ -293,13 +367,13 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
           customerId: this.customerId,
           userId: this.userId,
           invoiceNumber: this.totalItems,
-          total: this.totalItems,
-          ivaTotal: this.ivaTotal,
-          customerAddress: this.formInvoice.controls['address'].value,
-          customerCuit: this.formInvoice.controls['customerCuit'].value,
-          customerName: this.formInvoice.controls['customerName'].value,
+          customerName: this.formInvoice.controls['customerName'].value,          
+          customerCuit: this.formInvoice.controls['customerCuit'].value,  
+          customerAddress: this.formInvoice.controls['address'].value,          
           observation: '',
           dateTime: this.formInvoice.controls['dateTime'].value,
+          total: this.totalItems,
+          ivaTotal: this.ivaTotal,
           type: this.typeSelectedId,
           invoiceDetails: this.invoiceDetails
         };
@@ -322,6 +396,46 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
           });
       }
     }
+  };
+
+  startEdit(id: number): void {
+    this.editId = id;
+  };
+  startEditIva(id: number): void {
+    this.editIdIva = id;
+  }
+
+  stopEdit(): void {
+    this.editId = null;
+  };
+  stopEditIva(): void {
+    this.editIdIva = null;
+  }
+  changeQuantity(quantity: number):void{
+    if (quantity == 0 || quantity == null){
+      quantity= 1;
+    }
+    let product= this.invoiceDetailsList.filter(detail => detail.ownCode == this.editId)[0];
+
+    this.invoiceDetailsList.filter(detail => detail.ownCode == this.editId)[0].subTotal= quantity * product.price;
+
+    this.totalCalculate();
+    this.invoiceDetails.filter(detail => detail.productId == this.editId)[0].quantity= quantity;
+      
+  };
+  changeIvaValue(iva: number):void{    
+    if (iva == 0 || iva == null){
+      iva = 1;
+    }
+    try {
+      this.invoiceDetailsList.filter(detail => detail.ownCode == this.editIdIva)[0].iva= iva;     
+    
+      this.invoiceDetails.filter(detail => detail.productId == this.editIdIva)[0].iva= iva;
+      this.totalCalculate();
+    } catch (error) {
+      console.error(error);
+      
+    };    
   };
 }
 
