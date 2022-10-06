@@ -20,26 +20,29 @@ export class BrandsListComponent implements OnInit {
   queryData= {
     filter: '',
     page: 0,
-    pageSize: 10,
+    pageSize: 5,
   }
+
   onQueryParamsChange(params: NzTableQueryParams): void {
     this.queryData.page = params.pageIndex - 1;
     this.queryData.pageSize = params.pageSize;
     this.getBrand(this.queryData);
  }
+
  getBrand(params: any): void {
   this.service.getByFilter(params).subscribe({
     next: (r)=>{
       this.brandList= r.data;
       this.totalItems= r.totalCount;
-      this.loading= false
+      this.loading= false;
     },
-    error: ()=>{  this.loading = false;
+    error: ()=>{  
+    this.loading = false;
     this.brandList= [];}
   })
 }
 search(): void {
-this.queryData.page= 0;
-this.getBrand(this.queryData);
+  this.queryData.page = 0;
+  this.getBrand(this.queryData);
 }
 }

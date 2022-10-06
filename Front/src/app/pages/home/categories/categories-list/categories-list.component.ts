@@ -58,7 +58,6 @@ queryData= {
    ** Evento que se ejecuta ante algun cambio en la grillas (sorting,paging or filtering)
    */
    onQueryParamsChange(params: NzTableQueryParams): void {
-     this.queryData.filter = localStorage.getItem('categoryListFilter')!;
     this.queryData.page = params.pageIndex - 1;
     this.queryData.pageSize = params.pageSize;
     this.getData(this.queryData);

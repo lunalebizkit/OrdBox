@@ -40,7 +40,7 @@
      
       <div>
         <nz-table nzShowSizeChanger  class="table-list" [nzData]="entityList" nzBordered=true [nzSize]="'small'" [nzLoading]="loading"
-          [nzTotal]="totalItems" [nzPageSize]="queryParams.pageSize" [nzPageIndex]="1" [nzFrontPagination]="false"
+          [nzTotal]="totalItems" [nzPageSize]="queryParams.pageSize" [nzPageIndex]="queryParams.page + 1" [nzFrontPagination]="false"
           [nzPaginationType]="'small'" (nzQueryParams)="onQueryParamsChange($event)">
           <thead>
             <tr>                     
