@@ -11,9 +11,9 @@ import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { AgGridModule } from 'ag-grid-angular';
 import { UsuariosModule } from './users/users.module';
 import { ModuleRegistry } from '@ag-grid-community/core';
-import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model';
+// import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model';
 
-ModuleRegistry.registerModules([InfiniteRowModelModule]);
+// ModuleRegistry.registerModules([InfiniteRowModelModule]);
 
 @NgModule({
   declarations: [

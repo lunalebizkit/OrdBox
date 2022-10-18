@@ -9,6 +9,7 @@
 }
 .table-list{
   overflow:auto;
+
 }
 th{
   font-size: 12px;
@@ -16,7 +17,6 @@ th{
 }
 td{
   font-size: 12px;
-  padding-right: 10px;
 }
 .table{
   border-collapse: collapse;

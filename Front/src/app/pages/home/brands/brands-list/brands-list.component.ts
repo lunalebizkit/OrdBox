@@ -20,7 +20,7 @@ export class BrandsListComponent implements OnInit {
   queryData= {
     filter: '',
     page: 0,
-    pageSize: 5,
+    pageSize: 50,
   }
 
   onQueryParamsChange(params: NzTableQueryParams): void {

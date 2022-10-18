@@ -10,14 +10,13 @@ import { RolesConst } from '../auth/permission/permission-rol.enum';
 })
 export class HomeComponent implements OnInit {
 
-  isCollapsed = false;
+  isCollapsed = true;
 
   constRol: RolesConst = new RolesConst();
 
   constructor(public token: AuthService,
     private router: Router,
-    private route: ActivatedRoute,
-    // public permission: PermissionService
+    private route: ActivatedRoute
     ) { }
 
   ngOnInit() {

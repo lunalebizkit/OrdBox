@@ -59,12 +59,14 @@ import { PopupConfirmationComponent } from './components/popup-confirmation/popu
     NzTypographyModule,
     NzTagModule,
      PopupConfirmationComponent,
+     
  
   ],
   declarations: [
      HeaderOperationsButtonsComponent, 
      BaseComponent, 
-     PopupConfirmationComponent,
+     PopupConfirmationComponent
+     
 
   ],
   entryComponents: [

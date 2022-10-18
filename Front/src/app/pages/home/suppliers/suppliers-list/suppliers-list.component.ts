@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
-import { CommonResponse } from 'src/app/common/models/commonResponse.model';
-import { environment } from 'src/environments/environment';
 import { EntityService } from '../../customers/customer.service';
 import { CustomerModel } from '../../customers/model/customer.model';
 

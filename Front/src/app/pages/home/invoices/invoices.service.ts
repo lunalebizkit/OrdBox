@@ -10,6 +10,24 @@ export class InvoiceService {
 
     constructor(public api: ApiService) { }
 
+        /**
+   * Obtiene un Comprobante por Id
+   * @param id
+   * @returns
+   */
+  public getInvoiceById(id: number): Observable<any> {
+    return this.api.get(`invoice?id=${id}`, false);
+  }
+
+     /**
+   * Obtiene todos los Comprobantes
+   * @param queryParams
+   * @returns
+   */
+      public getInvoices(queryParams: any): Observable<any> {
+        return this.api.post(`invoice/list`, queryParams, false);
+      }
+
     /**
   * Guarda una Factura/Comprobante
   * @param model

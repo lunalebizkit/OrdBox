@@ -1,4 +1,3 @@
-<!-- <form nz-form [formGroup]="formSearch"> -->
     <nz-content>       
         <nz-collapse class="list-header">
            <form nz-form (ngSubmit)="search()">    
@@ -33,22 +32,27 @@
            <tr> 
             <th>Codigo</th> 
              <th>Marca</th>
-             <th>Proveedor</th>            
+             <th>Proveedor</th> 
+             <th >Precio Costo</th>           
              <th>Stock</th>
-             <th >Precio Costo</th>        
+             <th [nzWidth]="'30px'"></th>
            </tr>
          </thead>
          <tbody>
            <tr *ngFor="let data of productList" class="small-text" id="{{data.id}}" (click)="selecccion($event)" >
             <td >{{data.code}}</td>
             <td >{{data.brandName}}</td> 
-             <td nzBreakWord>{{data.description}}</td>             
-             <td>{{data.quantity}}</td>
-             <td>$ {{data.purchasePrice}}</td>                      
-                   
+             <td nzBreakWord>{{data.description}}</td> 
+             <td>$ {{data.purchasePrice}}</td> 
+             <td>{{data.quantity}}             
+            </td>           
+             <td>
+              <i nz-icon nzType="exclamation-circle" nzTheme="outline" *ngIf="data.quantity === 0"
+              [title]="'Este producto no cuenta con stock'"
+              style="color: brown;"></i>
+             </td> 
            </tr>
          </tbody>
        </nz-table>
      </div>
    </nz-content>
-<!-- </form> -->
