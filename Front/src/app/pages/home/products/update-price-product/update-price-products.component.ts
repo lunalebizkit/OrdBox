@@ -1,13 +1,11 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { NzTableQueryParams } from 'ng-zorro-antd/table';
-import { CommonResponse, DtoPagination } from 'src/app/common/models/commonResponse.model';
-import { environment } from 'src/environments/environment';
+
 import { ProductsModel } from '../model/product.model';
 import { ProductService } from '../product.service';
 import {  UpdatePriceProduct } from '../model/update.price.product';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BaseComponent } from 'src/app/common/components/base/base.component';
 import { CategoriesService } from '../../categories/category.services';
@@ -102,7 +100,8 @@ export class UpdatePriceProductsComponent extends BaseComponent implements OnIni
     el: ElementRef,
     message: NzMessageService,
     private route: ActivatedRoute,
-    private fb: FormBuilder)
+    private fb: FormBuilder,    
+    private router: Router,)
      {
     super(notificacionService, el, message);
     this.form = this.fb.group({
@@ -189,8 +188,11 @@ export class UpdatePriceProductsComponent extends BaseComponent implements OnIni
         this.allSuppliers = []
       }
     })
-  }
-  /*
+  };
+  back(){    
+    this.router.navigate(['../list'], { relativeTo: this.route });
+  };
+  
   
 
   /*
@@ -213,7 +215,7 @@ export class UpdatePriceProductsComponent extends BaseComponent implements OnIni
   getData(params: any): void {
     this.loading = true;
     this.service.getProductsByUpdatePrice(params).subscribe({
-      next: (r:DtoPagination<ProductsModel>)=>{
+      next: (r)=>{
         this.productList= r.data;
         this.totalItems = r.totalCount;
         this.loading = false;

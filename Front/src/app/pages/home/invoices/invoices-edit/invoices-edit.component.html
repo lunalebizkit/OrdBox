@@ -7,6 +7,12 @@
         <nz-page-header-tags>
             <nz-tag [nzColor]="'blue'">Comprobante</nz-tag>
         </nz-page-header-tags>
+        <nz-page-header-extra>
+            <button nzType="primary" nz-tooltip nzTooltipTitle="Volver" nz-button (click)="back()">
+                <i nz-icon nzType="rollback" nzTheme="outline"></i>
+                <span>Volver</span>
+            </button>
+        </nz-page-header-extra>
 
     </nz-page-header>
 
@@ -51,12 +57,12 @@
                         </div>
 
                     </div>
-                  
+
 
                     <!-- Datos del Cliente -->
                     <nz-divider nzText="Cliente" nzOrientation="left" style="margin-top: 0;"></nz-divider>
 
-                    
+
                     <nz-form-item>
                         <nz-form-label [nzSm]="6" [nzXs]="14" nzRequired nzFor="customerCuit">Cuit - Cuil
                         </nz-form-label>
@@ -91,39 +97,41 @@
                             <input nz-input formControlName="address" nzSize="small" maxlength="250" />
                         </nz-form-control>
                     </nz-form-item>
-                   
+
 
                     <!-- Buscador de Productos -->
                     <nz-divider nzText="Producto" nzOrientation="left"></nz-divider>
-                    
-                        <div nz-row nzJustify="start" nzAlign="middle">
-                            <form nz-form [formGroup]="formProductSearch" col nzSpan="12">
-                                <div >
-                                        <nz-form-item>
-                                            <nz-form-label [nzSm]="12" [nzXs]="24">Búsqueda de Producto</nz-form-label>
-                                            <nz-form-control [nzSm]="14" [nzXs]="24">               
-                                            <nz-input-group [nzSuffix]="clearQuery">
-                                                <input nzSize="small" type="text" formControlName="productSearchFilter"
-                                                placeholder="Ingrese Marca, Código, Categoria o Producto" nz-input (keydown.enter)="searchProduct(); this.formProductSearch.controls['productSearchFilter'].setValue('') ;" />
-                                            </nz-input-group>
-                                            
-                                            <ng-template #clearQuery>
-                                                <i nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle"
-                                                *ngIf="this.formProductSearch.controls['productSearchFilter'].value !=='' "  (click)="this.formProductSearch.controls['productSearchFilter'].setValue('') ;"></i>
-                                            </ng-template>
-                                            </nz-form-control>
-                                        </nz-form-item>
-                                </div>
-                            </form>
-                                <div nz-col style="margin: 3px;">
-                                        <button nz-button nzSize="small" nzType="primary" (click)="openComponentProduct()">
-                                            <i nz-icon nzType="search" nzTheme="outline"></i> Buscar
-                                        </button>
-                                   
-                                </div>
-                         
+
+                    <div nz-row nzJustify="start" nzAlign="middle">
+                        <form nz-form [formGroup]="formProductSearch" col nzSpan="12">
+                            <div>
+                                <nz-form-item>
+                                    <nz-form-label [nzSm]="12" [nzXs]="24">Búsqueda de Producto</nz-form-label>
+                                    <nz-form-control [nzSm]="14" [nzXs]="24">
+                                        <nz-input-group [nzSuffix]="clearQuery">
+                                            <input nzSize="small" type="text" formControlName="productSearchFilter"
+                                                placeholder="Ingrese Marca, Código, Categoria o Producto" nz-input
+                                                (keydown.enter)="searchProduct(); " />
+                                        </nz-input-group>
+
+                                        <ng-template #clearQuery>
+                                            <i nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle"
+                                                *ngIf="this.formProductSearch.controls['productSearchFilter'].value !=='' "
+                                                (click)="this.formProductSearch.controls['productSearchFilter'].setValue('') ;"></i>
+                                        </ng-template>
+                                    </nz-form-control>
+                                </nz-form-item>
+                            </div>
+                        </form>
+                        <div nz-col style="margin: 3px;">
+                            <button nz-button nzSize="small" nzType="primary" (click)="openComponentProduct()">
+                                <i nz-icon nzType="search" nzTheme="outline"></i> Buscar
+                            </button>
+
                         </div>
-                   
+
+                    </div>
+
 
                 </nz-content>
             </nz-collapse-panel>
@@ -132,47 +140,55 @@
 
     </form>
 
-    <nz-collapse>
-     
-    </nz-collapse>
     <!-- Tabla Detalle -->
-    <nz-collapse>
+    <nz-collapse style="padding: 1px;">
         <nz-collapse-panel nzHeader="Detalle" [nzActive]="true" [nzShowArrow]="false">
 
             <nz-content>
 
-                <nz-table [nzBordered]="true" [nzData]="invoiceDetailsList">
+                <nz-table [nzBordered]="true" [nzData]="invoiceDetailsList" nzShowPagination="false">
                     <thead>
                         <tr>
+                            <th></th>
                             <th>Codigo</th>
                             <th>Codigo Interno</th>
                             <th>Producto</th>
                             <th>Cantidad</th>
                             <th>Precio Unidad</th>
                             <th>SubTotal</th>
-                            <th nzWidth="90px">Iva</th>
+                            <th [nzAlign]="'center'" nzWidth="90px">Iva</th>
                             <th>Accion</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr *ngFor="let data of invoiceDetailsList" class="small-text">
+                            <td>
+                                <i nz-icon nzType="exclamation-circle" nzTheme="outline" *ngIf="data.stock === 0"
+                                    [title]="'Este producto no cuenta con stock'" style="color: brown;"></i>
+                            </td>
                             <td>{{data.code}}</td>
                             <td>{{data.ownCode}}</td>
                             <td nzBreakWord>{{data.productName}}</td>
                             <td>
-                                <div class="editable-cell" [hidden]="editId === data.ownCode" (click)="startEdit(data.ownCode)">
-                                 {{data.quantity}}
-                                  </div>
-                                  <nz-input-number [hidden]="editId !== data.ownCode"  [nzMin]="1" [nzMax]="10000" [(ngModel)]="data.quantity" (nzBlur)="stopEdit()"  (ngModelChange)="changeQuantity($event)" ></nz-input-number>
-                                </td>
-                            <td> {{this.currencyFormat(data.price) }}</td>
-                            <td> {{ this.currencyFormat(data.subTotal) }}</td>
-                            <td><div class="editable-cell" [hidden]="editIdIva === data.ownCode" (click)="startEditIva(data.ownCode)">
-                                 {{data.iva}}
-                                  </div>
-                                  <nz-input-number [hidden]="editIdIva !== data.ownCode" [nzMin]="1" [nzMax]="100" [(ngModel)]="data.iva" (nzBlur)="stopEditIva()"  
-                                  (ngModelChange)="changeIvaValue($event)" ></nz-input-number>
-                                </td>
+                                <div class="editable-cell" [hidden]="editId === data.ownCode"
+                                    (click)="startEdit(data.ownCode)">
+                                    {{data.quantity}}
+                                </div>
+                                <nz-input-number [hidden]="editId !== data.ownCode" [nzMin]="1" [nzMax]="10000"
+                                    [(ngModel)]="data.quantity" (nzBlur)="stopEdit()"
+                                    (ngModelChange)="changeQuantity($event)"></nz-input-number>
+                            </td>
+                            <td [nzAlign]="'right'"> {{this.currencyFormat(data.price) }}</td>
+                            <td [nzAlign]="'right'"> {{ this.currencyFormat(data.subTotal) }}</td>
+                            <td>
+                                <div class="editable-cell" [hidden]="editIdIva === data.ownCode"
+                                    (click)="startEditIva(data.ownCode)">
+                                    {{data.iva}}
+                                </div>
+                                <nz-input-number [hidden]="editIdIva !== data.ownCode" [nzMin]="1" [nzMax]="100"
+                                    [(ngModel)]="data.iva" (nzBlur)="stopEditIva()"
+                                    (ngModelChange)="changeIvaValue($event)"></nz-input-number>
+                            </td>
                             <td style="text-align: center;">
                                 <nz-space [nzSplit]="spaceSplit">
                                     <ng-template #spaceSplit>
@@ -188,13 +204,15 @@
                     </tbody>
                     <tfoot style="background-color: #fafafa;">
                         <tr>
+                            <td></td>
                             <td colspan="2" *ngIf="invoiceA; else elseBlock"> <b>Iva </b><b style="color: red;">{{
                                     this.currencyFormat(this.ivaTotal) }}</b> </td>
-                            <td colspan="2" *ngIf="invoiceA; else elseBlock"><b>SubTotal </b><b style="color: red;">{{ this.currencyFormat(this.subtotal)
+                            <td colspan="2" *ngIf="invoiceA; else elseBlock"><b>SubTotal </b><b style="color: red;">{{
+                                    this.currencyFormat(this.subtotal)
                                     }}</b></td>
                             <td colspan="2"><b>Total </b><b style="color: red;">{{ this.currencyFormat(this.total)
                                     }}</b></td>
-                            <td colspan="2">
+                            <td colspan="2" [nzAlign]="'right'">
                                 <button id="actualizarbutton" nz-button nzSize="large" style="background-color:#24ce41;"
                                     (click)="save()"><i nz-icon nzType="save" nzTheme="outline"></i>Grabar</button>
                             </td>
@@ -205,6 +223,15 @@
                     </tfoot>
                 </nz-table>
 
+                <form nz-form [formGroup]="formInvoice">
+                    <nz-form-item>
+                        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="observation">Observacion
+                        </nz-form-label>
+                        <nz-form-control [nzSm]="14" [nzXs]="24">
+                            <input formControlName="observation" nz-input id="observation" maxlength="250" />
+                        </nz-form-control>
+                    </nz-form-item>
+                </form>
             </nz-content>
         </nz-collapse-panel>
     </nz-collapse>

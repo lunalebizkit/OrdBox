@@ -1,8 +1,8 @@
 <nz-layout>
     <nz-page-header class="list-header">
-      <nz-page-header-title>Listado de Clientes</nz-page-header-title>
+      <nz-page-header-title>Listado de Comprobantes</nz-page-header-title>
       <nz-page-header-extra>
-        <a routerLink="/home/customers/new"> <button nz-tooltip nzTooltipTitle="Nuevo" nz-button nzType="primary"
+        <a routerLink="/home/invoices/new"> <button nz-tooltip nzTooltipTitle="Nuevo" nz-button nzType="primary"
             nzShape="circle"><i nz-icon nzType="plus" nzTheme="outline"></i></button></a>
       </nz-page-header-extra>
     </nz-page-header>
@@ -39,33 +39,33 @@
         <!-- Tabla -->
      
       <div>
-        <nz-table  class="table-list" [nzData]="entityList" [nzSize]="'small'" [nzLoading]="loading"
+        <nz-table  class="table-list" nzShowSizeChanger [nzData]="invoicesList" nzBordered=false [nzSize]="'small'" [nzLoading]="loading"
           [nzTotal]="totalItems" [nzPageSize]="queryParams.pageSize" [nzPageIndex]="queryParams.page + 1" 
           [nzPaginationType]="'small'" (nzQueryParams)="onQueryParamsChange($event)">
           <thead>
             <tr>                     
-              <th>Nombre</th>
-              <th>Dni</th>
+              <th>Numero</th>
+              <th>Fecha</th>
               <th>Cuit</th>
-              <th>Direccion</th>          
-              <th>Telefono/s</th>       
-              <th>Email/s</th>       
-              <th>Accion</th>
+              <th>Nombre</th>
+              <th [nzAlign]="'center'">Total</th>       
+              <th [nzAlign]="'center'">Tipo</th>       
+              <th [nzAlign]="'center'">Accion</th>
             </tr>
           </thead>
           <tbody>
-            <tr #td *ngFor="let data of entityList" class="small-text">     
-              <td>{{data.name}}</td>
-              <td>{{data.dni}}</td>
-              <td>{{data.cuit}}</td>
-              <td>{{data.address}}</td> 
-              <td>{{data.phoneEntity}}</td>
-              <td>{{data.emailEntity}}</td>                      
+            <tr *ngFor="let data of invoicesList" class="small-text"  id="{{data.id}}">     
+              <td>{{data.id}}</td>
+              <td>{{ this.formaterDate(data.dateTime) }}</td>
+              <td>{{data.customerCuit}}</td>
+              <td>{{data.customerName}}</td> 
+              <td [nzAlign]="'right'"><b>{{ this.currencyFormat(data.total) }}</b></td>
+              <td [nzAlign]="'center'">{{ this.getInvoiceType(data.type) }}</td>                 
               <td style="text-align: center;">
-                  <a routerLink="/home/customers/edit/{{data.id}}">
-                    <i nz-icon nzType="edit" nzTheme="outline"></i>
-                  </a>                  
-                </td>        
+                   <a routerLink="/home/invoices/view/{{data.id}}">
+                    <i nz-icon nzType="eye" nzTheme="outline" style="font-size: 16px;"></i>
+                  </a>                   
+                </td>         
             </tr>
           </tbody>
         </nz-table>

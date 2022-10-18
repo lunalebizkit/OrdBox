@@ -1,6 +1,5 @@
 .list-header {
     margin-bottom: 10px;
-    position: sticky;
     top: 0;
     display: inline-block;
     width:  100%;
@@ -16,3 +15,4 @@
     background-color: rgb(146, 204, 243);
     cursor: pointer;
   }
+ 

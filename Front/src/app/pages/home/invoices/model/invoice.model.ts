@@ -25,6 +25,7 @@ export interface InvoiceDetails {
     iva: number;
 }
 export interface InvoiceDetailList {
+    stock: number,
     ownCode : number;
     code : number;
     productName: string;
@@ -33,3 +34,25 @@ export interface InvoiceDetailList {
     subTotal: number;
     iva: number ;
 }
+export function invoiceGridParser(value: any, iva: number, price: number) {
+    return {
+      stock: value.quantity,
+      code: value.code,
+      ownCode: value.id,
+      productName: value.description,
+      price: price,
+      quantity: 1,
+     subTotal: price,
+     iva: iva
+    }}
+    export function invoiceDetailParser(value: any, iva: number, price: number) {
+        return {
+          id: 0,
+          invoiceId: 0,
+          productId: value.id,
+          productName: value.description,
+          productCode: value.code,
+          price: price,
+          quantity: 1,
+         iva: iva
+        }}

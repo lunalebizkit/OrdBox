@@ -13,7 +13,8 @@ export class BaseComponent {
   constructor(
     private notification: NzNotificationService,
     private el: ElementRef,
-    private message: NzMessageService) { }
+    private message: NzMessageService
+    ) { }
 
   /**
    * Show Success message
@@ -86,4 +87,6 @@ export class BaseComponent {
         reader.onerror = error => reject(error);
       });
     }
+
+  
 }

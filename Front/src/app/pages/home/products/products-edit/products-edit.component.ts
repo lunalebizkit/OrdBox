@@ -63,7 +63,7 @@ export class ProductsEditComponent extends BaseComponent implements OnInit {
       */
      imagesList: NzUploadFile[] = [];
 
-  allCategories = [];
+  allCategories/*: {value: number, label: string}[] */ =[];
   allBrands = [];
   allSuppliers = [];
   constructor(
@@ -81,8 +81,8 @@ export class ProductsEditComponent extends BaseComponent implements OnInit {
     this.form = this.fb.group({
       description: ['', [Validators.required]],
       code: [0, [Validators.required]],
-      category: ['', [Validators.required]],
-      brand: ['', [Validators.required]],
+      categoryName: ['', [Validators.required]],
+      brandName: ['', [Validators.required]],
       salePercentage: [50, [Validators.required]],
       cardSalePercentage: [60, [Validators.required]],
       cashSalePercentage: [40, [Validators.required]],
@@ -90,10 +90,10 @@ export class ProductsEditComponent extends BaseComponent implements OnInit {
       purchasePrice: [0, [Validators.required]],
       cashSalePrice: [0, [Validators.required]],
       cardSalePrice: [0, [Validators.required]],
-      supplier: ['', [Validators.required]],
+      supplierName: ['', [Validators.required]],
       quantity: [0, [Validators.required]],
       pointOrder: [0, [Validators.required]],
-      observation: ['', [Validators.required]]
+      observation: ['', []]
       
     })
   }
@@ -116,21 +116,38 @@ export class ProductsEditComponent extends BaseComponent implements OnInit {
 
   getProduct(id: number): void {
     this.service.getById(id).subscribe({
-      next: (r) => {
-        this.form.controls['description'].setValue(r.description);
-        this.form.controls['code'].setValue(r.code);
-        this.form.controls['category'].setValue(r.category);
-        this.form.controls['brand'].setValue(r.brand);
-        this.form.controls['purchasePrice'].setValue(r.purchasePrice);
-        this.form.controls['quantity'].setValue(r.quantity);
-        this.form.controls['salePrice'].setValue(r.salePrice);
-        this.form.controls['salePercentage'].setValue(r.salePercentage);
-        this.form.controls['cardSalePrice'].setValue(r.cardSalePrice);
-        this.form.controls['cardSalePercentage'].setValue(r.cardSalePercentage);
-        this.form.controls['cashSalePrice'].setValue(r.cashSalePrice);
-        this.form.controls['cashSalePercentage'].setValue(r.cashSalePercentage);
-        this.form.controls['pointOrder'].setValue(r.pointOrder);
-        this.form.controls['observation'].setValue(r.observation);   
+      next: (r ) => {
+        Object.keys(this.form.controls).forEach((key: string)=>{
+          const ctr= this.form.controls[key];
+          const value= r[key]
+          if (value !== undefined && value !== null){
+            switch (key) {
+              case "categoryName":                
+                ctr.setValue
+              (this.allCategories
+                .filter((v: { value: any, label: string}) =>  v.label.toLocaleLowerCase() == value.toLocaleLowerCase())
+                .map((v: any) => v.value)[0] ); break;
+              
+              case "supplierName":
+                ctr.setValue
+                (this.allSuppliers
+                  .filter((v: { value: any, label: string}) =>  v.label.toLocaleLowerCase() == value.toLocaleLowerCase())
+                  .map((v: any) => v.value)[0] ); break;  
+              
+                case "brandName":
+                  ctr.setValue
+                  (this.allBrands
+                    .filter((v: { value: any, label: string}) =>  v.label.toLocaleLowerCase() == value.toLocaleLowerCase())
+                    .map((v: any) => v.value)[0] ); break;
+              default:
+                ctr.setValue(value)
+            }  
+           
+           
+          }         
+        })
+        
+
         this.isLoading = false
       },
       error: () => { this.isLoading = false; }
@@ -154,8 +171,8 @@ export class ProductsEditComponent extends BaseComponent implements OnInit {
         id: this.id !== undefined ? this.id : 0,
         description: this.form.controls['description'].value,
         code: this.form.controls['code'].value,
-        categoryid: this.form.controls['category'].value,
-        brandid: this.form.controls['brand'].value,
+        categoryid: this.form.controls['categoryName'].value,
+        brandid: this.form.controls['brandName'].value,
         cashSalePrice: this.form.controls['cashSalePrice'].value,
         cashSalePercentage: this.form.controls['cashSalePercentage'].value,      
         quantity: this.form.controls['quantity'].value,
@@ -166,7 +183,7 @@ export class ProductsEditComponent extends BaseComponent implements OnInit {
         cardSalePercentage: this.form.controls['cardSalePercentage'].value,
         pointOrder: this.form.controls['pointOrder'].value,
         observation: this.form.controls['observation'].value,
-        supplierid: this.form.controls['supplier'].value
+        supplierid: this.form.controls['supplierName'].value
       };
       this.isSaving = true;
       this.service.saveProduct(model).subscribe({

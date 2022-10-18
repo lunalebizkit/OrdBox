@@ -63,7 +63,6 @@ export class InvoiceProductSearchComponent implements OnInit {
     if ( dato.composedPath()[1].id != null ||  dato.composedPath()[1].id != undefined) {
       this.productId= dato.composedPath()[1].id; 
      this.product= this.productList.filter( t => t.id == this.productId)[0];
-     this.product.quantity= 1;
      this.close();
  
     }

@@ -11,10 +11,10 @@ import { CustomerModel } from "../../customers/model/customer.model";
 import { EntityService } from "../../customers/customer.service";
 import { ProductsModel } from "../../products/model/product.model";
 import { InvoiceProductSearchComponent } from "../invoice-product-search/invoice-product-search.component";
-import { InvoiceDetailList, InvoiceDetails, InvoiceModel } from "../model/invoice.model";
+import { InvoiceDetailList, InvoiceDetails, InvoiceModel, invoiceGridParser, invoiceDetailParser } from "../model/invoice.model";
 import { PopupConfirmationComponent } from "src/app/common/components/popup-confirmation/popup-confirmation.component";
 import { InvoiceService } from "../invoices.service";
-import { Router } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { ePayment } from "../model/invoice-payment.Enum";
 import { InvoiceType } from "../model/invoice-type.Enum";
 import { formatCurrency } from '@angular/common';
@@ -61,6 +61,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
   startDate = Date.now();
   type = InvoiceType;
   payment: { value: string; label: string }[] = Object.entries(ePayment).map(([value, label]) => ({ value, label }))
+  
   /*
  ** Lista de Productos
  */  
@@ -81,7 +82,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
   cuit!: string;
   product!: string;
   customerId!: number;
-  typeSelectedId!: number;
+  typeSelectedId: number=1;
   ivaTotal: number=0;
   invoiceA: boolean= true;
 
@@ -103,10 +104,11 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
     private serviceInvoice: InvoiceService,
     el: ElementRef,
     private router: Router,
+    private route: ActivatedRoute,
     message: NzMessageService,
     private drawerService: NzDrawerService,
     @Inject(LOCALE_ID) public locale: string
-     ) {
+   ) {
     super(notificacionService, el, message);
     this.formInvoice = this.fb.group({
       dateTime: [new Date(this.startDate), Validators.required],
@@ -115,17 +117,15 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
       address: ['', Validators.required],
       customerCuit: ['', Validators.required],
       customerName: ['', Validators.required],
-
-    });
-   
+      observation: ['']
+    });   
     this.formCustomerSearch = this.fb.group({})
     this.formProductSearch = this.fb.group({
       productSearchFilter: ['']
     })
   }
 
-  ngOnInit(): void {
-    
+  ngOnInit(): void {    
   }
 
   typeSelectedChange(id: any): void {
@@ -134,7 +134,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
       this.invoiceA = true;
     }else{
       this.invoiceA= false;
-    }
+    }    
   }
 
   paymentSelectedChange(id: any): void {
@@ -178,38 +178,32 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
 
       drawerRefProduct.afterClose.subscribe({
 
-        next: (data) => {
+        next: (data: ProductsModel) => {
           if (data != undefined) {
             if (this.invoiceDetails.find(item => item.productId == data.id)) {
                 /*Actualizo la lista que envio al back */
                    this.invoiceDetails.filter(item => item.productId == data.id)[0]
-                  .quantity += data.quantity;                        
+                  .quantity += 1;                        
 
                    /*Actualizo la lista de la tabla */
-                  this.invoiceDetailsList.filter(item => item.ownCode == data.id)[0]
-                  .quantity += data.quantity;
-
-                  this.invoiceDetailsList.filter(item => item.ownCode == data.id)[0]
-                  .subTotal +=  this.bindPrice(data) * data.quantity ;
+                  let newListElement = this.invoiceDetailsList.filter(item => item.ownCode == data.id)[0];
+               
+                  newListElement.quantity += 1;
+                  newListElement.subTotal += this.bindPrice(data) * newListElement.quantity;
+                
                   this.totalCalculate();
 
                 }else {
-              const model: InvoiceDetails = {
-                id: 0,
-                invoiceId: 0,
-                productId: data.id,
-                productName: data.description,
-                productCode: data.code,
-                quantity: data.quantity,
-                price: this.bindPrice(data),
-                iva: this.iva                        
-              };
-              
-              this.invoiceDetailListMapper(data);
-              this.invoiceDetails.push(model);              
-            
+
+                  /* Parseo dato a la grilla de Tabla */
+              const model: InvoiceDetailList = invoiceGridParser(data, this.iva, this.bindPrice(data));
+             this.invoiceListTest.push(model)
+             this.invoiceDetailsList = this.invoiceListTest;
+             /* Parseo dato a Dto Factura Detalle */
+             const modelDetail : InvoiceDetails = invoiceDetailParser(data, this.iva, this.bindPrice(data));
+             this.invoiceDetails.push(modelDetail);                
             this.totalCalculate();
-                }
+             }
           }},
           error: () => {
             this.invoiceDetailsList = [];
@@ -222,6 +216,13 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
   searchCustomer(): void {
     this.cuit =
       this.formInvoice.controls['customerCuit'].value;
+    if (this.cuit === '00'){
+      this.formInvoice.controls['address'].setValue('S/D');
+      this.formInvoice.controls['customerCuit'].setValue('00');
+      this.formInvoice.controls['customerName'].setValue('Admin');
+      this.customerId= 0;
+      
+    }else{
     if (this.cuit.length >= 6) {
       this.serviceEntity.getByCuit(this.cuit).subscribe({
         next: (data) => {
@@ -231,7 +232,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
         },
         error: () => {this.showMessageError('No se encontro Cliente'); }
       });
-    }
+    }}
   };
 
   searchProduct():void {
@@ -256,24 +257,20 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
                 this.totalCalculate();
 
               }else {
-             const product: ProductsModel= r.data[0];
-             product.quantity= 1; 
+             const product: ProductsModel= r.data[0];             
             const model: InvoiceDetails = {
               id: 0,
               invoiceId: 0,
               productId: product.id,
               productName: product.description,
               productCode: product.code,
-              quantity: product.quantity,
+              quantity: 1,
               price: this.bindPrice(product),
               iva: this.iva                        
             };
-            
-            this.invoiceDetailListMapper(product);
-            this.invoiceDetails.push(model);              
-          
+            this.invoiceDetails.push(model);
           this.totalCalculate();
-              }
+          }
             
           }else{
             this.openComponentProduct();
@@ -300,22 +297,6 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
     } catch (error) {
       console.log(error)
     }   
-  };
-
-  currencyFormat(data: any):string  { return formatCurrency(data, this.locale, '$', 'ARS', '1.1-2')}
-
-  invoiceDetailListMapper(product: ProductsModel) {
-    const model: InvoiceDetailList = {
-      ownCode: product.id,
-      code: product.code,
-      productName: product.description,
-      quantity: product.quantity,
-      price: this.bindPrice(product),
-      subTotal: this.bindPrice(product) * product.quantity,
-      iva: this.iva,
-    };
-    this.invoiceListTest.push(model);
-    this.invoiceDetailsList = this.invoiceListTest;
   };
 
   bindPrice(data: ProductsModel): number {
@@ -370,11 +351,11 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
           customerName: this.formInvoice.controls['customerName'].value,          
           customerCuit: this.formInvoice.controls['customerCuit'].value,  
           customerAddress: this.formInvoice.controls['address'].value,          
-          observation: '',
+          observation: this.formInvoice.controls['observation'].value,
           dateTime: this.formInvoice.controls['dateTime'].value,
           total: this.totalItems,
           ivaTotal: this.ivaTotal,
-          type: this.typeSelectedId,
+          type: this.formInvoice.controls['type'].value,
           invoiceDetails: this.invoiceDetails
         };
         this.isSaving = true;
@@ -386,7 +367,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
                 `Comprobante creado correctamente`
               );
               this.isSaving = false;
-              this.router.navigate(['/home/products/list']);
+              this.router.navigate(['/home/invoices']);
 
             },
             error: () => {
@@ -437,6 +418,13 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
       
     };    
   };
+  back(){    
+    this.router.navigate(['../'], { relativeTo: this.route });
+  };
+
+  currencyFormat(data: any):string  {    
+    return formatCurrency(data, this.locale, '$', 'ARS', '1.1-2')
+  }
 }
 
 

@@ -1,15 +1,19 @@
 <nz-layout>
-  <div class="sticky">
+  
     <nz-page-header class="list-header">
       <nz-page-header-title>Actualización de Productos</nz-page-header-title>
       <nz-page-header-extra>
+        <button nzType="primary" nz-tooltip nzTooltipTitle="Volver" nz-button (click)="back()">
+          <i nz-icon nzType="rollback" nzTheme="outline"></i>
+          <span>Volver</span>
+      </button>
         <button id="actualizarbutton" nz-tooltip nzTooltipTitle="Actualizar" nz-button style="background-color:#24ce41;" (click)="update()">
           <i nz-icon nzType="check" nzTheme="outline"></i>
           <span>Actualizar</span>
         </button>
       </nz-page-header-extra>
     </nz-page-header>
-  </div>
+ 
 
   <nz-content>
     <nz-collapse>
