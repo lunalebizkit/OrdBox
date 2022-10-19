@@ -39,8 +39,8 @@
         <!-- Tabla -->
      
       <div>
-        <nz-table nzShowSizeChanger  class="table-list" [nzData]="entityList" nzBordered=true [nzSize]="'small'" [nzLoading]="loading"
-          [nzTotal]="totalItems" [nzPageSize]="queryParams.pageSize" [nzPageIndex]="1" [nzFrontPagination]="false"
+        <nz-table class="table-list" [nzData]="entityList" nzBordered=true [nzSize]="'small'" [nzLoading]="loading"
+          [nzTotal]="totalItems" [nzPageSize]="queryParams.pageSize" [nzPageIndex]="queryParams.page + 1" 
           [nzPaginationType]="'small'" (nzQueryParams)="onQueryParamsChange($event)">
           <thead>
             <tr>                     

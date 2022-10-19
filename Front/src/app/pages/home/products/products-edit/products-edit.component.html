@@ -24,10 +24,10 @@
                     </nz-form-item>
 
                     <nz-form-item>
-                        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="category">Categoria </nz-form-label>
+                        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="categoryName">Categoria </nz-form-label>
                         <nz-form-control [nzSm]="14" [nzXs]="24">
                             <nz-spin [nzSpinning]="isLoadingCategory">
-                                <nz-select formControlName="category" id="category"
+                                <nz-select formControlName="categoryName" id="categoryName"
                                     (nzModelChange)="categorySelectedChange($event)" [nzOptions]="allCategories">
                                 </nz-select>
                             </nz-spin>
@@ -35,10 +35,10 @@
                     </nz-form-item>
 
                     <nz-form-item>
-                        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="brand">Marca </nz-form-label>
+                        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="brandName">Marca </nz-form-label>
                         <nz-form-control [nzSm]="14" [nzXs]="24">
                             <nz-spin [nzSpinning]="isLoadingBrand">
-                                <nz-select formControlName="brand" id="brand"
+                                <nz-select formControlName="brandName" id="brandName"
                                     (nzModelChange)="brandSelectedChange($event)" [nzOptions]="allBrands">
                                 </nz-select>
                             </nz-spin>
@@ -46,10 +46,10 @@
                     </nz-form-item>
 
                     <nz-form-item>
-                        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="supplier">Proveedor </nz-form-label>
+                        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="supplierName">Proveedor </nz-form-label>
                         <nz-form-control [nzSm]="14" [nzXs]="24">
                             <nz-spin [nzSpinning]="isLoadingEntity">
-                                <nz-select formControlName="supplier" id="supplier"
+                                <nz-select formControlName="supplierName" id="supplierName"
                                     (nzModelChange)="entitySelectedChange($event)" [nzOptions]="allSuppliers">
                                 </nz-select>
                             </nz-spin>
@@ -63,11 +63,6 @@
                         </nz-form-control>
                     </nz-form-item>
                 </nz-content>
-            </nz-collapse-panel>
-        </nz-collapse>
-        <nz-collapse>
-            <nz-collapse-panel [nzHeader]="'Imagenes'" [nzActive]="true">
-                <nz-content></nz-content>
             </nz-collapse-panel>
         </nz-collapse>
         <nz-collapse>

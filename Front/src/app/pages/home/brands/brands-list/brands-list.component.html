@@ -42,7 +42,7 @@
     <!-- Tabla -->
     <div>      
       <nz-table #filterTable [nzData]="brandList" nzBordered=true [nzLoading]="loading" [nzTotal]="totalItems"
-        [nzPageIndex]="1" [nzPageSize]="queryData.pageSize" [nzPaginationType]="'small'" [nzFrontPagination]="false"
+        [nzPageIndex]="queryData.page + 1" [nzPageSize]="queryData.pageSize" [nzPaginationType]="'small'" [nzFrontPagination]="false"
         (nzQueryParams)="onQueryParamsChange($event)">
         <thead>
           <tr>

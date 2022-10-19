@@ -47,14 +47,14 @@ namespace Kiltex.SistemaGestion.Services.Services
             var query = _contextSql
                                 .Invoices
                                 .AsNoTracking()
-                                .Include(p => p.InvoiceDetails);
-                                //.Where(p => p..ToLower().Contains(request.Filter ?? "") ||
+                                .Include(p => p.InvoiceDetails)
+                                .Where(p => p.CustomerCuit.ToLower().Contains(request.Filter ?? ""));
                                 //   (!p.Dni.HasValue || p.Dni.ToString().Contains(request.Filter ?? "")) ||
                                 //   p.Cuit.ToLower().Contains(request.Filter ?? ""));
 
             var count = await query.CountAsync().ConfigureAwait(false);
 
-            var list = await query.OrderBy(p => p.DateTime)
+            var list = await query.OrderByDescending(p => p.DateTime)
                                   .Skip(request.Page * request.PageSize)
                                   .Take(request.PageSize)
                                   .ToListAsync()
@@ -74,12 +74,15 @@ namespace Kiltex.SistemaGestion.Services.Services
         {
 
             var invoiceModel = _mapper.Map<Invoice>(model);
-            
-            var invoiceDetail = new InvoiceDetail();
+           
            
             if (invoiceModel.Id == 0)
             {
-             
+                if (invoiceModel.CustomerId == 0)
+                {
+                  var user=await  _contextSql.Customers.AsNoTracking().FirstOrDefaultAsync(p => p.Name == "Admin");
+                    invoiceModel.CustomerId = user.Id;
+                }              
 
                 await _contextSql.Invoices.AddAsync(invoiceModel, ct).ConfigureAwait(false);
                 await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);

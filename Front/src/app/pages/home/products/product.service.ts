@@ -67,23 +67,6 @@ export class ProductService {
     }
   }
 
-  /**
-   * Obtiene todas lineas de productos
-   * 
-   * @returns
-   */
-   public getCategories(): Observable<any> {
-    return this.api.post(`category/list`, null, false);
-  }
-
-  /**
-   * Obtiene todas las Categorias de productos
-   * @param id
-   * @returns
-   */
-   public getCategory(id: number): Observable<any> {
-    return this.api.get(`category?id=${id}`, false);
-  }
 
 
 }
