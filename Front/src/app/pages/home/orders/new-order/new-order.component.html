@@ -20,7 +20,7 @@
             <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="supplier"
               >Proveedor
             </nz-form-label>
-            <nz-form-control [nzSm]="14" [nzXs]="24">
+            <nz-form-control [nzSm]="6" [nzXs]="24">
               <input
                 nz-input
                 maxlength="250"
@@ -34,12 +34,14 @@
             <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="date"
               >Fecha
             </nz-form-label>
-            <nz-date-picker
-              [(ngModel)]="date"
-              (ngModelChange)="onChange($event)"
-              [nzPlaceHolder]="fecha"
-              formControlName="date"
-            ></nz-date-picker>
+            <nz-form-control [nzSm]="6" [nzXs]="24">
+              <nz-date-picker
+                [(ngModel)]="date"
+                (ngModelChange)="onChange($event)"
+                [nzPlaceHolder]="fecha"
+                formControlName="date"
+              ></nz-date-picker
+            ></nz-form-control>
           </nz-form-item>
 
           <nz-form-item>
@@ -52,60 +54,118 @@
             ></nz-switch>
           </nz-form-item>
 
-          <nz-form-item>
-            <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="email"
-              >Correo Principal
-            </nz-form-label>
-            <nz-form-control [nzSm]="14" [nzXs]="24">
-              <input
-                nz-input
-                maxlength="250"
-                nzSize="small"
-                formControlName="email"
-              />
-            </nz-form-control>
-            <nz-switch
-              [ngModel]="true"
-              nzCheckedChildren="Enviar"
-              nzUnCheckedChildren="No enviar"
-              formControlName="send"
-            ></nz-switch>
-          </nz-form-item>
+          <div nz-row>
+            <div nz-col nzSpan="12">
+              <nz-form-item>
+                <nz-form-label [nzSm]="12" [nzXs]="24" nzRequired nzFor="email"
+                  >Correo Principal
+                </nz-form-label>
+                <nz-form-control [nzSm]="14" [nzXs]="24">
+                  <input
+                    nz-input
+                    maxlength="250"
+                    nzSize="small"
+                    formControlName="email"
+                  /> </nz-form-control
+              ></nz-form-item>
+            </div>
 
-          <nz-form-item>
-            <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="email2"
-              >Correo Secundario
-            </nz-form-label>
-            <nz-form-control [nzSm]="14" [nzXs]="24">
-              <input
-                nz-input
-                formControlName="email2"
-                nzSize="small"
-                maxlength="250"
-              />
-            </nz-form-control>
+            <div nz-col>
+              <nz-form-item>
+                <nz-switch
+                  [ngModel]="true"
+                  nzCheckedChildren="Enviar"
+                  nzUnCheckedChildren="No enviar"
+                  formControlName="send"
+                ></nz-switch>
+              </nz-form-item>
+            </div>
+          </div>
 
-            <nz-switch
-              [ngModel]="true"
-              nzCheckedChildren="Enviar"
-              nzUnCheckedChildren="No enviar"
-              formControlName="send2"
-            ></nz-switch>
-          </nz-form-item>
+          <div nz-row>
+            <div nz-col nzSpan="12">
+              <nz-form-item>
+                <nz-form-label [nzSm]="12" [nzXs]="24" nzRequired nzFor="email2"
+                  >Correo Secundario
+                </nz-form-label>
+                <nz-form-control [nzSm]="24" [nzXs]="24">
+                  <input
+                    nz-input
+                    formControlName="email2"
+                    nzSize="small"
+                    maxlength="250"
+                  /> </nz-form-control
+              ></nz-form-item>
+            </div>
+            <div nz-col>
+              <nz-form-item>
+                <nz-switch
+                  [ngModel]="true"
+                  nzCheckedChildren="Enviar"
+                  nzUnCheckedChildren="No enviar"
+                  formControlName="send2"
+                ></nz-switch>
+              </nz-form-item>
+            </div>
+          </div>
         </form>
       </nz-content>
+      <!-- Buscador de Productos -->
+      <nz-divider
+        nzText="Seleccionar productos"
+        nzOrientation="left"
+      ></nz-divider>
 
-      <div style="margin-left: 15px">
-        <button
-          nz-button
-          nzSize="small"
-          nzType="primary"
-          style="justify-content: center"
-          (click)="showModal()"
-        >
-          Seleccionar Productos
-          <i nz-icon nzType="search" nzTheme="outline"></i>
-        </button>
+      <div nz-row nzJustify="start" nzAlign="middle">
+        <form nz-form [formGroup]="formProductSearch" col nzSpan="12">
+          <div>
+            <nz-form-item>
+              <nz-form-label [nzSm]="12" [nzXs]="24"
+                >Búsqueda de Producto</nz-form-label
+              >
+              <nz-form-control [nzSm]="14" [nzXs]="24">
+                <nz-input-group [nzSuffix]="clearQuery">
+                  <input
+                    nzSize="small"
+                    type="text"
+                    formControlName="productSearchFilter"
+                    placeholder="Ingrese Marca, Código, Categoria o Producto"
+                    nz-input
+                    (keydown.enter)="searchProduct()"
+                  />
+                </nz-input-group>
+
+                <ng-template #clearQuery>
+                  <i
+                    nz-icon
+                    class="ant-input-clear-icon"
+                    nzTheme="fill"
+                    nzType="close-circle"
+                    *ngIf="
+                      this.formProductSearch.controls['productSearchFilter']
+                        .value !== ''
+                    "
+                    (click)="
+                      this.formProductSearch.controls[
+                        'productSearchFilter'
+                      ].setValue('')
+                    "
+                  ></i>
+                </ng-template>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </form>
+        <div nz-col style="margin: 3px">
+          <button
+            nz-button
+            nzSize="small"
+            nzType="primary"
+            (click)="openComponentProduct()"
+          >
+            <i nz-icon nzType="search" nzTheme="outline"></i> Buscar
+          </button>
+        </div>
       </div>
     </nz-collapse-panel>
   </nz-collapse>
@@ -127,7 +187,7 @@
               <th>Cantidad</th>
               <th>Precio</th>
               <th>Subtotal</th>
-              <th>Accion</th>
+              <th [nzAlign]="'center'">Accion</th>
             </tr>
           </thead>
           <tbody>
@@ -138,12 +198,22 @@
               <td></td>
               <td></td>
               <td></td>
-              <td style="text-align: center"></td>
+              <td style="text-align: center">
+                <a *nzSpaceItem>
+                  <i
+                    nz-tooltip
+                    nzTooltipTitle="Eliminar"
+                    nz-icon
+                    nzType="delete"
+                    [nzTheme]="'twotone'"
+                    [nzTwotoneColor]="'#FF0000'"
+                  ></i>
+                </a>
+              </td>
             </tr>
           </tbody>
           <tfoot style="background-color: #fafafa">
             <tr>
-              <td colspan="2" *><b>Iva </b><b style="color: red"></b></td>
               <td colspan="2"><b>Total </b><b style="color: red"></b></td>
               <ng-template #elseBlock>
                 <td colspan="2"></td>
@@ -161,94 +231,6 @@
   [title]="'Confirmar eliminación'"
   [header]="'¿Está seguro de que desea eliminar el producto seleccionado?'"
   [message]="'Esta acción no se puede revertir'"
+  (handleOk)="handleOk()"
 >
 </app-popup-confirmation>
-
-<nz-modal
-  nzTitle="Seleccionar productos"
-  nzWidth="100"
-  [(nzVisible)]="isVisible"
->
-  <ng-container *nzModalContent>
-    <form nz-form [formGroup]="formModal">
-      <h3>Datos de la búsqueda</h3>
-      <div nz-row nzJustify="space-between">
-        <div nz-col nzSpan="5">
-          <nz-form-item>
-            <nz-form-label>Código</nz-form-label>
-            <nz-form-control>
-              <nz-input-group [nzSuffix]="clearQuery">
-                <input formControlName="code" type="text" nz-input />
-              </nz-input-group>
-
-              <ng-template #clearQuery>
-                <i
-                  nz-icon
-                  class="ant-input-clear-icon"
-                  nzTheme="fill"
-                  nzType="close-circle"
-                ></i>
-              </ng-template>
-            </nz-form-control>
-          </nz-form-item>
-        </div>
-
-        <div nz-col nzSpan="5">
-          <nz-form-item>
-            <nz-form-label>Descripción</nz-form-label>
-            <nz-form-control>
-              <nz-input-group [nzSuffix]="clearQuery">
-                <input formControlName="description" type="text" nz-input />
-              </nz-input-group>
-            </nz-form-control>
-          </nz-form-item>
-        </div>
-      </div>
-      <div nz-row nzJustify="end">
-        <div>
-          <button nz-button nzType="primary">
-            <i nz-icon nzType="search"></i>
-            Buscar
-          </button>
-        </div>
-      </div>
-    </form>
-    <br />
-    <nz-table [nzBordered]="true">
-      <thead>
-        <tr>
-          <th>Pedido</th>
-          <th>Código</th>
-          <th>Marca</th>
-          <th>Nombre</th>
-          <th>Stock</th>
-          <th>Precio de compra</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr class="small-text">
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td style="text-align: center"></td>
-        </tr>
-      </tbody>
-    </nz-table>
-  </ng-container>
-  <div *nzModalFooter>
-    <button nz-button nzType="default" (click)="handleCancel()" nzDanger>
-      Cancelar
-    </button>
-    <button
-      nz-button
-      nzType="primary"
-      (click)="handleOk()"
-      [nzLoading]="isConfirmLoading"
-    >
-      Confirmar
-    </button>
-  </div>
-</nz-modal>

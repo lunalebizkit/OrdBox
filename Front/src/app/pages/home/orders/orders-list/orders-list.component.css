@@ -16,6 +16,6 @@
 
 .row {
   display: grid;
-  grid-template-columns: 600px 500px;
+  grid-template-columns: 50% 50%;
   height: 100%;
 }

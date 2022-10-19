@@ -24,17 +24,23 @@
           <div nz-row nzJustify="space-between">
             <div nz-col nzSpan="5">
               <nz-form-item>
-                <nz-form-label>Producto</nz-form-label>
+                <nz-form-label>Estado</nz-form-label>
                 <nz-form-control>
-                  <nz-input-group [nzSuffix]="clearQuery">
-                    <input
-                      formControlName="product"
-                      type="text"
-                      placeholder="Producto"
-                      nz-input
-                      [(ngModel)]="queryParams.filter.product"
-                    />
-                  </nz-input-group>
+                  <nz-select nzShowSearch nzAllowClear nzPlaceHolder="Estado">
+                    <nz-option nzLabel="Todos" nzValue="todos"></nz-option>
+                    <nz-option
+                      nzLabel="Aceptado"
+                      nzValue="aceptado"
+                    ></nz-option>
+                    <nz-option
+                      nzLabel="Pendiente"
+                      nzValue="pendiente"
+                    ></nz-option>
+                    <nz-option
+                      nzLabel="Rechazado"
+                      nzValue="rechazado"
+                    ></nz-option>
+                  </nz-select>
 
                   <ng-template #clearQuery>
                     <i
@@ -128,21 +134,40 @@
 <br />
 
 <div class="row">
-  <ag-grid-angular
-    class="ag-theme-alpine"
-    style="width: 100%; height: 50%; font-size: 10px"
-    [columnDefs]="columnDefs"
-    [defaultColDef]="defaultColDef"
-    [debounceVerticalScrollbar]="true"
-  >
-  </ag-grid-angular>
+  <div>
+    <nz-table [nzBordered]="true">
+      <thead>
+        <tr>
+          <th>N° Pedido</th>
+          <th>Fecha</th>
+          <th>Proveedor</th>
+          <th>Estado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="small-text">
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </div>
 
-  <ag-grid-angular
-    class="ag-theme-alpine"
-    style="width: 100%; height: 50%; font-size: 10px"
-    [columnDefs]="columnsDefs"
-    [defaultColDef]="defaultColDef"
-    [debounceVerticalScrollbar]="true"
-  >
-  </ag-grid-angular>
+  <div>
+    <nz-table [nzBordered]="true">
+      <thead>
+        <tr>
+          <th>Producto</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="small-text">
+          <td></td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </div>
 </div>
