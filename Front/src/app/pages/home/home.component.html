@@ -1,11 +1,22 @@
 <nz-layout class="app-layout">
-  <nz-sider class="menu-sidebar" nzCollapsible nzWidth="256px" nzBreakpoint="md" [(nzCollapsed)]="isCollapsed"
-    [nzTrigger]="null">
+  <nz-sider
+    class="menu-sidebar"
+    nzCollapsible
+    nzWidth="256px"
+    nzBreakpoint="md"
+    [(nzCollapsed)]="isCollapsed"
+    [nzTrigger]="null"
+  >
     <div class="sidebar-logo">
-      <img src="../../../assets/img/logoSideBar.png" alt="logo">
+      <img src="../../../assets/img/logoSideBar.png" alt="logo" />
       <h1>Gestion de Stock</h1>
     </div>
-    <ul nz-menu nzTheme="dark" nzMode="inline" [nzInlineCollapsed]="isCollapsed">
+    <ul
+      nz-menu
+      nzTheme="dark"
+      nzMode="inline"
+      [nzInlineCollapsed]="isCollapsed"
+    >
       <li nz-submenu nzOpen nzTitle="Persona" nzIcon="user">
         <ul>
           <li nz-menu-item nzMatchRouter>
@@ -18,12 +29,10 @@
             <a routerLink="/home/suppliers">Proveedores</a>
           </li>
         </ul>
-
       </li>
       <li nz-submenu nzOpen nzTitle="Dashboard" nzIcon="dashboard">
         <ul>
-         
-         <li nz-menu-item nzMatchRouter>
+          <li nz-menu-item nzMatchRouter>
             <a routerLink="/home/categories">Categorias</a>
           </li>
           <li nz-menu-item nzMatchRouter>
@@ -33,7 +42,6 @@
       </li>
       <li nz-submenu nzOpen nzTitle="Productos" nzIcon="tag">
         <ul>
-         
           <li nz-menu-item nzMatchRouter>
             <a routerLink="/home/products/list">Productos</a>
           </li>
@@ -42,38 +50,45 @@
           </li>         
         </ul>
       </li>
+      <li nz-submenu nzOpen nzTitle="Pedidos" nzIcon="shopping-cart">
+        <ul>
+          <li nz-menu-item nzMatchRouter>
+            <a routerLink="/home/orders/list">Pedidos</a>
+          </li>
+        </ul>
+      </li>
       <li nz-submenu nzOpen nzTitle="Comprobantes" nzIcon="file-excel">
         <ul>
-         
           <li nz-menu-item nzMatchRouter>
             <a routerLink="/home/invoices">Comprobantes</a>
-          </li>    
-         
+          </li>
         </ul>
       </li>
       <li nz-submenu nzOpen nzTitle="Mi perfil" nzIcon="user">
         <ul>
           <li nz-menu-item (click)="logOut()" nzIcon="logout">
-             Salir del Sistema
+            Salir del Sistema
           </li>
         </ul>
       </li>
-
     </ul>
-    <ul class="version" nz-menu>
-    </ul>
+    <ul class="version" nz-menu></ul>
   </nz-sider>
   <nz-layout>
     <nz-header>
       <div class="app-header">
         <span class="header-trigger" (click)="isCollapsed = !isCollapsed">
-          <i class="trigger" nz-icon [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'"></i>
+          <i
+            class="trigger"
+            nz-icon
+            [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'"
+          ></i>
         </span>
       </div>
     </nz-header>
     <nz-content>
       <router-outlet></router-outlet>
     </nz-content>
-    <nz-footer> ©{{getYear()}}</nz-footer>
+    <nz-footer> ©{{ getYear() }}</nz-footer>
   </nz-layout>
 </nz-layout>

@@ -1,0 +1,164 @@
+<nz-layout>
+  <div class="sticky">
+    <nz-page-header class="list-header">
+      <nz-page-header-title>Listado de Pedidos</nz-page-header-title>
+      <nz-page-header-extra>
+        <a routerLink="/home/orders/new">
+          <button
+            nz-tooltip
+            nzTooltipTitle="Nuevo Pedido"
+            nz-button
+            nzType="primary"
+            nzShape="circle"
+          >
+            <i nz-icon nzType="plus" nzTheme="outline"></i></button
+        ></a>
+      </nz-page-header-extra>
+    </nz-page-header>
+  </div>
+
+  <nz-content>
+    <nz-collapse>
+      <nz-collapse-panel nzSize="small" nzHeader="Filtros" [nzActive]="true">
+        <form nz-form [formGroup]="formSearch">
+          <div nz-row nzJustify="space-between">
+            <div nz-col nzSpan="5">
+              <nz-form-item>
+                <nz-form-label>Estado</nz-form-label>
+                <nz-form-control>
+                  <nz-select nzShowSearch nzAllowClear nzPlaceHolder="Estado">
+                    <nz-option nzLabel="Todos" nzValue="1"></nz-option>
+                    <nz-option nzLabel="Aceptado" nzValue="2"></nz-option>
+                    <nz-option nzLabel="Pendiente" nzValue="3"></nz-option>
+                    <nz-option nzLabel="Rechazado" nzValue="4"></nz-option>
+                  </nz-select>
+
+                  <ng-template #clearQuery>
+                    <i
+                      nz-icon
+                      class="ant-input-clear-icon"
+                      nzTheme="fill"
+                      nzType="close-circle"
+                      *ngIf="formSearch.get('product')?.value"
+                      (click)="formSearch.get('product')?.setValue('')"
+                    ></i>
+                  </ng-template>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+
+            <div nz-col nzSpan="6" class="mb-2">
+              <nz-form-item>
+                <nz-form-label>Proveedor</nz-form-label>
+                <nz-form-control>
+                  <nz-select
+                    nzMode="tags"
+                    nzMode="multiple"
+                    nzPlaceHolder="Seleccione Proveedor"
+                    nzAllowClear
+                    nzShowSearch
+                    nzServerSearch
+                    (nzOnSearch)="onSearch($event)"
+                    formControlName="supplier"
+                    (ngModelChange)="supplierSelectedChange($event)"
+                  >
+                    <nz-option
+                      *ngFor="let p of allSuppliers; let id = index"
+                      [nzValue]="p.value"
+                      [nzLabel]="p.label"
+                    ></nz-option>
+
+                    <nz-option *ngIf="isLoading" nzDisabled nzCustomContent>
+                      <span
+                        nz-icon
+                        nzType="loading"
+                        class="loading-icon"
+                      ></span>
+                      Loading Data...
+                    </nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div nz-col nzSpan="5">
+              <nz-form-item>
+                <nz-form-label nzFor="category">Categoria </nz-form-label>
+                <nz-form-control [nzSm]="14" [nzXs]="24">
+                  <nz-spin [nzSpinning]="isLoadingCategory">
+                    <nz-select
+                      id="category"
+                      nzShowSearch
+                      nzAllowClear
+                      formControlName="category"
+                      (ngModelChange)="categorySelectedChange($event)"
+                      [nzOptions]="allCategories"
+                    >
+                    </nz-select>
+                    <ng-template #clearQuery>
+                      <i
+                        nz-icon
+                        class="ant-input-clear-icon"
+                        nzTheme="fill"
+                        nzType="close-circle"
+                        *ngIf="formSearch.get('category')?.value"
+                        (click)="formSearch.get('category')?.setValue(0)"
+                      ></i>
+                    </ng-template>
+                  </nz-spin>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+          <div nz-row nzJustify="end">
+            <div>
+              <button nz-button nzType="primary">
+                <i nz-icon nzType="search"></i>
+                Buscar
+              </button>
+            </div>
+          </div>
+        </form>
+      </nz-collapse-panel>
+    </nz-collapse>
+  </nz-content>
+</nz-layout>
+<br />
+
+<div class="row">
+  <div>
+    <nz-table [nzBordered]="true">
+      <thead>
+        <tr>
+          <th>N° Pedido</th>
+          <th>Fecha</th>
+          <th>Proveedor</th>
+          <th>Estado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="small-text">
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </div>
+
+  <div>
+    <nz-table [nzBordered]="true">
+      <thead>
+        <tr>
+          <th>Producto</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="small-text">
+          <td></td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </div>
+</div>
