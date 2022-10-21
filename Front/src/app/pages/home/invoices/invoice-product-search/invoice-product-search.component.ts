@@ -1,11 +1,9 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { NzDrawerRef, NzDrawerService } from 'ng-zorro-antd/drawer';
+import { FormBuilder } from '@angular/forms';
+import { NzDrawerRef } from 'ng-zorro-antd/drawer';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { ProductsModel } from '../../products/model/product.model';
 import { ProductService } from '../../products/product.service';
-import { InvoiceProductSearchQuantityComponent } from '../invoice-product-search-quantity/invoice-product-search-quantity.component';
-import { InvoiceDetailList, InvoiceDetails } from '../model/invoice.model';
 
 @Component({
   selector: 'app-invoice-product-search',
@@ -13,18 +11,18 @@ import { InvoiceDetailList, InvoiceDetails } from '../model/invoice.model';
   styleUrls: ['./invoice-product-search.component.css']
 })
 export class InvoiceProductSearchComponent implements OnInit {
+  @Input() set filter(value: string){
+    this.queryParams.filter = value;
+  };
+
   childrenVisible = false;
   /*
   ** Listado de los productos
   */
   productList: ProductsModel[] = [];
   product!: ProductsModel;
-  invoiceDetail!: InvoiceDetails;
-  timeout!: any;
-  quantity!: number;
   productId!: number;
 
-  formSearch!: FormGroup;
   /*
   ** Parametros de busqueda
   */
@@ -38,21 +36,13 @@ export class InvoiceProductSearchComponent implements OnInit {
 ** Catidad total de productos
 */
   totalItems = 0;
-
-
-  isLoading = false;
   loading = false;
 
 
   constructor(
     private drawerRef: NzDrawerRef<string>,
-    private drawerService: NzDrawerService,
     private service: ProductService,
-    private fb: FormBuilder) {
-    this.formSearch = this.fb.group({
-      supplier: ['',],
-    })
-  }
+    private fb: FormBuilder) { }
 
   ngOnInit(): void {
     this.getData(this.queryParams);
@@ -73,26 +63,12 @@ export class InvoiceProductSearchComponent implements OnInit {
     if ( dato.composedPath()[1].id != null ||  dato.composedPath()[1].id != undefined) {
       this.productId= dato.composedPath()[1].id; 
      this.product= this.productList.filter( t => t.id == this.productId)[0];
-     this.openComponentQuantity()
+     this.close();
+ 
     }
    }
 
-  openComponentQuantity(): void {
-    const drawerRefProductQuantity = this.drawerService.create<InvoiceProductSearchQuantityComponent, {}, number>({
-      nzTitle: 'Cantidad',
-      nzContent: InvoiceProductSearchQuantityComponent,
-      nzSize: 'default'
-    });
-
-    drawerRefProductQuantity.afterClose.subscribe(data => {
-      if (data != undefined) {
-        this.product.quantity= data;
-        // this.quantity = data;
-        this.close();
-      }
-    }
-    )
-  }
+ 
   /*
    ** Evento que se ejecuta ante algun cambio en la grillas (sorting,paging or filtering)
    */

@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
-import { CommonResponse } from 'src/app/common/models/commonResponse.model';
-import { environment } from 'src/environments/environment';
 import { EntityService } from '../../customers/customer.service';
 import { CustomerModel } from '../../customers/model/customer.model';
 
@@ -59,7 +57,6 @@ import { CustomerModel } from '../../customers/model/customer.model';
   ** Evento que se ejecuta ante algun cambio en la grillas (sorting,paging or filtering)
   */
   onQueryParamsChange(params: NzTableQueryParams): void {
-    this.queryParams.filter = localStorage.getItem('entidadtListFilter')!;
     this.queryParams.page = params.pageIndex -1;
     this.queryParams.pageSize = params.pageSize;
      this.getData(this.queryParams);

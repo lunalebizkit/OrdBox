@@ -67,13 +67,16 @@ export class InvoiceCustomerSearchComponent implements OnInit {
   }
 
   getAllCustomer(): void {
+    this.loading = true;
     this.serviceEntity.getCustomers(this.queryParams).subscribe({
       next: (r) => {
         this.allCustomer = r.data;
         this.totalItems= r.totalCount;
+        this.loading = false;
       },
       error: () => {
-        this.allCustomer = []
+        this.allCustomer = [];
+        this.loading = false;
       }
     })
   }

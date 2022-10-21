@@ -1,20 +1,21 @@
-import { Component, ElementRef, OnInit, QueryList, ViewChildren } from '@angular/core';
+import { Component, OnInit, Inject, LOCALE_ID } from '@angular/core';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
-import { EntityService } from '../customer.service';
-import { CustomerModel } from '../model/customer.model';
+import { InvoiceService } from '../invoices.service';
+import { eInvoiceType } from '../model/invoice-type.Enum';
+import { InvoiceModel, } from '../model/invoice.model';
+import { formatCurrency, formatDate } from '@angular/common';
 
 @Component({
-    selector: 'app-customers-list',
-    templateUrl: './customers-list.component.html',
-    styleUrls: ['./customers-list.component.css']
+    selector: 'app-invoices-list',
+    templateUrl: './invoices-list.component.html',
+    styleUrls: ['./invoices-list.component.css']
   })
-  export class CustomersListComponent implements OnInit {
-    @ViewChildren('td') cells!: QueryList<ElementRef>;
+  export class InvoicesListComponent implements OnInit {
 
-  
   /*
   ** Catidad total de entidades
   */
+ 
   totalItems!: number;
   /*
   ** Indicador de carga de la grilla
@@ -23,7 +24,7 @@ import { CustomerModel } from '../model/customer.model';
   /*
   ** Lista de Productos
   */
-  entityList: CustomerModel[] = [];
+  invoicesList: InvoiceModel []= [];
     /*
   ** Parametros de busqueda
   */
@@ -36,9 +37,8 @@ import { CustomerModel } from '../model/customer.model';
       /*
   ** Constructor
   */
-  constructor(private service: EntityService) {
-    
-}
+  constructor(private service: InvoiceService, 
+    @Inject(LOCALE_ID) public locale: string) {}
  /*
   ** Evento de inicio de angular
   */
@@ -66,18 +66,29 @@ import { CustomerModel } from '../model/customer.model';
  
   getData(params: any): void {
     this.loading = true;
-    this.service.getCustomers(params).subscribe({
+    this.service.getInvoices(params).subscribe({
       next: (r)=>{
-        this.entityList= r.data;
+        this.invoicesList= r.data;
         this.totalItems = r.totalCount;
         this.loading = false;
       },
       error: ()=>{
         this.loading = false;
-        this.entityList = [];
+        this.invoicesList = [];
       }
     })};
+    
+    getInvoiceType(id:number) {
+      return eInvoiceType[id];
+    };
 
-
+    formaterDate(date: string| number| Date):string {
+      return formatDate( date, 'YYYY-MM-dd', this.locale)
+    };
+    
+    currencyFormat(data: any):string  { 
+      if(!this.locale) return '';
+      return formatCurrency(data, this.locale!, '$', 'ARS', '1.1-2')
+    }
 
   }

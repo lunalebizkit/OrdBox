@@ -10,7 +10,6 @@ import { BrandsModel } from '../model/brands.model';
 })
 export class BrandsListComponent implements OnInit{
   brandList: BrandsModel[]= [];
-  brandListTest: BrandsModel[]= [];
   totalItems!: number;
   loading!: boolean;
   selectedIndex: number = 0; 
@@ -21,7 +20,6 @@ queryData= {
   page: 0,
   pageSize: 50, 
 }
-  nativeElement: any;
 
   constructor(private service: BrandsService, private router: Router) {
       }
@@ -29,7 +27,7 @@ queryData= {
    ngOnInit(): void {
     this.getBrand(this.queryData)
   }
- 
+
  getBrand(params: any): void {
   this.service.getByFilter(params).subscribe({
     next: (r)=>{

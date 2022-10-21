@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
-import { DtoPagination } from 'src/app/common/models/commonResponse.model';
 import { ProductsModel } from '../model/product.model';
 import { ProductService } from '../product.service';
 
@@ -84,7 +83,7 @@ export class ProductsListComponent implements OnInit {
  getData(params: any): void {
     this.loading = true;
     this.service.getProducts(params).subscribe({
-      next: (r: DtoPagination<ProductsModel>) => {
+      next: (r) => {
         this.productList = r.data;
         this.totalItems = r.totalCount;
         this.loading = false;

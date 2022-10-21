@@ -1,0 +1,9 @@
+.sticky {
+    position: relative;
+    padding: 10px;
+    display: inline-block;
+    width: 100%;
+    background-color: #fff;
+    z-index: 101;
+    box-shadow: -1px 1px 5px 1px #a3a1a3;
+}

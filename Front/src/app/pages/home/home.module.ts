@@ -11,7 +11,6 @@ import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { AgGridModule } from 'ag-grid-angular';
 import { UsuariosModule } from './users/users.module';
 import { InfiniteScrollModule } from "ngx-infinite-scroll";
-/* import {ScrollingModule} from '@angular/cdk/scrolling' */
 
 @NgModule({
   declarations: [

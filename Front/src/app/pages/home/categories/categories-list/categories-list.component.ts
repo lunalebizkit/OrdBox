@@ -52,20 +52,18 @@ export class CategoriesListComponent implements OnInit {
 queryData= {
   filter: '',
   page: 0,
-  pageSize: 10,
+  pageSize: 50,
 }
  /*
    ** Evento que se ejecuta ante algun cambio en la grillas (sorting,paging or filtering)
    */
    onQueryParamsChange(params: NzTableQueryParams): void {
-     this.queryData.filter = localStorage.getItem('categoryListFilter')!;
     this.queryData.page = params.pageIndex - 1;
     this.queryData.pageSize = params.pageSize;
     this.getData(this.queryData);
   }
 
   search(): void {
-    localStorage.setItem('categoryListFilter', this.queryData.filter);
     this.queryData.page = 0;
     this.getData(this.queryData);
   }

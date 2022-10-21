@@ -78,7 +78,9 @@ namespace Kiltex.SistemaGestion.Services.Services
                                 .Where(p => (p.Description.ToLower().Contains(request.Filter ?? "") ||
                                 p.Category.Description.ToLower().Contains(request.Filter ?? "") ||              
                                 p.Supplier.Name.ToLower().Contains(request.Filter ?? "") ||
-                                p.Brand.Description.ToLower().Contains(request.Filter ?? "")));
+                                p.Brand.Description.ToLower().Contains(request.Filter ?? "") ||
+                                p.Code.ToString().Contains(request.Filter ?? "")
+                                ));
 
             var count = await query.CountAsync().ConfigureAwait(false);
 
@@ -99,6 +101,8 @@ namespace Kiltex.SistemaGestion.Services.Services
                 TotalCount = count
             });
         }
+
+        //Servicio que utlizamos para filtrar en UPDATEPRICEPRODUCT
         public async Task<OperationResponse<DtoPagination<DtoProduct>>> ListProduct(RequestPaginatedData<ProductFilter> request)
         {
             var query = _contextSql
@@ -107,7 +111,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                                 .Include(p => p.Category)
                                 .Include(p => p.Brand)
                                 .Include(p => p.Supplier)
-                                .Where(p => (!String.IsNullOrEmpty(request.Filter.Product) ? p.Description.ToLower().Contains(request.Filter.Product) : true)
+                                .Where(p => (!string.IsNullOrEmpty(request.Filter.Product) ? p.Description.ToLower().Contains(request.Filter.Product) : true)
                                 &&
                                 ((request.Filter.Brand.HasValue && request.Filter.Brand != 0) ? p.BrandId == request.Filter.Brand : true)
                                 &&

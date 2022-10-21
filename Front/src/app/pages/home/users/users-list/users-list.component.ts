@@ -41,7 +41,6 @@ export class UsersListComponent implements OnInit {
    ** Evento que se ejecuta ante algun cambio en la grillas (sorting,paging or filtering)
    */
    onQueryParamsChange(params: NzTableQueryParams): void {
-    this.queryData.filter = localStorage.getItem('userListFilter')!;
     this.queryData.page = params.pageIndex - 1;
     this.queryData.pageSize = params.pageSize;
     this.getData(this.queryData);
@@ -79,7 +78,6 @@ export class UsersListComponent implements OnInit {
    */
 
    search(): void {
-    localStorage.setItem('userListFilter', this.queryData.filter);
     this.queryData.page = 0;
     this.getData(this.queryData);
   }
