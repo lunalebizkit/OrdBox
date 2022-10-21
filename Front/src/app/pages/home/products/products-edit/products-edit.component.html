@@ -1,10 +1,10 @@
-<app-header-op-buttons #header [btnCancelText]="'Cancelar'" [btnSaveText]="'Guardar'" [title]="'Producto'"
-    [showSpinner]="isSaving" [iconBack]="'rollback'" [iconSave]="'save'" [iconTitle]="'tags'" (onSaveClick)="save()">
+<app-header-op-buttons #header [btnSaveText]="'Guardar'" [title]="'Producto'" [showSpinner]="isSaving"
+    [iconBack]="'rollback'" [iconSave]="'save'" [iconTitle]="'tags'" (onSaveClick)="save()">
 </app-header-op-buttons>
 
 <nz-spin [nzSpinning]="isLoading">
     <form nz-form [formGroup]="form" style="margin-top: 16px">
-    <nz-collapse>       
+        <nz-collapse>
             <nz-collapse-panel nzHeader="General" [nzActive]="true">
                 <nz-content>
                     <!--Nombre-->
@@ -19,15 +19,15 @@
                     <nz-form-item>
                         <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="code">Codigo </nz-form-label>
                         <nz-form-control [nzSm]="14" [nzXs]="24">
-                            <input formControlName="code" nz-input id="code" maxlength="250" />
+                            <nz-input-number formControlName="code" nz-input id="code" [nzMin]="0"></nz-input-number>
                         </nz-form-control>
                     </nz-form-item>
 
                     <nz-form-item>
-                        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="category">Categoria </nz-form-label>
+                        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="categoryName">Categoria </nz-form-label>
                         <nz-form-control [nzSm]="14" [nzXs]="24">
                             <nz-spin [nzSpinning]="isLoadingCategory">
-                                <nz-select formControlName="category" id="category"
+                                <nz-select formControlName="categoryName" id="categoryName"
                                     (nzModelChange)="categorySelectedChange($event)" [nzOptions]="allCategories">
                                 </nz-select>
                             </nz-spin>
@@ -35,21 +35,21 @@
                     </nz-form-item>
 
                     <nz-form-item>
-                        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="brand">Marca </nz-form-label>
+                        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="brandName">Marca </nz-form-label>
                         <nz-form-control [nzSm]="14" [nzXs]="24">
                             <nz-spin [nzSpinning]="isLoadingBrand">
-                                <nz-select formControlName="brand" id="brand"                                     
-                                (nzModelChange)="brandSelectedChange($event)" [nzOptions]="allBrands" >
+                                <nz-select formControlName="brandName" id="brandName"
+                                    (nzModelChange)="brandSelectedChange($event)" [nzOptions]="allBrands">
                                 </nz-select>
                             </nz-spin>
                         </nz-form-control>
                     </nz-form-item>
 
                     <nz-form-item>
-                        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="supplier">Proveedor </nz-form-label>
+                        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="supplierName">Proveedor </nz-form-label>
                         <nz-form-control [nzSm]="14" [nzXs]="24">
                             <nz-spin [nzSpinning]="isLoadingEntity">
-                                <nz-select formControlName="supplier" id="supplier"
+                                <nz-select formControlName="supplierName" id="supplierName"
                                     (nzModelChange)="entitySelectedChange($event)" [nzOptions]="allSuppliers">
                                 </nz-select>
                             </nz-spin>
@@ -64,79 +64,74 @@
                     </nz-form-item>
                 </nz-content>
             </nz-collapse-panel>
-    </nz-collapse>
-    <nz-collapse>
-        <nz-collapse-panel [nzHeader]="'Imagenes'" [nzActive]="true">
-            <nz-content></nz-content>
-        </nz-collapse-panel>
-    </nz-collapse>
-      <nz-collapse>
+        </nz-collapse>
+        <nz-collapse>
             <nz-collapse-panel [nzHeader]="'Precio'" [nzActive]="true">
-                            <nz-content>
-                                <nz-form-item>
-                                    <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="pointOrder">Punto Pedido
-                                    </nz-form-label>
-                                    <nz-input-number formControlName="pointOrder" id="pointOrder"></nz-input-number>
+                <nz-content>
+                    <nz-form-item>
+                        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="pointOrder">Punto Pedido
+                        </nz-form-label>
+                        <nz-input-number formControlName="pointOrder" id="pointOrder" [nzMin]="0"></nz-input-number>
 
-                                </nz-form-item>
-                                <nz-form-item>
-                                    <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="quantity">Cantidad
-                                    </nz-form-label>
-                                    <nz-input-number formControlName="quantity" id="quantity"></nz-input-number>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="quantity">Cantidad
+                        </nz-form-label>
+                        <nz-input-number formControlName="quantity" id="quantity" [nzMin]="0"></nz-input-number>
 
-                                    <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="purchasePrice">Precio Costo
-                                    </nz-form-label>
-                                    <nz-input-number formControlName="purchasePrice" [nzFormatter]="formatterPeso"
-                                        id="purchasePrice" [nzMin]="0" [nzMax]="10000000"
-                                        (ngModelChange)="onPrecioCosto($event)"></nz-input-number>
-                                </nz-form-item>
+                        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="purchasePrice">Precio Costo
+                        </nz-form-label>
+                        <nz-input-number formControlName="purchasePrice" [nzFormatter]="formatterPeso"
+                            id="purchasePrice" [nzMin]="0" [nzMax]="10000000" (ngModelChange)="onPrecioCosto($event)">
+                        </nz-input-number>
+                    </nz-form-item>
 
-                                <nz-form-item>
-                                    <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="salePrice">Precio Lista
-                                    </nz-form-label>
-                                    <nz-input-number id="salePrice" formControlName="salePrice" [nzMin]="0"
-                                        [nzFormatter]="formatterPeso"></nz-input-number>
+                    <nz-form-item>
+                        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="salePrice">Precio Lista
+                        </nz-form-label>
+                        <nz-input-number id="salePrice" formControlName="salePrice" [nzMin]="0"
+                            [nzFormatter]="formatterPeso"></nz-input-number>
 
-                                    <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="salePercentage">Porcentaje
-                                    </nz-form-label>
-                                    <nz-input-number formControlName="salePercentage" id="salePercentage"
-                                        (ngModelChange)="valuechange($event)" [nzFormatter]="formatterPorcentaje">
-                                    </nz-input-number>
-                                </nz-form-item>
-                                <nz-form-item>
-                                    <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="cashSalePrice">Precio
-                                        Contado
-                                    </nz-form-label>
-                                    <nz-input-number formControlName="cashSalePrice" id="cashSalePrice"
-                                        [nzFormatter]="formatterPeso" [nzMin]="0" [nzMax]="10000000"></nz-input-number>
+                        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="salePercentage">Porcentaje
+                        </nz-form-label>
+                        <nz-input-number formControlName="salePercentage" id="salePercentage" [nzMin]="0"
+                            (ngModelChange)="valuechange($event)" [nzFormatter]="formatterPorcentaje">
+                        </nz-input-number>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="cashSalePrice">Precio
+                            Contado
+                        </nz-form-label>
+                        <nz-input-number formControlName="cashSalePrice" id="cashSalePrice"
+                            [nzFormatter]="formatterPeso" [nzMin]="0" [nzMax]="10000000"></nz-input-number>
 
-                                    <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="cashSalePercentage">
-                                        Porcentaje
-                                        Contado
-                                    </nz-form-label>
-                                    <nz-input-number formControlName="cashSalePercentage" id="cashSalePercentage"
-                                        [nzMin]="0" [nzMax]="10000000" [nzStep]="1" [nzFormatter]="formatterPorcentaje"
-                                        (ngModelChange)="valuechange($event)"></nz-input-number>
-                                </nz-form-item>
-                                <nz-form-item>
-                                    <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="cardSalePrice">Precio
-                                        Tarjeta
-                                    </nz-form-label>
-                                    <nz-input-number formControlName="cardSalePrice" id="cardSalePrice"
-                                        [nzFormatter]="formatterPeso" [nzMin]="0" [nzMax]="10000000" [nzStep]="1">
-                                    </nz-input-number>
+                        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="cashSalePercentage">
+                            Porcentaje
+                            Contado
+                        </nz-form-label>
+                        <nz-input-number formControlName="cashSalePercentage" id="cashSalePercentage" [nzMin]="0"
+                            [nzMax]="10000000" [nzStep]="1" [nzFormatter]="formatterPorcentaje"
+                            (ngModelChange)="valuechange($event)"></nz-input-number>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="cardSalePrice">Precio
+                            Tarjeta
+                        </nz-form-label>
+                        <nz-input-number formControlName="cardSalePrice" id="cardSalePrice"
+                            [nzFormatter]="formatterPeso" [nzMin]="0" [nzMax]="10000000" [nzStep]="1">
+                        </nz-input-number>
 
-                                    <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="cardSalePercentage">
-                                        Porcentaje
-                                        Tarjeta
-                                    </nz-form-label>
-                                    <nz-input-number formControlName="cardSalePercentage" id="cardSalePercentage"
-                                        [nzMin]="0" [nzMax]="10000000" [nzFormatter]="formatterPorcentaje"
-                                        (ngModelChange)="valuechange($event)"></nz-input-number>
-                                </nz-form-item>
-                            </nz-content>
+                        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="cardSalePercentage">
+                            Porcentaje
+                            Tarjeta
+                        </nz-form-label>
+                        <nz-input-number formControlName="cardSalePercentage" id="cardSalePercentage" [nzMin]="0"
+                            [nzMax]="10000000" [nzFormatter]="formatterPorcentaje"
+                            (ngModelChange)="valuechange($event)"></nz-input-number>
+                    </nz-form-item>
+                </nz-content>
             </nz-collapse-panel>
-        </nz-collapse>       
-    
-</form>
+        </nz-collapse>
+
+    </form>
 </nz-spin>

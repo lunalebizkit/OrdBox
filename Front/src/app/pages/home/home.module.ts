@@ -8,8 +8,9 @@ import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { IconsProviderModule } from 'src/app/icons-provider.module';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
-
+import { AgGridModule } from 'ag-grid-angular';
 import { UsuariosModule } from './users/users.module';
+import { InfiniteScrollModule } from "ngx-infinite-scroll";
 
 @NgModule({
   declarations: [
@@ -25,7 +26,9 @@ import { UsuariosModule } from './users/users.module';
     NzMenuModule,
     IconsProviderModule,    
     NzDividerModule,
-    UsuariosModule
+    UsuariosModule,
+    AgGridModule,
+    InfiniteScrollModule,
   ],
   exports: [HomeComponent]
 })

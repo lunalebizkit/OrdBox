@@ -1,95 +1,73 @@
-<nz-layout>
-  <nz-page-header class="list-header">
-    <nz-page-header-title>Listado de Productos</nz-page-header-title>
-    <nz-page-header-extra>
-      <a routerLink="/home/products/new"> <button nz-tooltip nzTooltipTitle="Nuevo" nz-button nzType="primary"
-          nzShape="circle"><i nz-icon nzType="plus" nzTheme="outline"></i></button></a>
-    </nz-page-header-extra>
-  </nz-page-header>
-
-  <nz-content>  
-       <nz-collapse>
-        <nz-collapse-panel nzSize="small" nzHeader="Filtros">
-          <form nz-form (ngSubmit)="search()">
-            <div nz-row [nzGutter]="[8,1]">
-
-              <div nz-col nzSpan="24">
-                <nz-form-item>
-                  <nz-form-label>Búsqueda</nz-form-label>
-                  <nz-form-control>                  
-                    <nz-input-group [nzSuffix]="clearQuery">
-                      <input [ngModelOptions]="{standalone: true}" type="text" placeholder="Ingrese Marca, Categoria o Producto" nz-input
-                        (keydown.enter)="search()" [(ngModel)]="queryParams.filter" />
-                    </nz-input-group>
-                    
-                    <ng-template #clearQuery>
-                      <i nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle"
-                        *ngIf="queryParams.filter" (click)="queryParams.filter = ''; search()"></i>
-                    </ng-template>
-                  </nz-form-control>
-                </nz-form-item>
-              </div>
-
+ <nz-layout> 
+    <nz-page-header class="list-header">
+      <nz-page-header-title>Listado de Productos</nz-page-header-title>
+      <nz-page-header-extra>
+        <a routerLink="/home/products/new"> <button nz-tooltip nzTooltipTitle="Nuevo" nz-button nzType="primary"
+            nzShape="circle"><i nz-icon nzType="plus" nzTheme="outline"></i></button></a>
+      </nz-page-header-extra>
+    </nz-page-header> 
+    <nz-collapse>
+      <nz-collapse-panel nzSize="small" nzHeader="Filtros">
+        <form nz-form (ngSubmit)="search()">
+          <div nz-row [nzGutter]="[8,1]">
+            <div nz-col nzSpan="24">
+              <nz-form-item>
+                <nz-form-label>Búsqueda</nz-form-label>
+                <nz-form-control>                  
+                  <nz-input-group [nzSuffix]="clearQuery">
+                    <input [ngModelOptions]="{standalone: true}" type="text" placeholder="Ingrese descripcion o Categoria" nz-input
+                      (keydown)="search()" [(ngModel)]="queryParams.filter" />
+                  </nz-input-group>
+                  <ng-template #clearQuery>
+                    <i nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle"
+                      *ngIf="queryParams.filter" (click)="queryParams.filter = ''; search()"></i>
+                  </ng-template>
+                </nz-form-control>
+              </nz-form-item>
             </div>
-
-          </form>
-        </nz-collapse-panel>
-      </nz-collapse> 
-
-      <!-- Tabla -->
-   
-    <div>
-      <nz-table nzShowSizeChanger [nzData]="productList" nzBordered=true [nzSize]="'middle'" [nzLoading]="loading"
-        [nzTotal]="totalItems" [nzPageSize]="queryParams.pageSize" [nzPageIndex]="1" [nzFrontPagination]="false"
-        [nzPaginationType]="'small'" (nzQueryParams)="onQueryParamsChange($event)">
-        <thead>
-          <tr> 
-            <th [nzWidth]="'100px'" nzLeft></th>          
-            <th [nzWidth]="'90px'" nzLeft>Producto</th>           
-            <th  nzLeft>Categoria</th>
-            <th nzLeft>Marca</th>
-            <th nzLeft>Proveedor</th>
-            <th>Codigo</th>
-            <th>Cantidad</th>
-            <th >Precio Costo</th>
-            <th >Precio Lista</th>
-        
-            <th >Precio Tarjeta</th>
-        
-            <th >Precio Contado</th>
-            
-            <th>Punto Pedido</th>
-            <th >Obervacion</th>            
-            <th nzRight>Accion</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let data of productList" class="small-text">
-           <td nzLeft> <img width="100px" height="100px" 
-            src="../../../../../assets/img/no-image.png" alt="" /></td>
-            <td nzLeft>{{data.description}}</td>            
-            <td nzLeft>{{data.categoryName}}</td>
-            <td nzLeft>{{data.brandName}}</td> 
-            <td nzLeft>{{data.supplierName}}</td>
-            <td >{{data.code}}</td>
-            <td>{{data.quantity}}</td>
-            <td>$ {{data.purchasePrice}}</td>
-            <td>$ {{data.salePrice}}</td>
-          
-            <td>$ {{data.cardSalePrice}}</td>
-           
-            <td>$ {{data.cashSalePrice}}</td>
-         
-            <td>{{data.pointOrder}}</td>
-            <td>{{data.observation}}</td>                         
-            <td style="text-align: center;" nzRight>
-                <a routerLink="/home/products/edit/{{data.id}}">
-                  <i nz-icon nzType="edit" nzTheme="outline"></i>
-                </a>
-              </td>        
-          </tr>
-        </tbody>
-      </nz-table>
-    </div>
-  </nz-content>
+          </div>
+        </form>
+      </nz-collapse-panel>
+    </nz-collapse>   
+<div class="table" (scroll)="onScroll($event)"> 
+  <nz-table  #dinamicTable [nzData]="productList" nzBordered=false [nzLoading]="loading" [nzTotal]="totalItems" [nzPageIndex]="1" [nzPageSize]="queryParams.PageSize"
+  [nzPaginationType]="'small'" (nzQueryParams)="onQueryParamsChange($event)" [nzSize]="'small'"  [nzScroll]="{ x: '1300px' }" nzShowPagination="false">
+  <thead>
+    <tr>
+      <th style="width: 400px;">Producto</th>  
+      <th style="width: 150px;">Categoria</th>
+      <th style="width: 80px;">Marca</th>
+      <th style="width: 80px;">Proveedor</th> 
+      <th style="width: 100px;">Precio Compra</th>
+      <th style="width: 95px;">Precio Costo</th>
+      <th style="width: 95px;">Precio Tarjeta</th>
+      <th style="width: 100px;">Precio Contado</th>
+      <th style="width: 70px;">Cantidad</th>
+      <th style="width: 75px;">Código</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let product of productList, let i=index" class="small-text" tabindex="-1" (click)="onClick(product, i)" (keydown)="myNavegation($event)"
+    [style.background-color]="product === selectedProduct ? 'lightblue' : ''"  (keydown.enter)="onKeyPress(product)" (dblclick)="onDoubleClicked(product)">
+      <td>{{product.description}}</td>
+      <td>{{product.categoryName}}</td>
+      <td>{{product.brandName}}</td>
+      <td>{{product.supplierName}}</td> 
+      <td style="color: red;text-align: right;">${{product.purchasePrice}}</td>
+      <td style="color:green;text-align: right;">${{product.salePrice}}</td>
+      <td style="color:blue; text-align: right;">${{product.cardSalePrice}}</td>
+      <td style="text-align: right;">${{product.cashSalePrice}}</td>
+      <td style="text-align: right;">{{product.quantity}}</td>
+      <td style="text-align: right;">{{product.code}}</td>
+    </tr>
+  </tbody>
+</nz-table>  
+</div> 
 </nz-layout>
+ 
+
+
+
+
+
+

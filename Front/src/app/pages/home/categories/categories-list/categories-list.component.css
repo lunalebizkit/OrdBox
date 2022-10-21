@@ -3,7 +3,19 @@
   height: 64px;
   padding: 10px;
   background: #fff;
-
   box-shadow: -1px 1px 5px 1px #a3a1a3;
   margin-bottom: 10px;
   }
+  .table-list{
+    overflow: auto;
+  }
+  th{
+    font-size: 12px; 
+  }
+  td{
+    font-size: 12px;
+  }
+  .table{
+    border-collapse: collapse;
+  }
+ 

@@ -15,7 +15,6 @@
         <nz-collapse-panel nzSize="small" nzHeader="Filtros">
           <form nz-form (ngSubmit)="search()">
             <div nz-row [nzGutter]="[8,1]">
-
               <div nz-col nzSpan="24">
                 <nz-form-item>
                   <nz-form-label>Búsqueda</nz-form-label>
@@ -32,25 +31,21 @@
                   </nz-form-control>
                 </nz-form-item>
               </div>
-
             </div>
-
           </form>
         </nz-collapse-panel>
       </nz-collapse> 
     
     <!-- Tabla -->
     <div>
-      <nz-table #filterTable [nzData]="categoryList" nzBordered=true [nzLoading]="loading" [nzTotal]="totalItems" [nzPageIndex]="1" [nzPageSize]="queryData.pageSize"
+      <nz-table class="table-list" #filterTable [nzData]="categoryList" nzBordered=true [nzLoading]="loading" [nzTotal]="totalItems" 
+      [nzPageIndex]="queryData.page + 1" [nzPageSize]="queryData.pageSize"
         [nzPaginationType]="'small'" [nzFrontPagination]="false" (nzQueryParams)="onQueryParamsChange($event)" >
-        <!--  nzShowSizeChanger 
-            
-          > -->
         <thead>
           <tr>
             <th>#</th>
-            <th>Descripcion</th>
-            <th nzWidth="100px">Acciones</th>
+            <th style="text-align: center;">Descripcion</th>
+            <th style="text-align: center;">Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -63,11 +58,11 @@
                   <nz-divider nzType="vertical"></nz-divider>
                 </ng-template>
                 <a *nzSpaceItem routerLink="/home/categories/edit/{{category.id}}">
-                  <i nz-tooltip nzTooltipTitle="Editar" nz-icon nzType="edit"></i>
+                  <i nz-tooltip nzTooltipTitle="Editar" nz-icon nzType="edit" style="font-size: 12px;"></i>
                 </a>
                 <a *nzSpaceItem (click)="popup.showDeleteConfirmation(category.id)">
                   <i nz-tooltip nzTooltipTitle="Eliminar" nz-icon nzType="delete" [nzTheme]="'twotone'"
-                    [nzTwotoneColor]="'#FF0000'"></i>
+                    [nzTwotoneColor]="'#FF0000'" style="font-size: 12px;"></i>
                 </a>
               </nz-space>
             </td>

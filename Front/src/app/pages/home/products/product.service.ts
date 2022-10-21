@@ -3,7 +3,6 @@ import { ApiService } from './../../../common/services/api.base.service';
 import { Observable } from 'rxjs';
 import { ProductsModel } from './model/product.model';
 import { ProductAddModel } from './model/product.add.model';
-// import { ProductModel } from './model/edit.product.model';
 
 @Injectable({
   providedIn: 'root'
@@ -25,21 +24,21 @@ export class ProductService {
   }
 
   /**
-   * Obtiene los productos por categoría
+   *Actualiza los precios de los productos 
    * @param queryParams
    * @returns
    */
-  public getProductsByCategory(queryParams: any) : Observable<any> {
-    return this.api.post(`products/byCategory`, queryParams, false);
+  public UpdatePriceProduct(queryParams: any) : Observable<any> {
+    return this.api.put(`updatepriceproduct/updatepriceproduct`, queryParams, false);
   }
 
   /**
-   * Obtiene los productos por categoría
+   * Obtiene los productos por consulta de actualizacion
    * @param queryParams
    * @returns
    */
-   public getProductsByCampaign(queryParams: any) : Observable<any> {
-    return this.api.post(`products/byCampaign`, queryParams, false);
+   public getProductsByUpdatePrice(queryParams: any) : Observable<any> {
+    return this.api.post(`updatepriceproduct/list`, queryParams, false);
   }
 
   /**
@@ -68,23 +67,6 @@ export class ProductService {
     }
   }
 
-  /**
-   * Obtiene todas lineas de productos
-   * 
-   * @returns
-   */
-   public getCategories(): Observable<any> {
-    return this.api.post(`category/list`, null, false);
-  }
-
-  /**
-   * Obtiene todas las Categorias de productos
-   * @param id
-   * @returns
-   */
-   public getCategory(id: number): Observable<any> {
-    return this.api.get(`category?id=${id}`, false);
-  }
 
 
 }

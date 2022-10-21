@@ -7,3 +7,13 @@
   box-shadow: -1px 1px 5px 1px #a3a1a3;
   margin-bottom: 10px;
 }
+.table-list{
+  overflow: auto;
+}
+td{
+  font-size: 12px;
+}
+th{
+  font-size: 12px;
+}
+

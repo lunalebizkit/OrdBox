@@ -1,0 +1,31 @@
+.list-header {
+  background: #fff;
+  box-shadow: -1px 1px 5px 1px #a3a1a3;
+}
+#actualizarbutton {
+  transition-duration: 0.4s !important;
+  border: #4CAF50;
+}
+
+#actualizarbutton:hover {
+  background-color: #4CAF50 /* Green */ !important;
+  color: white;
+  border-color: white;
+  overflow: auto;
+}
+#actualizarbutton:focus {
+  background-color: #4CAF50 /* Green */ !important;
+  color: white;
+  border-color: white;
+}
+  .table-list{
+    overflow: auto;
+    table-layout: fixed;
+  }
+  th{
+    font-size: 10px;
+  }
+  td{
+    font-size: 10px;
+    
+  }

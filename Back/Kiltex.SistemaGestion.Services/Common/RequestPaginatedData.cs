@@ -15,4 +15,18 @@ namespace Kiltex.SistemaGestion.Services.Common
         public string Query { get; set; }
         public long[] Rol { get; set; }
     }
+    public class ProductFilter
+    {
+        public string? Product { get; set; }
+        public long? Brand { get; set; }
+        public long? Category { get; set; }
+        public List<long> Supplier { get; set; }
+    }
+    public class SupplierOrderFilter
+    {
+        public string? Supplier { get; set; }
+        public string? Category { get; set; }
+        public int? StatusId { get; set; }
+    }
+  
 }

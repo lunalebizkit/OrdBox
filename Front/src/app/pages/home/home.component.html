@@ -9,11 +9,11 @@
       <li nz-submenu nzOpen nzTitle="Persona" nzIcon="user">
         <ul>
           <li nz-menu-item nzMatchRouter>
-            <a routerLink="/home/customers">Clientes</a>
+            <a routerLink="/home/users">Usuarios</a>
           </li>
           <li nz-menu-item nzMatchRouter>
-            <a routerLink="/home/entity">Vendedores</a>
-          </li>
+            <a routerLink="/home/customers">Clientes</a>
+          </li>         
           <li nz-menu-item nzMatchRouter>
             <a routerLink="/home/suppliers">Proveedores</a>
           </li>
@@ -22,13 +22,8 @@
       </li>
       <li nz-submenu nzOpen nzTitle="Dashboard" nzIcon="dashboard">
         <ul>
-          <li nz-menu-item nzMatchRouter>
-            <a routerLink="/home/users">Usuarios</a>
-          </li>
-          <li nz-menu-item nzMatchRouter>
-            <a routerLink="/home/products">Productos</a>
-          </li>
-          <li nz-menu-item nzMatchRouter>
+         
+         <li nz-menu-item nzMatchRouter>
             <a routerLink="/home/categories">Categorias</a>
           </li>
           <li nz-menu-item nzMatchRouter>
@@ -36,7 +31,26 @@
           </li>
         </ul>
       </li>
-     
+      <li nz-submenu nzOpen nzTitle="Productos" nzIcon="tag">
+        <ul>
+         
+          <li nz-menu-item nzMatchRouter>
+            <a routerLink="/home/products/list">Productos</a>
+          </li>
+          <li nz-menu-item nzMatchRouter>
+            <a routerLink="/home/products/updateprice">Actualizar Precio</a>
+          </li>         
+        </ul>
+      </li>
+      <li nz-submenu nzOpen nzTitle="Comprobantes" nzIcon="file-excel">
+        <ul>
+         
+          <li nz-menu-item nzMatchRouter>
+            <a routerLink="/home/invoices">Comprobantes</a>
+          </li>    
+         
+        </ul>
+      </li>
       <li nz-submenu nzOpen nzTitle="Mi perfil" nzIcon="user">
         <ul>
           <li nz-menu-item (click)="logOut()" nzIcon="logout">
@@ -47,9 +61,6 @@
 
     </ul>
     <ul class="version" nz-menu>
-      <li>
-        ©{{getYear()}}
-      </li>
     </ul>
   </nz-sider>
   <nz-layout>
@@ -59,10 +70,10 @@
           <i class="trigger" nz-icon [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'"></i>
         </span>
       </div>
-
     </nz-header>
     <nz-content>
       <router-outlet></router-outlet>
     </nz-content>
+    <nz-footer> ©{{getYear()}}</nz-footer>
   </nz-layout>
 </nz-layout>

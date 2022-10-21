@@ -3,8 +3,8 @@ export interface ProductAddModel {
     id: number,
     description: string,
     code: number,
-    category: number,
-    brand: number,
+    categoryid: number,
+    brandid: number,
     quantity: number,
     purchasePrice: number,
     salePrice: number,
@@ -15,7 +15,7 @@ export interface ProductAddModel {
     cashSalePercentage: number,
     pointOrder: number,
     observation: string,
-    supplier: number,
+    supplierid: number,
 }
 export interface Image {
     uid: string;

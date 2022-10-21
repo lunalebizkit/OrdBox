@@ -34,7 +34,9 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Product
         
         public async Task<IActionResult> Edit([FromBody] DtoAddProduct model)
         {
-            return Return(await _service.Update(model).ConfigureAwait(!false));
+            return Return(await _service.Update(model).ConfigureAwait(false));
         }
+
+     
     }
 }

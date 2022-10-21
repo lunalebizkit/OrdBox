@@ -1,4 +1,3 @@
-import { environment } from 'src/environments/environment';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -60,12 +59,14 @@ import { PopupConfirmationComponent } from './components/popup-confirmation/popu
     NzTypographyModule,
     NzTagModule,
      PopupConfirmationComponent,
+     
  
   ],
   declarations: [
      HeaderOperationsButtonsComponent, 
      BaseComponent, 
-     PopupConfirmationComponent,
+     PopupConfirmationComponent
+     
 
   ],
   entryComponents: [

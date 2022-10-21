@@ -19,13 +19,16 @@ namespace Kiltex.SistemaGestion.Services.Models.Dtos
 
         public decimal PurchasePrice { get; set; }
 
+        public decimal SalePercentage { get; set; }
+
         public decimal SalePrice { get; set; }
 
-        public decimal CardSalePrice { get; set; }
+        public decimal CardSalePercentage { get; set; }
 
-        public int SalePercentage { get; set; }
-        public int CardSalePercentage { get; set; }
-        public int CashSalePercentage { get; set; }
+        public decimal CardSalePrice { get; set; }
+        
+        public decimal CashSalePercentage { get; set; }
+        
         public decimal CashSalePrice { get; set; }
 
         public int PointOrder { get; set; }

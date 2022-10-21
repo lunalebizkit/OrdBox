@@ -13,7 +13,6 @@
       <nz-collapse-panel nzSize="small" nzHeader="Filtros">
         <form nz-form (ngSubmit)="search()">
           <div nz-row [nzGutter]="[8,1]">
-
             <div nz-col nzSpan="24">
               <nz-form-item>
                 <nz-form-label>Búsqueda</nz-form-label>
@@ -30,25 +29,23 @@
                 </nz-form-control>
               </nz-form-item>
             </div>
-
           </div>
-
         </form>
       </nz-collapse-panel>
     </nz-collapse> 
     <!-- Tabla -->
     <div>
-      <nz-table #filterTable nzShowSizeChanger [nzData]="userList" nzBordered=true [nzLoading]="loading"
-        [nzTotal]="totalItems" [nzPageSize]="queryData.pageSize" [nzPageIndex]="1" [nzFrontPagination]="false"
-        [nzPaginationType]="'small'" (nzQueryParams)="onQueryParamsChange($event)">
+      <nz-table class="table-list"  [nzData]="userList" nzBordered=false [nzSize]="'small'" [nzLoading]="loading"
+        [nzTotal]="totalItems" [nzPageSize]="queryData.pageSize" [nzPageIndex]="queryData.page + 1" [nzFrontPagination]="false"
+        [nzPaginationType]="'small'" (nzQueryParams)="onQueryParamsChange($event)" >
         <thead>
           <tr>
-            <th>Nombre</th>
-            <th>Apellido</th>
+            <th nzLeft>Nombre</th>
+            <th nzLeft>Apellido</th>
             <th>Usuario</th>
             <th>Email</th>
             <th>Rol</th>
-            <th nzWidth="100px">Acciones</th>
+            <th nzRight>Acciones</th>
           </tr>
         </thead>
         <tbody>

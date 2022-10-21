@@ -51,7 +51,9 @@ builder.Services.AddScoped<CategoryService>();
 builder.Services.AddScoped<BrandService>();
 builder.Services.AddScoped<ProductService>();
 builder.Services.AddSingleton<ErrorManager>();
+builder.Services.AddScoped<InvoiceService>();
 builder.Services.AddScoped<EntityService>();
+builder.Services.AddScoped<SupplierOrderService>();
 builder.Services.AddDbContext<DBContext>(x => x.UseSqlServer(connectionString));
 builder.Services.AddCors(options =>
    {
