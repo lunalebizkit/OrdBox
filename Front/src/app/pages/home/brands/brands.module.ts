@@ -16,6 +16,8 @@ import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { AppCommonModule } from 'src/app/common/app.common.module';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { InfiniteScrollModule } from "ngx-infinite-scroll";
+
 @NgModule({
   imports: [CommonModule,
     BrandsRoutingModule,
@@ -31,7 +33,8 @@ import { NzDividerModule } from 'ng-zorro-antd/divider';
     NzSpinModule,
     AppCommonModule,
     NzSpaceModule,
-    NzDividerModule
+    NzDividerModule,
+    InfiniteScrollModule
   ],
   declarations: [
     BrandsListComponent,
