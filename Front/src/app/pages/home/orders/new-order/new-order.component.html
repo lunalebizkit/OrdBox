@@ -37,7 +37,6 @@
             <nz-form-control [nzSm]="6" [nzXs]="24">
               <nz-date-picker
                 [(ngModel)]="date"
-                (ngModelChange)="onChange($event)"
                 [nzPlaceHolder]="fecha"
                 formControlName="date"
               ></nz-date-picker
@@ -179,7 +178,7 @@
       [nzShowArrow]="false"
     >
       <nz-content>
-        <nz-table [nzBordered]="true">
+        <nz-table [nzBordered]="true" [nzData]="invoiceDetailsList">
           <thead>
             <tr>
               <th>Codigo</th>
@@ -191,30 +190,58 @@
             </tr>
           </thead>
           <tbody>
-            <tr class="small-text">
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
+            <tr *ngFor="let data of invoiceDetailsList" class="small-text">
+              <td>{{ data.code }}</td>
+              <td>{{ data.productName }}</td>
+              <td>
+                <div
+                  class="editable-cell"
+                  [hidden]="editId === data.ownCode"
+                  (click)="startEdit(data.ownCode)"
+                >
+                  {{ data.quantity }}
+                </div>
+                <nz-input-number
+                  [hidden]="editId !== data.ownCode"
+                  [nzMin]="1"
+                  [nzMax]="10000"
+                  [(ngModel)]="data.quantity"
+                  (nzBlur)="stopEdit()"
+                  (ngModelChange)="changeQuantity($event)"
+                ></nz-input-number>
+              </td>
+              <td [nzAlign]="'right'">{{ this.currencyFormat(data.price) }}</td>
+              <td [nzAlign]="'right'">
+                {{ this.currencyFormat(data.subTotal) }}
+              </td>
               <td style="text-align: center">
-                <a *nzSpaceItem>
-                  <i
-                    nz-tooltip
-                    nzTooltipTitle="Eliminar"
-                    nz-icon
-                    nzType="delete"
-                    [nzTheme]="'twotone'"
-                    [nzTwotoneColor]="'#FF0000'"
-                  ></i>
-                </a>
+                <nz-space [nzSplit]="spaceSplit">
+                  <ng-template #spaceSplit>
+                    <nz-divider nzType="vertical"></nz-divider>
+                  </ng-template>
+                  <a
+                    *nzSpaceItem
+                    (click)="popup.showDeleteConfirmation(data.ownCode)"
+                  >
+                    <i
+                      nz-tooltip
+                      nzTooltipTitle="Eliminar"
+                      nz-icon
+                      nzType="delete"
+                      [nzTheme]="'twotone'"
+                      [nzTwotoneColor]="'#FF0000'"
+                    ></i>
+                  </a>
+                </nz-space>
               </td>
             </tr>
           </tbody>
           <tfoot style="background-color: #fafafa">
             <tr>
-              <td colspan="2"><b>Total </b><b style="color: red"></b></td>
+              <td colspan="6" [nzAlign]="'right'">
+                <b>Total </b
+                ><b style="color: red">{{ this.currencyFormat(this.total) }}</b>
+              </td>
               <ng-template #elseBlock>
                 <td colspan="2"></td>
               </ng-template>

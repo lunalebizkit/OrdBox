@@ -29,14 +29,14 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
   ) {
     super(notificacionService, el, message);
     this.formSearch = this.fb.group({
-      product: [''],
-      brand: [0],
+      status: [''],
       supplier: [[]],
       category: [0],
     });
   }
   ngOnInit(): void {
     this.getAllCategories();
+    this.getAllSupplier();
   }
 
   formSearch!: FormGroup;
@@ -51,6 +51,7 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
   loadingBrands!: boolean;
   isLoadingCategory = false;
   isLoadingBrand = false;
+  isLoadingEntity = false;
   isSaving = false;
 
   /*
@@ -58,8 +59,7 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
    */
   queryParams = {
     filter: {
-      product: '',
-      brand: 0,
+      status: 0,
       category: 0,
       supplier: [],
     },
@@ -71,20 +71,6 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
     page: 0,
     pageSize: 50,
   };
-
-  getAllSupplier(): void {
-    this.serviceEntity.getSuppliers(this.queryData).subscribe({
-      next: (r) => {
-        this.allSuppliers = r.data.map((entity: { id: any; name: any }) => {
-          return { value: entity.id, label: entity.name };
-        });
-        this.isLoading = false;
-      },
-      error: () => {
-        this.allSuppliers = [];
-      },
-    });
-  }
 
   getAllCategories(): void {
     this.isLoadingCategory = true;
@@ -100,6 +86,22 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
       error: () => {
         this.isLoadingCategory = false;
         this.allCategories = [];
+      },
+    });
+  }
+
+  getAllSupplier(): void {
+    this.isLoadingEntity = true;
+    this.serviceEntity.getSuppliers(this.queryData).subscribe({
+      next: (r) => {
+        this.isLoadingEntity = false;
+        this.allSuppliers = r.data.map((entity: { id: any; name: any }) => {
+          return { value: entity.id, label: entity.name };
+        });
+      },
+      error: () => {
+        this.isLoadingEntity = false;
+        this.allSuppliers = [];
       },
     });
   }

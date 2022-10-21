@@ -20,6 +20,7 @@ import { NewOrderComponent } from './new-order/new-order.component';
 import { OrdersListComponent } from './orders-list/orders-list.component';
 import { OrdersRoutingModule } from './orders-routing.module';
 import { SelectProductsModalComponent } from './modals/select-products/select-products-modal.component';
+import { NzSpaceModule } from 'ng-zorro-antd/space';
 
 @NgModule({
   imports: [
@@ -40,6 +41,7 @@ import { SelectProductsModalComponent } from './modals/select-products/select-pr
     NzDividerModule,
     NzSwitchModule,
     NzDatePickerModule,
+    NzSpaceModule,
   ],
   declarations: [
     OrdersListComponent,

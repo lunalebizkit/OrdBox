@@ -1,12 +1,20 @@
-export interface OrderAddModel {
+export interface OrderList {
+  order: string;
+  supplier: string;
+  date: Date;
+  status: string;
+}
+
+export interface NewOrder {
   id: number;
   supplier: string;
   date: Date;
-  isPaid: string;
+  isPaid: boolean;
   email: string;
-  send: string;
-  email2: string;
-  send2: string;
+  isSend: boolean;
+  emailSecondary: string;
+  isSendSecondary: boolean;
+  product: string;
 }
 
 export interface OrderDetailList {

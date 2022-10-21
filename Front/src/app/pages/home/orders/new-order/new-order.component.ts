@@ -1,6 +1,9 @@
+import { formatCurrency } from '@angular/common';
 import {
   Component,
   ElementRef,
+  Inject,
+  LOCALE_ID,
   OnInit,
   TemplateRef,
   ViewChild,
@@ -23,11 +26,7 @@ import {
 } from '../../invoices/model/invoice.model';
 import { ProductsModel } from '../../products/model/product.model';
 import { ProductService } from '../../products/product.service';
-import {
-  OrderAddModel,
-  OrderDetailList,
-  OrderDetails,
-} from '../models/order.model';
+import { NewOrder, OrderDetailList, OrderDetails } from '../models/order.model';
 import { OrdersService } from '../orders.service';
 
 @Component({
@@ -52,7 +51,8 @@ export class NewOrderComponent extends BaseComponent implements OnInit {
     private fb: FormBuilder,
     private ordersService: OrdersService,
     private drawerService: NzDrawerService,
-    private serviceProduct: ProductService
+    private serviceProduct: ProductService,
+    @Inject(LOCALE_ID) public locale: string
   ) {
     super(notificacionService, el, message);
     this.form = this.fb.group({
@@ -90,9 +90,9 @@ export class NewOrderComponent extends BaseComponent implements OnInit {
    ** Lista de Productos
    */
   customer: CustomerModel[] = [];
-  invoiceDetailList: InvoiceDetailList[] = [];
   orderDetailList: OrderDetailList[] = [];
   orderDetails: OrderDetails[] = [];
+  invoiceListTest: InvoiceDetailList[] = [];
 
   /*
    ** Catidad total de productos
@@ -102,6 +102,11 @@ export class NewOrderComponent extends BaseComponent implements OnInit {
   iva: number = 21;
   total: number = 0;
   ivaTotal: number = 0;
+
+  /*
+   **Variables de la tabla detalle
+   */
+  editId: number | null = null;
 
   /*
    ** Parametros de busqueda
@@ -114,15 +119,16 @@ export class NewOrderComponent extends BaseComponent implements OnInit {
 
   save(): void {
     if (this.isValidForm(this.form)) {
-      const model: OrderAddModel = {
+      const model: NewOrder = {
         id: this.id !== undefined ? this.id : 0,
         supplier: this.form.controls['supplier'].value,
         date: this.form.controls['date'].value,
         isPaid: this.form.controls['isPaid'].value,
         email: this.form.controls['email'].value,
-        send: this.form.controls['send'].value,
-        email2: this.form.controls['email2'].value,
-        send2: this.form.controls['send2'].value,
+        emailSecondary: this.form.controls['emailSecondary'].value,
+        isSend: this.form.controls['isSend'].value,
+        isSendSecondary: this.form.controls['isSendSecondary'].value,
+        product: this.form.controls['product'].value,
       };
       this.isSaving = true;
       this.ordersService.saveOrder(model).subscribe({
@@ -186,6 +192,32 @@ export class NewOrderComponent extends BaseComponent implements OnInit {
 
   ivaCalculate(data: number, iva: number): number {
     return (data * iva) / 100;
+  }
+
+  startEdit(id: number): void {
+    this.editId = id;
+  }
+
+  stopEdit(): void {
+    this.editId = null;
+  }
+
+  changeQuantity(quantity: number): void {
+    if (quantity == 0 || quantity == null) {
+      quantity = 1;
+    }
+    let product = this.invoiceDetailsList.filter(
+      (detail) => detail.ownCode == this.editId
+    )[0];
+
+    this.invoiceDetailsList.filter(
+      (detail) => detail.ownCode == this.editId
+    )[0].subTotal = quantity * product.price;
+
+    this.totalCalculate();
+    this.invoiceDetails.filter(
+      (detail) => detail.productId == this.editId
+    )[0].quantity = quantity;
   }
 
   searchProduct(): void {
@@ -274,20 +306,20 @@ export class NewOrderComponent extends BaseComponent implements OnInit {
               this.totalCalculate();
             } else {
               /* Parseo dato a la grilla de Tabla */
-              const model: OrderDetailList = invoiceGridParser(
+              const model: InvoiceDetailList = invoiceGridParser(
                 data,
                 this.iva,
                 this.bindPrice(data)
               );
-              this.orderListTest.push(model);
-              this.orderDetailList = this.orderListTest;
+              this.invoiceListTest.push(model);
+              this.invoiceDetailsList = this.invoiceListTest;
               /* Parseo dato a Dto Factura Detalle */
-              const modelDetail: OrderDetails = invoiceDetailParser(
+              const modelDetail: InvoiceDetails = invoiceDetailParser(
                 data,
                 this.iva,
                 this.bindPrice(data)
               );
-              this.orderDetails.push(modelDetail);
+              this.invoiceDetails.push(modelDetail);
               this.totalCalculate();
             }
           }
@@ -303,19 +335,19 @@ export class NewOrderComponent extends BaseComponent implements OnInit {
 
   handleOk() {
     try {
-      this.orderListTest = this.orderDetailList.filter(
+      this.invoiceListTest = this.invoiceDetailsList.filter(
         (element) =>
           element.ownCode != this.popupComponent.elementSelectedToDelete
       );
-      this.orderDetails = this.orderDetails.filter(
+      this.invoiceDetails = this.invoiceDetails.filter(
         (element) =>
           element.productId != this.popupComponent.elementSelectedToDelete
       );
       this.popupComponent.isDeleteConfirmationVisible = false;
-      if (this.orderListTest.length == 0) {
-        this.orderDetailList = [];
+      if (this.invoiceListTest.length == 0) {
+        this.invoiceDetailsList = [];
       } else {
-        this.orderDetailList = this.orderListTest;
+        this.invoiceDetailsList = this.invoiceListTest;
       }
 
       this.totalCalculate();
@@ -324,7 +356,7 @@ export class NewOrderComponent extends BaseComponent implements OnInit {
     }
   }
 
-  onChange(result: Date): void {
-    console.log('onChange: ', result);
+  currencyFormat(data: any): string {
+    return formatCurrency(data, this.locale, '$', 'ARS', '1.1-2');
   }
 }

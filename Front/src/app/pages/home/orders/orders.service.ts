@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ApiService } from './../../../common/services/api.base.service';
 import { Observable } from 'rxjs';
-import { OrderAddModel } from './models/order.model';
+import { NewOrder } from './models/order.model';
 
 @Injectable({
   providedIn: 'root',
@@ -17,7 +17,7 @@ export class OrdersService {
    * @param model
    * @returns
    */
-  public saveOrder(model: OrderAddModel): Observable<any> {
+  public saveOrder(model: NewOrder): Observable<any> {
     if (model.id === 0) {
       return this.api.post(`supplierorder`, model, false);
     } else {

@@ -20,26 +20,17 @@
   <nz-content>
     <nz-collapse>
       <nz-collapse-panel nzSize="small" nzHeader="Filtros" [nzActive]="true">
-        <form nz-form>
+        <form nz-form [formGroup]="formSearch">
           <div nz-row nzJustify="space-between">
             <div nz-col nzSpan="5">
               <nz-form-item>
                 <nz-form-label>Estado</nz-form-label>
                 <nz-form-control>
                   <nz-select nzShowSearch nzAllowClear nzPlaceHolder="Estado">
-                    <nz-option nzLabel="Todos" nzValue="todos"></nz-option>
-                    <nz-option
-                      nzLabel="Aceptado"
-                      nzValue="aceptado"
-                    ></nz-option>
-                    <nz-option
-                      nzLabel="Pendiente"
-                      nzValue="pendiente"
-                    ></nz-option>
-                    <nz-option
-                      nzLabel="Rechazado"
-                      nzValue="rechazado"
-                    ></nz-option>
+                    <nz-option nzLabel="Todos" nzValue="1"></nz-option>
+                    <nz-option nzLabel="Aceptado" nzValue="2"></nz-option>
+                    <nz-option nzLabel="Pendiente" nzValue="3"></nz-option>
+                    <nz-option nzLabel="Rechazado" nzValue="4"></nz-option>
                   </nz-select>
 
                   <ng-template #clearQuery>
