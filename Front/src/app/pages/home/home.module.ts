@@ -10,10 +10,8 @@ import { IconsProviderModule } from 'src/app/icons-provider.module';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { AgGridModule } from 'ag-grid-angular';
 import { UsuariosModule } from './users/users.module';
-import { ModuleRegistry } from '@ag-grid-community/core';
-import { InfiniteRowModelModule } from '@ag-grid-community/infinite-row-model';
-
-ModuleRegistry.registerModules([InfiniteRowModelModule]);
+import { InfiniteScrollModule } from "ngx-infinite-scroll";
+/* import {ScrollingModule} from '@angular/cdk/scrolling' */
 
 @NgModule({
   declarations: [
@@ -31,6 +29,7 @@ ModuleRegistry.registerModules([InfiniteRowModelModule]);
     NzDividerModule,
     UsuariosModule,
     AgGridModule,
+    InfiniteScrollModule,
   ],
   exports: [HomeComponent]
 })

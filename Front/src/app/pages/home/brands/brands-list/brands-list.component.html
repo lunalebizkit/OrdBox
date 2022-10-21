@@ -1,4 +1,4 @@
-<nz-layout>
+<nz-layout > 
   <nz-page-header class="list-header">
     <nz-page-header-title>Listado de Marcas</nz-page-header-title>
     <nz-page-header-extra>
@@ -8,21 +8,18 @@
           </i></button></a>
     </nz-page-header-extra>
   </nz-page-header>
-
   <nz-content>
       <!-- Busqueda -->
       <nz-collapse>
         <nz-collapse-panel nzSize="small" nzHeader="Filtros">
-          <form nz-form (ngSubmit)="search()">
             <div nz-row [nzGutter]="[8,1]">
-
               <div nz-col nzSpan="24">
                 <nz-form-item>
                   <nz-form-label>Búsqueda</nz-form-label>
                   <nz-form-control>                  
                     <nz-input-group [nzSuffix]="clearQuery">
                       <input [ngModelOptions]="{standalone: true}" type="text" placeholder="Ingrese Marca" nz-input
-                        (keydown.enter)="search()" [(ngModel)]="queryData.filter" />
+                        (keydown.enter)="search()" [(ngModel)]="queryData.filter" >
                     </nz-input-group>
                     
                     <ng-template #clearQuery>
@@ -32,46 +29,30 @@
                   </nz-form-control>
                 </nz-form-item>
               </div>
-
             </div>
-
-          </form>
         </nz-collapse-panel>
       </nz-collapse> 
     
     <!-- Tabla -->
-    <div>      
-      <nz-table #filterTable [nzData]="brandList" nzBordered=true [nzLoading]="loading" [nzTotal]="totalItems"
-        [nzPageIndex]="1" [nzPageSize]="queryData.pageSize" [nzPaginationType]="'small'" [nzFrontPagination]="false"
-        (nzQueryParams)="onQueryParamsChange($event)">
+    
+     <div class="shadow" #target    
+     (scroll)="onScroll($event)">  
+       <nz-table class="brand-table"  [nzData]="brandList" nzBordered=true [nzLoading]="loading" 
+        [nzSize]="'small'" nzShowPagination="false"> 
         <thead>
           <tr>
             <th>#</th>
             <th>Marca</th>
-            <th nzWidth="100px">Acciones</th>
           </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let brand of brandList" class="small-text">
-            <td>{{brand.id}}</td>
-            <td>{{brand.description}}</td>
-            <td style="text-align: center;">
-              <nz-space [nzSplit]="spaceSplit">
-                <ng-template #spaceSplit>
-                  <nz-divider nzType="vertical"></nz-divider>
-                </ng-template>
-                <a *nzSpaceItem routerLink="/home/brands/edit/{{brand.id}}">
-                  <i nz-tooltip nzTooltipTitle="Editar" nz-icon nzType="edit"></i>
-                </a>
-                <!-- <a *nzSpaceItem (click)="popup.showDeleteConfirmation(brand.id)">
-                  <i nz-tooltip nzTooltipTitle="Eliminar" nz-icon nzType="delete" [nzTheme]="'twotone'"
-                    [nzTwotoneColor]="'#FF0000'"></i>
-                </a> -->
-              </nz-space>
-            </td>
-          </tr>
+        </thead> 
+        <tbody > 
+          <tr  *ngFor="let brand of brandList ; let i = index " class="small-text" tabindex="-1" (click)="onClick(brand, i)" (keydown)="myNavegation($event) "
+          [style.background-color]="brand === selectedBrand ? 'lightblue' : ''" (keydown.enter)="onKeyPress(brand)" (dblclick)="onDoubleClicked(brand)" >            
+          <td>{{brand.id }}</td>
+          <td>{{brand.description}}</td>
+          </tr> 
         </tbody>
       </nz-table>
-    </div>
+   </div> 
   </nz-content>
-</nz-layout>
+ </nz-layout> 
