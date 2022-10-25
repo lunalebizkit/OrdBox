@@ -30,9 +30,9 @@ namespace Kiltex.SistemaGestion.Api.Controllers.SupplierOrder
         }
         [HttpPost]
         [Route("[action]")]
-        public async Task<IActionResult> List([FromBody] RequestPaginatedData<string> filter, int? status)
+        public async Task<IActionResult> List([FromBody] RequestPaginatedData<ProductFilter> filter)
         {
-            return Return(await _service.List(filter, status).ConfigureAwait(false));
+            return Return(await _service.List(filter).ConfigureAwait(false));
         }
     }
 }

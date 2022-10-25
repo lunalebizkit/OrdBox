@@ -7,10 +7,12 @@
   margin-bottom: 10px;
 }
 th{
-  font-size: 12px
+  font-size: 11px
 }
 td{
   font-size: 12px; 
+  padding: 0px;
+  margin: 0%;
 }
 .table{
   height: 500px;

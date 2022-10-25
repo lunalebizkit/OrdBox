@@ -69,6 +69,7 @@ export class UpdatePriceProductsComponent extends BaseComponent implements OnIni
       product:'',
       brand: 0,
       category: 0,
+      status: 0,
       supplier:[]},
     page: 0,
     pageSize: 50

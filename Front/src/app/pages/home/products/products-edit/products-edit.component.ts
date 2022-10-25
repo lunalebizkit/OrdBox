@@ -12,7 +12,6 @@ import { BrandsService } from '../../brands/brands.services';
 import { CategoriesService } from '../../categories/category.services';
 import { EntityService } from '../../customers/customer.service';
 import { ProductAddModel } from '../model/product.add.model';
-import { ProductsModel } from '../model/product.model';
 import { ProductService } from '../product.service';
 
 @Component({
