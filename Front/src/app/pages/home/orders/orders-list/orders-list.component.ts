@@ -1,14 +1,12 @@
 import { Component, ElementRef, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
-import { ColDef } from 'ag-grid-community';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { BaseComponent } from 'src/app/common/components/base/base.component';
-import { BrandsService } from '../../brands/brands.services';
 import { CategoriesService } from '../../categories/category.services';
 import { EntityService } from '../../customers/customer.service';
-import { ProductService } from '../../products/product.service';
+import { OrderDetail, OrderList } from '../models/order.model';
+import { OrdersService } from '../orders.service';
 
 @Component({
   selector: 'app-orders-list',
@@ -17,14 +15,12 @@ import { ProductService } from '../../products/product.service';
 })
 export class OrdersListComponent extends BaseComponent implements OnInit {
   constructor(
-    private service: ProductService,
+    private serviceSupplier: OrdersService,
     private serviceCategory: CategoriesService,
-    private serviceBrand: BrandsService,
     private serviceEntity: EntityService,
     notificacionService: NzNotificationService,
     el: ElementRef,
     message: NzMessageService,
-    private route: ActivatedRoute,
     private fb: FormBuilder
   ) {
     super(notificacionService, el, message);
@@ -37,6 +33,7 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
   ngOnInit(): void {
     this.getAllCategories();
     this.getAllSupplier();
+    this.getAllOrders();
   }
 
   formSearch!: FormGroup;
@@ -44,6 +41,8 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
   timeout!: any;
   allCategories = [];
   allSuppliers: { value: string; label: string }[] = [];
+  allOrders: OrderList[]= [];
+  orderDetailList:OrderDetail[]=[];
 
   /*
    ** Indicador de carga de marcas y lineas
@@ -57,20 +56,37 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
   /*
    ** Parametros de busqueda
    */
-  queryParams = {
+   queryParams = {
     filter: {
-      status: 0,
+      product:'',
+      brand: 0,
       category: 0,
-      supplier: [],
-    },
+      status: 0,
+      supplier:[]},
     page: 0,
-    pageSize: 50,
+    pageSize: 50
   };
   queryData = {
     filter: '',
     page: 0,
     pageSize: 50,
   };
+
+  getAllOrders(): void {
+    this.isLoadingCategory = true;
+    this.serviceSupplier.getOrders(this.queryParams).subscribe({
+      next: (r) => {
+        this.isLoading = false;
+        this.allOrders = r.data;          
+        
+      },
+      error: () => {
+        this.isLoading = false;
+        this.allOrders = [];
+      },
+    });
+  }
+
 
   getAllCategories(): void {
     this.isLoadingCategory = true;
@@ -118,48 +134,11 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
         this.getAllSupplier();
       }
     }, 1000);
-
-    // this.searchChange$.next(value);
   }
-
-  /*   creacion de columnas de la grid */
-  public columnDefs: ColDef[] = [
-    {
-      headerName: 'N° Pedido',
-      field: 'pedido',
-    },
-    {
-      headerName: 'Fecha',
-      field: 'fecha',
-    },
-    {
-      headerName: 'Proveedor',
-      field: 'proveedor',
-    },
-    {
-      headerName: 'Estado',
-      field: 'estado',
-    },
-  ];
-
-  public columnsDefs: ColDef[] = [
-    {
-      headerName: 'Productos',
-      field: 'productos',
-    },
-    {
-      headerName: 'Cantidad',
-      field: 'cantidad',
-    },
-  ];
-
-  public defaultColDef: ColDef = {
-    sortable: true,
-    filter: true,
-    flex: 1,
-    minWidth: 100,
-    resizable: true,
-  };
+  onSelect(id: number):void {
+   this.orderDetailList= this.allOrders.filter( order => order.id == id)[0].orderDetail;
+     
+  }
 
   supplierSelectedChange(id: any): void {
     this.queryParams.filter.supplier =

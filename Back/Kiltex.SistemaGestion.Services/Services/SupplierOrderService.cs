@@ -64,14 +64,48 @@ namespace Kiltex.SistemaGestion.Services.Services
 
             return Ok(new IdResponse<long>(newOrder.Id));
         }
-        public async Task<OperationResponse<DtoPagination<DtoSupplierOrder>>> List(RequestPaginatedData<string> request, int? status)
+        //public async Task<OperationResponse<DtoPagination<DtoSupplierOrder>>> List(RequestPaginatedData<string> request, int? status)
+        //{
+        //    var query = _contextSql
+        //                        .SupplierOrders
+        //                        .AsNoTracking()
+        //                        .Include(p => p.SupplierOrderDetail)
+        //                        .Include(p => p.Supplier)
+        //                        .Where(p => p.Supplier.Name.ToLower().Contains(request.Filter ?? "") && p.StatusId == status);
+
+        //    var count = await query.CountAsync().ConfigureAwait(false);
+
+        //    var list = await query.OrderBy(p => p.Id)
+        //                          .Skip(request.Page * request.PageSize)
+        //                          .Take(request.PageSize)
+        //                          .ToListAsync()
+        //                          .ConfigureAwait(false);
+
+        //    var dto = _mapper.Map<List<DtoSupplierOrder>>(list);
+
+
+        //    return new OperationResponse<DtoPagination<DtoSupplierOrder>>(new DtoPagination<DtoSupplierOrder>
+        //    {
+        //        Data = dto,
+        //        PageSize = request.PageSize,
+        //        TotalCount = count
+        //    });
+        //}
+        public async Task<OperationResponse<DtoPagination<DtoSupplierOrder>>> List(RequestPaginatedData<ProductFilter> request)
         {
             var query = _contextSql
                                 .SupplierOrders
                                 .AsNoTracking()
                                 .Include(p => p.SupplierOrderDetail)
                                 .Include(p => p.Supplier)
-                                .Where(p => p.Supplier.Name.ToLower().Contains(request.Filter ?? "") && p.StatusId == status);
+                                .Where(p =>
+                                   ((request.Filter.Status.HasValue &&
+                                   request.Filter.Status.Value > 0) ? 
+                                   p.StatusId == request.Filter.Status : true)
+                                &&
+
+                                 (request.Filter.Supplier.Count > 0 ? request.Filter.Supplier.Contains(p.SupplierId) : true)
+                                 );
 
             var count = await query.CountAsync().ConfigureAwait(false);
 

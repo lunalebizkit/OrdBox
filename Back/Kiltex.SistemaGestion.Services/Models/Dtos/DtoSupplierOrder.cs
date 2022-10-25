@@ -16,12 +16,15 @@ namespace Kiltex.SistemaGestion.Services.Models.Dtos
 
         public long StatusId { get; set; }
         public List<DtoOrderDetail> OrderDetail { get; set; }
-        
+
 
     }
     public class DtoOrderDetail
     {
         public long Id { get; set; }
+
+        public long SupplierOrderId { get; set; }
+
         public long ProductId { get; set; }
 
         public int OrderedQuantity { get; set; }

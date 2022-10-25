@@ -126,7 +126,7 @@
 
 <div class="row">
   <div>
-    <nz-table [nzBordered]="true">
+    <nz-table [nzBordered]="true" [nzData]="allOrders">
       <thead>
         <tr>
           <th>N° Pedido</th>
@@ -136,27 +136,28 @@
         </tr>
       </thead>
       <tbody>
-        <tr class="small-text">
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
+        <tr class="small-text" *ngFor="let data of allOrders" (click)="onSelect(data.id)">
+          <td>{{data.id}}</td>
+          <td>{{data.isPaid}}</td>
+          <td>{{data.supplierName}}</td>
+          <td>{{data.statusId}}</td>
         </tr>
       </tbody>
     </nz-table>
   </div>
 
   <div>
-    <nz-table [nzBordered]="true">
+    <nz-table [nzBordered]="true" [nzData]="orderDetailList" >
       <thead>
         <tr>
           <th>Producto</th>
+          <th>Cantidad</th>
         </tr>
       </thead>
       <tbody>
-        <tr class="small-text">
-          <td></td>
+        <tr class="small-text" *ngFor="let data of orderDetailList">
+          <td>{{data.productId}}</td>
+          <td>{{data.orderedQuantity}}</td>
         </tr>
       </tbody>
     </nz-table>

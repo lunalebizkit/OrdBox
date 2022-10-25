@@ -20,6 +20,7 @@ namespace Kiltex.SistemaGestion.Services.Common
         public string? Product { get; set; }
         public long? Brand { get; set; }
         public long? Category { get; set; }
+        public long? Status { get; set; }
         public List<long> Supplier { get; set; }
     }
     public class SupplierOrderFilter

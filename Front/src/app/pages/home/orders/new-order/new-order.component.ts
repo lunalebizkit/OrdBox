@@ -16,17 +16,12 @@ import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { BaseComponent } from 'src/app/common/components/base/base.component';
 import { HeaderOperationsButtonsComponent } from 'src/app/common/components/headers/buttons.oparations.header.component';
 import { PopupConfirmationComponent } from 'src/app/common/components/popup-confirmation/popup-confirmation.component';
+import { EntityService } from '../../customers/customer.service';
 import { CustomerModel } from '../../customers/model/customer.model';
 import { InvoiceProductSearchComponent } from '../../invoices/invoice-product-search/invoice-product-search.component';
-import {
-  InvoiceDetailList,
-  InvoiceDetails,
-  invoiceGridParser,
-  invoiceDetailParser,
-} from '../../invoices/model/invoice.model';
 import { ProductsModel } from '../../products/model/product.model';
 import { ProductService } from '../../products/product.service';
-import { NewOrder, OrderDetailList, OrderDetails } from '../models/order.model';
+import { NewOrder, OrderDetailGrid, orderDetailParser, OrderDetail, orderGridParser } from '../models/order.model';
 import { OrdersService } from '../orders.service';
 
 @Component({
@@ -42,13 +37,15 @@ export class NewOrderComponent extends BaseComponent implements OnInit {
     $implicit: { filter: string };
     drawerRef: NzDrawerRef<string>;
   }>;
+ 
+  
 
   constructor(
     notificacionService: NzNotificationService,
     el: ElementRef,
     message: NzMessageService,
-    private route: ActivatedRoute,
     private fb: FormBuilder,
+    private entityService: EntityService,
     private ordersService: OrdersService,
     private drawerService: NzDrawerService,
     private serviceProduct: ProductService,
@@ -56,16 +53,18 @@ export class NewOrderComponent extends BaseComponent implements OnInit {
   ) {
     super(notificacionService, el, message);
     this.form = this.fb.group({
-      supplier: ['', [Validators.required]],
       date: ['', [Validators.required]],
-      isPaid: ['', [Validators.required]],
-      email: ['', [Validators.required]],
-      send: ['', [Validators.required]],
-      email2: ['', [Validators.required]],
-      send2: ['', [Validators.required]],
+      isPaid: ['', ],
+      email: ['', ],
+      send: ['', ],
+      email2: ['', ],
+      send2: ['', ],
     });
     this.formProductSearch = this.fb.group({
       productSearchFilter: [''],
+    });
+    this.formSupplierSearch = this.fb.group({
+      supplierId: [ '', [Validators.required]],
     });
   }
 
@@ -73,7 +72,9 @@ export class NewOrderComponent extends BaseComponent implements OnInit {
 
   form!: FormGroup;
   formProductSearch!: FormGroup;
+  formSupplierSearch!: FormGroup;
   isSaving!: boolean;
+  loading!: boolean;
   isVisible = false;
   switchValue = false;
   date = null;
@@ -81,21 +82,19 @@ export class NewOrderComponent extends BaseComponent implements OnInit {
   isConfirmLoading = false;
   id!: number;
   product!: string;
-  orderListTest: OrderDetailList[] = [];
-  invoiceDetailsList: InvoiceDetailList[] = [];
-  invoiceDetails: InvoiceDetails[] = [];
-
-  paymentSelected: any;
+  orderListGrid: OrderDetailGrid[] = [];
+  orderListGridTest: OrderDetailGrid[] = [];
+  entityList: CustomerModel[]=[];
+  paymentSelected: any;  
+  supplierName!: string;
   /*
    ** Lista de Productos
    */
-  customer: CustomerModel[] = [];
-  orderDetailList: OrderDetailList[] = [];
-  orderDetails: OrderDetails[] = [];
-  invoiceListTest: InvoiceDetailList[] = [];
+  orderDetailGrid: OrderDetailGrid[] = [];
+  orderDetail: OrderDetail[] = [];
 
   /*
-   ** Catidad total de productos
+   ** Cantidad total de productos
    */
   totalItems: number = 0;
   subtotal: number = 0;
@@ -117,18 +116,38 @@ export class NewOrderComponent extends BaseComponent implements OnInit {
     pageSize: 10,
   };
 
+  onSearch(data:string): void { 
+    if (data.length > 2){
+      this.queryParams.page=0; 
+      this.queryParams.filter=data; 
+      this.getSupplier(this.queryParams); 
+    }   
+   }; 
+   getSupplier(params: any): void {
+    this.loading= true;
+    this.entityService.getSuppliers(params).subscribe({
+      next: (r)=>{
+        this.entityList= r.data;
+        this.totalItems = r.totalCount;
+        this.loading = false;
+      },
+      error: ()=>{
+        this.loading = false;
+        this.entityList = [];
+      }
+    })}
+    
+   
   save(): void {
-    if (this.isValidForm(this.form)) {
+    if (this.isValidForm(this.form) && (this.orderDetail.length > 0)) {     
       const model: NewOrder = {
         id: this.id !== undefined ? this.id : 0,
-        supplier: this.form.controls['supplier'].value,
+        supplierId: this.formSupplierSearch.controls['supplierId'].value,        
         date: this.form.controls['date'].value,
         isPaid: this.form.controls['isPaid'].value,
         email: this.form.controls['email'].value,
-        emailSecondary: this.form.controls['emailSecondary'].value,
-        isSend: this.form.controls['isSend'].value,
-        isSendSecondary: this.form.controls['isSendSecondary'].value,
-        product: this.form.controls['product'].value,
+        statusId: 1,
+        orderDetail: this.orderDetail,
       };
       this.isSaving = true;
       this.ordersService.saveOrder(model).subscribe({
@@ -156,43 +175,17 @@ export class NewOrderComponent extends BaseComponent implements OnInit {
   totalCalculate(): void {
     this.subtotal = 0;
     this.total = 0;
-    this.ivaTotal = 0;
     try {
-      this.invoiceDetailsList.forEach((detail) => {
+      this.orderDetailGrid.forEach((detail) => {
         this.subtotal +=
-          detail.price * detail.quantity -
-          this.ivaCalculate(detail.price * detail.quantity, detail.iva);
-      });
-      this.invoiceDetailsList.forEach((dato) => {
-        this.ivaTotal += this.ivaCalculate(
-          dato.price * dato.quantity,
-          dato.iva
-        );
-        this.total += dato.price * dato.quantity;
-      });
-    } catch (error) {
+          detail.price * detail.quantity;
+        this.total += detail.subTotal
+      });        
+      }
+     catch (error) {
       console.log(error);
     }
-  }
-
-  bindPrice(data: ProductsModel): number {
-    const typePayment = this.paymentSelected;
-    var a = Object.keys(data).filter((type) => type == typePayment);
-    switch (a[0]) {
-      case 'cardSalePrice':
-        return data.cardSalePrice;
-
-      case 'salePrice':
-        return data.salePrice;
-
-      default:
-        return data.cashSalePrice;
-    }
-  }
-
-  ivaCalculate(data: number, iva: number): number {
-    return (data * iva) / 100;
-  }
+  }  
 
   startEdit(id: number): void {
     this.editId = id;
@@ -206,18 +199,21 @@ export class NewOrderComponent extends BaseComponent implements OnInit {
     if (quantity == 0 || quantity == null) {
       quantity = 1;
     }
-    let product = this.invoiceDetailsList.filter(
-      (detail) => detail.ownCode == this.editId
+    let product = this.orderDetail.filter(
+      (detail) => detail.id == this.editId
+    )[0];
+    let productGrid = this.orderDetailGrid.filter(
+      (detail) => detail.id == this.editId
     )[0];
 
-    this.invoiceDetailsList.filter(
-      (detail) => detail.ownCode == this.editId
-    )[0].subTotal = quantity * product.price;
+    this.orderDetailGrid.filter(
+      (detail) => detail.id == this.editId
+    )[0].subTotal = quantity * productGrid.price;
 
     this.totalCalculate();
-    this.invoiceDetails.filter(
+    this.orderDetail.filter(
       (detail) => detail.productId == this.editId
-    )[0].quantity = quantity;
+    )[0].orderedQuantity = quantity;
   }
 
   searchProduct(): void {
@@ -229,35 +225,26 @@ export class NewOrderComponent extends BaseComponent implements OnInit {
           if (r.data.length == 1) {
             const model: ProductsModel = r.data[0];
             if (
-              this.invoiceDetails.find((item) => item.productId == model.id)
+              this.orderDetail.find((item) => item.productId == model.id)
             ) {
               /*Actualizo la lista que envio al back */
-              this.invoiceDetails.filter(
+              this.orderDetail.filter(
                 (item) => item.productId == model.id
-              )[0].quantity += 1;
+              )[0].orderedQuantity += 1;
 
               /*Actualizo la lista de la tabla */
-              this.invoiceDetailsList.filter(
-                (item) => item.ownCode == model.id
+              this.orderDetailGrid.filter(
+                (item) => item.id == model.id
               )[0].quantity += 1;
 
-              this.invoiceDetailsList.filter(
-                (item) => item.ownCode == model.id
-              )[0].subTotal += this.bindPrice(model) * model.quantity;
+              this.orderDetailGrid.filter(
+                (item) => item.id == model.id
+              )[0].subTotal += model.purchasePrice * model.quantity;
               this.totalCalculate();
             } else {
               const product: ProductsModel = r.data[0];
-              const model: InvoiceDetails = {
-                id: 0,
-                invoiceId: 0,
-                productId: product.id,
-                productName: product.description,
-                productCode: product.code,
-                quantity: 1,
-                price: this.bindPrice(product),
-                iva: this.iva,
-              };
-              this.invoiceDetails.push(model);
+              const model: OrderDetail= orderDetailParser(product);
+              this.orderDetail.push(model);
               this.totalCalculate();
             }
           } else {
@@ -287,45 +274,42 @@ export class NewOrderComponent extends BaseComponent implements OnInit {
 
       drawerRefProduct.afterClose.subscribe({
         next: (data: ProductsModel) => {
+          
           if (data != undefined) {
-            if (this.orderDetails.find((item) => item.productId == data.id)) {
+            if (this.orderDetail.find((item) => item.productId == data.id)) {
               /*Actualizo la lista que envio al back */
-              this.orderDetails.filter(
+              this.orderDetail.filter(
                 (item) => item.productId == data.id
-              )[0].quantity += 1;
+              )[0].orderedQuantity += 1;
 
               /*Actualizo la lista de la tabla */
-              let newListElement = this.orderDetailList.filter(
-                (item) => item.ownCode == data.id
+              let newListElement = this.orderDetailGrid.filter(
+                (item) => item.id == data.id
               )[0];
 
               newListElement.quantity += 1;
               newListElement.subTotal +=
-                this.bindPrice(data) * newListElement.quantity;
+                data.purchasePrice * newListElement.quantity;
 
               this.totalCalculate();
             } else {
               /* Parseo dato a la grilla de Tabla */
-              const model: InvoiceDetailList = invoiceGridParser(
-                data,
-                this.iva,
-                this.bindPrice(data)
+              const model: OrderDetailGrid = orderGridParser(
+                data
               );
-              this.invoiceListTest.push(model);
-              this.invoiceDetailsList = this.invoiceListTest;
+              this.orderListGridTest.push(model);
+              this.orderDetailGrid = this.orderListGridTest;
               /* Parseo dato a Dto Factura Detalle */
-              const modelDetail: InvoiceDetails = invoiceDetailParser(
-                data,
-                this.iva,
-                this.bindPrice(data)
+              const modelDetail: OrderDetail = orderDetailParser(
+                data
               );
-              this.invoiceDetails.push(modelDetail);
+              this.orderDetail.push(modelDetail);
               this.totalCalculate();
             }
           }
         },
         error: () => {
-          this.orderDetailList = [];
+          this.orderDetailGrid = [];
         },
       });
     } else {
@@ -335,19 +319,19 @@ export class NewOrderComponent extends BaseComponent implements OnInit {
 
   handleOk() {
     try {
-      this.invoiceListTest = this.invoiceDetailsList.filter(
+      this.orderListGridTest = this.orderDetailGrid.filter(
         (element) =>
-          element.ownCode != this.popupComponent.elementSelectedToDelete
+          element.id != this.popupComponent.elementSelectedToDelete
       );
-      this.invoiceDetails = this.invoiceDetails.filter(
+      this.orderDetail = this.orderDetail.filter(
         (element) =>
           element.productId != this.popupComponent.elementSelectedToDelete
       );
       this.popupComponent.isDeleteConfirmationVisible = false;
-      if (this.invoiceListTest.length == 0) {
-        this.invoiceDetailsList = [];
+      if (this.orderListGridTest.length == 0) {
+        this.orderDetailGrid = [];
       } else {
-        this.invoiceDetailsList = this.invoiceListTest;
+        this.orderDetailGrid = this.orderListGridTest;
       }
 
       this.totalCalculate();
@@ -359,4 +343,6 @@ export class NewOrderComponent extends BaseComponent implements OnInit {
   currencyFormat(data: any): string {
     return formatCurrency(data, this.locale, '$', 'ARS', '1.1-2');
   }
+    
+ 
 }

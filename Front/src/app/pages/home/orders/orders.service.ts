@@ -12,6 +12,15 @@ export class OrdersService {
    */
   constructor(public api: ApiService) {}
 
+   /**
+   * Obtiene todos los productos por query text
+   * @param queryParams
+   * @returns
+   */
+    public getOrders(queryParams: any): Observable<any> {
+      return this.api.post(`supplierorder/list`, queryParams, false);
+    }
+
   /**
    * Guarda un pedido
    * @param model

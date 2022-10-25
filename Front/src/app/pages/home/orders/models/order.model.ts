@@ -1,41 +1,57 @@
 export interface OrderList {
-  order: string;
-  supplier: string;
+  id: number;
+  supplierId: number;
+  supplierName: string;
   date: Date;
-  status: string;
+  isPaid: boolean;
+  email: string;
+  statusId: number;
+  orderDetail: OrderDetail[];
 }
 
 export interface NewOrder {
   id: number;
-  supplier: string;
+  supplierId: number;
   date: Date;
   isPaid: boolean;
   email: string;
-  isSend: boolean;
-  emailSecondary: string;
-  isSendSecondary: boolean;
-  product: string;
+  statusId: number;
+  orderDetail: OrderDetail[];
 }
 
-export interface OrderDetailList {
-  stock: number;
-  ownCode: number;
+export interface OrderDetailGrid {
+  id: number;
   code: number;
   productName: string;
   quantity: number;
   price: number;
   subTotal: number;
-  iva: number;
 }
 
-export interface OrderDetails {
+export interface OrderDetail {
   id: number;
-  ownCode?: number;
-  invoiceId: number;
+  supplierOrderId: number;
   productId: number;
+  orderedQuantity: number;
   productName: string;
-  productCode: number;
-  quantity: number;
-  price: number;
-  iva: number;
+  statusId: number
 }
+export function orderDetailParser(value: any) {
+  return {
+    id: 0,
+    supplierOrderId: 0,
+    productId: value.id,
+    productName: value.description,
+    productCode: value.code,
+    orderedQuantity: 1,
+    statusId: 1
+  }}
+  export function orderGridParser(value: any) {
+    return {
+      code: value.code,
+      id: value.id,
+      productName: value.description,
+      price: value.purchasePrice,
+      quantity: 1,
+     subTotal: value.purchasePrice * 1
+    }}
