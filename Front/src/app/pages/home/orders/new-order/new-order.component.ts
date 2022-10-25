@@ -8,7 +8,13 @@ import {
   TemplateRef,
   ViewChild,
 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormArray,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { NzDrawerRef, NzDrawerService } from 'ng-zorro-antd/drawer';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -23,6 +29,7 @@ import { ProductsModel } from '../../products/model/product.model';
 import { ProductService } from '../../products/product.service';
 import { NewOrder, OrderDetailGrid, orderDetailParser, OrderDetail, orderGridParser } from '../models/order.model';
 import { OrdersService } from '../orders.service';
+import { differenceInCalendarDays, setHours } from 'date-fns';
 
 @Component({
   selector: 'app-new-order',
@@ -59,6 +66,7 @@ export class NewOrderComponent extends BaseComponent implements OnInit {
       send: ['', ],
       email2: ['', ],
       send2: ['', ],
+      emailEntity: new FormArray([]),
     });
     this.formProductSearch = this.fb.group({
       productSearchFilter: [''],
@@ -82,6 +90,8 @@ export class NewOrderComponent extends BaseComponent implements OnInit {
   isConfirmLoading = false;
   id!: number;
   product!: string;
+  dateFormat = 'dd/MM/yyyy';
+  today = new Date();
   orderListGrid: OrderDetailGrid[] = [];
   orderListGridTest: OrderDetailGrid[] = [];
   entityList: CustomerModel[]=[];
@@ -171,6 +181,18 @@ export class NewOrderComponent extends BaseComponent implements OnInit {
     page: 0,
     pageSize: 10,
   };
+
+  get emailsArray() {
+    return this.form.controls['emailEntity'] as FormArray;
+  }
+
+  get emailsControls() {
+    return this.emailsArray.controls as FormControl[];
+  }
+
+  disabledDate = (current: Date): boolean =>
+    // Can not select days before today and today
+    differenceInCalendarDays(current, this.today) < 0;
 
   totalCalculate(): void {
     this.subtotal = 0;
@@ -343,6 +365,17 @@ export class NewOrderComponent extends BaseComponent implements OnInit {
   currencyFormat(data: any): string {
     return formatCurrency(data, this.locale, '$', 'ARS', '1.1-2');
   }
-    
- 
+
+  addEmailField(e?: MouseEvent): void {
+    if (e) {
+      e.preventDefault();
+    }
+    let emailForm = this.form.controls['emailEntity'] as FormArray;
+    emailForm.push(new FormControl(''));
+  }
+
+  removeEmailField(e: MouseEvent, index: number): void {
+    e.preventDefault();
+    this.emailsArray.removeAt(index);
+  }
 }
