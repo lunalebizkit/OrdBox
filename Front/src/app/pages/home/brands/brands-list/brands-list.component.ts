@@ -20,7 +20,6 @@ queryData= {
   page: 0,
   pageSize: 50, 
 }
-
   constructor(private service: BrandsService, private router: Router) {
       }
  
@@ -43,6 +42,10 @@ search(): void {
 this.queryData.page= 0;
 this.getBrand(this.queryData); 
 }
+/*
+   ** Evento que selecciona una fila en la tabla.
+*/
+
 onDoubleClicked (datos:any) {
   var data = datos.id
   this.router.navigate(['home/brands/edit/', data]); 
@@ -55,6 +58,11 @@ onKeyPress( datos:any) {
   var data = datos.id
   this.router.navigate(['home/brands/edit/', data]);
 } 
+
+/*
+   ** Evento de navegación por teclado en la tabla
+   */
+
 myNavegation(event:any) {
   switch (event.key) {
     case "ArrowDown":
@@ -70,8 +78,11 @@ myNavegation(event:any) {
     }
       break 
   } 
-
 }
+/*
+   ** Evento que ejecuta el scroll Infinito en la tabla.
+   */
+
 onScroll(event:any): void { 
 let scrollHeight= event.target.scrollHeight;
 let scrolltop= event.target.scrollTop;

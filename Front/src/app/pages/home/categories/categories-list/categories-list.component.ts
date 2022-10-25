@@ -21,13 +21,15 @@ export class CategoriesListComponent implements OnInit {
    ** Catidad total de Categorias
    */
    totalItems = 0;
+   selectedIndex: number = 0; 
+   selectedCategory: any;
 
   categoryList: CategoryModel[]= []
 
   constructor(private service: CategoriesService) { }
 
   ngOnInit(): void {
-    this.getData(this.queryData)
+   this.getData(this.queryData) 
   }
     /*
  ** Evento de busqueda datos en el server
@@ -54,19 +56,63 @@ queryData= {
   page: 0,
   pageSize: 50,
 }
- /*
-   ** Evento que se ejecuta ante algun cambio en la grillas (sorting,paging or filtering)
-   */
-   onQueryParamsChange(params: NzTableQueryParams): void {
-    this.queryData.page = params.pageIndex - 1;
-    this.queryData.pageSize = params.pageSize;
-    this.getData(this.queryData);
-  }
-
   search(): void {
     this.queryData.page = 0;
     this.getData(this.queryData);
   }
+  /*
+   ** Evento de selección de filas en la tabla
+   */
+
+  onClick(datos:any, index:number): void {
+    this.selectedIndex = index 
+    this.selectedCategory= datos;
+  } 
+
+  /*
+   ** Evento de navegación por teclado
+   */
+  myNavegation(event:any) {
+    switch (event.key) {
+      case "ArrowDown":
+        let nextCell = this.categoryList.length > this.selectedIndex ? ++ this.selectedIndex : this.categoryList.length;
+        if(this.categoryList[nextCell] !== undefined){
+          this.selectedCategory= this.categoryList[nextCell];  
+      } 
+        break; 
+      case "ArrowUp":
+        let previousCell= this.selectedIndex > 0 ? -- this.selectedIndex : 0; 
+        if (this.categoryList[previousCell] !== undefined ){
+          this.selectedCategory= this.categoryList[previousCell];
+      }
+        break 
+    }   
+  } 
+
+  /*
+   ** Evento de scroll infinito en tabla
+   */
+  onScroll(event:any): void { 
+    let scrollHeight= event.target.scrollHeight;
+    let scrolltop= event.target.scrollTop;
+    let client= event.target.clientHeight
+    let ScrollPosition= scrollHeight - (scrolltop + client);
+    if((ScrollPosition === 0 || ScrollPosition === 1) && (this.totalItems / this.queryData.page) > this.queryData.page){ 
+      this.queryData.page ++ ; 
+      if(this.totalItems === undefined ||(this.queryData.page * this.queryData.pageSize <= this.totalItems)){ 
+        this.service.getByFilter(this.queryData)
+        .subscribe({
+          next:(r)=>{
+            r.data.map((category: CategoryModel)=>
+            this.categoryList.push(category))  
+            this.loading= false 
+          },
+          error: ()=>{  this.loading = false;
+          this.categoryList= [];}
+        }) 
+      }
+    }
+    }
   
   handleOk() {
   //   this.service.deleteUser(this.popupComponent.elementSelectedToDelete).subscribe(

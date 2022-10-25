@@ -32,10 +32,10 @@
             </div>
         </nz-collapse-panel>
       </nz-collapse> 
-    
-    <!-- Tabla -->
-    
-     <div class="shadow" #target    
+
+    <!-- Tabla --> 
+
+    <div class="shadow"    
      (scroll)="onScroll($event)">  
        <nz-table class="brand-table"  [nzData]="brandList" nzBordered=true [nzLoading]="loading" 
         [nzSize]="'small'" nzShowPagination="false"> 
@@ -53,6 +53,6 @@
           </tr> 
         </tbody>
       </nz-table>
-   </div> 
+    </div> 
   </nz-content>
  </nz-layout> 

@@ -158,7 +158,6 @@ export class ProductsListComponent implements OnInit {
           error: ()=>{  this.loading = false;
           this.productList= [];}
         }) 
-        console.log(this.queryParams)
       }
     }
   } 

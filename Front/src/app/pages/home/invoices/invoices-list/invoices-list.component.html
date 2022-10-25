@@ -11,8 +11,7 @@
         <nz-collapse>
           <nz-collapse-panel nzSize="small" nzHeader="Filtros">
             <form nz-form >
-              <div nz-row [nzGutter]="[8,1]">
-  
+              <div nz-row [nzGutter]="[8,1]">  
                 <div nz-col nzSpan="24">
                   <nz-form-item>
                     <nz-form-label>Búsqueda</nz-form-label>
@@ -28,10 +27,8 @@
                       </ng-template>
                     </nz-form-control>
                   </nz-form-item>
-                </div>
-  
-              </div>
-  
+                </div>  
+              </div>  
             </form>
           </nz-collapse-panel>
         </nz-collapse> 
@@ -44,13 +41,13 @@
           [nzPaginationType]="'small'" (nzQueryParams)="onQueryParamsChange($event)">
           <thead>
             <tr>                     
-              <th>Numero</th>
+              <th>Número</th>
               <th>Fecha</th>
               <th>Cuit</th>
               <th>Nombre</th>
               <th [nzAlign]="'center'">Total</th>       
               <th [nzAlign]="'center'">Tipo</th>       
-              <th [nzAlign]="'center'">Accion</th>
+              <th [nzAlign]="'center'">Acción</th>
             </tr>
           </thead>
           <tbody>
