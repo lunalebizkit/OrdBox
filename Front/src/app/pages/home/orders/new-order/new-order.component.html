@@ -39,6 +39,8 @@
                 [(ngModel)]="date"
                 [nzPlaceHolder]="fecha"
                 formControlName="date"
+                [nzFormat]="dateFormat"
+                [nzDisabledDate]="disabledDate"
               ></nz-date-picker
             ></nz-form-control>
           </nz-form-item>
@@ -53,60 +55,62 @@
             ></nz-switch>
           </nz-form-item>
 
-          <div nz-row>
-            <div nz-col nzSpan="12">
-              <nz-form-item>
-                <nz-form-label [nzSm]="12" [nzXs]="24" nzRequired nzFor="email"
-                  >Correo Principal
-                </nz-form-label>
-                <nz-form-control [nzSm]="14" [nzXs]="24">
-                  <input
-                    nz-input
-                    maxlength="250"
-                    nzSize="small"
-                    formControlName="email"
-                  /> </nz-form-control
-              ></nz-form-item>
-            </div>
+          <!-- En caso  -->
 
-            <div nz-col>
-              <nz-form-item>
-                <nz-switch
-                  [ngModel]="true"
-                  nzCheckedChildren="Enviar"
-                  nzUnCheckedChildren="No enviar"
-                  formControlName="send"
-                ></nz-switch>
-              </nz-form-item>
-            </div>
-          </div>
+          <!-- En caso de que sea un pedido nuevo -->
 
-          <div nz-row>
-            <div nz-col nzSpan="12">
-              <nz-form-item>
-                <nz-form-label [nzSm]="12" [nzXs]="24" nzRequired nzFor="email2"
-                  >Correo Secundario
-                </nz-form-label>
-                <nz-form-control [nzSm]="24" [nzXs]="24">
-                  <input
-                    nz-input
-                    formControlName="email2"
-                    nzSize="small"
-                    maxlength="250"
-                  /> </nz-form-control
-              ></nz-form-item>
-            </div>
-            <div nz-col>
-              <nz-form-item>
-                <nz-switch
-                  [ngModel]="true"
-                  nzCheckedChildren="Enviar"
-                  nzUnCheckedChildren="No enviar"
-                  formControlName="send2"
-                ></nz-switch>
-              </nz-form-item>
-            </div>
-          </div>
+          <ng-container formArrayName="emailEntity">
+            <ng-container *ngFor="let e of emailsControls; let i = index">
+              <div nz-row>
+                <div nz-col nzSpan="12">
+                  <nz-form-item>
+                    <nz-form-label
+                      [nzSm]="8"
+                      [nzXs]="24"
+                      nzRequired
+                      nzFor="email"
+                    >
+                      Email {{ i + 1 }}
+                    </nz-form-label>
+                    <nz-form-control [nzSm]="14" [nzXs]="24">
+                      <input [formControl]="e" nz-input />
+                      <i
+                        nz-icon
+                        nzType="minus-circle-o"
+                        class="dynamic-delete-button"
+                        style="
+                          color: rgb(243, 79, 79);
+                          position: absolute;
+                          margin-top: -7x;
+                          margin-left: 4px;
+                        "
+                        (click)="removeEmailField($event, i)"
+                      ></i>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+
+                <div nz-col>
+                  <nz-form-item>
+                    <nz-switch
+                      [ngModel]="true"
+                      nzCheckedChildren="Enviar"
+                      nzUnCheckedChildren="No enviar"
+                      formControlName="send2"
+                    ></nz-switch>
+                  </nz-form-item>
+                </div>
+              </div>
+            </ng-container>
+            <button
+              nz-button
+              nzType="primary"
+              nzShape="circle"
+              style="margin-left: 146px"
+            >
+              <i nz-icon nzType="mail" (click)="addEmailField($event)"></i>
+            </button>
+          </ng-container>
         </form>
       </nz-content>
       <!-- Buscador de Productos -->
