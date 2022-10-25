@@ -6,12 +6,12 @@
   box-shadow: -1px 1px 5px 1px #a3a1a3;
   margin-bottom: 10px;
   }
-  .table-list{
+  .table-list td{
     overflow: auto;
+    padding: 8px;
   }
   th{
     font-size: 12px;
-    padding: 20px;
   }
   td{
     font-size: 12px;
@@ -19,7 +19,6 @@
   .table{
     border-collapse: collapse;
   }
-  
   .highlighted{
    cursor: pointer;
   }

@@ -13,14 +13,13 @@
       <!-- Busqueda -->
       <nz-collapse>
         <nz-collapse-panel nzSize="small" nzHeader="Filtros">
-          <form nz-form (ngSubmit)="search()">
             <div nz-row [nzGutter]="[8,1]">
               <div nz-col nzSpan="24">
                 <nz-form-item>
                   <nz-form-label>Búsqueda</nz-form-label>
                   <nz-form-control>                  
                     <nz-input-group [nzSuffix]="clearQuery">
-                      <input [ngModelOptions]="{standalone: true}" type="text" placeholder="Ingrese descripcion o Categoria" nz-input
+                      <input [ngModelOptions]="{standalone: true}" type="text" placeholder="Ingrese descripción o Categoría" nz-input
                         (keydown.enter)="search()" [(ngModel)]="queryData.filter" />
                     </nz-input-group>
                     
@@ -32,24 +31,22 @@
                 </nz-form-item>
               </div>
             </div>
-          </form>
         </nz-collapse-panel>
       </nz-collapse> 
     
     <!-- Tabla -->
-    <div>
-      <nz-table class="table-list" #filterTable [nzData]="categoryList" nzBordered=true [nzLoading]="loading" [nzTotal]="totalItems" 
-      [nzPageIndex]="queryData.page + 1" [nzPageSize]="queryData.pageSize"
-        [nzPaginationType]="'small'" [nzFrontPagination]="false" (nzQueryParams)="onQueryParamsChange($event)" >
+    <div class="shadow"  (scroll)="onScroll($event)" >
+      <nz-table class="table-list" #filterTable [nzData]="categoryList" nzBordered=true [nzLoading]="loading" 
+      nzShowPagination="false">
         <thead>
           <tr>
             <th>#</th>
-            <th style="text-align: center;">Descripcion</th>
+            <th style="text-align: center;">Descripción</th>
             <th style="text-align: center;">Acciones</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let category of categoryList" class="small-text">
+          <tr *ngFor="let category of categoryList, let i= index" class="small-text" tabindex="-1" (keydown)="myNavegation($event) " [style.background-color]="category === selectedCategory ? 'lightblue' : ''"  (click)="onClick(category, i)">
             <td>{{ category.id}}</td>
             <td>{{ category.description}}</td>
             <td style="text-align: center;">
