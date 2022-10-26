@@ -97,8 +97,13 @@ namespace Kiltex.SistemaGestion.Services.Services
                                 .SupplierOrders
                                 .AsNoTracking()
                                 .Include(p => p.SupplierOrderDetail)
+                                .ThenInclude(p => p.Product)
                                 .Include(p => p.Supplier)
+                                
                                 .Where(p =>
+                                    ((request.Filter.Category.HasValue && request.Filter.Category.Value > 0) ?
+                                        p.SupplierOrderDetail.Any( x => x.Product.CategoryId == request.Filter.Category ): true)
+                                        &&
                                    ((request.Filter.Status.HasValue &&
                                    request.Filter.Status.Value > 0) ? 
                                    p.StatusId == request.Filter.Status : true)

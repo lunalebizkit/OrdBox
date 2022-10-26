@@ -48,7 +48,7 @@
                 </nz-form-item>
         
                 <!--Repetir Contraseña-->
-                <nz-form-item *ngIf="showPasswordChange">
+                <!-- <nz-form-item *ngIf="showPasswordChange">
                     <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="checkpassword" nzRequired>Confirmar Contraseña</nz-form-label>
                     <nz-form-control [nzSm]="14" [nzXs]="24" [nzErrorTip]="errorTpl">
                         <input nz-input type="password" formControlName="checkpassword" id="checkpassword" maxlength="250"
@@ -59,7 +59,7 @@
                             </ng-container>
                         </ng-template>
                     </nz-form-control>
-                </nz-form-item>
+                </nz-form-item> -->
         
                 <!--Cambiar contraseña boton-->
                 <nz-form-item *ngIf="!showPasswordChange">
@@ -76,7 +76,9 @@
                     <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="roleId">Rol</nz-form-label>
                     <nz-form-control [nzSm]="14" [nzXs]="24">
                         <nz-spin [nzSpinning]="!isLoadingRoles">
-                            <input formControlName=roleId nz-input id="roleId" type="text" maxlength="250" />
+                            <nz-select formControlName="roleId" id="roleId"
+                            [nzOptions]="allRols">
+                        </nz-select>                           
                         </nz-spin>
                     </nz-form-control>
                 </nz-form-item>

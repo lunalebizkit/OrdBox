@@ -35,9 +35,9 @@ import { UserModel } from "./model/user.model";
      */
     public saveUser(model: UserModel): Observable<any> {
       if (model.id === 0) {
-        return this.api.put(`user`, model, false);
-      } else {
         return this.api.post(`user`, model, false);
+      } else {
+        return this.api.put(`user`, model, false);
       }
     }
   
@@ -50,15 +50,7 @@ import { UserModel } from "./model/user.model";
       return this.api.delete(`user/${id}`, false);
     }
   
-    /**
-     * Obtiene los usuarios por filtro
-     * @param data
-     * @returns
-     */
-     public getRols(): Observable<any> {
-      return this.api.post(`users/listallrols`, null, false);
-    }
-     /**
+        /**
      * Obtiene los usuarios por filtro
      * @param data
      * @returns
