@@ -15,7 +15,6 @@ namespace Kiltex.SistemaGestion.Services.Mapper
         public OrderMapperProfile()
         {
             CreateMap<DtoSupplierOrder, SupplierOrder>()
-                .ForMember(o => o.Supplier, d => d.MapFrom(c => c.SupplierName))
             .AfterMap((o, d, c) =>
             {
                 d.SupplierOrderDetail = c.Mapper.Map<List<SupplierOrderDetail>>(o.OrderDetail);

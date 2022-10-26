@@ -5,7 +5,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { BaseComponent } from 'src/app/common/components/base/base.component';
 import { HeaderOperationsButtonsComponent } from 'src/app/common/components/headers/buttons.oparations.header.component';
-import { eRol } from '../model/rol.enum';
+import { eRol, rolList } from '../model/rol.enum';
 import { UserModel } from '../model/user.model';
 import { UserService } from '../users.services';
 
@@ -42,7 +42,7 @@ export class UsersEditComponent extends BaseComponent implements OnInit {
     /*
      ** Determina si se muestra la sección para cambio de password
      */
-    showPasswordChange = false;
+    showPasswordChange = true;
     /*
   ** Formulario
   */
@@ -51,7 +51,8 @@ export class UsersEditComponent extends BaseComponent implements OnInit {
     /*
      ** Listado de todos los roles
      */
-    allRols = [];
+    allRols = rolList;
+    rolSelected!: number;
 
     constructor(
         private service: UserService,
@@ -66,6 +67,7 @@ export class UsersEditComponent extends BaseComponent implements OnInit {
             firstName: ['', [Validators.required]],
             lastName: ['', [Validators.required]],
             userName: ['', [Validators.required]],
+            password: ['', [Validators.required]],
             email: ['', [Validators.email]],
             roleId: [2, [Validators.required]],
         });
@@ -90,14 +92,17 @@ export class UsersEditComponent extends BaseComponent implements OnInit {
     getRolName(id: number) {
         return eRol[id];
     }
+    
     save(): void {
-        this.updateConfirmValidator();
+        this.updateConfirmValidator();        
+       
         if (this.isValidForm(this.form)) {
             const model: UserModel = {
                 id: this.id !== undefined ? this.id : 0,
                 firstName: this.form.controls['firstName'].value,
                 lastName: this.form.controls['lastName'].value,
                 userName: this.form.controls['userName'].value,
+                password: this.form.controls['password'].value,
                 email: this.form.controls['email'].value,
                 roleId: this.form.controls['roleId'].value
             };
@@ -129,7 +134,9 @@ export class UsersEditComponent extends BaseComponent implements OnInit {
                     this.form.controls['lastName'].setValue(r.lastName),
                     this.form.controls['userName'].setValue(r.userName),
                     this.form.controls['email'].setValue(r.email),
-                    this.form.controls['roleId'].setValue(this.getRolName(r.roleId));
+                    this.form.controls['roleId'].setValue(this.allRols
+                        .filter((v: { value: any, label: string}) =>  v.value == r.roleId)
+                        .map((v: any) => v.value)[0]);
                 this.isLoading = false;
             },
             error: () => {
@@ -137,36 +144,8 @@ export class UsersEditComponent extends BaseComponent implements OnInit {
             }
         })
     }
-
-    /*
-     ** Evento de busqueda de todos los roles en el server
-     */
-       getAllRols(): void {
-         this.service.getRols().subscribe({
-            next: (r)=>{
-                this.isLoading= false;
-                this.allRols = r.map((rol: { id: any; name: any; }) =>{ return { value: rol.id, label: rol.name}})
-            },
-            error: ()=>{
-                this.allRols= [];
-                this.isLoading= false;
-            }
-
-         });
-     this.isLoading= false}
-
-
-
-    /*
-     ** Evento del cambio de rol
-     ** @param id
-     */
-    rolSelectChange(id: any): void {
-        // this.form.controls.rolId.setValue(id);
-    }
-
-
-    /*
+   
+      /*
      ** Muestra los inputs para cambiar la constraseña y los hace obligatorios
      */
     showPasswordChangeBox(): void {
@@ -181,7 +160,8 @@ export class UsersEditComponent extends BaseComponent implements OnInit {
      ** Comprueba que ambas contraseñas son iguales
      */
     updateConfirmValidator(): void {
-        // Promise.resolve().then(() => this.form.controls.checkpassword.updateValueAndValidity());
+        Promise.resolve().then(() => this.form.controls['password'].updateValueAndValidity());
+        //  Promise.resolve().then(() => this.form.controls.checkpassword.updateValueAndValidity());
     }
 
     confirmationValidator = (control: FormControl): { [s: string]: boolean } => {
