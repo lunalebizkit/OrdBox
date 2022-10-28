@@ -15,7 +15,6 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
 import { NzDrawerRef, NzDrawerService } from 'ng-zorro-antd/drawer';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
@@ -59,13 +58,13 @@ export class NewOrderComponent extends BaseComponent implements OnInit {
     @Inject(LOCALE_ID) public locale: string
   ) {
     super(notificacionService, el, message);
-    this.form = this.fb.group({
-      date: ['', [Validators.required]],
+    this.form = this.fb.group({      
       isPaid: ['', ],
       email: ['', ],
       send: ['', ],
       email2: ['', ],
       send2: ['', ],
+      datetime: [new Date, [Validators.required]],
       emailEntity: new FormArray([]),
     });
     this.formProductSearch = this.fb.group({
@@ -85,7 +84,7 @@ export class NewOrderComponent extends BaseComponent implements OnInit {
   loading!: boolean;
   isVisible = false;
   switchValue = false;
-  date = null;
+  datetime = null;
   fecha = 'Elige una fecha';
   isConfirmLoading = false;
   id!: number;
@@ -149,15 +148,17 @@ export class NewOrderComponent extends BaseComponent implements OnInit {
     
    
   save(): void {
+    console.log(this.form);
+    
     if (this.isValidForm(this.form) && (this.orderDetail.length > 0)) {     
       const model: NewOrder = {
         id: this.id !== undefined ? this.id : 0,
-        supplierId: this.formSupplierSearch.controls['supplierId'].value,        
-        date: this.form.controls['date'].value,
+        supplierId: this.formSupplierSearch.controls['supplierId'].value,
         isPaid: this.form.controls['isPaid'].value,
         email: this.form.controls['email'].value,
         statusId: 1,
         orderDetail: this.orderDetail,
+        datetime: this.form.controls['datetime'].value 
       };
       this.isSaving = true;
       this.ordersService.saveOrder(model).subscribe({

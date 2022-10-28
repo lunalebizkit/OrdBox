@@ -28,13 +28,13 @@
             </div>
           </form>
           <nz-form-item>
-            <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="date">Fecha
+            <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="datetime">Fecha
             </nz-form-label>
             <nz-form-control [nzSm]="6" [nzXs]="24">
               <nz-date-picker
-                [(ngModel)]="date"
+                [(ngModel)]="datetime"
                 [nzPlaceHolder]="fecha"
-                formControlName="date"
+                formControlName="datetime"
                 [nzFormat]="dateFormat"
                 [nzDisabledDate]="disabledDate"
               ></nz-date-picker

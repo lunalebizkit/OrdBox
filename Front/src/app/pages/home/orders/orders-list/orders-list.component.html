@@ -26,11 +26,10 @@
               <nz-form-item>
                 <nz-form-label>Estado</nz-form-label>
                 <nz-form-control>
-                  <nz-select nzShowSearch nzAllowClear nzPlaceHolder="Estado">
-                    <nz-option nzLabel="Todos" nzValue="1"></nz-option>
-                    <nz-option nzLabel="Aceptado" nzValue="2"></nz-option>
-                    <nz-option nzLabel="Pendiente" nzValue="3"></nz-option>
-                    <nz-option nzLabel="Rechazado" nzValue="4"></nz-option>
+                  <nz-select nzShowSearch nzAllowClear nzPlaceHolder="Estado" id="status"
+                  formControlName="status"
+                  (ngModelChange)="statusSelectedChange($event)"
+                  [nzOptions]="allStatus">
                   </nz-select>
 
                   <ng-template #clearQuery>
@@ -49,33 +48,27 @@
 
             <div nz-col nzSpan="6" class="mb-2">
               <nz-form-item>
-                <nz-form-label>Proveedor</nz-form-label>
+                <nz-form-label nzFor="supplier">Proveedor</nz-form-label>
                 <nz-form-control>
                   <nz-select
-                    nzMode="tags"
-                    nzMode="multiple"
+                    id="supplier"
                     nzPlaceHolder="Seleccione Proveedor"
                     nzAllowClear
-                    nzShowSearch
-                    nzServerSearch
-                    (nzOnSearch)="onSearch($event)"
+                    nzShowSearch                   
                     formControlName="supplier"
                     (ngModelChange)="supplierSelectedChange($event)"
-                  >
-                    <nz-option
-                      *ngFor="let p of allSuppliers; let id = index"
-                      [nzValue]="p.value"
-                      [nzLabel]="p.label"
-                    ></nz-option>
-
-                    <nz-option *ngIf="isLoading" nzDisabled nzCustomContent>
-                      <span
-                        nz-icon
-                        nzType="loading"
-                        class="loading-icon"
-                      ></span>
-                      Loading Data...
-                    </nz-option>
+                    [nzOptions]="allSuppliers"
+                  >                
+                  <ng-template #clearQuery>
+                    <i
+                      nz-icon
+                      class="ant-input-clear-icon"
+                      nzTheme="fill"
+                      nzType="close-circle"
+                      *ngIf="formSearch.get('supplier')?.value"
+                      (click)="formSearch.get('supplier')?.setValue([])"
+                    ></i>
+                  </ng-template>
                   </nz-select>
                 </nz-form-control>
               </nz-form-item>
@@ -111,7 +104,7 @@
           </div>
           <div nz-row nzJustify="end">
             <div>
-              <button nz-button nzType="primary">
+              <button nz-button nzType="primary" (click)="search()">
                 <i nz-icon nzType="search"></i>
                 Buscar
               </button>
@@ -138,7 +131,7 @@
       <tbody>
         <tr class="small-text" *ngFor="let data of allOrders" (click)="onSelect(data.id)">
           <td>{{data.id}}</td>
-          <td>{{data.isPaid}}</td>
+          <td>{{ this.formaterDate(data.dateTime)}}</td>
           <td>{{data.supplierName}}</td>
           <td>{{data.statusId}}</td>
         </tr>

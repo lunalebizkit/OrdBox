@@ -4,6 +4,7 @@ export interface OrderList {
   supplierName: string;
   date: Date;
   isPaid: boolean;
+  dateTime: Date;
   email: string;
   statusId: number;
   orderDetail: OrderDetail[];
@@ -12,8 +13,8 @@ export interface OrderList {
 export interface NewOrder {
   id: number;
   supplierId: number;
-  date: Date;
   isPaid: boolean;
+  datetime: Date;
   email: string;
   statusId: number;
   orderDetail: OrderDetail[];
