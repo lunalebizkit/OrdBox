@@ -13,7 +13,7 @@ namespace Kiltex.SistemaGestion.Services.Mapper
                 .ForMember(o => o.SupplierName, x => x.MapFrom(y => y.Supplier.Name))
             .AfterMap((o, d, c) =>
             {
-                d.OrderDetail = c.Mapper.Map<List<DtoOrderDetail>>(o.SupplierOrderDetail);
+                d.OrderDetail = c.Mapper.Map<List<DtoResponseOrderDetail>>(o.SupplierOrderDetail);
             });
             CreateMap<DtoRequestSupplierOrder, SupplierOrder>()
                 .AfterMap((o, d,c)=> {
@@ -21,9 +21,10 @@ namespace Kiltex.SistemaGestion.Services.Mapper
                     d.ScheduledDate = o.DateTime=  DateTime.Now;
                     d.SupplierOrderDetail = c.Mapper.Map<List<SupplierOrderDetail>>(o.OrderDetail);
                  });          
-            CreateMap<DtoOrderDetail, SupplierOrderDetail>().ReverseMap();
-         
-           
+            CreateMap<SupplierOrderDetail, DtoResponseOrderDetail>()
+                .ForMember( o => o.ProductId, x => x.MapFrom(y => y.Product.Description));
+            CreateMap<DtoRequestSupplierOrder, SupplierOrderDetail>();
+
         }
     }
 }

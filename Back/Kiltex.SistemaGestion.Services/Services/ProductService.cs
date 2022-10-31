@@ -6,6 +6,8 @@ using Kiltex.SistemaGestion.Domain.Model;
 using Kiltex.SistemaGestion.SDK.Error;
 using Kiltex.SistemaGestion.Services.Common;
 using Kiltex.SistemaGestion.Services.Models.Dtos;
+using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
+using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
 using Microsoft.EntityFrameworkCore;
 
 namespace Kiltex.SistemaGestion.Services.Services
@@ -18,7 +20,7 @@ namespace Kiltex.SistemaGestion.Services.Services
 
         { }
 
-        public async Task<OperationResponse<DtoProduct>> GetById(long id)
+        public async Task<OperationResponse<DtoResponseProduct>> GetById(long id)
         {
             var producto = await _contextSql
                                 .Products
@@ -30,19 +32,19 @@ namespace Kiltex.SistemaGestion.Services.Services
                                 .ConfigureAwait(false);
             if (producto == null)
 
-                return new OperationResponse<DtoProduct>(null, false, new OperationExceptions("000", $"Producto no encontrado {id}"));
+                return new OperationResponse<DtoResponseProduct>(null, false, new OperationExceptions("000", $"Producto no encontrado {id}"));
 
-            var result= _mapper.Map<DtoProduct>(producto);
+            var result= _mapper.Map<DtoResponseProduct>(producto);
 
-            return new OperationResponse<DtoProduct>(result);
+            return new OperationResponse<DtoResponseProduct>(result);
         }
-        public async Task<OperationResponse<IdResponse<long>>> Add(DtoAddProduct model, CancellationToken ct = default)
+        public async Task<OperationResponse<IdResponse<long>>> Add(DtoRequestAddProduct model, CancellationToken ct = default)
         {
             model.Id = 0;
             return await AddOrUpdate(model, ct).ConfigureAwait(false);
         }
 
-        public async Task<OperationResponse<IdResponse<long>>> AddOrUpdate(DtoAddProduct model, CancellationToken ct = default)
+        public async Task<OperationResponse<IdResponse<long>>> AddOrUpdate(DtoRequestAddProduct model, CancellationToken ct = default)
         {
             var productModel= _mapper.Map<Product>(model);
 
@@ -65,7 +67,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             return Ok(new IdResponse<long>(productModel.Id));
         }
 
-        public async Task<OperationResponse<DtoPagination<DtoProduct>>> List(RequestPaginatedData<string> request)
+        public async Task<OperationResponse<DtoPagination<DtoResponseProduct>>> List(RequestPaginatedData<string> request)
         {
             var query = _contextSql
                                 .Products
@@ -89,10 +91,10 @@ namespace Kiltex.SistemaGestion.Services.Services
                                   .ConfigureAwait(false);
 
 
-            var dto = _mapper.Map<List<DtoProduct>>(list);
+            var dto = _mapper.Map<List<DtoResponseProduct>>(list);
     
 
-            return new OperationResponse<DtoPagination<DtoProduct>>(new DtoPagination<DtoProduct>
+            return new OperationResponse<DtoPagination<DtoResponseProduct>>(new DtoPagination<DtoResponseProduct>
             {
                 Data = dto,
                 PageSize = request.PageSize,
@@ -101,7 +103,7 @@ namespace Kiltex.SistemaGestion.Services.Services
         }
 
         //Servicio que utlizamos para filtrar en UPDATEPRICEPRODUCT
-        public async Task<OperationResponse<DtoPagination<DtoProduct>>> ListProduct(RequestPaginatedData<ProductFilter> request)
+        public async Task<OperationResponse<DtoPagination<DtoResponseProduct>>> ListProduct(RequestPaginatedData<ProductFilter> request)
         {
             var query = _contextSql
                                 .Products
@@ -126,17 +128,17 @@ namespace Kiltex.SistemaGestion.Services.Services
                                   .ConfigureAwait(false);
 
 
-            var dto = _mapper.Map<List<DtoProduct>>(list);
+            var dto = _mapper.Map<List<DtoResponseProduct>>(list);
 
 
-            return new OperationResponse<DtoPagination<DtoProduct>>(new DtoPagination<DtoProduct>
+            return new OperationResponse<DtoPagination<DtoResponseProduct>>(new DtoPagination<DtoResponseProduct>
             {
                 Data = dto,
                 PageSize = request.PageSize,
                 TotalCount = count
             });
         }
-        public async Task<OperationResponse<IdResponse<long>>> Update(DtoAddProduct model, CancellationToken ct = default)
+        public async Task<OperationResponse<IdResponse<long>>> Update(DtoRequestAddProduct model, CancellationToken ct = default)
         {
             if (model.Id == 0)
             {
