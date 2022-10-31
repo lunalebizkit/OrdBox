@@ -27,38 +27,32 @@ export class HeaderOperationsButtonsComponent implements OnInit {
   @Output('onDeleteClick') onDeleteClick: EventEmitter<any> =
     new EventEmitter<any>();
 
-  constructor(private route: ActivatedRoute, private router: Router) {}
+  constructor(private route: ActivatedRoute, private router: Router) { }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
   goBack() {
     if (this.onCancelClick.length > 0) {
       this.onCancelClick.emit();
     } else {
       this.route.params.subscribe((p) => {
-        if (
-          this.router.routerState.snapshot.url
-            .split('home/', 2)[1]
-            .split('/')[0] == 'products' ||
-          this.router.routerState.snapshot.url
-            .split('home/', 2)[1]
-            .split('/')[0] == 'invoices'
-        ) {
-          this.router.navigate(['/home/products/list']);
-        }
-        if (
-          this.router.routerState.snapshot.url
-            .split('home/', 2)[1]
-            .split('/')[0] == 'orders'
-        ) {
-          this.router.navigate(['/home/orders/list']);
-        } else {
-          if (p['id']) {
-            this.router.navigate(['../../'], { relativeTo: this.route });
-          } else {
-            this.router.navigate(['../'], { relativeTo: this.route });
-          }
-        }
+        let url = this.router.routerState.snapshot.url
+          .split('home/', 2)[1]
+          .split('/')[0];
+        switch (url) {
+          case 'products':
+            let productId= p['id'] ? p['id']: null;            
+            this.router.navigate(['/home/products/list', {productId}]);
+            break;
+
+          default:
+            if (p['id']) {
+              this.router.navigate(['../../'], { relativeTo: this.route });
+            } else {
+              this.router.navigate(['../'], { relativeTo: this.route });
+            }
+            break;
+        }      
       });
     }
   }
