@@ -1,7 +1,7 @@
 ﻿using Kiltex.SistemaGestion.Services.Common;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
 using Kiltex.SistemaGestion.Services.Services;
-using Kiltex.SitemaGestion.Api.Controllers;
+using Kiltex.SistemaGestion.Api.Controllers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Kiltex.SistemaGestion.Api.Controllers.SupplierOrder

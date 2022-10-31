@@ -44,13 +44,13 @@ namespace Kiltex.SistemaGestion.Services.Services
             }
             else
             {
-                //var oldOrder = await _contextSql
-                //    .SupplierOrders
-                //    .AsNoTracking()
-                //    .Include(p => p.Supplier)
-                //    .Include(p => p.SupplierOrderDetail)
-                //    .FirstAsync(p => p.Id == newOrder.Id)
-                //    .ConfigureAwait(false);
+                var oldOrder = await _contextSql
+                    .SupplierOrders
+                    .AsNoTracking()
+                    .Include(p => p.Supplier)
+                    .Include(p => p.SupplierOrderDetail)
+                    .FirstAsync(p => p.Id == newOrder.Id)
+                    .ConfigureAwait(false);
 
                 _contextSql.SupplierOrders.Update(newOrder);
 
@@ -68,8 +68,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                                 .AsNoTracking()
                                 .Include(p => p.SupplierOrderDetail)
                                 .ThenInclude(p => p.Product)
-                                .Include(p => p.Supplier)
-                                
+                                .Include(p => p.Supplier)                                
                                 .Where(p =>
                                     ((request.Filter.Category.HasValue && request.Filter.Category.Value > 0) ?
                                         p.SupplierOrderDetail.Any( x => x.Product.CategoryId == request.Filter.Category ): true)

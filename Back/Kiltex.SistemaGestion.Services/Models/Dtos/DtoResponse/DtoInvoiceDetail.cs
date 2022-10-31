@@ -1,6 +1,4 @@
-﻿
-
-namespace Kiltex.SistemaGestion.Services.Models.Dtos
+﻿namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse
 {
     public class DtoInvoiceDetail
     {

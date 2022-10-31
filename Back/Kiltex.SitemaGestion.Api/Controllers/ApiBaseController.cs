@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 
-namespace Kiltex.SitemaGestion.Api.Controllers
+namespace Kiltex.SistemaGestion.Api.Controllers
 {
     [ApiVersion("1")]
     [Route("api/v1/[controller]")]
