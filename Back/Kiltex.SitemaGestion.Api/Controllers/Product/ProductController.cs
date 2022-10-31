@@ -1,5 +1,5 @@
 ﻿using Kiltex.SistemaGestion.Services.Common;
-using Kiltex.SistemaGestion.Services.Models.Dtos;
+using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
 using Kiltex.SistemaGestion.Services.Services;
 using Kiltex.SitemaGestion.Api.Controllers;
 using Microsoft.AspNetCore.Mvc;
@@ -20,7 +20,7 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Product
         }
 
         [HttpPost]
-        public async Task<IActionResult> New([FromBody] DtoAddProduct model)
+        public async Task<IActionResult> New([FromBody] DtoRequestAddProduct model)
         {
             return Return(await _service.Add(model).ConfigureAwait(false));
         }
@@ -32,7 +32,7 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Product
         }
         [HttpPut]
         
-        public async Task<IActionResult> Edit([FromBody] DtoAddProduct model)
+        public async Task<IActionResult> Edit([FromBody] DtoRequestAddProduct model)
         {
             return Return(await _service.Update(model).ConfigureAwait(false));
         }

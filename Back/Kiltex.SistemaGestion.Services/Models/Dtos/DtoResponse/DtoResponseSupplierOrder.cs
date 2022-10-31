@@ -20,9 +20,19 @@ namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse
 
         public DateTime? ScheduledDate { get; set; }
 
-        public List<DtoOrderDetail> OrderDetail { get; set; }
+        public List<DtoResponseOrderDetail> OrderDetail { get; set; }
 
 
     }
-   
+    public class DtoResponseOrderDetail
+    {
+        public long Id { get; set; }
+        public string ProductId { get; set; }
+        public int OrderedQuantity { get; set; }
+        public int RecievedQuantity { get; set; }
+        public long StatusId { get; set; }
+
+
+    }
+
 }
