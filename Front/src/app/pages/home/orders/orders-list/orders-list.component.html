@@ -133,7 +133,7 @@
           <td>{{data.id}}</td>
           <td>{{ this.formaterDate(data.dateTime)}}</td>
           <td>{{data.supplierName}}</td>
-          <td>{{data.statusId}}</td>
+          <td>{{ this.getStatusName(data.statusId) }}</td>
         </tr>
       </tbody>
     </nz-table>

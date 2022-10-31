@@ -6,7 +6,7 @@ import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { BaseComponent } from 'src/app/common/components/base/base.component';
 import { CategoriesService } from '../../categories/category.services';
 import { EntityService } from '../../customers/customer.service';
-import { StatusType } from '../enum/status-type.enum';
+import { eStatus, StatusType } from '../enum/status-type.enum';
 import { OrderDetail, OrderList } from '../models/order.model';
 import { OrdersService } from '../orders.service';
 
@@ -181,5 +181,9 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
   search(): void {
     this.queryParams.page = 0;
     this.getAllOrders();
+  };
+
+  getStatusName(id:number) {
+    return eStatus[id];
   }
 }

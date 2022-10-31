@@ -1,10 +1,8 @@
 ﻿
 
-using System.ComponentModel.DataAnnotations;
-
-namespace Kiltex.SistemaGestion.Services.Models.Dtos
+namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest
 {
-    public class RequestAddPermissionXRol
+    public class DtoRequestAddPermissionXRol
     {
         public long Id { get; set; }
 
