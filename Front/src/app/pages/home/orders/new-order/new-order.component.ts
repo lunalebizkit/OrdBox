@@ -147,9 +147,7 @@ export class NewOrderComponent extends BaseComponent implements OnInit {
     })}
     
    
-  save(): void {
-    console.log(this.form);
-    
+  save(): void {    
     if (this.isValidForm(this.form) && (this.orderDetail.length > 0)) {     
       const model: NewOrder = {
         id: this.id !== undefined ? this.id : 0,

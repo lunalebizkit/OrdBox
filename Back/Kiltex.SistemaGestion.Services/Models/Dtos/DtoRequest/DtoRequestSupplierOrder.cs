@@ -10,11 +10,11 @@ namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest
         public DateTime DateTime { get; set; }
         public long StatusId { get; set; }
 
-        public List<DtoOrderDetail> OrderDetail { get; set; }
+        public List<DtoRequestOrderDetail> OrderDetail { get; set; }
 
 
     }
-    public class DtoOrderDetail
+    public class DtoRequestOrderDetail
     {
         public long Id { get; set; }
         public long ProductId { get; set; }
