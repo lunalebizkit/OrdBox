@@ -1,5 +1,5 @@
-<app-header-op-buttons #header [btnSaveText]="'Guardar'" [title]="'Producto'" [showSpinner]="isSaving"
-    [iconBack]="'rollback'" [iconSave]="'save'" [iconTitle]="'tags'" (onSaveClick)="save()">
+<app-header-op-buttons #header [btnCancelText]="'volver'" [btnSaveText]="'Guardar'" [title]="'Producto'" [showSpinner]="isSaving"
+    [iconBack]="'rollback'" [iconSave]="'save'" [iconTitle]="'tags'" (onSaveClick)="save()" >
 </app-header-op-buttons>
 
 <nz-spin [nzSpinning]="isLoading">
@@ -17,14 +17,14 @@
                     </nz-form-item>
 
                     <nz-form-item>
-                        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="code">Codigo </nz-form-label>
+                        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="code">Código </nz-form-label>
                         <nz-form-control [nzSm]="14" [nzXs]="24">
                             <nz-input-number formControlName="code" nz-input id="code" [nzMin]="0"></nz-input-number>
                         </nz-form-control>
                     </nz-form-item>
 
                     <nz-form-item>
-                        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="categoryName">Categoria </nz-form-label>
+                        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="categoryName">Categoría </nz-form-label>
                         <nz-form-control [nzSm]="14" [nzXs]="24">
                             <nz-spin [nzSpinning]="isLoadingCategory">
                                 <nz-select formControlName="categoryName" id="categoryName"
@@ -56,7 +56,7 @@
                         </nz-form-control>
                     </nz-form-item>
                     <nz-form-item>
-                        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="observation">Observacion
+                        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="observation">Observación
                         </nz-form-label>
                         <nz-form-control [nzSm]="14" [nzXs]="24">
                             <input formControlName="observation" nz-input id="observation" maxlength="250" />

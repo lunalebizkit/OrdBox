@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { ProductsModel } from '../model/product.model';
 import { ProductService } from '../product.service';
@@ -11,6 +11,8 @@ import { ProductService } from '../product.service';
   styleUrls: ['./products-list.component.css']
 })
 export class ProductsListComponent implements OnInit {
+
+
   /*
     ** Listado de los productos
     */
@@ -53,26 +55,40 @@ export class ProductsListComponent implements OnInit {
   /*
   ** Constructor
   */
-  constructor(private service: ProductService, private router: Router) {
+  constructor(private service: ProductService, private router: Router, private route:ActivatedRoute) {
 
   }
+
   selectedIndex: number = 0; 
   selectedProduct: any;
+  productId!:number |null; 
+ /*  private route: ActivatedRoute; */
 
   /*
   ** Evento de inicio de angular
   */
   ngOnInit(): void {
-
+    this.productId= Number (this.route.snapshot.paramMap.get('productId'));  
+    if (this.productId != null){
+      let paramsStorage= JSON.parse(localStorage.getItem('filter')!) ? JSON.parse(localStorage.getItem('filter')!) : null;
+      if (paramsStorage != undefined){
+        console.log(paramsStorage.filter);
+        
+       this.queryParams.filter= paramsStorage.filter != null ? paramsStorage.filter : ''; 
+       this.queryParams.PageSize= paramsStorage.PageSize != null ? paramsStorage.PageSize : 100
+       this.queryParams.page= paramsStorage.page != null ? paramsStorage.page : 0
+      
+      this.getData(this.queryParams);}
+    }
   }
 
   /*
   ** Evento que se ejecuta ante algun cambio en la grillas (sorting,paging or filtering)
   */
   onQueryParamsChange(params: NzTableQueryParams): void {
-    this.queryParams.filter = localStorage.getItem('productListFilter')!;
+    /* this.queryParams.filter = localStorage.getItem('productListFilter')!;
      this.queryParams.page = params.pageIndex - 1;
-    this.queryParams.PageSize = params.pageSize;    
+    this.queryParams.PageSize = params.pageSize;    */ 
     this.getData(this.queryParams);
   } 
 
@@ -87,13 +103,19 @@ export class ProductsListComponent implements OnInit {
         this.productList = r.data;
         this.totalItems = r.totalCount;
         this.loading = false;
+        localStorage.clear();
+        if (this.productId != null){
+          let index= this.productList.findIndex(element => element.id == this.productId);
+          let data= this.productList.filter(element => element.id == this.productId)[0];
+          this.onClick(data,index)
+        }
       },
       error: () => {
         this.loading = false;
         this.productList = []; 
       }
     })
-  } 
+  }  
   /*
   ** Evento al presionar buscar o presionar enter
   */
@@ -109,7 +131,9 @@ export class ProductsListComponent implements OnInit {
   }
   onClick(datos:any, index:number): void {
   this.selectedIndex = index 
-  this.selectedProduct = datos;
+  this.selectedProduct = datos
+
+ 
   }  
   onKeyPress( datos:any) {
     var data = datos.id
@@ -145,7 +169,7 @@ export class ProductsListComponent implements OnInit {
     let scrolltop= event.target.scrollTop;
     let client= event.target.clientHeight
     let ScrollPosition= scrollHeight - (scrolltop + client);
-    if((ScrollPosition === 0 || ScrollPosition ===1 ) && (this.totalItems / this.queryParams.page) > this.queryParams.page){ 
+    if((ScrollPosition === 0 || ScrollPosition === -1 ) && (this.totalItems / this.queryParams.page) > this.queryParams.page){ 
     this.queryParams.page= this.queryParams.page +1; 
       if(this.totalItems === undefined ||(this.queryParams.page * this.queryParams.PageSize <= this.totalItems)){ 
         this.service.getProducts(this.queryParams)

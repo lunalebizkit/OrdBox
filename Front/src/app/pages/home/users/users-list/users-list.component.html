@@ -34,10 +34,9 @@
       </nz-collapse-panel>
     </nz-collapse> 
     <!-- Tabla -->
-    <div>
+    <div (scroll)="onScroll($event)"class="table">
       <nz-table class="table-list"  [nzData]="userList" nzBordered=false [nzSize]="'small'" [nzLoading]="loading"
-        [nzTotal]="totalItems" [nzPageSize]="queryData.pageSize" [nzPageIndex]="queryData.page + 1" [nzFrontPagination]="false"
-        [nzPaginationType]="'small'" (nzQueryParams)="onQueryParamsChange($event)" >
+       [nzPageSize]="queryData.pageSize"  nzShowPagination="false">
         <thead>
           <tr>
             <th nzLeft>Nombre</th>
@@ -49,7 +48,9 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let user of userList" class="small-text">
+          <tr *ngFor="let user of userList; let i= index" class="small-text" tabindex="-1" (click)="onClick(user, i)" (keydown)="myNavegation($event) "
+          [style.background-color]="user === selectedUser ? 'lightblue' : ''" 
+          (dblclick)="onDoubleClicked(user)">
             <td>{{ user.firstName }}</td>
             <td>{{ user.lastName }}</td>
             <td>{{ user.userName }}</td>
@@ -59,15 +60,12 @@
               <nz-space [nzSplit]="spaceSplit">
                 <ng-template #spaceSplit>
                   <nz-divider nzType="vertical"></nz-divider>
-                </ng-template>
-                <a *nzSpaceItem routerLink="/home/users/edit/{{user.id}}">
-                  <i nz-tooltip nzTooltipTitle="Editar" nz-icon nzType="edit"></i>
-                </a>
+                </ng-template> 
                 <a *nzSpaceItem (click)="popup.showDeleteConfirmation(user.id)">
                   <i nz-tooltip nzTooltipTitle="Eliminar" nz-icon nzType="delete" [nzTheme]="'twotone'"
                     [nzTwotoneColor]="'#FF0000'"></i>
                 </a>
-              </nz-space>
+              </nz-space> 
             </td>
           </tr>
         </tbody>

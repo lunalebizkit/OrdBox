@@ -4,6 +4,7 @@ import { ListUserModel } from '../model/list.user.model';
 import { PopupConfirmationComponent } from 'src/app/common/components/popup-confirmation/popup-confirmation.component';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import {eRol} from '../model/rol.enum'
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-users-list',
   templateUrl: './users-list.component.html',
@@ -13,7 +14,9 @@ export class UsersListComponent implements OnInit {
 
   @ViewChild('popup') popupComponent!: PopupConfirmationComponent;
 
-  constructor(private service: UserService) { }
+  constructor(private service: UserService, private router: Router) { }
+  selectedIndex: number = 0; 
+  selectedUser: any;
 
   ngOnInit(): void {
     this.getData(this.queryData);
@@ -95,4 +98,51 @@ export class UsersListComponent implements OnInit {
   getRolName(id:number) {
     return eRol[id];
   }
+
+  onClick(datos:any, index:number): void {
+    this.selectedIndex = index 
+    this.selectedUser = datos;
+  } 
+  onDoubleClicked (datos:any) {
+    var data = datos.id
+    this.router.navigate(['home/users/edit/', data]); 
+  }
+  myNavegation(event:any) {
+    switch (event.key) {
+      case "ArrowDown":
+        let nextCell = this.userList.length > this.selectedIndex ? ++ this.selectedIndex : this.userList.length;
+        if(this.userList[nextCell] !== undefined){
+          this.selectedUser = this.userList[nextCell];  
+      } 
+        break; 
+      case "ArrowUp":
+        let previousCell= this.selectedIndex > 0 ? -- this.selectedIndex : 0; 
+        if (this.userList[previousCell] !== undefined ){
+          this.selectedUser= this.userList[previousCell];
+      }
+        break 
+    } 
+  
+  }
+  onScroll(event:any): void { 
+    let scrollHeight= event.target.scrollHeight;
+    let scrolltop= event.target.scrollTop;
+    let client= event.target.clientHeight
+    let ScrollPosition= scrollHeight - (scrolltop + client);
+    if((ScrollPosition === 0 || ScrollPosition === -1 ) && (this.totalItems / this.queryData.page) > this.queryData.page){ 
+    this.queryData.page= this.queryData.page +1; 
+      if(this.totalItems === undefined ||(this.queryData.page * this.queryData.pageSize <= this.totalItems)){ 
+        this.service.getByFilter(this.queryData)
+        .subscribe({
+          next:(r)=>{
+            r.data.map((user: ListUserModel)=>
+            this.userList.push(user))  
+            this.loading= false 
+          },
+          error: ()=>{  this.loading = false;
+          this.userList= [];}
+        }) 
+      }
+    }
+  } 
 }

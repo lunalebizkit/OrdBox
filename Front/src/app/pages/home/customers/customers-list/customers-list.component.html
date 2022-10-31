@@ -10,9 +10,7 @@
     <nz-content>  
         <nz-collapse>
           <nz-collapse-panel nzSize="small" nzHeader="Filtros">
-            <form nz-form (ngSubmit)="search()">
               <div nz-row [nzGutter]="[8,1]">
-  
                 <div nz-col nzSpan="24">
                   <nz-form-item>
                     <nz-form-label>Búsqueda</nz-form-label>
@@ -29,19 +27,14 @@
                     </nz-form-control>
                   </nz-form-item>
                 </div>
-  
               </div>
-  
-            </form>
           </nz-collapse-panel>
         </nz-collapse> 
   
         <!-- Tabla -->
      
-      <div>
-        <nz-table  class="table-list" [nzData]="entityList" [nzSize]="'small'" [nzLoading]="loading"
-          [nzTotal]="totalItems" [nzPageSize]="queryParams.pageSize" [nzPageIndex]="queryParams.page + 1" 
-          [nzPaginationType]="'small'" (nzQueryParams)="onQueryParamsChange($event)">
+      <div class="table" (scroll)="onScroll($event)">
+        <nz-table  class="table-list" [nzData]="entityList" [nzSize]="'small'" [nzLoading]="loading" nzShowPagination="false">
           <thead>
             <tr>                     
               <th>Nombre</th>
@@ -50,22 +43,24 @@
               <th>Direccion</th>          
               <th>Telefono/s</th>       
               <th>Email/s</th>       
-              <th>Accion</th>
+            <!--   <th>Accion</th> -->
             </tr>
           </thead>
           <tbody>
-            <tr #td *ngFor="let data of entityList" class="small-text">     
+            <tr #td *ngFor="let data of entityList ; let i = index" class="small-text" tabindex="-1" (click)="onClick(data, i)" (keydown)="myNavegation($event) "
+            [style.background-color]="data === selectedCustomers? 'lightblue' : ''" 
+            (keydown.enter)="onKeyPress(data)" (dblclick)="onDoubleClicked(data)">     
               <td>{{data.name}}</td>
               <td>{{data.dni}}</td>
               <td>{{data.cuit}}</td>
               <td>{{data.address}}</td> 
               <td>{{data.phoneEntity}}</td>
               <td>{{data.emailEntity}}</td>                      
-              <td style="text-align: center;">
+          <!--     <td style="text-align: center;">
                   <a routerLink="/home/customers/edit/{{data.id}}">
                     <i nz-icon nzType="edit" nzTheme="outline"></i>
                   </a>                  
-                </td>        
+                </td>   -->      
             </tr>
           </tbody>
         </nz-table>

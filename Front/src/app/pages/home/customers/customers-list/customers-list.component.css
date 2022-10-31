@@ -10,17 +10,14 @@
   overflow:auto;
 }
 th{
-  font-size: 12px;
-  padding: 20px;
+  font-size: 13px;
 }
 td{
   font-size: 12px;
-  padding-right: 10px;
 }
 .table{
   border-collapse: collapse;
-}
-
-.highlighted{
- cursor: pointer;
+  height: 70vh;
+  overflow-y: scroll;
+  scroll-behavior: smooth;
 }

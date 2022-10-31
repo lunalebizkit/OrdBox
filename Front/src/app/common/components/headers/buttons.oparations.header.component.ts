@@ -1,3 +1,4 @@
+import { style } from '@angular/animations';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -35,30 +36,23 @@ export class HeaderOperationsButtonsComponent implements OnInit {
     if (this.onCancelClick.length > 0) {
       this.onCancelClick.emit();
     } else {
-      this.route.params.subscribe((p) => {
-        if (
-          this.router.routerState.snapshot.url
-            .split('home/', 2)[1]
-            .split('/')[0] == 'products' ||
-          this.router.routerState.snapshot.url
-            .split('home/', 2)[1]
-            .split('/')[0] == 'invoices'
-        ) {
-          this.router.navigate(['/home/products/list']);
+      this.route.params.subscribe((p) => {        
+        let url=this.router.routerState.snapshot.url.split('home/', 2)[1]
+        .split('/')[0]
+        switch (url) {
+          case 'products':
+            this.router.navigate(['home/products/list']); 
+            break;
+           
+          default:
+            if (p['id']) {
+              this.router.navigate(['../../'], { relativeTo: this.route });
+            } else {
+              this.router.navigate(['../'], { relativeTo: this.route });
+            }
+            break;
         }
-        if (
-          this.router.routerState.snapshot.url
-            .split('home/', 2)[1]
-            .split('/')[0] == 'orders'
-        ) {
-          this.router.navigate(['/home/orders/list']);
-        } else {
-          if (p['id']) {
-            this.router.navigate(['../../'], { relativeTo: this.route });
-          } else {
-            this.router.navigate(['../'], { relativeTo: this.route });
-          }
-        }
+    
       });
     }
   }

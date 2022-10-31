@@ -78,9 +78,9 @@ export class UsersEditComponent extends BaseComponent implements OnInit {
                     this.getUser(p['id']);
                     this.id = p['id'];
                 }
-                else {
+                 else {
                     this.showPasswordChangeBox();
-                }
+                } 
                 this.getRolName(p['id']);
             },
             error: () => { }
@@ -172,7 +172,7 @@ export class UsersEditComponent extends BaseComponent implements OnInit {
     showPasswordChangeBox(): void {
         this.form.controls['password'].setValidators([Validators.required]);
         this.form.get('password')!.updateValueAndValidity();
-        this.form.controls['checkpassword'].setValidators([Validators.required, this.confirmationValidator]);
+        this.form.controls['checkpassword'].setValidators([Validators.required, this.confirmationValidator]); 
         this.form.get('checkpassword')!.updateValueAndValidity();
         this.showPasswordChange = true;
     }
