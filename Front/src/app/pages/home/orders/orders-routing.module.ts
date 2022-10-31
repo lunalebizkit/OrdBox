@@ -5,7 +5,7 @@ import { OrdersListComponent } from './orders-list/orders-list.component';
 
 const routes: Routes = [
   {
-    path: 'list',
+    path: '',
     component: OrdersListComponent,
   },
 

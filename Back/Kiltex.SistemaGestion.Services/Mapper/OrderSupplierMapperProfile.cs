@@ -23,7 +23,7 @@ namespace Kiltex.SistemaGestion.Services.Mapper
                  });          
             CreateMap<SupplierOrderDetail, DtoResponseOrderDetail>()
                 .ForMember( o => o.ProductId, x => x.MapFrom(y => y.Product.Description));
-            CreateMap<DtoRequestSupplierOrder, SupplierOrderDetail>();
+            CreateMap<DtoRequestOrderDetail, SupplierOrderDetail>();
 
         }
     }
