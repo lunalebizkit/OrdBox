@@ -1,7 +1,7 @@
 ﻿using Kiltex.SistemaGestion.Services.Common;
-using Kiltex.SistemaGestion.Services.Models.Dtos;
+using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
 using Kiltex.SistemaGestion.Services.Services;
-using Kiltex.SitemaGestion.Api.Controllers;
+using Kiltex.SistemaGestion.Api.Controllers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Kiltex.SistemaGestion.Api.Controllers.Invoice
@@ -28,7 +28,7 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Invoice
             return Return(await _service.ListInvoices(filter).ConfigureAwait(false));
         }
         [HttpPost]
-        public async Task<IActionResult> New([FromBody] DtoInvoice model)
+        public async Task<IActionResult> New([FromBody] DtoRequestInvoice model)
         {
             return Return(await _service.NewInvoice(model).ConfigureAwait(false));
         }

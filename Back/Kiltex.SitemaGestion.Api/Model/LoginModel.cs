@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Kiltex.SitemaGestion.Api.Model
+namespace Kiltex.SistemaGestion.Api.Model
 {
     public class LoginModel
     {

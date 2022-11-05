@@ -3,7 +3,7 @@ using Kiltex.SistemaGestion.Services.Models.Dtos;
 using Kiltex.SistemaGestion.Services.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Kiltex.SitemaGestion.Api.Controllers.Category
+namespace Kiltex.SistemaGestion.Api.Controllers.Category
 {
     public class CategoryController : ApiBaseController
     {

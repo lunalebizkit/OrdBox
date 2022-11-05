@@ -17,7 +17,7 @@
                     <nz-form-label>Búsqueda</nz-form-label>
                     <nz-form-control>                  
                       <nz-input-group [nzSuffix]="clearQuery">
-                        <input [ngModelOptions]="{standalone: true}" type="text" placeholder="Ingrese Nombre o CUIT-DNI" nz-input
+                        <input [ngModelOptions]="{standalone: true}" type="text" placeholder="Ingrese CUIT-DNI" nz-input
                           (keydown.enter)="search()" [(ngModel)]="queryParams.filter" />
                       </nz-input-group>
                       

@@ -1,13 +1,13 @@
 ﻿using Kiltex.SistemaGestion.Domain.Enum;
 using Kiltex.SistemaGestion.SDK.Security;
 using Kiltex.SistemaGestion.Services.Services;
-using Kiltex.SitemaGestion.Api.Model;
+using Kiltex.SistemaGestion.Api.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
-namespace Kiltex.SitemaGestion.Api.Controllers.Authentication
+namespace Kiltex.SistemaGestion.Api.Controllers.Authentication
 {
     public class AccessController : ApiBaseController
     {

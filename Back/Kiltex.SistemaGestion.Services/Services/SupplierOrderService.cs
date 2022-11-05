@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Kiltex.SistemaGestion.Domain;
+using Kiltex.SistemaGestion.Domain.Enum;
 using Kiltex.SistemaGestion.Domain.Model;
 using Kiltex.SistemaGestion.SDK.Error;
 using Kiltex.SistemaGestion.Services.Common;
@@ -14,49 +15,79 @@ namespace Kiltex.SistemaGestion.Services.Services
         public SupplierOrderService(ErrorManager logger, DBContext context, IMapper maper) :
             base(logger, context, maper)
         { }
-        public async Task<OperationResponse<DtoResponseSupplierOrder>> GetById(long id)
+        public async Task<OperationResponse<DtoResponseSupplierOrderById>> GetById(long id)
         {
             var order = await _contextSql
                                 .SupplierOrders
                                 .Include(p => p.Supplier)
+                                 .ThenInclude(p =>p.EmailEntities)
                                 .Include(p => p.SupplierOrderDetail)
+                                .ThenInclude(p => p.Product)
                                 .AsNoTracking()
                                 .FirstOrDefaultAsync(p => p.Id == id)
                                 .ConfigureAwait(false);
             if (order == null)
 
-                return new OperationResponse<DtoResponseSupplierOrder>(null, false, new OperationExceptions("000", $"Orden no encontrada {id}"));
+                return new OperationResponse<DtoResponseSupplierOrderById>(null, false, new OperationExceptions("000", $"Orden no encontrada {id}"));
 
 
-            DtoResponseSupplierOrder result = _mapper.Map<DtoResponseSupplierOrder>(order);
+            var result = _mapper.Map<DtoResponseSupplierOrderById>(order);
 
-            return new OperationResponse<DtoResponseSupplierOrder>(result);
+            return new OperationResponse<DtoResponseSupplierOrderById>(result);
         }
         public async Task<OperationResponse<IdResponse<long>>> AddOrUpdate(DtoRequestSupplierOrder model, CancellationToken ct = default)
         {
-
-           var newOrder = _mapper.Map<SupplierOrder>(model);
-            if (newOrder.Id == 0)
+            var transaction = _contextSql.Database.BeginTransaction();
+            var newOrder = _mapper.Map<SupplierOrder>(model);
+            var productDetail = new Product();
+            try
             {
-                newOrder.StatusId = 1;
-                await _contextSql.SupplierOrders.AddAsync(newOrder, ct).ConfigureAwait(false);
+                if (newOrder.Id == 0)
+                {
+                    newOrder.StatusId = (int)ESupplierOrderStatuses.Pendiente;
+                    await _contextSql.SupplierOrders.AddAsync(newOrder, ct).ConfigureAwait(false);
 
+                }
+                else
+                {
+                    var oldOrder = await _contextSql
+                        .SupplierOrders
+                        .AsNoTracking()
+                        .Include(p => p.Supplier)
+                        .Include(p => p.SupplierOrderDetail)
+                        .FirstAsync(p => p.Id == newOrder.Id, ct)
+                        .ConfigureAwait(false);
+
+                    _contextSql.SupplierOrders.Update(newOrder);
+
+                    if (newOrder.StatusId == (int)ESupplierOrderStatuses.Aceptado)
+                    {
+                        foreach (var detail in newOrder.SupplierOrderDetail)
+                        {
+                            var oldProduct = await _contextSql.
+                                                    Products
+                                                    .AsNoTracking()
+                                                    .FirstOrDefaultAsync(p => p.Id == detail.ProductId, ct)
+                                                    .ConfigureAwait(false);
+
+                            productDetail = _mapper.Map<Product>(oldProduct);
+                            productDetail.UpdateStock( detail.OrderedQuantity);
+                        }
+                        _contextSql.Products.Update(productDetail);
+                    }
+
+                    
+                }
+                
+                await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
+                transaction.Commit();
             }
-            else
+            catch (Exception ex)
             {
-                //var oldOrder = await _contextSql
-                //    .SupplierOrders
-                //    .AsNoTracking()
-                //    .Include(p => p.Supplier)
-                //    .Include(p => p.SupplierOrderDetail)
-                //    .FirstAsync(p => p.Id == newOrder.Id)
-                //    .ConfigureAwait(false);
 
-                _contextSql.SupplierOrders.Update(newOrder);
-
-
+                throw;
             }
-            await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
+           
 
             return Ok(new IdResponse<long>(newOrder.Id));
         }
@@ -68,8 +99,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                                 .AsNoTracking()
                                 .Include(p => p.SupplierOrderDetail)
                                 .ThenInclude(p => p.Product)
-                                .Include(p => p.Supplier)
-                                
+                                .Include(p => p.Supplier)                                
                                 .Where(p =>
                                     ((request.Filter.Category.HasValue && request.Filter.Category.Value > 0) ?
                                         p.SupplierOrderDetail.Any( x => x.Product.CategoryId == request.Filter.Category ): true)

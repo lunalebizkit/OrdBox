@@ -145,7 +145,7 @@ export class ProductsListComponent implements OnInit {
     let scrolltop= event.target.scrollTop;
     let client= event.target.clientHeight
     let ScrollPosition= scrollHeight - (scrolltop + client);
-    if((ScrollPosition === 0 || ScrollPosition ===1 ) && (this.totalItems / this.queryParams.page) > this.queryParams.page){ 
+    if((ScrollPosition === 0 || ScrollPosition === -1 ) && (this.totalItems / this.queryParams.page) > this.queryParams.page){ 
     this.queryParams.page= this.queryParams.page +1; 
       if(this.totalItems === undefined ||(this.queryParams.page * this.queryParams.PageSize <= this.totalItems)){ 
         this.service.getProducts(this.queryParams)

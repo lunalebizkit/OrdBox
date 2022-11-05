@@ -204,7 +204,7 @@ export class ProductsEditComponent extends BaseComponent implements OnInit {
   queryData = {
     filter: '',
     page: 0,
-    pageSize: 10,
+    pageSize: 100,
   }
   getAllCategories(): void {
     this.isLoadingCategory = true;

@@ -3,7 +3,7 @@ using Kiltex.SistemaGestion.Domain;
 using Kiltex.SistemaGestion.Domain.Model;
 using Kiltex.SistemaGestion.SDK.Error;
 using Kiltex.SistemaGestion.Services.Common;
-using Kiltex.SistemaGestion.Services.Models.Dtos;
+using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -14,7 +14,7 @@ namespace Kiltex.SistemaGestion.Services.Services
         public InvoiceService(ErrorManager logger, DBContext context, IMapper maper) :
             base(logger, context, maper)
         { }
-        public async Task<OperationResponse<DtoInvoice>> GetById(long id)
+        public async Task<OperationResponse<DtoRequestInvoice>> GetById(long id)
         {
             var factura = await _contextSql
                                .Invoices
@@ -24,15 +24,15 @@ namespace Kiltex.SistemaGestion.Services.Services
                                .ConfigureAwait(false);
             if (factura == null)
 
-                return new OperationResponse<DtoInvoice>(null, false, new OperationExceptions("000", $"Factura no encontrada {id}"));
+                return new OperationResponse<DtoRequestInvoice>(null, false, new OperationExceptions("000", $"Factura no encontrada {id}"));
 
-            var result = _mapper.Map<DtoInvoice>(factura);
+            var result = _mapper.Map<DtoRequestInvoice>(factura);
            
 
-            return new OperationResponse<DtoInvoice>(result);
+            return new OperationResponse<DtoRequestInvoice>(result);
         }
 
-        public async Task<OperationResponse<IdResponse<long>>> NewInvoice(DtoInvoice model, CancellationToken ct = default)
+        public async Task<OperationResponse<IdResponse<long>>> NewInvoice(DtoRequestInvoice model, CancellationToken ct = default)
         {
             model.Id = 0;
             if (String.IsNullOrEmpty(model.CustomerName) )
@@ -42,15 +42,13 @@ namespace Kiltex.SistemaGestion.Services.Services
             return await AddOrUpdate(model, ct).ConfigureAwait(false);
         }
 
-        public async Task<OperationResponse<DtoPagination<DtoInvoice>>> ListInvoices(RequestPaginatedData<string> request)
+        public async Task<OperationResponse<DtoPagination<DtoRequestInvoice>>> ListInvoices(RequestPaginatedData<string> request)
         {
             var query = _contextSql
                                 .Invoices
                                 .AsNoTracking()
                                 .Include(p => p.InvoiceDetails)
                                 .Where(p => p.CustomerCuit.ToLower().Contains(request.Filter ?? ""));
-                                //   (!p.Dni.HasValue || p.Dni.ToString().Contains(request.Filter ?? "")) ||
-                                //   p.Cuit.ToLower().Contains(request.Filter ?? ""));
 
             var count = await query.CountAsync().ConfigureAwait(false);
 
@@ -60,34 +58,53 @@ namespace Kiltex.SistemaGestion.Services.Services
                                   .ToListAsync()
                                   .ConfigureAwait(false);
 
-            var result = _mapper.Map<List<DtoInvoice>>(list);
+            var result = _mapper.Map<List<DtoRequestInvoice>>(list);
 
 
-            return new OperationResponse<DtoPagination<DtoInvoice>>(new DtoPagination<DtoInvoice>
+            return new OperationResponse<DtoPagination<DtoRequestInvoice>>(new DtoPagination<DtoRequestInvoice>
             {
                 Data = result,
                 PageSize = request.PageSize,
                 TotalCount = count
             });
         }
-        public async Task<OperationResponse<IdResponse<long>>> AddOrUpdate(DtoInvoice model, CancellationToken ct = default)
+        public async Task<OperationResponse<IdResponse<long>>> AddOrUpdate(DtoRequestInvoice model, CancellationToken ct = default)
         {
-
+            var transaction = _contextSql.Database.BeginTransaction();
             var invoiceModel = _mapper.Map<Invoice>(model);
+            var productDetail = new Product();
            
-           
-            if (invoiceModel.Id == 0)
+           try
             {
-                if (invoiceModel.CustomerId == 0)
+                if (invoiceModel.Id == 0)
                 {
-                  var user=await  _contextSql.Customers.AsNoTracking().FirstOrDefaultAsync(p => p.Name == "Admin");
-                    invoiceModel.CustomerId = user.Id;
-                }              
+                    if (invoiceModel.CustomerId == 0)
+                    {
+                        var user = await _contextSql.Customers.AsNoTracking().FirstOrDefaultAsync(p => p.Name == "Admin");
+                        invoiceModel.CustomerId = user.Id;
+                    }
+                    
 
-                await _contextSql.Invoices.AddAsync(invoiceModel, ct).ConfigureAwait(false);
-                await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
+                    foreach (var detail in invoiceModel.InvoiceDetails)
+                    {
+                        var oldProduct = await _contextSql.Products.AsNoTracking().FirstAsync(p => p.Id == detail.ProductId).ConfigureAwait(false);
 
+                        productDetail= oldProduct;
+                        productDetail.UpdateStock(- detail.Quantity);
+                    }
+
+                    _contextSql.Products.Update(productDetail);
+                    await _contextSql.Invoices.AddAsync(invoiceModel, ct).ConfigureAwait(false);
+                    await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
+                }
+                
+                transaction.Commit();
             }
+            catch (Exception ex)
+            {
+
+                throw;
+            }         
          
 
             return Ok(new IdResponse<long>(invoiceModel.Id));

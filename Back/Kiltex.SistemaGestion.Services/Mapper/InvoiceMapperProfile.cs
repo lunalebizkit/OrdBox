@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Kiltex.SistemaGestion.Domain.Model;
-using Kiltex.SistemaGestion.Services.Models.Dtos;
-
+using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
+using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
 
 namespace Kiltex.SistemaGestion.Services.Mapper
 {
@@ -9,14 +9,14 @@ namespace Kiltex.SistemaGestion.Services.Mapper
     {
         public InvoiceMapperProfile()
         {
-            CreateMap<DtoInvoice, Invoice>()
+            CreateMap<DtoRequestInvoice, Invoice>()
                 .AfterMap((o, d, c) =>
                 {
                     d.Total = o.InvoiceDetails.Sum(p => (p.Quantity * p.Price));
                     d.IvaTotal = o.InvoiceDetails.Sum( e => (e.Quantity * e.Price) * e.Iva / 100.00m);                    
                 });
 
-            CreateMap<Invoice, DtoInvoice>();
+            CreateMap<Invoice, DtoRequestInvoice>();
 
             CreateMap<InvoiceDetail, DtoInvoiceDetail>().ReverseMap();
            
