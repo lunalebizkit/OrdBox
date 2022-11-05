@@ -90,7 +90,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                         var oldProduct = await _contextSql.Products.AsNoTracking().FirstAsync(p => p.Id == detail.ProductId).ConfigureAwait(false);
 
                         productDetail= oldProduct;
-                        productDetail.UpdateStock(detail.Quantity, false);
+                        productDetail.UpdateStock(- detail.Quantity);
                     }
 
                     _contextSql.Products.Update(productDetail);
@@ -104,8 +104,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             {
 
                 throw;
-            }
-           
+            }         
          
 
             return Ok(new IdResponse<long>(invoiceModel.Id));

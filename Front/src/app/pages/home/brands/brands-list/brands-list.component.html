@@ -2,10 +2,11 @@
   <nz-page-header class="list-header">
     <nz-page-header-title>Listado de Marcas</nz-page-header-title>
     <nz-page-header-extra>
-      <a routerLink="/home/brands/new">
-        <button nz-tooltip nzTooltipTitle="Nuevo" nz-button nzType="primary" nzShape="circle"><i nz-icon nzType="plus"
+     
+        <button nz-tooltip nzTooltipTitle="Nuevo" nz-button nzType="primary" nzShape="circle" (click)="openComponentBrandEdit()">
+          <i nz-icon nzType="plus"
             nzTheme="outline">
-          </i></button></a>
+          </i></button>
     </nz-page-header-extra>
   </nz-page-header>
   <nz-content>
@@ -47,7 +48,7 @@
         </thead> 
         <tbody > 
           <tr  *ngFor="let brand of brandList ; let i = index " class="small-text" tabindex="-1" (click)="onClick(brand, i)" (keydown)="myNavegation($event) "
-          [style.background-color]="brand === selectedBrand ? 'lightblue' : ''" (keydown.enter)="onKeyPress(brand)" (dblclick)="onDoubleClicked(brand)" >            
+          [style.background-color]="brand === selectedBrand ? 'lightblue' : ''" (dblclick)="onDoubleClicked(brand)" >            
           <td>{{brand.id }}</td>
           <td>{{brand.description}}</td>
           </tr> 

@@ -32,23 +32,23 @@
   [nzPaginationType]="'small'" (nzQueryParams)="onQueryParamsChange($event)" [nzSize]="'small'"  [nzScroll]="{ x: '1300px' }" nzShowPagination="false">
   <thead>
     <tr>
-      <th style="width: 420px;">Producto</th>  
+      <th nzEllipsis  style="width: 200px;">Producto</th>  
       <th style="width: 130px;">Categoría</th>
-      <th style="width: 75px;">Marca</th>
-      <th style="width: 65px;">Cantidad</th>
+      <th nzEllipsis style="width: 75px;">Marca</th>
+      <th style="width: 55px;">Cantidad</th>
       <th style="width: 95px;">Precio Costo</th>
-      <th style="width: 100px;">Precio Lista</th>
-      <th style="width: 100px;">Precio Contado</th>
+      <th style="width: 95px;">Precio Lista</th>
+      <th style="width: 95px;">Precio Contado</th>
       <th style="width: 95px;">Precio Tarjeta</th>  
-      <th style="width: 75px;">Código</th>
+      <th style="width: 50px;">Código</th>
     </tr>
   </thead>
   <tbody>
     <tr *ngFor="let product of productList, let i=index" class="small-text" tabindex="-1" (click)="onClick(product, i)" (keydown)="myNavegation($event)"
     [style.background-color]="product === selectedProduct ? 'lightblue' : ''"  (keydown.enter)="onKeyPress(product)" (dblclick)="onDoubleClicked(product)">
-      <td>{{product.description}}</td>
+      <td nzEllipsis>{{product.description}}</td>
       <td>{{product.categoryName}}</td>
-      <td>{{product.brandName}}</td>
+      <td nzEllipsis>{{product.brandName}}</td>
       <td style="text-align: right;">{{product.quantity}}</td>
       <td style="color:blue;text-align: right;font-weight: bold;">${{product.purchasePrice}}</td>
       <td style="color:green;text-align: right;font-weight: bold;">${{product.cashSalePrice}}</td>
