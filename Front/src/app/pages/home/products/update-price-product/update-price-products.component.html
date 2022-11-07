@@ -1,141 +1,199 @@
 <nz-layout>
-  
-    <nz-page-header class="list-header">
-      <nz-page-header-title>Actualización de Productos</nz-page-header-title>
-      <nz-page-header-extra>
-        <button nzType="primary" nz-tooltip nzTooltipTitle="Volver" nz-button (click)="back()">
-          <i nz-icon nzType="rollback" nzTheme="outline"></i>
-          <span>Volver</span>
-      </button>
-        <button id="actualizarbutton" nz-tooltip nzTooltipTitle="Actualizar" nz-button style="background-color:#24ce41;" (click)="update()">
-          <i nz-icon nzType="check" nzTheme="outline"></i>
-          <span>Actualizar</span>
-        </button>
-      </nz-page-header-extra>
-    </nz-page-header>
- 
+  <app-header-op-buttons
+    #header
+    [btnCancelText]="'Volver'"
+    [btnUpdateText]="'Actualizar'"
+    [hideUpdate]="false"
+    [hideSave]="true"
+    [title]="'Actualización de Productos'"
+    [iconBack]="'rollback'"
+    [iconUpdate]="'check'"
+    [iconTitle]="'redo'"
+  >
+  </app-header-op-buttons>
 
   <nz-content>
     <nz-collapse>
       <nz-collapse-panel nzSize="small" nzHeader="Filtros" [nzActive]="true">
         <form nz-form [formGroup]="formSearch">
           <div nz-row nzJustify="space-between">
-
-            <div nz-col  nzSpan="5" >
+            <div nz-col nzSpan="5">
               <nz-form-item>
                 <nz-form-label>Producto</nz-form-label>
                 <nz-form-control>
                   <nz-input-group [nzSuffix]="clearQuery">
-                    <input formControlName="product" type="text" placeholder="Producto" nz-input
-                    [(ngModel)]="queryParams.filter.product"/>
+                    <input
+                      formControlName="product"
+                      type="text"
+                      placeholder="Producto"
+                      nz-input
+                      [(ngModel)]="queryParams.filter.product"
+                    />
                   </nz-input-group>
 
                   <ng-template #clearQuery>
-                    <i nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle"
-                      *ngIf="formSearch.get('product')?.value" (click)="formSearch.get('product')?.setValue('');"></i>
+                    <i
+                      nz-icon
+                      class="ant-input-clear-icon"
+                      nzTheme="fill"
+                      nzType="close-circle"
+                      *ngIf="formSearch.get('product')?.value"
+                      (click)="formSearch.get('product')?.setValue('')"
+                    ></i>
                   </ng-template>
                 </nz-form-control>
               </nz-form-item>
             </div>
 
-            <div nz-col nzSpan="5" >
-              <nz-form-item >
+            <div nz-col nzSpan="5">
+              <nz-form-item>
                 <nz-form-label>Marca</nz-form-label>
                 <nz-form-control>
-                  <nz-select  id="brand" nzShowSearch nzAllowClear formControlName="brand"                    
-                  (ngModelChange)="brandSelectedChange($event)" [nzOptions]="allBrands" >
-                  </nz-select>  
+                  <nz-select
+                    id="brand"
+                    nzShowSearch
+                    nzAllowClear
+                    formControlName="brand"
+                    (ngModelChange)="brandSelectedChange($event)"
+                    [nzOptions]="allBrands"
+                  >
+                  </nz-select>
                   <ng-template #clearQuery>
-                    <i nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle"
-                      *ngIf="formSearch.get('brand')?.value" (click)="formSearch.get('brand')?.setValue(0);"></i>
-                  </ng-template>            
+                    <i
+                      nz-icon
+                      class="ant-input-clear-icon"
+                      nzTheme="fill"
+                      nzType="close-circle"
+                      *ngIf="formSearch.get('brand')?.value"
+                      (click)="formSearch.get('brand')?.setValue(0)"
+                    ></i>
+                  </ng-template>
                 </nz-form-control>
               </nz-form-item>
             </div>
 
             <div nz-col nzSpan="6" class="mb-2">
               <nz-form-item>
-                <nz-form-label >Proveedor</nz-form-label>
+                <nz-form-label>Proveedor</nz-form-label>
                 <nz-form-control>
-                  <nz-select nzMode="tags"
-                  nzMode="multiple"
-                  nzPlaceHolder="Seleccione Proveedor"
-                  nzAllowClear
-                  nzShowSearch
-                  nzServerSearch                 
-                  (nzOnSearch)="onSearch($event)"
-                  formControlName="supplier"  
-                  (ngModelChange)="supplierSelectedChange($event)"
-                >
-                
-                  <nz-option  *ngFor="let p of allSuppliers, let id = index" [nzValue]="p.value" [nzLabel]="p.label" ></nz-option>
-               
-                <nz-option *ngIf="isLoading" nzDisabled nzCustomContent>
-                  <span nz-icon nzType="loading" class="loading-icon"></span>
-                  Loading Data...
-                </nz-option>
-              </nz-select>
+                  <nz-select
+                    nzMode="tags"
+                    nzMode="multiple"
+                    nzPlaceHolder="Seleccione Proveedor"
+                    nzAllowClear
+                    nzShowSearch
+                    nzServerSearch
+                    (nzOnSearch)="onSearch($event)"
+                    formControlName="supplier"
+                    (ngModelChange)="supplierSelectedChange($event)"
+                  >
+                    <nz-option
+                      *ngFor="let p of allSuppliers; let id = index"
+                      [nzValue]="p.value"
+                      [nzLabel]="p.label"
+                    ></nz-option>
 
+                    <nz-option *ngIf="isLoading" nzDisabled nzCustomContent>
+                      <span
+                        nz-icon
+                        nzType="loading"
+                        class="loading-icon"
+                      ></span>
+                      Loading Data...
+                    </nz-option>
+                  </nz-select>
                 </nz-form-control>
               </nz-form-item>
             </div>
-            <div nz-col nzSpan="5" >
+            <div nz-col nzSpan="5">
               <nz-form-item>
                 <nz-form-label nzFor="category">Categoria </nz-form-label>
                 <nz-form-control [nzSm]="14" [nzXs]="24">
-                    <nz-spin [nzSpinning]="isLoadingCategory">
-                        <nz-select id="category" nzShowSearch nzAllowClear formControlName="category" 
-                            (ngModelChange)="categorySelectedChange($event)" [nzOptions]="allCategories">
-                        </nz-select>
-                          <ng-template #clearQuery>
-                    <i nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle"
-                      *ngIf="formSearch.get('category')?.value" (click)="formSearch.get('category')?.setValue(0);"></i>
-                  </ng-template>
-                    </nz-spin>
+                  <nz-spin [nzSpinning]="isLoadingCategory">
+                    <nz-select
+                      id="category"
+                      nzShowSearch
+                      nzAllowClear
+                      formControlName="category"
+                      (ngModelChange)="categorySelectedChange($event)"
+                      [nzOptions]="allCategories"
+                    >
+                    </nz-select>
+                    <ng-template #clearQuery>
+                      <i
+                        nz-icon
+                        class="ant-input-clear-icon"
+                        nzTheme="fill"
+                        nzType="close-circle"
+                        *ngIf="formSearch.get('category')?.value"
+                        (click)="formSearch.get('category')?.setValue(0)"
+                      ></i>
+                    </ng-template>
+                  </nz-spin>
                 </nz-form-control>
-            </nz-form-item>
+              </nz-form-item>
             </div>
-
-           
           </div>
           <div nz-row nzJustify="end">
-            <div >
+            <div>
               <button nz-button nzType="primary" (click)="search()">
                 <i nz-icon nzType="search"></i>
-                Buscar</button>
+                Buscar
+              </button>
             </div>
           </div>
         </form>
-        
       </nz-collapse-panel>
     </nz-collapse>
 
     <!-- Opciones para Actualizar Productos-->
-    <form nz-form [formGroup]="form" >
-      <div nz-row nzJustify="space-around" style="padding: 10px;">
+    <form nz-form [formGroup]="form">
+      <div nz-row nzJustify="space-around" style="padding: 10px">
         <div>
-          <nz-form-label [nzSm]="10" [nzXs]="12" nzRequired nzFor="idPrice">Opciones
+          <nz-form-label [nzSm]="10" [nzXs]="12" nzRequired nzFor="idPrice"
+            >Opciones
           </nz-form-label>
-          <nz-select id="IdPrice" formControlName="idPrice" nzPlaceHolder="Opciones"
-            (ngModelChange)="optionsSelectedChange($event)" [nzOptions]="updateList" style="width: 175px;">
+          <nz-select
+            id="IdPrice"
+            formControlName="idPrice"
+            nzPlaceHolder="Opciones"
+            (ngModelChange)="optionsSelectedChange($event)"
+            [nzOptions]="updateList"
+            style="width: 175px"
+          >
           </nz-select>
         </div>
         <div>
-          <nz-form-label [nzSm]="10" [nzXs]="12" nzRequired nzFor="value">Valor
+          <nz-form-label [nzSm]="10" [nzXs]="12" nzRequired nzFor="value"
+            >Valor
           </nz-form-label>
-          <nz-input-number formControlName="value" id="value"  [nzMax]="1000000" [nzFormatter]="formatterPesoOPorcentaje"></nz-input-number>
+          <nz-input-number
+            formControlName="value"
+            id="value"
+            [nzMax]="1000000"
+            [nzFormatter]="formatterPesoOPorcentaje"
+          ></nz-input-number>
         </div>
       </div>
     </form>
     <!-- Tabla -->
 
     <div>
-      <nz-table class="table-list" nzShowSizeChanger [nzData]="productList" nzBordered=true [nzSize]="'small'" [nzLoading]="loading"
-        [nzTotal]="totalItems" [nzPageSize]="queryParams.pageSize" [nzPageIndex]="1" [nzFrontPagination]="false"
-        [nzPaginationType]="'small'" >
+      <nz-table
+        class="table-list"
+        nzShowSizeChanger
+        [nzData]="productList"
+        nzBordered="true"
+        [nzSize]="'small'"
+        [nzLoading]="loading"
+        [nzTotal]="totalItems"
+        [nzPageSize]="queryParams.pageSize"
+        [nzPageIndex]="1"
+        [nzFrontPagination]="false"
+        [nzPaginationType]="'small'"
+      >
         <thead>
           <tr>
-
             <th [nzWidth]="'90px'" nzLeft>Producto</th>
             <th nzLeft>Categoria</th>
             <th nzLeft>Marca</th>
@@ -149,16 +207,21 @@
         </thead>
         <tbody>
           <tr *ngFor="let data of productList" class="small-text">
-
-            <td nzLeft>{{data.description}}</td>
-            <td nzLeft>{{data.categoryName}}</td>
-            <td nzLeft>{{data.brandName}}</td>
-            <td nzLeft>{{data.supplierName}}</td>
-            <td>{{data.code}}</td>
-            <td style="color:blue; text-align:right" >$ {{data.purchasePrice}}</td>
-            <td style="color:green ; text-align:right">$ {{data.salePrice}}</td>
-            <td style="color:red ; text-align:right ">$ {{data.cardSalePrice}}</td>
-            <td style="text-align:right ">$ {{data.cashSalePrice}}</td>
+            <td nzLeft>{{ data.description }}</td>
+            <td nzLeft>{{ data.categoryName }}</td>
+            <td nzLeft>{{ data.brandName }}</td>
+            <td nzLeft>{{ data.supplierName }}</td>
+            <td>{{ data.code }}</td>
+            <td style="color: blue; text-align: right">
+              $ {{ data.purchasePrice }}
+            </td>
+            <td style="color: green; text-align: right">
+              $ {{ data.salePrice }}
+            </td>
+            <td style="color: red; text-align: right">
+              $ {{ data.cardSalePrice }}
+            </td>
+            <td style="text-align: right">$ {{ data.cashSalePrice }}</td>
           </tr>
         </tbody>
       </nz-table>
