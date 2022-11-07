@@ -16,11 +16,11 @@ import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 
 import { AppCommonModule } from 'src/app/common/app.common.module';
-import { NewOrderComponent } from './new-order/new-order.component';
 import { OrdersListComponent } from './orders-list/orders-list.component';
 import { OrdersRoutingModule } from './orders-routing.module';
 import { SelectProductsModalComponent } from './modals/select-products/select-products-modal.component';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
+import { OrdersEditDrawerComponent } from './orders-edit-drawer/orders-edit.drawer.component';
 
 @NgModule({
   imports: [
@@ -45,7 +45,7 @@ import { NzSpaceModule } from 'ng-zorro-antd/space';
   ],
   declarations: [
     OrdersListComponent,
-    NewOrderComponent,
+    OrdersEditDrawerComponent,
     SelectProductsModalComponent,
   ],
 })

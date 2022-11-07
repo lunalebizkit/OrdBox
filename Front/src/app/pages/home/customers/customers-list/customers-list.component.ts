@@ -1,6 +1,8 @@
 import { Component, ElementRef, OnInit, QueryList, ViewChildren } from '@angular/core';
+import { NzDrawerService } from 'ng-zorro-antd/drawer';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { EntityService } from '../customer.service';
+import { CustomersEditDrawerComponent } from '../customers-edit-drawer/customers-edit.drawer.component';
 import { CustomerModel } from '../model/customer.model';
 
 @Component({
@@ -24,6 +26,7 @@ import { CustomerModel } from '../model/customer.model';
   ** Lista de Productos
   */
   entityList: CustomerModel[] = [];
+  id!:number;
     /*
   ** Parametros de busqueda
   */
@@ -36,7 +39,8 @@ import { CustomerModel } from '../model/customer.model';
       /*
   ** Constructor
   */
-  constructor(private service: EntityService) {
+  constructor(private service: EntityService,
+    private drawerService: NzDrawerService) {
     
 }
  /*
@@ -78,6 +82,40 @@ import { CustomerModel } from '../model/customer.model';
       }
     })};
 
+    openComponentCustomerEdit(): void {
+      const drawerRefCustomer = this.drawerService.create<CustomersEditDrawerComponent, { filter: number}, number>({
+        nzContent: CustomersEditDrawerComponent,
+        nzSize: 'large',
+        nzContentParams: {
+          filter: this.id > 0 ? this.id : 0
+        },
+        nzClosable: false
+      });
+      drawerRefCustomer.afterClose.subscribe({         
+        next: (data) => {    
+          this.id= 0;
+          if (data != undefined && data != 0) {
+            this.service.getById(data).subscribe({
+              next: (r: CustomerModel) =>{
+                this.entityList[this.entityList.findIndex(r => r.id == data)] != undefined ?            
+               this.entityList[this.entityList.findIndex(r => r.id == data)] = r :
+               this.entityList.push(r);                     
+              },
+              error: ()=>{
+                this.id= 0;
+              }
+            })
+          }
+        },
+        error: () => {
+          this.id= 0;
+         }
+      })
+    };
 
+    onDoubleClicked (datos:any) {
+      this.id = datos.id;
+      this.openComponentCustomerEdit();
+    }
 
   }

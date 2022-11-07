@@ -19,7 +19,7 @@ import { NzImageModule } from "ng-zorro-antd/image";
 import { NzUploadModule } from 'ng-zorro-antd/upload';
 import { CustomersListComponent } from "./customers-list/customers-list.component";
 import { CustomersRoutingModule } from "./customers-routing.module";
-import { CustomersEditComponent } from "./customers-edit/customers-edit.component";
+import { CustomersEditDrawerComponent } from "./customers-edit-drawer/customers-edit.drawer.component";
 
 @NgModule({
     imports: [CommonModule,
@@ -42,6 +42,6 @@ import { CustomersEditComponent } from "./customers-edit/customers-edit.componen
     NzSpaceModule,
     NzImageModule  
     ],
-    declarations:[CustomersListComponent, CustomersEditComponent ]
+    declarations:[CustomersListComponent, CustomersEditDrawerComponent ]
 })
 export class CustomerModule {}

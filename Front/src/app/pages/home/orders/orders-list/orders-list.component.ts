@@ -1,6 +1,7 @@
 import { formatDate } from '@angular/common';
 import { Component, ElementRef, Inject, LOCALE_ID, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { NzDrawerService } from 'ng-zorro-antd/drawer';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { BaseComponent } from 'src/app/common/components/base/base.component';
@@ -8,6 +9,7 @@ import { CategoriesService } from '../../categories/category.services';
 import { EntityService } from '../../customers/customer.service';
 import { eStatus, StatusType } from '../enum/status-type.enum';
 import { OrderDetail, OrderList } from '../models/order.model';
+import { OrdersEditDrawerComponent } from '../orders-edit-drawer/orders-edit.drawer.component';
 import { OrdersService } from '../orders.service';
 
 @Component({
@@ -25,6 +27,10 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
   allOrders: OrderList[]= [];
   orderDetailList:OrderDetail[]=[];
   allStatus= StatusType;
+     /*
+   ** id del usuario a editar, si es nuevo...
+   */
+   id!: number;
 
   /*
    ** Parametros de busqueda Filtrada
@@ -56,6 +62,7 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
     el: ElementRef,
     message: NzMessageService,
     private fb: FormBuilder,
+    private drawerService: NzDrawerService,
     @Inject(LOCALE_ID) public locale: string
   ) {
     super(notificacionService, el, message);
@@ -86,7 +93,7 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
 
   
 
-  getAllOrders(): void {
+  getAllOrders(): void {    
     this.isLoading = true;
     this.serviceOrders.getOrders(this.queryParams).subscribe({
       next: (r) => {
@@ -186,5 +193,39 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
 
   getStatusName(id:number) {
     return eStatus[id];
-  }
+  };
+  onDoubleClicked (datos:any) {
+    this.id = datos.id
+    this.openComponentOrdersEdit();
+  };
+  openComponentOrdersEdit(): void {
+    const drawerRefCustomer = this.drawerService.create<OrdersEditDrawerComponent, { filter: number}, number>({
+      nzContent: OrdersEditDrawerComponent,
+      nzSize: 'large',
+      nzContentParams: {
+        filter: this.id > 0 ? this.id : 0
+      },
+      nzClosable: false
+    });
+    drawerRefCustomer.afterClose.subscribe({         
+      next: (data) => {    
+        this.id= 0;
+        // if (data != undefined && data != 0) {
+        //   this.service.getById(data).subscribe({
+        //     next: (r: OrderDetail) =>{
+        //       this.orderDetailList[this.orderDetailList.findIndex(r => r.id == data)] != undefined ?            
+        //      this.orderDetailList[this.orderDetailList.findIndex(r => r.id == data)] = r :
+        //      this.orderDetailList.push(r);                     
+        //     },
+        //     error: ()=>{
+        //       this.id= 0;
+        //     }
+        //   })
+        // }
+      },
+      error: () => {
+        this.id= 0;
+       }
+    })
+  };
 }

@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { NzTableQueryParams } from 'ng-zorro-antd/table';
+import { NzDrawerService } from 'ng-zorro-antd/drawer';
 import { PopupConfirmationComponent } from 'src/app/common/components/popup-confirmation/popup-confirmation.component';
+import { CategoryEditDrawerComponent } from '../categories-edit-drawer/categories-edit-drawer.component';
 import { CategoriesService } from '../category.services';
 import { CategoryModel } from '../model/category.model';
 
@@ -23,10 +24,12 @@ export class CategoriesListComponent implements OnInit {
    totalItems = 0;
    selectedIndex: number = 0; 
    selectedCategory: any;
+   id!: number;
 
   categoryList: CategoryModel[]= []
 
-  constructor(private service: CategoriesService) { }
+  constructor(private service: CategoriesService,
+    private drawerService: NzDrawerService) { }
 
   ngOnInit(): void {
    this.getData(this.queryData) 
@@ -39,10 +42,8 @@ export class CategoriesListComponent implements OnInit {
   this.service.getByFilter(params).subscribe(
     {next: (r)=> { 
       this.categoryList = r.data;
-
       // Envía el numero total de páginas
       this.totalItems = r.totalCount;
-
       // Saca spinner de carga
       this.loading = false;
     },
@@ -114,13 +115,40 @@ queryData= {
     }
     }
   
-  handleOk() {
-  //   this.service.deleteUser(this.popupComponent.elementSelectedToDelete).subscribe(
-  //    {next: (r) => {
-  //       this.popupComponent.isDeleteConfirmationVisible = false;
-  //       this.search();
-  //     },
-  //     error:() => { }
-  // });
-}
+  handleOk() {};
+
+  openComponentCategoryEdit(): void {
+    const drawerRefCustomer = this.drawerService.create<CategoryEditDrawerComponent, { filter: number}, number>({
+      nzContent: CategoryEditDrawerComponent,
+      nzSize: 'large',
+      nzContentParams: {
+        filter: this.id > 0 ? this.id : 0
+      },
+      nzClosable: false
+    });
+    drawerRefCustomer.afterClose.subscribe({          
+      next: (data) => {    
+        this.id= 0;
+        if (data != undefined && data != 0) {
+          this.service.getCategoryById(data).subscribe({
+            next: (r: CategoryModel) =>{
+              this.categoryList[this.categoryList.findIndex(r => r.id == data)] != undefined ?            
+             this.categoryList[this.categoryList.findIndex(r => r.id == data)] = r :
+             this.categoryList.push(r);                     
+            },
+            error: ()=>{
+              this.id= 0;
+            }
+          })
+        }
+      },
+      error: () => {
+        this.id= 0;
+       }
+    })
+  };
+  onDoubleClicked (datos:any) {
+    this.id = datos.id;
+    this.openComponentCategoryEdit();
+  }
 }

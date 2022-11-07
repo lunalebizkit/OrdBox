@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { NewOrderComponent } from './new-order/new-order.component';
 import { OrdersListComponent } from './orders-list/orders-list.component';
 
 const routes: Routes = [
@@ -9,10 +8,6 @@ const routes: Routes = [
     component: OrdersListComponent,
   },
 
-  {
-    path: 'new',
-    component: NewOrderComponent,
-  },
 ];
 @NgModule({
   imports: [RouterModule.forChild(routes)],

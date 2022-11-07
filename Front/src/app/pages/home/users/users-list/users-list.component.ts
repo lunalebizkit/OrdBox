@@ -4,6 +4,8 @@ import { ListUserModel } from '../model/list.user.model';
 import { PopupConfirmationComponent } from 'src/app/common/components/popup-confirmation/popup-confirmation.component';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import {eRol} from '../model/rol.enum'
+import { NzDrawerService } from 'ng-zorro-antd/drawer';
+import { UsersEditDrawerComponent } from '../users-edit-drawer/users-edit.drawer.component';
 @Component({
   selector: 'app-users-list',
   templateUrl: './users-list.component.html',
@@ -11,9 +13,10 @@ import {eRol} from '../model/rol.enum'
 })
 export class UsersListComponent implements OnInit {
 
-  @ViewChild('popup') popupComponent!: PopupConfirmationComponent;
+  id!:number;
 
-  constructor(private service: UserService) { }
+  constructor(private service: UserService,
+    private drawerService: NzDrawerService) { }
 
   ngOnInit(): void {
     this.getData(this.queryData);
@@ -80,19 +83,44 @@ export class UsersListComponent implements OnInit {
    search(): void {
     this.queryData.page = 0;
     this.getData(this.queryData);
-  }
-
-
-  handleOk() {
-    this.service.deleteUser(this.popupComponent.elementSelectedToDelete).subscribe(
-     {next: (r) => {
-        this.popupComponent.isDeleteConfirmationVisible = false;
-        this.search();
-      },
-      error:() => { }
-  });
-  }
+  } 
+  
   getRolName(id:number) {
     return eRol[id];
+  };
+  openComponentUserEdit(): void {
+    const drawerRefCustomer = this.drawerService.create<UsersEditDrawerComponent, { filter: number}, number>({
+      nzContent: UsersEditDrawerComponent,
+      nzSize: 'large',
+      nzContentParams: {
+        filter: this.id > 0 ? this.id : 0
+      },
+      nzClosable: false
+    });
+    drawerRefCustomer.afterClose.subscribe({         
+      next: (data) => {    
+        this.id= 0;
+        if (data != undefined && data != 0) {
+          this.service.getById(data).subscribe({
+            next: (r: ListUserModel) =>{
+              this.userList[this.userList.findIndex(r => r.id == data)] != undefined ?            
+             this.userList[this.userList.findIndex(r => r.id == data)] = r :
+             this.userList.push(r);                     
+            },
+            error: ()=>{
+              this.id= 0;
+            }
+          })
+        }
+      },
+      error: () => {
+        this.id= 0;
+       }
+    })
+  };
+
+  onDoubleClicked (datos:any) {
+    this.id = datos.id;
+    this.openComponentUserEdit();
   }
 }

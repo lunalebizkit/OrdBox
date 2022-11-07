@@ -9,13 +9,12 @@ import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { IconsProviderModule } from 'src/app/icons-provider.module';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { AgGridModule } from 'ag-grid-angular';
-import { UsuariosModule } from './users/users.module';
 import { InfiniteScrollModule } from "ngx-infinite-scroll";
+import { UsuariosModule } from './users/users.module';
 
 @NgModule({
   declarations: [
     HomeComponent
-    
   ],
   imports: [
     HomeRoutingModule,
@@ -26,9 +25,9 @@ import { InfiniteScrollModule } from "ngx-infinite-scroll";
     NzMenuModule,
     IconsProviderModule,    
     NzDividerModule,
-    UsuariosModule,
     AgGridModule,
     InfiniteScrollModule,
+    UsuariosModule
   ],
   exports: [HomeComponent]
 })
