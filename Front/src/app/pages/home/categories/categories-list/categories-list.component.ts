@@ -115,18 +115,6 @@ queryData= {
     }
     }
   
-<<<<<<< HEAD
-  handleOk() {
-  //   this.service.deleteUser(this.popupComponent.elementSelectedToDelete).subscribe(
-  //    {next: (r) => {
-  //       this.popupComponent.isDeleteConfirmationVisible = false;
-  //       this.search();
-  //     },
-  //     error:() => { }
-  // });
-}
-
-=======
   handleOk() {};
 
   openComponentCategoryEdit(): void {
@@ -163,5 +151,4 @@ queryData= {
     this.id = datos.id;
     this.openComponentCategoryEdit();
   }
->>>>>>> 62bcd85dcab548e0d176714a648edb3ab3b32dfd
 }

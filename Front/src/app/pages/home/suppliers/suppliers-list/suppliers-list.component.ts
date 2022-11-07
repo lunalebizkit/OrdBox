@@ -1,9 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-<<<<<<< HEAD
-import { Router } from '@angular/router';
-=======
 import { NzDrawerService } from 'ng-zorro-antd/drawer';
->>>>>>> 62bcd85dcab548e0d176714a648edb3ab3b32dfd
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { EntityService } from '../../customers/customer.service';
 import { CustomerModel } from '../../customers/model/customer.model';
@@ -43,12 +39,8 @@ import { SuppliersEditDrawerComponent } from '../suppliers-edit-drawer/suppliers
       /*
   ** Constructor
   */
-<<<<<<< HEAD
-  constructor(private service: EntityService, private router: Router) {
-=======
   constructor(private service: EntityService,
     private drawerService: NzDrawerService) {
->>>>>>> 62bcd85dcab548e0d176714a648edb3ab3b32dfd
     
 }
  /*
@@ -88,30 +80,18 @@ import { SuppliersEditDrawerComponent } from '../suppliers-edit-drawer/suppliers
         this.loading = false;
         this.entityList = [];
       }
-<<<<<<< HEAD
-    })}
+    })};
 
-      /*
-  ** Evento de selección de fila y navegación en las tablas por teclado
-  */  
-    onDoubleClicked (datos:any) {
-      var data = datos.id
-      this.router.navigate(['home/suppliers/edit/', data]); 
-    }
     onClick(datos:any, index:number): void {
       this.selectedIndex = index 
       this.selectedSuppliers = datos;
-    }  
-    onKeyPress( datos:any) {
-      var data = datos.id
-      this.router.navigate(['home/suppliers/edit/', data]);
-    }
+    } 
     myNavegation(event:any) {
       switch (event.key) {
         case "ArrowDown":
           let nextCell = this.entityList.length > this.selectedIndex ? ++ this.selectedIndex : this.entityList.length;
           if(this.entityList[nextCell] !== undefined){
-            this.selectedSuppliers= this.entityList[nextCell];  
+            this.selectedSuppliers = this.entityList[nextCell];  
         } 
           break; 
         case "ArrowUp":
@@ -121,8 +101,8 @@ import { SuppliersEditDrawerComponent } from '../suppliers-edit-drawer/suppliers
         }
           break 
       } 
-=======
-    })};
+    
+    }
 
     openComponentSupplierEdit(): void {
       const drawerRefCustomer = this.drawerService.create<SuppliersEditDrawerComponent, { filter: number}, number>({
@@ -158,9 +138,7 @@ import { SuppliersEditDrawerComponent } from '../suppliers-edit-drawer/suppliers
       this.id = datos.id;
       this.openComponentSupplierEdit();
     }
->>>>>>> 62bcd85dcab548e0d176714a648edb3ab3b32dfd
     
-    }  
     onScroll(event:any): void { 
       let scrollHeight= event.target.scrollHeight;
       let scrolltop= event.target.scrollTop;
