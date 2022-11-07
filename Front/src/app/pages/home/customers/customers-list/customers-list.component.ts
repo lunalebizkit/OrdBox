@@ -1,7 +1,8 @@
 import { Component, ElementRef, OnInit, QueryList, ViewChildren } from '@angular/core';
-import { Router } from '@angular/router';
+import { NzDrawerService } from 'ng-zorro-antd/drawer';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { EntityService } from '../customer.service';
+import { CustomersEditDrawerComponent } from '../customers-edit-drawer/customers-edit.drawer.component';
 import { CustomerModel } from '../model/customer.model';
 
 @Component({
@@ -26,6 +27,7 @@ import { CustomerModel } from '../model/customer.model';
   ** Lista de Productos
   */
   entityList: CustomerModel[] = [];
+  id!:number;
     /*
   ** Parametros de busqueda
   */
@@ -38,7 +40,8 @@ import { CustomerModel } from '../model/customer.model';
       /*
   ** Constructor
   */
-  constructor(private service: EntityService, private router: Router){
+  constructor(private service: EntityService,
+    private drawerService: NzDrawerService) {
     
 }
  /*
@@ -65,7 +68,36 @@ import { CustomerModel } from '../model/customer.model';
     /*
   ** Evento de busqueda datos en el server
   */
- 
+  openComponentCustomerEdit(): void {
+    const drawerRefCustomer = this.drawerService.create<CustomersEditDrawerComponent, { filter: number}, number>({
+      nzContent: CustomersEditDrawerComponent,
+      nzSize: 'large',
+      nzContentParams: {
+        filter: this.id > 0 ? this.id : 0
+      },
+      nzClosable: false
+    });
+    drawerRefCustomer.afterClose.subscribe({         
+      next: (data) => {    
+        this.id= 0;
+        if (data != undefined && data != 0) {
+          this.service.getById(data).subscribe({
+            next: (r: CustomerModel) =>{
+              this.entityList[this.entityList.findIndex(r => r.id == data)] != undefined ?            
+             this.entityList[this.entityList.findIndex(r => r.id == data)] = r :
+             this.entityList.push(r);                     
+            },
+            error: ()=>{
+              this.id= 0;
+            }
+          })
+        }
+      },
+      error: () => {
+        this.id= 0;
+       }
+    })
+  };
   getData(params: any): void {
     this.loading = true;
     this.service.getCustomers(params).subscribe({
@@ -80,18 +112,14 @@ import { CustomerModel } from '../model/customer.model';
       }
     })};
   
-    onDoubleClicked (datos:any) {
-      var data = datos.id
-      this.router.navigate(['home/customers/edit/', data]); 
-    }
     onClick(datos:any, index:number): void {
       this.selectedIndex = index 
       this.selectedCustomers = datos;
     }  
-    onKeyPress( datos:any) {
+    /* onKeyPress( datos:any) {
       var data = datos.id
       this.router.navigate(['home/customers/edit/', data]);
-    }
+    } */
     myNavegation(event:any) {
       switch (event.key) {
         case "ArrowDown":
@@ -107,7 +135,7 @@ import { CustomerModel } from '../model/customer.model';
         }
           break 
       } 
-    
+     
     }
     onScroll(event:any): void { 
       let scrollHeight= event.target.scrollHeight;
@@ -131,5 +159,9 @@ import { CustomerModel } from '../model/customer.model';
       }
     }   
 
+    onDoubleClicked (datos:any) {
+      this.id = datos.id;
+      this.openComponentCustomerEdit();
+    }
 
   }

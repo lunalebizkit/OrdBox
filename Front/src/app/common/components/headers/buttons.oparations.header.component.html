@@ -27,6 +27,17 @@
       <i nz-icon [nzType]="iconBack"></i>{{ btnCancelText }}
     </button>
     <!-- </div> -->
+      <!-- <div class="buttons-close"> -->
+        <button
+        *ngIf="hideClose"
+        nz-button
+        nzType="default"
+        [disabled]="showSpinner"
+        (click)="onCloseClick?.emit($event)"
+      >
+        <i nz-icon [nzType]="iconBack"></i>{{ btnCloseText }}
+      </button>
+      <!-- </div> -->
     <!-- <div class="buttons-save"> -->
     <button
       nz-button

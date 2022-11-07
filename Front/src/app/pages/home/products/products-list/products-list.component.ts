@@ -1,10 +1,11 @@
-import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { NzDrawerService } from 'ng-zorro-antd/drawer';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { ProductsModel } from '../model/product.model';
 import { ProductService } from '../product.service';
-import { NzDrawerRef, NzDrawerService } from 'ng-zorro-antd/drawer';
-import { ProductsEditComponent } from '../products-edit/products-edit.component';
+import { ProductsEditDrawerComponent } from '../products-edit-drawer/products-edit.drawer.component';
+
 
 @Component({
   selector: 'app-products-list',
@@ -12,15 +13,15 @@ import { ProductsEditComponent } from '../products-edit/products-edit.component'
   styleUrls: ['./products-list.component.css']
 })
 export class ProductsListComponent implements OnInit {
-  @ViewChild('drawerTemplate', { static: false }) drawerTemplate?: TemplateRef<{
-    $implicit: { filter: string };
-    drawerRef: NzDrawerRef<string>;
-  }>;
 
   /*
     ** Listado de los productos
     */
   productList: ProductsModel[] = [];
+   /*
+   ** id del usuario a editar, si es nuevo...
+   */
+   id!: number;
 
   /*
   ** Indicador de carga de la grilla
@@ -60,8 +61,9 @@ export class ProductsListComponent implements OnInit {
   /*
   ** Constructor
   */
-  constructor(private service: ProductService, private router: Router, 
-    private route:ActivatedRoute, private drawerService: NzDrawerService,) {
+  constructor(private service: ProductService,
+     private router: Router,
+     private drawerService: NzDrawerService) {
 
   }
 
@@ -74,15 +76,7 @@ export class ProductsListComponent implements OnInit {
   ** Evento de inicio de angular
   */
   ngOnInit(): void {
-    this.productId= Number (this.route.snapshot.paramMap.get('productId'));  
-    if (this.productId != null){
-      let paramsStorage= JSON.parse(localStorage.getItem('filter')!) ? JSON.parse(localStorage.getItem('filter')!) : null;
-     if (paramsStorage != undefined){ 
-       this.queryParams.filter= paramsStorage.filter != null ? paramsStorage.filter : ''; 
-       this.queryParams.PageSize= paramsStorage.PageSize != null ? paramsStorage.PageSize : 50
-       this.queryParams.page= paramsStorage.page != null ? paramsStorage.page : 0
-      this.getData(this.queryParams);}
-    }
+  
   }
 
   /*
@@ -106,12 +100,6 @@ export class ProductsListComponent implements OnInit {
         this.productList = r.data;
         this.totalItems = r.totalCount;
         this.loading = false;
-        localStorage.clear();
-        if (this.productId != null){
-          let index= this.productList.findIndex(element => element.id == this.productId);
-          let data= this.productList.filter(element => element.id == this.productId)[0];
-          this.onClick(data,index)
-        }
       },
       error: () => {
         this.loading = false;
@@ -129,9 +117,8 @@ export class ProductsListComponent implements OnInit {
  
   }; 
   onDoubleClicked (datos:any) {
-  var data = datos.id
-  this.router.navigate(['home/products/edit/', data]); 
-  localStorage.setItem('filter',JSON.stringify(this.queryParams))
+  this.id = datos.id
+  this.openComponentProductsEdit();
   }
   onClick(datos:any, index:number): void {
   this.selectedIndex = index 
@@ -192,6 +179,35 @@ export class ProductsListComponent implements OnInit {
         this.queryParams.page = page;  
       }
     }
-  }  
-  
+  };
+  openComponentProductsEdit(): void {
+    const drawerRefCustomer = this.drawerService.create<ProductsEditDrawerComponent, { filter: number}, number>({
+      nzContent: ProductsEditDrawerComponent,
+      nzSize: 'large',
+      nzContentParams: {
+        filter: this.id > 0 ? this.id : 0
+      },
+      nzClosable: false
+    });
+    drawerRefCustomer.afterClose.subscribe({         
+      next: (data) => {    
+        this.id= 0;
+        if (data != undefined && data != 0) {
+          this.service.getById(data).subscribe({
+            next: (r: ProductsModel) =>{
+              this.productList[this.productList.findIndex(r => r.id == data)] != undefined ?            
+             this.productList[this.productList.findIndex(r => r.id == data)] = r :
+             this.productList.push(r);                     
+            },
+            error: ()=>{
+              this.id= 0;
+            }
+          })
+        }
+      },
+      error: () => {
+        this.id= 0;
+       }
+    })
+  };
 }

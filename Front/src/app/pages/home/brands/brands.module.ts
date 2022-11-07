@@ -11,7 +11,9 @@ import { NzCollapseModule } from "ng-zorro-antd/collapse";
 import { NzButtonModule } from "ng-zorro-antd/button";
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { FormsModule } from '@angular/forms';
-import { BrandsEditComponent } from "./brands-edit/brands-edit.component";
+
+import { BrandsEditDrawerComponent } from "./brands-edit-drawer/brands-edit.drawer.component";
+
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { AppCommonModule } from 'src/app/common/app.common.module';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
@@ -38,7 +40,7 @@ import { InfiniteScrollModule } from "ngx-infinite-scroll";
   ],
   declarations: [
     BrandsListComponent,
-    BrandsEditComponent
+    BrandsEditDrawerComponent
 
   ]
 })

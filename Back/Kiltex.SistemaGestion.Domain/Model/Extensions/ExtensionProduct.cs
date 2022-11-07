@@ -39,5 +39,11 @@ namespace Kiltex.SistemaGestion.Domain.Model
             }
           
         }
+
+        public void UpdateStock(int quantity)
+        {
+            this.Quantity += quantity;
+            //this.Quantity = this.Quantity < 0 ? 0 : this.Quantity;
+        }
     }
 }

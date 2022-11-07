@@ -3,7 +3,7 @@ using Kiltex.SistemaGestion.Services.Dtos;
 using Kiltex.SistemaGestion.Services.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Kiltex.SitemaGestion.Api.Controllers.User
+namespace Kiltex.SistemaGestion.Api.Controllers.User
 {
     public class UserController : ApiBaseController
     {

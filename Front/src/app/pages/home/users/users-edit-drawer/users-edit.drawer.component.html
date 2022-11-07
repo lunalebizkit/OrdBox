@@ -1,8 +1,9 @@
 <app-header-op-buttons #header [btnCancelText]="'Cancelar'" [btnSaveText]="'Guardar'" [title]="'Usuarios'"
 [showSpinner]="isSaving" [iconBack]="'rollback'" [iconSave]="'save'" [iconTitle]="'user'"
-(onSaveClick)="save()">
+(onSaveClick)="save()"
+(onCloseClick)="close()" [hideClose]="true" [hideBack]="true">
 </app-header-op-buttons>
-<nz-spin [nzSpinning]="isLoading">
+<nz-spin [nzSpinning]="isLoading" style="margin-top: 20px;">
     <nz-collapse>
         <nz-collapse-panel nzHeader="General" [nzActive]="true">
             <form nz-form [formGroup]="form" style="margin-top: 16px">

@@ -1,7 +1,5 @@
 ﻿
 
-using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
-
 namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse
 {
     public class DtoResponseSupplierOrder

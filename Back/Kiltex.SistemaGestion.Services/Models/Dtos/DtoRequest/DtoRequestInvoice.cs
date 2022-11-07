@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
 
-namespace Kiltex.SistemaGestion.Services.Models.Dtos
+namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest
 {
-    public class DtoInvoice
+    public class DtoRequestInvoice
     {
         public long Id { get; set; }
 
@@ -25,7 +22,7 @@ namespace Kiltex.SistemaGestion.Services.Models.Dtos
         public string? Observation { get; set; }
 
         public DateTime DateTime { get; set; }
-        
+
         public decimal Total { get; set; }
 
         public decimal IvaTotal { get; set; }

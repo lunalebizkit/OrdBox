@@ -4,8 +4,8 @@
       Listado de Usuarios
     </nz-page-header-title>
     <nz-page-header-extra>
-      <a routerLink="/home/users/new"> <button nz-tooltip nzTooltipTitle="Nuevo" nz-button nzType="primary"
-          nzShape="circle"><i nz-icon nzType="plus" nzTheme="outline"></i></button></a>
+       <button nz-tooltip nzTooltipTitle="Nuevo" nz-button nzType="primary"
+          nzShape="circle"><i nz-icon nzType="plus" nzTheme="outline" (click)="openComponentUserEdit()"></i></button>
     </nz-page-header-extra>
   </nz-page-header>
   <nz-content>
@@ -44,7 +44,6 @@
             <th>Usuario</th>
             <th>Email</th>
             <th>Rol</th>
-            <th nzRight>Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -55,26 +54,10 @@
             <td>{{ user.lastName }}</td>
             <td>{{ user.userName }}</td>
             <td>{{ user.email }}</td>
-            <td>{{ this.getRolName(user.roleId) }}</td>
-            <td style="text-align: center;">
-              <nz-space [nzSplit]="spaceSplit">
-                <ng-template #spaceSplit>
-                  <nz-divider nzType="vertical"></nz-divider>
-                </ng-template> 
-                <a *nzSpaceItem (click)="popup.showDeleteConfirmation(user.id)">
-                  <i nz-tooltip nzTooltipTitle="Eliminar" nz-icon nzType="delete" [nzTheme]="'twotone'"
-                    [nzTwotoneColor]="'#FF0000'"></i>
-                </a>
-              </nz-space> 
-            </td>
+            <td>{{ this.getRolName(user.roleId) }}</td>       
           </tr>
         </tbody>
       </nz-table>
     </div>
   </nz-content>
 </nz-layout>
-
-<app-popup-confirmation #popup [title]="'Confirmar eliminación'"
-  [header]="'¿Está seguro de que desea eliminar el usuario seleccionado?'"
-  [message]="'Esta acción no se puede revertir'" (handleOk)="handleOk()">
-</app-popup-confirmation>

@@ -1,8 +1,13 @@
 import { Component, OnInit } from '@angular/core';
+<<<<<<< HEAD
 import { Router } from '@angular/router';
+=======
+import { NzDrawerService } from 'ng-zorro-antd/drawer';
+>>>>>>> 62bcd85dcab548e0d176714a648edb3ab3b32dfd
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { EntityService } from '../../customers/customer.service';
 import { CustomerModel } from '../../customers/model/customer.model';
+import { SuppliersEditDrawerComponent } from '../suppliers-edit-drawer/suppliers-edit.drawer.component';
 
 
 @Component({
@@ -25,6 +30,7 @@ import { CustomerModel } from '../../customers/model/customer.model';
   ** Lista de Productos
   */
   entityList: CustomerModel[] = [];
+  id!:number;
     /*
   ** Parametros de busqueda
   */
@@ -37,7 +43,12 @@ import { CustomerModel } from '../../customers/model/customer.model';
       /*
   ** Constructor
   */
+<<<<<<< HEAD
   constructor(private service: EntityService, private router: Router) {
+=======
+  constructor(private service: EntityService,
+    private drawerService: NzDrawerService) {
+>>>>>>> 62bcd85dcab548e0d176714a648edb3ab3b32dfd
     
 }
  /*
@@ -77,6 +88,7 @@ import { CustomerModel } from '../../customers/model/customer.model';
         this.loading = false;
         this.entityList = [];
       }
+<<<<<<< HEAD
     })}
 
       /*
@@ -109,6 +121,44 @@ import { CustomerModel } from '../../customers/model/customer.model';
         }
           break 
       } 
+=======
+    })};
+
+    openComponentSupplierEdit(): void {
+      const drawerRefCustomer = this.drawerService.create<SuppliersEditDrawerComponent, { filter: number}, number>({
+        nzContent: SuppliersEditDrawerComponent,
+        nzSize: 'large',
+        nzContentParams: {
+          filter: this.id > 0 ? this.id : 0
+        },
+        nzClosable: false
+      });
+      drawerRefCustomer.afterClose.subscribe({         
+        next: (data) => {    
+          this.id= 0;
+          if (data != undefined && data != 0) {
+            this.service.getSupplierById(data).subscribe({
+              next: (r: CustomerModel) =>{
+                this.entityList[this.entityList.findIndex(r => r.id == data)] != undefined ?            
+               this.entityList[this.entityList.findIndex(r => r.id == data)] = r :
+               this.entityList.push(r);                     
+              },
+              error: ()=>{
+                this.id= 0;
+              }
+            })
+          }
+        },
+        error: () => {
+          this.id= 0;
+         }
+      })
+    };
+    onDoubleClicked (datos:any) {
+      this.id = datos.id;
+      this.openComponentSupplierEdit();
+    }
+>>>>>>> 62bcd85dcab548e0d176714a648edb3ab3b32dfd
     
     }  
     onScroll(event:any): void { 

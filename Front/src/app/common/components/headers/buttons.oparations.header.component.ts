@@ -11,6 +11,7 @@ export class HeaderOperationsButtonsComponent implements OnInit {
   @Input('btnSaveText') btnSaveText: string = 'Guardar';
   @Input('btnSaveSendText') btnSaveSendText: string = 'Guardar y Enviar';
   @Input('btnCancelText') btnCancelText: string = 'Volver';
+  @Input('btnCloseText') btnCloseText: string = 'Volver';
   @Input('btnDeleteText') btnDeleteText: string = 'Eliminar';
   @Input('title') title!: string;
   @Input('iconSave') iconSave!: string;
@@ -19,6 +20,7 @@ export class HeaderOperationsButtonsComponent implements OnInit {
   @Input('iconBack') iconBack!: string;
   @Input('showSpinner') showSpinner!: boolean;
   @Input('hideBack') hideBack: boolean = false;
+  @Input('hideClose') hideClose: boolean = false;
   @Input('hideDelete') hideDelete: boolean = true;
   @Input('hideSaveSend') hideSaveSend: boolean = true;
   @Output('onSaveClick') onSaveClick: EventEmitter<any> =
@@ -26,6 +28,8 @@ export class HeaderOperationsButtonsComponent implements OnInit {
   @Output('onCancelClick') onCancelClick: EventEmitter<any> =
     new EventEmitter<any>();
   @Output('onDeleteClick') onDeleteClick: EventEmitter<any> =
+    new EventEmitter<any>();
+    @Output('onCloseClick') onCloseClick: EventEmitter<any> =
     new EventEmitter<any>();
 
   constructor(private route: ActivatedRoute, private router: Router) { }

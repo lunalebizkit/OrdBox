@@ -2,8 +2,8 @@
     <nz-page-header class="list-header">
       <nz-page-header-title>Listado de Productos</nz-page-header-title>
       <nz-page-header-extra>
-        <a routerLink="/home/products/new"> <button nz-tooltip nzTooltipTitle="Nuevo" nz-button nzType="primary"
-            nzShape="circle"><i nz-icon nzType="plus" nzTheme="outline"></i></button></a>
+        <button nz-tooltip nzTooltipTitle="Nuevo" nz-button nzType="primary"
+            nzShape="circle"><i nz-icon nzType="plus" nzTheme="outline" (click)="openComponentProductsEdit()"></i></button>
       </nz-page-header-extra>
     </nz-page-header> 
     <nz-collapse>
@@ -32,13 +32,13 @@
   [nzPaginationType]="'small'" (nzQueryParams)="onQueryParamsChange($event)" [nzSize]="'small'"  [nzScroll]="{ x: '1300px' }" nzShowPagination="false">
   <thead>
     <tr>
-      <th style="width: 420px;">Producto</th>  
+      <th nzEllipsis  style="width: 200px;">Producto</th>  
       <th style="width: 130px;">Categoría</th>
       <th style="width: 65px;">Marca</th>
       <th style="width: 65px;">Cantidad</th>
       <th style="width: 95px;">Precio Costo</th>
-      <th style="width: 100px;">Precio Lista</th>
-      <th style="width: 100px;">Precio Contado</th>
+      <th style="width: 95px;">Precio Lista</th>
+      <th style="width: 95px;">Precio Contado</th>
       <th style="width: 95px;">Precio Tarjeta</th>  
       <th style="width: 60px;">Código</th>
     </tr>
@@ -48,7 +48,7 @@
     [style.background-color]="product === selectedProduct ? 'lightblue' : ''"  (keydown.enter)="onEnter(product, i)" (dblclick)="onDoubleClicked(product)">
       <td>{{product.description}}</td>
       <td>{{product.categoryName}}</td>
-      <td>{{product.brandName}}</td>
+      <td nzEllipsis>{{product.brandName}}</td>
       <td style="text-align: right;">{{product.quantity}}</td>
       <td style="color:blue;text-align: right;font-weight: bold;">${{product.purchasePrice}}</td>
       <td style="color:green;text-align: right;font-weight: bold;">${{product.cashSalePrice}}</td>

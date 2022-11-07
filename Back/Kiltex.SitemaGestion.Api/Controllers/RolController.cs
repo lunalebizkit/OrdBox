@@ -3,7 +3,7 @@ using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
 using Kiltex.SistemaGestion.Services.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Kiltex.SitemaGestion.Api.Controllers
+namespace Kiltex.SistemaGestion.Api.Controllers
 {
     public class RolController : ApiBaseController
     {

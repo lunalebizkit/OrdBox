@@ -1,5 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { Router} from '@angular/router';
+import { NzDrawerRef, NzDrawerService } from 'ng-zorro-antd/drawer';
+import { BrandsEditDrawerComponent } from '../brands-edit-drawer/brands-edit.drawer.component';
 import { BrandsService } from '../brands.services';
 import { BrandsModel } from '../model/brands.model';
 
@@ -9,18 +11,27 @@ import { BrandsModel } from '../model/brands.model';
   styleUrls: ['./brands-list.component.css'],
 })
 export class BrandsListComponent implements OnInit{
+
+  @ViewChild('drawerTemplate', { static: false }) drawerTemplate?: TemplateRef<{
+    $implicit: { filter: number },
+    drawerRef: NzDrawerRef<string>;
+  }>;
+  
   brandList: BrandsModel[]= [];
   totalItems!: number;
   loading!: boolean;
   selectedIndex: number = 0; 
   selectedBrand: any;
+  id!: number;
   
 queryData= {
   filter: '',
   page: 0,
   pageSize: 50, 
 }
-  constructor(private service: BrandsService, private router: Router) {
+  
+  constructor(private service: BrandsService,
+     private drawerService: NzDrawerService) {
       }
  
    ngOnInit(): void {
@@ -47,17 +58,13 @@ this.getBrand(this.queryData);
 */
 
 onDoubleClicked (datos:any) {
-  var data = datos.id
-  this.router.navigate(['home/brands/edit/', data]); 
+  this.id = datos.id;
+  this.openComponentBrandEdit();
 }
 onClick(datos:any, index:number): void {
   this.selectedIndex = index 
   this.selectedBrand = datos;
 }  
-onKeyPress( datos:any) {
-  var data = datos.id
-  this.router.navigate(['home/brands/edit/', data]);
-} 
 
 /*
    ** Evento de navegación por teclado en la tabla
@@ -103,7 +110,39 @@ if((ScrollPosition === 0 || ScrollPosition === -1) && (this.totalItems / this.qu
     }) 
   }
 }
-}
+};
+
+openComponentBrandEdit(): void {
+  const drawerRefCustomer = this.drawerService.create<BrandsEditDrawerComponent, { filter: number}, number>({
+    nzContent: BrandsEditDrawerComponent,
+    nzSize: 'large',
+    nzContentParams: {
+      filter: this.id > 0 ? this.id : 0
+    },
+    nzClosable: false
+  });
+  drawerRefCustomer.afterClose.subscribe({   
+     
+    next: (data) => {    
+      this.id= 0;
+      if (data != undefined && data != 0) {
+        this.service.getById(data).subscribe({
+          next: (r: BrandsModel) =>{
+            this.brandList[this.brandList.findIndex(r => r.id == data)] != undefined ?            
+           this.brandList[this.brandList.findIndex(r => r.id == data)] = r :
+           this.brandList.push(r);                     
+          },
+          error: ()=>{
+            this.id= 0;
+          }
+        })
+      }
+    },
+    error: () => {
+      this.id= 0;
+     }
+  })
+};
 }
 
 

@@ -35,7 +35,7 @@ registerLocaleData(en);
     NzLayoutModule,
     NzMenuModule,
     SecurityAuthModule,
-    HomeModule
+    HomeModule,
   ],
   providers: [{ provide: NZ_I18N, useValue: en_US }, NzMessageService],
   bootstrap: [AppComponent]

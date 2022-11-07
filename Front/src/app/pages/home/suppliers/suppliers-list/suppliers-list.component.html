@@ -2,8 +2,8 @@
     <nz-page-header class="list-header">
       <nz-page-header-title>Listado de Proveedores</nz-page-header-title>
       <nz-page-header-extra>
-        <a routerLink="/home/suppliers/new"> <button nz-tooltip nzTooltipTitle="Nuevo" nz-button nzType="primary"
-            nzShape="circle"><i nz-icon nzType="plus" nzTheme="outline"></i></button></a>
+        <button nz-tooltip nzTooltipTitle="Nuevo" nz-button nzType="primary"
+            nzShape="circle"><i nz-icon nzType="plus" nzTheme="outline" (click)="openComponentSupplierEdit()"></i></button>
       </nz-page-header-extra>
     </nz-page-header>
   
@@ -41,6 +41,7 @@
               <th>Nombre</th>
               <th>Dni</th>
               <th>Cuit</th>
+<<<<<<< HEAD
               <th>Dirección</th>       
               <th>Observación</th>       
               <th>Teléfono/s</th>       
@@ -52,18 +53,33 @@
             <tr *ngFor="let data of entityList, let i= index" class="small-text" tabindex="-1" (click)="onClick(data, i)" (keydown)="myNavegation($event) "
             [style.background-color]="data === selectedSuppliers ? 'lightblue' : ''" 
             (keydown.enter)="onKeyPress(data)" (dblclick)="onDoubleClicked(data)">          
+=======
+              <th>Direccion</th>       
+              <th>Observacion</th>       
+              <th>Telefono/s</th>       
+              <th>Email/s</th>  
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let data of entityList" class="small-text" (dblclick)="onDoubleClicked(data)">          
+>>>>>>> 62bcd85dcab548e0d176714a648edb3ab3b32dfd
               <td>{{data.name}}</td>
               <td>{{data.dni}}</td>
               <td>{{data.cuit}}</td>
               <td>{{data.address}}</td> 
               <td>{{data.observation}}</td>
               <td>{{data.phoneEntity}}</td>
+<<<<<<< HEAD
               <td>{{data.emailEntity}}</td>                      
               <!-- <td style="text-align: center;">
                   <a routerLink="/home/suppliers/edit/{{data.id}}">
                     <i nz-icon nzType="edit" nzTheme="outline"></i>
                   </a>                  
                 </td>   -->      
+=======
+              <td>{{data.emailEntity}}</td>                
+                   
+>>>>>>> 62bcd85dcab548e0d176714a648edb3ab3b32dfd
             </tr>
           </tbody>
         </nz-table>
