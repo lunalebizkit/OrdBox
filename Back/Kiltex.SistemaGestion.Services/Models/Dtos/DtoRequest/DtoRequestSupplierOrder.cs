@@ -1,30 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
 
-namespace Kiltex.SistemaGestion.Services.Models.Dtos
+namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest
 {
-    public class DtoAddSupplierOrder
+    public class DtoRequestSupplierOrder
     {
         public long Id { get; set; }
         public long SupplierId { get; set; }
         public bool IsPaid { get; set; }
-
+        public DateTime DateTime { get; set; }
         public long StatusId { get; set; }
-     
-        public List<DtoAddOrderDetail> OrderDetail { get; set; }
+
+        public List<DtoRequestOrderDetail> OrderDetail { get; set; }
 
 
     }
-    public class DtoAddOrderDetail
+    public class DtoRequestOrderDetail
     {
         public long Id { get; set; }
         public long ProductId { get; set; }
-
         public int OrderedQuantity { get; set; }
-
         public int RecievedQuantity { get; set; }
         public long StatusId { get; set; }
 

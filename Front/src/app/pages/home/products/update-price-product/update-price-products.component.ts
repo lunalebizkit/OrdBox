@@ -69,6 +69,7 @@ export class UpdatePriceProductsComponent extends BaseComponent implements OnIni
       product:'',
       brand: 0,
       category: 0,
+      status: 0,
       supplier:[]},
     page: 0,
     pageSize: 50
@@ -177,7 +178,8 @@ export class UpdatePriceProductsComponent extends BaseComponent implements OnIni
         this.allBrands = []
       }
     })
-  }
+  };
+  
   getAllSupplier(): void {
     this.serviceEntity.getSuppliers(this.queryData).subscribe({
       next: (r) => {
@@ -206,12 +208,9 @@ export class UpdatePriceProductsComponent extends BaseComponent implements OnIni
         this.allSuppliers= [];
         this.queryData.filter= value;
         this.getAllSupplier();
-      }  }, 1000);
-    
-    
-    
-    // this.searchChange$.next(value);
-  }
+      }  }, 1000);    
+  };
+
   getData(params: any): void {
     this.loading = true;
     this.service.getProductsByUpdatePrice(params).subscribe({

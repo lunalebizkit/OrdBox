@@ -28,22 +28,23 @@ export class HeaderOperationsButtonsComponent implements OnInit {
   @Output('onDeleteClick') onDeleteClick: EventEmitter<any> =
     new EventEmitter<any>();
 
-  constructor(private route: ActivatedRoute, private router: Router) {}
+  constructor(private route: ActivatedRoute, private router: Router) { }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
   goBack() {
     if (this.onCancelClick.length > 0) {
       this.onCancelClick.emit();
     } else {
-      this.route.params.subscribe((p) => {        
-        let url=this.router.routerState.snapshot.url.split('home/', 2)[1]
-        .split('/')[0]
+      this.route.params.subscribe((p) => {
+        let url = this.router.routerState.snapshot.url
+          .split('home/', 2)[1]
+          .split('/')[0];
         switch (url) {
           case 'products':
-            this.router.navigate(['home/products/list']); 
+            let productId= p['id'] ? p['id']: null;            
+            this.router.navigate(['/home/products/list', {productId}]);
             break;
-           
           default:
             if (p['id']) {
               this.router.navigate(['../../'], { relativeTo: this.route });
@@ -51,8 +52,7 @@ export class HeaderOperationsButtonsComponent implements OnInit {
               this.router.navigate(['../'], { relativeTo: this.route });
             }
             break;
-        }
-    
+        }      
       });
     }
   }

@@ -33,7 +33,7 @@ namespace Kiltex.SistemaGestion.Domain.Model
         public int Quantity { get; set; } //cantidad
 
         [Column("purchase_price")]
-        public decimal PurchasePrice { get; set; } //precio de compra
+        public decimal PurchasePrice { get; set; } //precio de compra 
 
         [Column("sale_price")]
         public decimal SalePrice { get; set; } //precio de venta (lista)

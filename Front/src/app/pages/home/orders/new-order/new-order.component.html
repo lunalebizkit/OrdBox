@@ -1,14 +1,6 @@
-<app-header-op-buttons
-  #header
-  [btnCancelText]="'Cancelar'"
-  [btnSaveText]="'Guardar'"
-  [btnSaveSendText]="'Guardar y Enviar'"
-  [hideSaveSend]="false"
-  [title]="'Pedidos'"
-  [iconBack]="'rollback'"
-  [iconSave]="'save'"
-  [iconTitle]="'user'"
->
+<app-header-op-buttons #header [btnCancelText]="'Cancelar'" [btnSaveText]="'Guardar'"
+  [btnSaveSendText]="'Guardar y Enviar'" [hideSaveSend]="false" [title]="'Pedidos'" [iconBack]="'rollback'"
+  [iconSave]="'save'" [iconTitle]="'shopping-cart'"  (onSaveClick)="save()">
 </app-header-op-buttons>
 
 <div class="site-page-header-ghost-wrapper">
@@ -16,152 +8,134 @@
     <nz-collapse-panel nzHeader="Datos Pedido" [nzActive]="true">
       <nz-content>
         <form nz-form [formGroup]="form">
+          <form nz-form [formGroup]="formSupplierSearch">
+            <div nzSpan="12" class="mb-2">
+              <nz-form-item>
+                <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="supplierId">Proveedor
+                </nz-form-label>
+                <nz-select nzPlaceHolder="Seleccione Proveedor" nzAllowClear nzShowSearch nzServerSearch
+                  (nzOnSearch)="onSearch($event)" formControlName="supplierId" style="width: 200px;"
+                  >
+                  <ng-container *ngFor="let o of entityList">
+                    <nz-option *ngIf="!loading" [nzValue]="o.id" [nzLabel]="o.name" ></nz-option>
+                  </ng-container>
+                  <nz-option *ngIf="loading" nzDisabled nzCustomContent>
+                    <span nz-icon nzType="loading" class="loading-icon"></span>
+                    Cargando ...
+                  </nz-option>
+                </nz-select>
+              </nz-form-item>
+            </div>
+          </form>
           <nz-form-item>
-            <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="supplier"
-              >Proveedor
-            </nz-form-label>
-            <nz-form-control [nzSm]="6" [nzXs]="24">
-              <input
-                nz-input
-                maxlength="250"
-                nzSize="small"
-                formControlName="supplier"
-              />
-            </nz-form-control>
-          </nz-form-item>
-
-          <nz-form-item>
-            <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="date"
-              >Fecha
+            <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="datetime">Fecha
             </nz-form-label>
             <nz-form-control [nzSm]="6" [nzXs]="24">
               <nz-date-picker
-                [(ngModel)]="date"
+                [(ngModel)]="datetime"
                 [nzPlaceHolder]="fecha"
-                formControlName="date"
+                formControlName="datetime"
+                [nzFormat]="dateFormat"
+                [nzDisabledDate]="disabledDate"
               ></nz-date-picker
             ></nz-form-control>
           </nz-form-item>
 
           <nz-form-item>
-            <nz-form-label [nzSm]="6" [nzXs]="14" nzRequired nzFor="isPaid"
-              >Pagado
+            <nz-form-label [nzSm]="6" [nzXs]="14" nzRequired nzFor="isPaid">Pagado
             </nz-form-label>
-            <nz-switch
-              formControlName="isPaid"
-              [ngModel]="switchValue"
-            ></nz-switch>
+            <nz-switch formControlName="isPaid" [ngModel]="switchValue"></nz-switch>
           </nz-form-item>
 
-          <div nz-row>
-            <div nz-col nzSpan="12">
-              <nz-form-item>
-                <nz-form-label [nzSm]="12" [nzXs]="24" nzRequired nzFor="email"
-                  >Correo Principal
-                </nz-form-label>
-                <nz-form-control [nzSm]="14" [nzXs]="24">
-                  <input
-                    nz-input
-                    maxlength="250"
-                    nzSize="small"
-                    formControlName="email"
-                  /> </nz-form-control
-              ></nz-form-item>
-            </div>
+          <!-- En caso  -->
 
-            <div nz-col>
-              <nz-form-item>
-                <nz-switch
-                  [ngModel]="true"
-                  nzCheckedChildren="Enviar"
-                  nzUnCheckedChildren="No enviar"
-                  formControlName="send"
-                ></nz-switch>
-              </nz-form-item>
-            </div>
-          </div>
+          <!-- En caso de que sea un pedido nuevo -->
 
-          <div nz-row>
-            <div nz-col nzSpan="12">
-              <nz-form-item>
-                <nz-form-label [nzSm]="12" [nzXs]="24" nzRequired nzFor="email2"
-                  >Correo Secundario
-                </nz-form-label>
-                <nz-form-control [nzSm]="24" [nzXs]="24">
-                  <input
-                    nz-input
-                    formControlName="email2"
-                    nzSize="small"
-                    maxlength="250"
-                  /> </nz-form-control
-              ></nz-form-item>
-            </div>
-            <div nz-col>
-              <nz-form-item>
-                <nz-switch
-                  [ngModel]="true"
-                  nzCheckedChildren="Enviar"
-                  nzUnCheckedChildren="No enviar"
-                  formControlName="send2"
-                ></nz-switch>
-              </nz-form-item>
-            </div>
-          </div>
+          <ng-container formArrayName="emailEntity">
+            <ng-container *ngFor="let e of emailsControls; let i = index">
+              <div nz-row>
+                <div nz-col nzSpan="12">
+                  <nz-form-item>
+                    <nz-form-label
+                      [nzSm]="8"
+                      [nzXs]="24"
+                      nzRequired
+                      nzFor="email"
+                    >
+                      Email {{ i + 1 }}
+                    </nz-form-label>
+                    <nz-form-control [nzSm]="14" [nzXs]="24">
+                      <input [formControl]="e" nz-input />
+                      <i
+                        nz-icon
+                        nzType="minus-circle-o"
+                        class="dynamic-delete-button"
+                        style="
+                          color: rgb(243, 79, 79);
+                          position: absolute;
+                          margin-top: -7x;
+                          margin-left: 4px;
+                        "
+                        (click)="removeEmailField($event, i)"
+                      ></i>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+
+                <div nz-col>
+                  <nz-form-item>
+                    <nz-switch
+                      [ngModel]="true"
+                      nzCheckedChildren="Enviar"
+                      nzUnCheckedChildren="No enviar"
+                      formControlName="send2"
+                    ></nz-switch>
+                  </nz-form-item>
+                </div>
+              </div>
+            </ng-container>
+            <button
+              nz-button
+              nzType="primary"
+              nzShape="circle"
+              style="margin-left: 146px"
+            >
+              <i nz-icon nzType="mail" (click)="addEmailField($event)"></i>
+            </button>
+          </ng-container>
         </form>
       </nz-content>
       <!-- Buscador de Productos -->
-      <nz-divider
-        nzText="Seleccionar productos"
-        nzOrientation="left"
-      ></nz-divider>
+      <nz-divider nzText="Seleccionar productos" nzOrientation="left"></nz-divider>
 
       <div nz-row nzJustify="start" nzAlign="middle">
         <form nz-form [formGroup]="formProductSearch" col nzSpan="12">
           <div>
             <nz-form-item>
-              <nz-form-label [nzSm]="12" [nzXs]="24"
-                >Búsqueda de Producto</nz-form-label
-              >
+              <nz-form-label [nzSm]="12" [nzXs]="24">Búsqueda de Producto</nz-form-label>
               <nz-form-control [nzSm]="14" [nzXs]="24">
                 <nz-input-group [nzSuffix]="clearQuery">
-                  <input
-                    nzSize="small"
-                    type="text"
-                    formControlName="productSearchFilter"
-                    placeholder="Ingrese Marca, Código, Categoria o Producto"
-                    nz-input
-                    (keydown.enter)="searchProduct()"
-                  />
+                  <input nzSize="small" type="text" formControlName="productSearchFilter"
+                    placeholder="Ingrese Marca, Código, Categoria o Producto" nz-input
+                    (keydown.enter)="searchProduct()" />
                 </nz-input-group>
 
                 <ng-template #clearQuery>
-                  <i
-                    nz-icon
-                    class="ant-input-clear-icon"
-                    nzTheme="fill"
-                    nzType="close-circle"
-                    *ngIf="
+                  <i nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle" *ngIf="
                       this.formProductSearch.controls['productSearchFilter']
                         .value !== ''
-                    "
-                    (click)="
+                    " (click)="
                       this.formProductSearch.controls[
                         'productSearchFilter'
                       ].setValue('')
-                    "
-                  ></i>
+                    "></i>
                 </ng-template>
               </nz-form-control>
             </nz-form-item>
           </div>
         </form>
         <div nz-col style="margin: 3px">
-          <button
-            nz-button
-            nzSize="small"
-            nzType="primary"
-            (click)="openComponentProduct()"
-          >
+          <button nz-button nzSize="small" nzType="primary" (click)="openComponentProduct()">
             <i nz-icon nzType="search" nzTheme="outline"></i> Buscar
           </button>
         </div>
@@ -172,13 +146,9 @@
   <!-- </form> -->
   <!-- Tabla Detalle -->
   <nz-collapse>
-    <nz-collapse-panel
-      nzHeader="Detalle Pedido"
-      [nzActive]="true"
-      [nzShowArrow]="false"
-    >
+    <nz-collapse-panel nzHeader="Detalle Pedido" [nzActive]="true" [nzShowArrow]="false">
       <nz-content>
-        <nz-table [nzBordered]="true" [nzData]="invoiceDetailsList">
+        <nz-table [nzBordered]="true" [nzData]="orderDetailGrid">
           <thead>
             <tr>
               <th>Codigo</th>
@@ -190,25 +160,16 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let data of invoiceDetailsList" class="small-text">
+            <tr *ngFor="let data of orderDetailGrid" class="small-text">
               <td>{{ data.code }}</td>
               <td>{{ data.productName }}</td>
               <td>
-                <div
-                  class="editable-cell"
-                  [hidden]="editId === data.ownCode"
-                  (click)="startEdit(data.ownCode)"
-                >
+                <div class="editable-cell" [hidden]="editId === data.id" (click)="startEdit(data.id)">
                   {{ data.quantity }}
                 </div>
-                <nz-input-number
-                  [hidden]="editId !== data.ownCode"
-                  [nzMin]="1"
-                  [nzMax]="10000"
-                  [(ngModel)]="data.quantity"
-                  (nzBlur)="stopEdit()"
-                  (ngModelChange)="changeQuantity($event)"
-                ></nz-input-number>
+                <nz-input-number [hidden]="editId !== data.id" [nzMin]="1" [nzMax]="10000"
+                  [(ngModel)]="data.quantity" (nzBlur)="stopEdit()" (ngModelChange)="changeQuantity($event)">
+                </nz-input-number>
               </td>
               <td [nzAlign]="'right'">{{ this.currencyFormat(data.price) }}</td>
               <td [nzAlign]="'right'">
@@ -219,18 +180,9 @@
                   <ng-template #spaceSplit>
                     <nz-divider nzType="vertical"></nz-divider>
                   </ng-template>
-                  <a
-                    *nzSpaceItem
-                    (click)="popup.showDeleteConfirmation(data.ownCode)"
-                  >
-                    <i
-                      nz-tooltip
-                      nzTooltipTitle="Eliminar"
-                      nz-icon
-                      nzType="delete"
-                      [nzTheme]="'twotone'"
-                      [nzTwotoneColor]="'#FF0000'"
-                    ></i>
+                  <a *nzSpaceItem (click)="popup.showDeleteConfirmation(data.id)">
+                    <i nz-tooltip nzTooltipTitle="Eliminar" nz-icon nzType="delete" [nzTheme]="'twotone'"
+                      [nzTwotoneColor]="'#FF0000'"></i>
                   </a>
                 </nz-space>
               </td>
@@ -239,8 +191,7 @@
           <tfoot style="background-color: #fafafa">
             <tr>
               <td colspan="6" [nzAlign]="'right'">
-                <b>Total </b
-                ><b style="color: red">{{ this.currencyFormat(this.total) }}</b>
+                <b>Total </b><b style="color: red">{{ this.currencyFormat(this.total) }}</b>
               </td>
               <ng-template #elseBlock>
                 <td colspan="2"></td>
@@ -253,11 +204,7 @@
   </nz-collapse>
 </div>
 
-<app-popup-confirmation
-  #popup
-  [title]="'Confirmar eliminación'"
+<app-popup-confirmation #popup [title]="'Confirmar eliminación'"
   [header]="'¿Está seguro de que desea eliminar el producto seleccionado?'"
-  [message]="'Esta acción no se puede revertir'"
-  (handleOk)="handleOk()"
->
+  [message]="'Esta acción no se puede revertir'" (handleOk)="handleOk()">
 </app-popup-confirmation>

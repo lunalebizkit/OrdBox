@@ -126,6 +126,8 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
   }
 
   ngOnInit(): void {    
+    console.log(this.payment);
+    
   }
 
   typeSelectedChange(id: any): void {

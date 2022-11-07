@@ -58,7 +58,6 @@ import { formatCurrency, formatDate } from '@angular/common';
   onQueryParamsChange(params: NzTableQueryParams): void {
     this.queryParams.page = params.pageIndex -1;
     this.queryParams.pageSize = params.pageSize;
-    //  this.getData(this.queryParams);
   };
     /*
   ** Evento de busqueda datos en el server

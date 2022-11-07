@@ -1,14 +1,14 @@
-import { Component, ElementRef, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
-import { ColDef } from 'ag-grid-community';
+import { formatDate } from '@angular/common';
+import { Component, ElementRef, Inject, LOCALE_ID, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { BaseComponent } from 'src/app/common/components/base/base.component';
-import { BrandsService } from '../../brands/brands.services';
 import { CategoriesService } from '../../categories/category.services';
 import { EntityService } from '../../customers/customer.service';
-import { ProductService } from '../../products/product.service';
+import { eStatus, StatusType } from '../enum/status-type.enum';
+import { OrderDetail, OrderList } from '../models/order.model';
+import { OrdersService } from '../orders.service';
 
 @Component({
   selector: 'app-orders-list',
@@ -16,34 +16,64 @@ import { ProductService } from '../../products/product.service';
   styleUrls: ['./orders-list.component.css'],
 })
 export class OrdersListComponent extends BaseComponent implements OnInit {
-  constructor(
-    private service: ProductService,
-    private serviceCategory: CategoriesService,
-    private serviceBrand: BrandsService,
-    private serviceEntity: EntityService,
-    notificacionService: NzNotificationService,
-    el: ElementRef,
-    message: NzMessageService,
-    private route: ActivatedRoute,
-    private fb: FormBuilder
-  ) {
-    super(notificacionService, el, message);
-    this.formSearch = this.fb.group({
-      status: [''],
-      supplier: [[]],
-      category: [0],
-    });
-  }
-  ngOnInit(): void {
-    this.getAllCategories();
-    this.getAllSupplier();
-  }
 
   formSearch!: FormGroup;
   isLoading = false;
   timeout!: any;
   allCategories = [];
   allSuppliers: { value: string; label: string }[] = [];
+  allOrders: OrderList[]= [];
+  orderDetailList:OrderDetail[]=[];
+  allStatus= StatusType;
+
+  /*
+   ** Parametros de busqueda Filtrada
+   */
+   queryParams = {
+    filter: {
+      product:'',
+      brand: 0,
+      category: 0,
+      status: 0,
+      supplier: [0]},
+    page: 0,
+    pageSize: 20
+  };
+  /*
+   ** Parametros de busqueda
+   */
+  queryData = {
+    filter: '',
+    page: 0,
+    pageSize: 10,
+  };
+
+  constructor(
+    private serviceOrders: OrdersService,
+    private serviceCategory: CategoriesService,
+    private serviceEntity: EntityService,
+    notificacionService: NzNotificationService,
+    el: ElementRef,
+    message: NzMessageService,
+    private fb: FormBuilder,
+    @Inject(LOCALE_ID) public locale: string
+  ) {
+    super(notificacionService, el, message);
+    this.formSearch = this.fb.group({
+      status: [0],
+      supplier: [[]],
+      category: [0],
+    });
+  }
+
+  
+  ngOnInit(): void {
+    this.getAllCategories();
+    this.getAllSupplier();
+    this.getAllOrders();
+  }
+
+ 
 
   /*
    ** Indicador de carga de marcas y lineas
@@ -54,23 +84,23 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
   isLoadingEntity = false;
   isSaving = false;
 
-  /*
-   ** Parametros de busqueda
-   */
-  queryParams = {
-    filter: {
-      status: 0,
-      category: 0,
-      supplier: [],
-    },
-    page: 0,
-    pageSize: 50,
-  };
-  queryData = {
-    filter: '',
-    page: 0,
-    pageSize: 50,
-  };
+  
+
+  getAllOrders(): void {
+    this.isLoading = true;
+    this.serviceOrders.getOrders(this.queryParams).subscribe({
+      next: (r) => {
+        this.isLoading = false;
+        this.allOrders = r.data;          
+        
+      },
+      error: () => {
+        this.isLoading = false;
+        this.allOrders = [];
+      },
+    });
+  }
+
 
   getAllCategories(): void {
     this.isLoadingCategory = true;
@@ -118,55 +148,43 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
         this.getAllSupplier();
       }
     }, 1000);
-
-    // this.searchChange$.next(value);
+  }
+  onSelect(id: number):void {
+   this.orderDetailList= this.allOrders.filter( order => order.id == id)[0].orderDetail;
+     
   }
 
-  /*   creacion de columnas de la grid */
-  public columnDefs: ColDef[] = [
-    {
-      headerName: 'N° Pedido',
-      field: 'pedido',
-    },
-    {
-      headerName: 'Fecha',
-      field: 'fecha',
-    },
-    {
-      headerName: 'Proveedor',
-      field: 'proveedor',
-    },
-    {
-      headerName: 'Estado',
-      field: 'estado',
-    },
-  ];
+  supplierSelectedChange(id: any): void { 
+    this.queryParams.filter.supplier =[];
+    if (id == 0 || id == null){      
+    this.queryParams.filter.supplier =[0];
+    } else{
+      this.queryParams.filter.supplier.push(this.formSearch.controls['supplier'].value);
+    }  
+  }
 
-  public columnsDefs: ColDef[] = [
-    {
-      headerName: 'Productos',
-      field: 'productos',
-    },
-    {
-      headerName: 'Cantidad',
-      field: 'cantidad',
-    },
-  ];
-
-  public defaultColDef: ColDef = {
-    sortable: true,
-    filter: true,
-    flex: 1,
-    minWidth: 100,
-    resizable: true,
+  categorySelectedChange(id: number): void {
+    this.queryParams.filter.category = id;
   };
 
-  supplierSelectedChange(id: any): void {
-    this.queryParams.filter.supplier =
-      this.formSearch.controls['supplier'].value;
-  }
+  statusSelectedChange(id: number): void {
+    this.queryParams.filter.status = id;
+  };
+  
+  formaterDate(date: string| number| Date):string {
+    return formatDate( date, 'YYYY-MM-dd', this.locale)
+  };
 
-  categorySelectedChange(id: any): void {
-    this.queryParams.filter.category = id;
+    /*
+  ** Evento al presionar buscar o presionar enter
+  */
+  search(): void {
+    this.queryParams.page = 0;
+    this.orderDetailList= [];
+    this.getAllOrders();
+  };
+
+  getStatusName(id:number) {
+    return eStatus[id];
   }
 }

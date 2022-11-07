@@ -5,6 +5,8 @@ using Kiltex.SistemaGestion.SDK.Error;
 using Kiltex.SistemaGestion.Services.Common;
 using Kiltex.SistemaGestion.Services.Dtos;
 using Kiltex.SistemaGestion.Services.Models.Dtos;
+using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
+using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 
@@ -116,7 +118,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                         Key = p.Key
                     }).ToListAsync(cancellationToken: ct));
         }
-        public async Task<OperationResponse<IdResponse<long>>> AddOrUpdatePermission(RequestAddPermissionXRol model, CancellationToken ct= default)
+        public async Task<OperationResponse<IdResponse<long>>> AddOrUpdatePermission(DtoRequestAddPermissionXRol model, CancellationToken ct= default)
         {
             var rolesExistentes = await _contextSql
                                     .Rols
