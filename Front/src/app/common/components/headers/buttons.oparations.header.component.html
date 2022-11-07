@@ -4,6 +4,9 @@
     ><i nz-icon [nzType]="iconTitle" style="padding-right: 5px"></i
     >{{ title }}</nz-page-header-title
   >
+  <nz-page-header-tags *ngIf="!hideTag">
+    <nz-tag [nzColor]="'blue'">{{ tagText }}</nz-tag>
+  </nz-page-header-tags>
   <nz-page-header-extra>
     <!-- <div class="buttons-save" style="padding-left: 25px;"> -->
     <button
@@ -26,20 +29,19 @@
     >
       <i nz-icon [nzType]="iconBack"></i>{{ btnCancelText }}
     </button>
+    <button
+      *ngIf="hideClose"
+      nz-button
+      nzType="default"
+      [disabled]="showSpinner"
+      (click)="onCloseClick?.emit($event)"
+    >
+      <i nz-icon [nzType]="iconBack"></i>{{ btnCloseText }}
+    </button>
     <!-- </div> -->
-      <!-- <div class="buttons-close"> -->
-        <button
-        *ngIf="hideClose"
-        nz-button
-        nzType="default"
-        [disabled]="showSpinner"
-        (click)="onCloseClick?.emit($event)"
-      >
-        <i nz-icon [nzType]="iconBack"></i>{{ btnCloseText }}
-      </button>
-      <!-- </div> -->
     <!-- <div class="buttons-save"> -->
     <button
+      *ngIf="!hideSave"
       nz-button
       nzType="primary"
       [nzLoading]="showSpinner"
@@ -55,7 +57,16 @@
       [nzLoading]="showSpinner"
       (click)="onSaveClick?.emit($event)"
     >
-      <i nz-icon [nzType]="iconSave"></i>{{ btnSaveSendText }}
+      <i nz-icon [nzType]="iconSaveSend"></i>{{ btnSaveSendText }}
+    </button>
+    <button
+      *ngIf="!hideUpdate"
+      nz-button
+      class="btnGreen"
+      [nzLoading]="showSpinner"
+      (click)="onUpdateClick?.emit($event)"
+    >
+      <i nz-icon [nzType]="iconUpdate"></i>{{ btnUpdateText }}
     </button>
   </nz-page-header-extra>
 </nz-page-header>
