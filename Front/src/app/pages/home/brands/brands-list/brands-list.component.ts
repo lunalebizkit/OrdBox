@@ -88,7 +88,6 @@ let scrollHeight= event.target.scrollHeight;
 let scrolltop= event.target.scrollTop;
 let client= event.target.clientHeight
 let ScrollPosition= scrollHeight - (scrolltop + client);
-console.log(ScrollPosition)
 if((ScrollPosition === 0 || ScrollPosition === -1) && (this.totalItems / this.queryData.page) > this.queryData.page){ 
   this.queryData.page ++ ; 
   if(this.totalItems === undefined ||(this.queryData.page * this.queryData.pageSize <= this.totalItems)){ 

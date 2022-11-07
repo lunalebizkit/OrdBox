@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { ProductsModel } from '../model/product.model';
 import { ProductService } from '../product.service';
-
+import { NzDrawerRef, NzDrawerService } from 'ng-zorro-antd/drawer';
+import { ProductsEditComponent } from '../products-edit/products-edit.component';
 
 @Component({
   selector: 'app-products-list',
@@ -11,7 +12,10 @@ import { ProductService } from '../product.service';
   styleUrls: ['./products-list.component.css']
 })
 export class ProductsListComponent implements OnInit {
-
+  @ViewChild('drawerTemplate', { static: false }) drawerTemplate?: TemplateRef<{
+    $implicit: { filter: string };
+    drawerRef: NzDrawerRef<string>;
+  }>;
 
   /*
     ** Listado de los productos
@@ -49,13 +53,15 @@ export class ProductsListComponent implements OnInit {
   queryParams = {
     filter: '',
     page: 0, 
-    PageSize:100,   
+    PageSize:50,   
   };
+  formProductsEditComponent: any;
 
   /*
   ** Constructor
   */
-  constructor(private service: ProductService, private router: Router, private route:ActivatedRoute) {
+  constructor(private service: ProductService, private router: Router, 
+    private route:ActivatedRoute, private drawerService: NzDrawerService,) {
 
   }
 
@@ -71,13 +77,10 @@ export class ProductsListComponent implements OnInit {
     this.productId= Number (this.route.snapshot.paramMap.get('productId'));  
     if (this.productId != null){
       let paramsStorage= JSON.parse(localStorage.getItem('filter')!) ? JSON.parse(localStorage.getItem('filter')!) : null;
-      if (paramsStorage != undefined){
-        console.log(paramsStorage.filter);
-        
+     if (paramsStorage != undefined){ 
        this.queryParams.filter= paramsStorage.filter != null ? paramsStorage.filter : ''; 
-       this.queryParams.PageSize= paramsStorage.PageSize != null ? paramsStorage.PageSize : 100
+       this.queryParams.PageSize= paramsStorage.PageSize != null ? paramsStorage.PageSize : 50
        this.queryParams.page= paramsStorage.page != null ? paramsStorage.page : 0
-      
       this.getData(this.queryParams);}
     }
   }
@@ -86,10 +89,10 @@ export class ProductsListComponent implements OnInit {
   ** Evento que se ejecuta ante algun cambio en la grillas (sorting,paging or filtering)
   */
   onQueryParamsChange(params: NzTableQueryParams): void {
-    /* this.queryParams.filter = localStorage.getItem('productListFilter')!;
+/*      this.queryParams.filter = localStorage.getItem('productListFilter')!;
      this.queryParams.page = params.pageIndex - 1;
-    this.queryParams.PageSize = params.pageSize;    */ 
-    this.getData(this.queryParams);
+    this.queryParams.PageSize = params.pageSize;     */
+    this.getData(this.queryParams);  
   } 
 
   /*
@@ -128,16 +131,16 @@ export class ProductsListComponent implements OnInit {
   onDoubleClicked (datos:any) {
   var data = datos.id
   this.router.navigate(['home/products/edit/', data]); 
+  localStorage.setItem('filter',JSON.stringify(this.queryParams))
   }
   onClick(datos:any, index:number): void {
   this.selectedIndex = index 
   this.selectedProduct = datos
-
- 
   }  
-  onKeyPress( datos:any) {
-    var data = datos.id
-    this.router.navigate(['home/products/edit/', data]); 
+  onEnter( data:any, index:number) {
+    var datos = data.id
+    console.log(data, index)
+    this.router.navigate(['home/products/edit/', datos]); 
   } 
 
  /*
@@ -164,13 +167,16 @@ export class ProductsListComponent implements OnInit {
  /*
   ** Evento de scroll infinito
   */
+ 
   onScroll(event:any): void { 
     let scrollHeight= event.target.scrollHeight;
     let scrolltop= event.target.scrollTop;
     let client= event.target.clientHeight
     let ScrollPosition= scrollHeight - (scrolltop + client);
     if((ScrollPosition === 0 || ScrollPosition === -1 ) && (this.totalItems / this.queryParams.page) > this.queryParams.page){ 
-    this.queryParams.page= this.queryParams.page +1; 
+      let page= this.queryParams.page;
+      this.queryParams.page = this.queryParams.page +1;  
+      console.log(this.queryParams.page)
       if(this.totalItems === undefined ||(this.queryParams.page * this.queryParams.PageSize <= this.totalItems)){ 
         this.service.getProducts(this.queryParams)
         .subscribe({
@@ -182,7 +188,10 @@ export class ProductsListComponent implements OnInit {
           error: ()=>{  this.loading = false;
           this.productList= [];}
         }) 
+      }else{
+        this.queryParams.page = page;  
       }
     }
-  } 
+  }  
+  
 }

@@ -45,7 +45,7 @@
   </thead>
   <tbody>
     <tr *ngFor="let product of productList, let i=index" class="small-text" tabindex="-1" (click)="onClick(product, i)" (keydown)="myNavegation($event)"
-    [style.background-color]="product === selectedProduct ? 'lightblue' : ''"  (keydown.enter)="onKeyPress(product)" (dblclick)="onDoubleClicked(product)">
+    [style.background-color]="product === selectedProduct ? 'lightblue' : ''"  (keydown.enter)="onEnter(product, i)" (dblclick)="onDoubleClicked(product)">
       <td>{{product.description}}</td>
       <td>{{product.categoryName}}</td>
       <td>{{product.brandName}}</td>
