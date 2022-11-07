@@ -31,7 +31,7 @@ queryData= {
 }
   
   constructor(private service: BrandsService,
-     private drawerService: NzDrawerService,) {
+     private drawerService: NzDrawerService) {
       }
  
    ngOnInit(): void {

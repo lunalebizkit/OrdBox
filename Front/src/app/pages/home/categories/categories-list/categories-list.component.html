@@ -4,8 +4,9 @@
       Listado de Categorias
     </nz-page-header-title>
     <nz-page-header-extra>
-      <a routerLink="/home/categories/new"> <button nz-tooltip nzTooltipTitle="Nuevo" nz-button nzType="primary"
-          nzShape="circle"><i nz-icon nzType="plus" nzTheme="outline"></i></button></a>
+      <button nz-tooltip nzTooltipTitle="Nuevo" nz-button nzType="primary"
+        nzShape="circle"><i nz-icon nzType="plus" nzTheme="outline"
+        (click)="openComponentCategoryEdit()"  ></i></button>
     </nz-page-header-extra>
   </nz-page-header>
   <nz-content>
@@ -46,7 +47,8 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let category of categoryList, let i= index" class="small-text" tabindex="-1" (keydown)="myNavegation($event) " [style.background-color]="category === selectedCategory ? 'lightblue' : ''"  (click)="onClick(category, i)">
+          <tr *ngFor="let category of categoryList, let i= index" class="small-text" tabindex="-1" (keydown)="myNavegation($event) " [style.background-color]="category === selectedCategory ? 'lightblue' : ''" 
+           (click)="onClick(category, i)" (dblclick)="onDoubleClicked(category)">
             <td>{{ category.id}}</td>
             <td>{{ category.description}}</td>
             <td style="text-align: center;">

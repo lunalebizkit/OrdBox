@@ -2,8 +2,8 @@
     <nz-page-header class="list-header">
       <nz-page-header-title>Listado de Productos</nz-page-header-title>
       <nz-page-header-extra>
-        <a routerLink="/home/products/new"> <button nz-tooltip nzTooltipTitle="Nuevo" nz-button nzType="primary"
-            nzShape="circle"><i nz-icon nzType="plus" nzTheme="outline"></i></button></a>
+        <button nz-tooltip nzTooltipTitle="Nuevo" nz-button nzType="primary"
+            nzShape="circle"><i nz-icon nzType="plus" nzTheme="outline" (click)="openComponentProductsEdit()"></i></button>
       </nz-page-header-extra>
     </nz-page-header> 
     <nz-collapse>

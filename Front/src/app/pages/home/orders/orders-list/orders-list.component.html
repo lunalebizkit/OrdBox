@@ -2,17 +2,18 @@
   <div class="sticky">
     <nz-page-header class="list-header">
       <nz-page-header-title>Listado de Pedidos</nz-page-header-title>
-      <nz-page-header-extra>
-        <a routerLink="/home/orders/new">
+      <nz-page-header-extra>       
           <button
             nz-tooltip
             nzTooltipTitle="Nuevo Pedido"
             nz-button
             nzType="primary"
             nzShape="circle"
+            (click)="openComponentOrdersEdit()"
           >
-            <i nz-icon nzType="plus" nzTheme="outline"></i></button
-        ></a>
+            <i nz-icon nzType="plus" nzTheme="outline"
+            ></i></button
+        >
       </nz-page-header-extra>
     </nz-page-header>
   </div>
@@ -129,7 +130,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr class="small-text" *ngFor="let data of allOrders" (click)="onSelect(data.id)">
+        <tr class="small-text" *ngFor="let data of allOrders" (click)="onSelect(data.id)" (dblclick)="onDoubleClicked(data)">
           <td>{{data.id}}</td>
           <td>{{ this.formaterDate(data.dateTime)}}</td>
           <td>{{data.supplierName}}</td>
@@ -148,7 +149,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr class="small-text" *ngFor="let data of orderDetailList">
+        <tr class="small-text" *ngFor="let data of orderDetailList" (dblclick)="onDoubleClicked(data)">
           <td>{{data.productId}}</td>
           <td>{{data.orderedQuantity}}</td>
         </tr>
