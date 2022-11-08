@@ -1,4 +1,4 @@
- <nz-layout> 
+<nz-layout> 
     <nz-page-header class="list-header">
       <nz-page-header-title>Listado de Productos</nz-page-header-title>
       <nz-page-header-extra>
@@ -27,34 +27,34 @@
           </div>
       </nz-collapse-panel>
     </nz-collapse>   
-<div class="table" (scroll)="onScroll($event)"> 
-  <nz-table  #dinamicTable [nzData]="productList" nzBordered=false [nzLoading]="loading" [nzTotal]="totalItems" [nzPageIndex]="1" [nzPageSize]="queryParams.PageSize"
-  [nzPaginationType]="'small'" (nzQueryParams)="onQueryParamsChange($event)" [nzSize]="'small'"  [nzScroll]="{ x: '1300px' }" nzShowPagination="false">
+  <div class="table" (scroll)="onScroll($event)"> 
+  <nz-table class="tabla" [nzData]="productList" nzBordered=false [nzLoading]="loading" [nzTotal]="totalItems"  [nzSize]="'small'"
+  nzTableLayout="fixed" nzShowPagination="false">
   <thead>
     <tr>
-      <th style="width: 180px;text-align: center">Producto</th>  
-      <th style="width: 55px; text-align: center">Categoría</th>
-      <th style="width: 30px; text-align: center">Marca</th>
-      <th style="width: 35px;text-align: center">Cantidad</th>
-      <th style="width: 45px;text-align: center">Precio Costo</th>
-      <th style="width: 45px; text-align: center">Precio Lista</th>
-      <th style="width: 50px; text-align: center">Precio Contado</th>
-      <th style="width: 45px; text-align: center">Precio Tarjeta</th>  
-      <th style="width: 30px; text-align: center">Código</th>
+      <th nzEllipsis style="width: 180px;text-align: center">Producto</th>  
+      <th nzEllipsis style="width: 60px; text-align: center">Categoría</th>
+      <th nzEllipsis style="width: 35px; text-align: center">Marca</th>
+      <th nzEllipsis style="width: 30px; text-align: center">Cantidad</th>
+      <th nzEllipsis style="width: 45px;text-align: center">Precio Costo</th>
+      <th nzEllipsis style="width: 45px; text-align: center">Precio Lista</th>
+      <th nzEllipsis style="width: 50px; text-align: center">Precio Contado</th>
+      <th nzEllipsis style="width: 45px; text-align: center">Precio Tarjeta</th>  
+      <th nzEllipsis style="width: 30px; text-align: center">Código</th>
     </tr>
   </thead>
   <tbody>
     <tr *ngFor="let product of productList, let i=index" class="small-text" tabindex="-1" (click)="onClick(product, i)" (keydown)="myNavegation($event)"
     [style.background-color]="product === selectedProduct ? 'lightblue' : ''"  (keydown.enter)="onEnter(product, i)" (dblclick)="onDoubleClicked(product)">
-      <td>{{product.description}}</td>
-      <td>{{product.categoryName}}</td>
-      <td nzEllipsis>{{product.brandName}}</td>
-      <td style="text-align: right;">{{product.quantity}}</td>
-      <td style="color:blue;text-align: right;font-weight: bold;">${{product.purchasePrice}}</td>
-      <td style="color:green;text-align: right;font-weight: bold;">${{product.cashSalePrice}}</td>
-      <td style="color: red; text-align: right;font-weight: bold;">${{product.salePrice}}</td>  
-      <td style="text-align: right;font-weight: bold;">${{product.cardSalePrice}}</td>    
-      <td style="text-align: right;">{{product.code}}</td>
+      <td nzEllipsis >{{product.description}}</td>
+      <td nzEllipsis >{{product.categoryName}}</td>
+      <td nzEllipsis  >{{product.brandName}}</td>
+      <td nzEllipsis style="text-align: right;">{{product.quantity}}</td>
+      <td nzEllipsis style="color:blue;text-align: right;font-weight: bold;">${{product.purchasePrice}}</td>
+      <td nzEllipsis style="color:green;text-align: right;font-weight: bold;">${{product.cashSalePrice}}</td>
+      <td nzEllipsis style="color: red; text-align: right;font-weight: bold;">${{product.salePrice}}</td>  
+      <td nzEllipsis style="text-align: right;font-weight: bold;">${{product.cardSalePrice}}</td>    
+      <td nzEllipsis style="text-align: right;">{{product.code}}</td>
     </tr>
   </tbody>
 </nz-table>  

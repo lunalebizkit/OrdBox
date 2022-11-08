@@ -253,4 +253,26 @@ supplierSelectedChange(id: any): void {
 }
 formatterPesoOPorcentaje =(value: number):string => (this.optionSelected == 1) ? `$ ${value}` : `${value} %`;
 
+
+onScroll(event:any): void { 
+  let scrollHeight= event.target.scrollHeight;
+  let scrolltop= event.target.scrollTop;
+  let client= event.target.clientHeight
+  let ScrollPosition= Math.abs( Math.round(scrollHeight - (scrolltop + client)));  
+  if((ScrollPosition <= 5) && (this.totalItems / this.queryParams.page) > this.queryParams.page){ 
+    this.queryParams.page ++ ; 
+    if(this.totalItems === undefined ||(this.queryParams.page * this.queryParams.pageSize <= this.totalItems)){ 
+      this.service.getProductsByUpdatePrice(this.queryParams)
+      .subscribe({
+        next:(r)=>{
+          r.data.map((product: ProductsModel)=>
+          this.productList.push(product))  
+          this.loading= false 
+        },
+        error: ()=>{  this.loading = false;
+        this.productList= [];}
+      }) 
+    }
+  }
+  };
 }

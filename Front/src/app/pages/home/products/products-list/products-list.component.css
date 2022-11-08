@@ -13,14 +13,18 @@ td{
   font-size: 11px; 
 }
 .table{
-  height: 65vh;
-  overflow-y: scroll; 
+  height: 60vh;
+  overflow-y: scroll;
 }
  windows{
   scroll-behavior: smooth;
 } 
 html{
   scroll-behavior: smooth;
+}
+.tabla {
+  width: 100%;
+  table-layout: fixed;
 }
 
 

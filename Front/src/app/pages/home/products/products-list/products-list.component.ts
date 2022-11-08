@@ -76,7 +76,7 @@ export class ProductsListComponent implements OnInit {
   ** Evento de inicio de angular
   */
   ngOnInit(): void {
-  
+    this.getData(this.queryParams);
   }
 
   /*
@@ -159,8 +159,8 @@ export class ProductsListComponent implements OnInit {
     let scrollHeight= event.target.scrollHeight;
     let scrolltop= event.target.scrollTop;
     let client= event.target.clientHeight
-    let ScrollPosition= scrollHeight - (scrolltop + client);
-    if((ScrollPosition === 0 || ScrollPosition === -1 ) && (this.totalItems / this.queryParams.page) > this.queryParams.page){ 
+    let ScrollPosition= Math.abs(Math.round(scrollHeight - (scrolltop + client)));
+    if((ScrollPosition <=5 ) && (this.totalItems / this.queryParams.page) > this.queryParams.page){ 
       let page= this.queryParams.page;
       this.queryParams.page = this.queryParams.page +1;  
       console.log(this.queryParams.page)
