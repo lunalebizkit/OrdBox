@@ -178,27 +178,25 @@
     </form>
     <!-- Tabla -->
 
-    <div>
+    <div class="shadow"    
+    (scroll)="onScroll($event)">
       <nz-table
         class="table-list"
-        nzShowSizeChanger
         [nzData]="productList"
-        nzBordered="true"
+        nzBordered="false"
         [nzSize]="'small'"
         [nzLoading]="loading"
-        [nzTotal]="totalItems"
-        [nzPageSize]="queryParams.pageSize"
         [nzPageIndex]="1"
-        [nzFrontPagination]="false"
-        [nzPaginationType]="'small'"
+        nzShowPagination="false"
+        
       >
         <thead>
           <tr>
-            <th [nzWidth]="'90px'" nzLeft>Producto</th>
-            <th nzLeft>Categoria</th>
+            <th >Producto</th>
+            <th nzLeft>Categoría</th>
             <th nzLeft>Marca</th>
             <th nzLeft>Proveedor</th>
-            <th>Codigo</th>
+            <th>Código</th>
             <th>Precio Costo</th>
             <th>Precio Lista</th>
             <th>Precio Tarjeta</th>
@@ -212,16 +210,16 @@
             <td nzLeft>{{ data.brandName }}</td>
             <td nzLeft>{{ data.supplierName }}</td>
             <td>{{ data.code }}</td>
-            <td style="color: blue; text-align: right">
+            <td style="color: blue; text-align: right; font-weight: bold">
               $ {{ data.purchasePrice }}
             </td>
-            <td style="color: green; text-align: right">
+            <td style="color: green; text-align: right; font-weight: bold;">
               $ {{ data.salePrice }}
             </td>
-            <td style="color: red; text-align: right">
+            <td style="color: red; text-align: right; font-weight: bold;">
               $ {{ data.cardSalePrice }}
             </td>
-            <td style="text-align: right">$ {{ data.cashSalePrice }}</td>
+            <td style="text-align: right ; font-weight: bold;">$ {{ data.cashSalePrice }}</td>
           </tr>
         </tbody>
       </nz-table>

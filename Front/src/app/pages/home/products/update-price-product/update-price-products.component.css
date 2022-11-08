@@ -1,4 +1,7 @@
 .list-header {
+  position: relative;
+  height: 64px; 
+  padding: 10px;
   background: #fff;
   box-shadow: -1px 1px 5px 1px #a3a1a3;
 }
@@ -17,15 +20,19 @@
   background-color: #4CAF50 /* Green */ !important;
   color: white;
   border-color: white;
-}
+}/* 
   .table-list{
-    overflow: auto;
-    table-layout: fixed;
-  }
+    overflow: auto; 
+   table-layout: fixed; 
+  } */
   th{
-    font-size: 10px;
+    font-size: 12px;
   }
   td{
-    font-size: 10px;
-    
+    font-size: 11px; 
   }
+  .shadow{
+    overflow-y: scroll;
+    height: 66vh
+  } 
+ 

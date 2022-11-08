@@ -12,9 +12,8 @@ import { SuppliersEditDrawerComponent } from '../suppliers-edit-drawer/suppliers
     styleUrls: ['./suppliers-list.component.css']
   })
   export class SuppliersListComponent implements OnInit {
-
-
-  
+    selectedIndex: number = 0; 
+    selectedSuppliers: any;
   /*
   ** Catidad total de entidades
   */
@@ -60,11 +59,11 @@ import { SuppliersEditDrawerComponent } from '../suppliers-edit-drawer/suppliers
   /*
   ** Evento que se ejecuta ante algun cambio en la grillas (sorting,paging or filtering)
   */
-  onQueryParamsChange(params: NzTableQueryParams): void {
+/*   onQueryParamsChange(params: NzTableQueryParams): void {
     this.queryParams.page = params.pageIndex -1;
     this.queryParams.pageSize = params.pageSize;
      this.getData(this.queryParams);
-  }
+  } */
     /*
   ** Evento de busqueda datos en el server
   */
@@ -82,6 +81,28 @@ import { SuppliersEditDrawerComponent } from '../suppliers-edit-drawer/suppliers
         this.entityList = [];
       }
     })};
+
+    onClick(datos:any, index:number): void {
+      this.selectedIndex = index 
+      this.selectedSuppliers = datos;
+    } 
+    myNavegation(event:any) {
+      switch (event.key) {
+        case "ArrowDown":
+          let nextCell = this.entityList.length > this.selectedIndex ? ++ this.selectedIndex : this.entityList.length;
+          if(this.entityList[nextCell] !== undefined){
+            this.selectedSuppliers = this.entityList[nextCell];  
+        } 
+          break; 
+        case "ArrowUp":
+          let previousCell= this.selectedIndex > 0 ? -- this.selectedIndex : 0; 
+          if (this.entityList[previousCell] !== undefined ){
+            this.selectedSuppliers= this.entityList[previousCell];
+        }
+          break 
+      } 
+    
+    }
 
     openComponentSupplierEdit(): void {
       const drawerRefCustomer = this.drawerService.create<SuppliersEditDrawerComponent, { filter: number}, number>({
@@ -118,6 +139,27 @@ import { SuppliersEditDrawerComponent } from '../suppliers-edit-drawer/suppliers
       this.openComponentSupplierEdit();
     }
     
+    onScroll(event:any): void { 
+      let scrollHeight= event.target.scrollHeight;
+      let scrolltop= event.target.scrollTop;
+      let client= event.target.clientHeight
+      let ScrollPosition= Math.abs(Math.round(scrollHeight - (scrolltop + client)));
+      if((ScrollPosition <= 5 ) && (this.totalItems / this.queryParams.page) > this.queryParams.page){ 
+      this.queryParams.page= this.queryParams.page +1; 
+        if(this.totalItems === undefined ||(this.queryParams.page * this.queryParams.pageSize <= this.totalItems)){ 
+          this.service.getSuppliers(this.queryParams)
+          .subscribe({
+            next:(r)=>{
+              r.data.map((product: CustomerModel)=>
+              this.entityList.push(product))  
+              this.loading= false 
+            },
+            error: ()=>{  this.loading = false;
+            this.entityList= [];}
+          }) 
+        }
+      }
+    } 
 
 
   }
