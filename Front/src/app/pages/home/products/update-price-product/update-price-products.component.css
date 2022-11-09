@@ -20,19 +20,20 @@
   background-color: #4CAF50 /* Green */ !important;
   color: white;
   border-color: white;
-}/* 
-  .table-list{
+}
+  .tabla{
     overflow: auto; 
    table-layout: fixed; 
-  } */
-  th{
+  } 
+  .tabla th{
     font-size: 12px;
   }
-  td{
+  .tabla td{
     font-size: 11px; 
   }
-  .shadow{
+  .table{
     overflow-y: scroll;
-    height: 66vh
+    height: 60vh;
+    scroll-behavior: smooth;
   } 
  

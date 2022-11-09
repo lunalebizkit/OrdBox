@@ -1,6 +1,5 @@
 import { Component, ElementRef, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { NzDrawerService } from 'ng-zorro-antd/drawer';
-import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { EntityService } from '../customer.service';
 import { CustomersEditDrawerComponent } from '../customers-edit-drawer/customers-edit.drawer.component';
 import { CustomerModel } from '../model/customer.model';
@@ -57,14 +56,7 @@ import { CustomerModel } from '../model/customer.model';
     this.queryParams.page = 0;
      this.getData(this.queryParams); 
   };
-  /*
-  ** Evento que se ejecuta ante algun cambio en la grillas (sorting,paging or filtering)
-  */
- /*  onQueryParamsChange(params: NzTableQueryParams): void {
-    this.queryParams.page = params.pageIndex -1;
-    this.queryParams.pageSize = params.pageSize;
-     this.getData(this.queryParams);
-  }; */
+
     /*
   ** Evento de busqueda datos en el server
   */
@@ -116,10 +108,6 @@ import { CustomerModel } from '../model/customer.model';
       this.selectedIndex = index 
       this.selectedCustomers = datos;
     }  
-    /* onKeyPress( datos:any) {
-      var data = datos.id
-      this.router.navigate(['home/customers/edit/', data]);
-    } */
     myNavegation(event:any) {
       switch (event.key) {
         case "ArrowDown":

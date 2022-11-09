@@ -33,17 +33,17 @@
         <!-- Tabla -->
      
       <div class="table" (scroll)="onScroll($event)">
-        <nz-table class="table-list" [nzData]="entityList" nzBordered= false [nzSize]="'small'" [nzLoading]="loading" 
-        nzShowPagination="false">
+        <nz-table class="tabla" [nzData]="entityList" nzBordered= false [nzSize]="'small'" [nzLoading]="loading" 
+        nzShowPagination="false"  nzTableLayout="fixed">
           <thead>
             <tr>                     
-              <th nzEllipsis style="width: 90px; text-align: center;">Nombre</th>
-              <th nzEllipsis style="width: 80px; text-align: center">Dni</th>
-              <th nzEllipsis style="width: 90px; text-align: center">Cuit</th>
-              <th nzEllipsis style="text-align: center">Dirección</th>       
-              <th nzEllipsis style="text-align: center">Observación</th>       
-              <th nzEllipsis style="text-align: center">Teléfono/s</th>       
-              <th nzEllipsis style="text-align: center">Email/s</th>  
+              <th nzEllipsis nzWidth= "50px">Nombre</th>
+              <th nzEllipsis nzWidth= "50px">Dni</th>
+              <th nzEllipsis nzWidth="50px">Cuit</th>
+              <th nzEllipsis nzWidth="90px">Dirección</th>       
+              <th nzEllipsis nzWidth="130px">Observación</th>       
+              <th nzEllipsis nzWidth="100px">Teléfono/s</th>       
+              <th nzEllipsis nzWidth="90px">Email/s</th>  
             </tr>
           </thead>
           <tbody>
@@ -54,7 +54,7 @@
               <td nzEllipsis>{{data.cuit}}</td>
               <td nzEllipsis>{{data.address}}</td> 
               <td nzEllipsis>{{data.observation}}</td>
-              <td nzEllipsis>{{data.phoneEntity}}</td>
+              <td nzEllipsis >{{data.phoneEntity}}</td>
               <td nzEllipsis>{{data.emailEntity}}</td>                
                    
             </tr>

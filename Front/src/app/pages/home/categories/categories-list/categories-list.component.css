@@ -6,28 +6,21 @@
   box-shadow: -1px 1px 5px 1px #a3a1a3;
   margin-bottom: 10px;
   }
-  .table-list td {
-    overflow: auto;
-    padding: 6px;
-  }
-  .table-list th {
-    padding: 6px;
-  }
-  th{
+  .table th{
     font-size: 12px; 
     
   }
-  td{
+  .table td{
     font-size: 12px;
   }
   .table{
-    height: 360px;
+    height: 60vh;
     overflow-y: scroll;
     scroll-behavior: smooth;
   }
-  .shadow{
-    overflow-y: scroll;
-    height: 360px
+  .tabla {
+    width: 100%;
+    table-layout: fixed;
   }
  
   
