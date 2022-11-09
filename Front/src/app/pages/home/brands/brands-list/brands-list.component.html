@@ -38,12 +38,12 @@
 
     <div class="shadow"    
      (scroll)="onScroll($event)">  
-       <nz-table class="brand-table"  [nzData]="brandList" nzBordered=true [nzLoading]="loading" 
-        [nzSize]="'small'" nzShowPagination="false"> 
+       <nz-table class="brand-table"  [nzData]="brandList" nzBordered=false  [nzLoading]="loading" 
+        [nzSize]="'small'" nzShowPagination="false" [nzScroll]="{ x: '500px' }"> 
         <thead>
           <tr>
-            <th>#</th>
-            <th>Marca</th>
+            <th style="width: 380px">#</th>
+            <th> Marca</th>
           </tr>
         </thead> 
         <tbody > 

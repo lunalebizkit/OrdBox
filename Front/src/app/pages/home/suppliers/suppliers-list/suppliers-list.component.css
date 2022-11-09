@@ -16,4 +16,9 @@ td{
 th{
   font-size: 12px;
 }
+.table{
+  height: 70vh;
+  overflow-y: scroll;
+  scroll-behavior: smooth;
+}
 

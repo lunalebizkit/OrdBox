@@ -22,3 +22,8 @@
   .highlighted{
    cursor: pointer;
   }
+  .table{
+    height: 70vh;
+    overflow-y: scroll;
+    scroll-behavior: smooth;
+  }

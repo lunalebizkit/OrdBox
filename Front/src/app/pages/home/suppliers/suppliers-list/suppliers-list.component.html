@@ -5,14 +5,11 @@
         <button nz-tooltip nzTooltipTitle="Nuevo" nz-button nzType="primary"
             nzShape="circle"><i nz-icon nzType="plus" nzTheme="outline" (click)="openComponentSupplierEdit()"></i></button>
       </nz-page-header-extra>
-    </nz-page-header>
-  
+    </nz-page-header>  
     <nz-content>  
          <nz-collapse>
           <nz-collapse-panel nzSize="small" nzHeader="Filtros">
-            <form nz-form (ngSubmit)="search()">
               <div nz-row [nzGutter]="[8,1]">
-  
                 <div nz-col nzSpan="24">
                   <nz-form-item>
                     <nz-form-label>Búsqueda</nz-form-label>
@@ -29,39 +26,36 @@
                     </nz-form-control>
                   </nz-form-item>
                 </div>
-  
               </div>
-  
-            </form>
           </nz-collapse-panel>
         </nz-collapse> 
   
         <!-- Tabla -->
      
-      <div>
-        <nz-table class="table-list" [nzData]="entityList" nzBordered=true [nzSize]="'small'" [nzLoading]="loading"
-          [nzTotal]="totalItems" [nzPageSize]="queryParams.pageSize" [nzPageIndex]="queryParams.page + 1" 
-          [nzPaginationType]="'small'" (nzQueryParams)="onQueryParamsChange($event)">
+      <div class="table" (scroll)="onScroll($event)">
+        <nz-table class="table-list" [nzData]="entityList" nzBordered= false [nzSize]="'small'" [nzLoading]="loading" 
+        nzShowPagination="false">
           <thead>
             <tr>                     
-              <th>Nombre</th>
-              <th>Dni</th>
-              <th>Cuit</th>
-              <th>Direccion</th>       
-              <th>Observacion</th>       
-              <th>Telefono/s</th>       
-              <th>Email/s</th>  
+              <th nzEllipsis style="width: 90px; text-align: center;">Nombre</th>
+              <th nzEllipsis style="width: 80px; text-align: center">Dni</th>
+              <th nzEllipsis style="width: 90px; text-align: center">Cuit</th>
+              <th nzEllipsis style="text-align: center">Dirección</th>       
+              <th nzEllipsis style="text-align: center">Observación</th>       
+              <th nzEllipsis style="text-align: center">Teléfono/s</th>       
+              <th nzEllipsis style="text-align: center">Email/s</th>  
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let data of entityList" class="small-text" (dblclick)="onDoubleClicked(data)">          
-              <td>{{data.name}}</td>
-              <td>{{data.dni}}</td>
-              <td>{{data.cuit}}</td>
-              <td>{{data.address}}</td> 
-              <td>{{data.observation}}</td>
-              <td>{{data.phoneEntity}}</td>
-              <td>{{data.emailEntity}}</td>                
+            <tr *ngFor="let data of entityList; let i=index" class="small-text" (dblclick)="onDoubleClicked(data)" tabindex="-1" (click)="onClick(data, i)" (keydown)="myNavegation($event) "
+            [style.background-color]="data === selectedSuppliers ? 'lightblue' : ''" >          
+              <td nzEllipsis>{{data.name}}</td>
+              <td nzEllipsis >{{data.dni}}</td>
+              <td nzEllipsis>{{data.cuit}}</td>
+              <td nzEllipsis>{{data.address}}</td> 
+              <td nzEllipsis>{{data.observation}}</td>
+              <td nzEllipsis>{{data.phoneEntity}}</td>
+              <td nzEllipsis>{{data.emailEntity}}</td>                
                    
             </tr>
           </tbody>
