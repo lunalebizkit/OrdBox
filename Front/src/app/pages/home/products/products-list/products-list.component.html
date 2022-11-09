@@ -28,19 +28,20 @@
       </nz-collapse-panel>
     </nz-collapse>   
   <div class="table" (scroll)="onScroll($event)"> 
-  <nz-table class="tabla" [nzData]="productList" nzBordered=false [nzLoading]="loading" [nzTotal]="totalItems"  [nzSize]="'small'"
+  <nz-table class="tabla" [nzData]="productList" nzBordered="true" [nzLoading]="loading"
+  [nzSize]="'small'"
   nzTableLayout="fixed" nzShowPagination="false">
   <thead>
     <tr>
-      <th nzEllipsis style="width: 180px;text-align: center">Producto</th>  
-      <th nzEllipsis style="width: 60px; text-align: center">Categoría</th>
-      <th nzEllipsis style="width: 35px; text-align: center">Marca</th>
-      <th nzEllipsis style="width: 30px; text-align: center">Cantidad</th>
-      <th nzEllipsis style="width: 45px;text-align: center">Precio Costo</th>
-      <th nzEllipsis style="width: 45px; text-align: center">Precio Lista</th>
-      <th nzEllipsis style="width: 50px; text-align: center">Precio Contado</th>
-      <th nzEllipsis style="width: 45px; text-align: center">Precio Tarjeta</th>  
-      <th nzEllipsis style="width: 30px; text-align: center">Código</th>
+      <th nzEllipsis nzWidth="275px">Producto</th>  
+      <th nzEllipsis nzWidth="75px" >Categoría</th>
+      <th nzEllipsis nzWidth="70px">Marca</th>
+      <th nzEllipsis nzWidth="45px">Cantidad</th>
+      <th nzEllipsis nzWidth="65px">Precio Costo</th>
+      <th nzEllipsis nzWidth= "65px">Precio Lista</th>
+      <th nzEllipsis nzWidth="65px">Precio Contado</th>
+      <th nzEllipsis nzWidth="65px">Precio Tarjeta</th>  
+      <th nzEllipsis nzWidth="45px">Código</th>
     </tr>
   </thead>
   <tbody>
@@ -50,10 +51,10 @@
       <td nzEllipsis >{{product.categoryName}}</td>
       <td nzEllipsis  >{{product.brandName}}</td>
       <td nzEllipsis style="text-align: right;">{{product.quantity}}</td>
-      <td nzEllipsis style="color:blue;text-align: right;font-weight: bold;">${{product.purchasePrice}}</td>
-      <td nzEllipsis style="color:green;text-align: right;font-weight: bold;">${{product.cashSalePrice}}</td>
-      <td nzEllipsis style="color: red; text-align: right;font-weight: bold;">${{product.salePrice}}</td>  
-      <td nzEllipsis style="text-align: right;font-weight: bold;">${{product.cardSalePrice}}</td>    
+      <td style="color:blue;text-align: right;font-weight: bold;">${{product.purchasePrice}}</td>
+      <td style="color:green;text-align: right;font-weight: bold;">${{product.cashSalePrice}}</td>
+      <td style="color: red; text-align: right;font-weight: bold;">${{product.salePrice}}</td>  
+      <td style="text-align: right;font-weight: bold;">${{product.cardSalePrice}}</td>    
       <td nzEllipsis style="text-align: right;">{{product.code}}</td>
     </tr>
   </tbody>

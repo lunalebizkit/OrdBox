@@ -5,19 +5,20 @@
   background: #fff;
   box-shadow: -1px 1px 5px 1px #a3a1a3;
   margin-bottom: 10px;
-  overflow: auto;
 }
-  th{
+  .tabla th{
     font-size: 13px;
   }
-  td{
+  .tabla td{
     font-size: 11px;
   }
-windows{
-  scroll-behavior: smooth;
-}  
-.shadow{
+.table{
   overflow-y: scroll;
-  height: 60vh
+  height: 60vh;
+  scroll-behavior: smooth;
+}
+.tabla {
+  width: 100%;
+  table-layout: fixed;
 }
 

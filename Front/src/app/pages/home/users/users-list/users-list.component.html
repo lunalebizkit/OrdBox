@@ -35,26 +35,26 @@
     </nz-collapse> 
     <!-- Tabla -->
     <div (scroll)="onScroll($event)"class="table">
-      <nz-table class="table-list"  [nzData]="userList" nzBordered=false [nzSize]="'small'" [nzLoading]="loading"
-       [nzPageSize]="queryData.pageSize"  nzShowPagination="false">
+      <nz-table class="tabla"  [nzData]="userList" nzBordered="true" [nzSize]="'small'" [nzLoading]="loading"
+      nzShowPagination="false"  nzTableLayout="fixed">
         <thead>
           <tr>
-            <th nzLeft>Nombre</th>
-            <th nzLeft>Apellido</th>
-            <th>Usuario</th>
-            <th>Email</th>
-            <th>Rol</th>
+            <th nzEllipsis nzWidth="45px">Nombre</th>
+            <th nzEllipsis nzWidth= "45px">Apellido</th>
+            <th nzEllipsis nzWidth= "45px">Usuario</th>
+            <th nzEllipsis nzWidth= "85px">Email</th>
+            <th nzEllipsis nzWidth= "45px">Rol</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let user of userList; let i= index" class="small-text" tabindex="-1" (click)="onClick(user, i)" (keydown)="myNavegation($event) "
           [style.background-color]="user === selectedUser ? 'lightblue' : ''" 
           (dblclick)="onDoubleClicked(user)">
-            <td>{{ user.firstName }}</td>
-            <td>{{ user.lastName }}</td>
-            <td>{{ user.userName }}</td>
-            <td>{{ user.email }}</td>
-            <td>{{ this.getRolName(user.roleId) }}</td>       
+            <td nzEllipsis >{{ user.firstName }}</td>
+            <td nzEllipsis >{{ user.lastName }}</td>
+            <td nzEllipsis >{{ user.userName }}</td>
+            <td nzEllipsis >{{ user.email }}</td>
+            <td nzEllipsis >{{ this.getRolName(user.roleId) }}</td>       
           </tr>
         </tbody>
       </nz-table>

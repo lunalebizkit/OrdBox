@@ -70,7 +70,6 @@ export class ProductsListComponent implements OnInit {
   selectedIndex: number = 0; 
   selectedProduct: any;
   productId!:number |null; 
- /*  private route: ActivatedRoute; */
 
   /*
   ** Evento de inicio de angular
@@ -78,17 +77,6 @@ export class ProductsListComponent implements OnInit {
   ngOnInit(): void {
     this.getData(this.queryParams);
   }
-
-  /*
-  ** Evento que se ejecuta ante algun cambio en la grillas (sorting,paging or filtering)
-  */
-  onQueryParamsChange(params: NzTableQueryParams): void {
-/*      this.queryParams.filter = localStorage.getItem('productListFilter')!;
-     this.queryParams.page = params.pageIndex - 1;
-    this.queryParams.PageSize = params.pageSize;     */
-    this.getData(this.queryParams);  
-  } 
-
   /*
   ** Evento de busqueda datos en el servers
   */
