@@ -71,7 +71,7 @@ export class ProductsListComponent implements OnInit {
   ** Evento de inicio de angular
   */
   ngOnInit(): void {
-
+    this.getData(this.queryParams);
   }
 
   /*

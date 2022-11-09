@@ -14,7 +14,7 @@ td{
   padding: 0px;
   margin: 0%;
 }
-.table{
+.table{  
   height: 70vh;
   overflow-y: scroll;
   scroll-behavior: smooth;
@@ -25,7 +25,13 @@ td{
 html{
   scroll-behavior: smooth;
 }
-
+.tabla.td{
+  table-layout: fixed;
+  width: 100%;
+  font-size: 12px; 
+  padding: 0px;
+  margin: 0%;
+}
 
 
 

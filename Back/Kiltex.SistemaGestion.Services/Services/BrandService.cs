@@ -5,7 +5,7 @@ using Kiltex.SistemaGestion.Domain;
 using Kiltex.SistemaGestion.Domain.Model;
 using Kiltex.SistemaGestion.SDK.Error;
 using Kiltex.SistemaGestion.Services.Common;
-using Kiltex.SistemaGestion.Services.Models.Dtos;
+using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
 using Microsoft.EntityFrameworkCore;
 
 namespace Kiltex.SistemaGestion.Services.Services
@@ -15,7 +15,7 @@ namespace Kiltex.SistemaGestion.Services.Services
         public BrandService(ErrorManager logger, DBContext context, IMapper maper) :
             base(logger, context, maper)
         {}
-        public async Task<OperationResponse<DtoBrand>> GetById(long id)
+        public async Task<OperationResponse<DtoResponseBrand>> GetById(long id)
         {
             var marca = await _contextSql
                                .Brands
@@ -24,18 +24,18 @@ namespace Kiltex.SistemaGestion.Services.Services
                                .ConfigureAwait(false);
             if (marca == null)
 
-                return new OperationResponse<DtoBrand>(null, false, new OperationExceptions("000", $"Marca no encontrada {id}"));
+                return new OperationResponse<DtoResponseBrand>(null, false, new OperationExceptions("000", $"Marca no encontrada {id}"));
 
-            var result = _mapper.Map<DtoBrand>(marca);
+            var result = _mapper.Map<DtoResponseBrand>(marca);
 
-            return new OperationResponse<DtoBrand>(result);
+            return new OperationResponse<DtoResponseBrand>(result);
         }
-        public async Task<OperationResponse<IdResponse<long>>> Add(DtoBrand model, CancellationToken ct = default)
+        public async Task<OperationResponse<IdResponse<long>>> Add(DtoResponseBrand model, CancellationToken ct = default)
         {
             model.Id = 0;
             return await AddOrUpdate(model, ct).ConfigureAwait(false);
         }
-        public async Task<OperationResponse<IdResponse<long>>> AddOrUpdate(DtoBrand model, CancellationToken ct = default)
+        public async Task<OperationResponse<IdResponse<long>>> AddOrUpdate(DtoResponseBrand model, CancellationToken ct = default)
         {
             var countBrands = await _contextSql
                                 .Brands
@@ -66,7 +66,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             return Ok(new IdResponse<long>(brandModel.Id));
         }
 
-        public async Task<OperationResponse<IdResponse<long>>> Update(DtoBrand model, CancellationToken ct = default)
+        public async Task<OperationResponse<IdResponse<long>>> Update(DtoResponseBrand model, CancellationToken ct = default)
         {
             if (model.Id <= 0)
             {
@@ -75,7 +75,7 @@ namespace Kiltex.SistemaGestion.Services.Services
 
             return await AddOrUpdate(model, ct).ConfigureAwait(false);
         }
-        public async Task<OperationResponse<DtoPagination<DtoBrand>>> ListBrands(RequestPaginatedData<string> request)
+        public async Task<OperationResponse<DtoPagination<DtoResponseBrand>>> ListBrands(RequestPaginatedData<string> request)
         {
             var query = _contextSql
                                 .Brands
@@ -89,9 +89,9 @@ namespace Kiltex.SistemaGestion.Services.Services
                                   .Take(request.PageSize)
                                   .ToListAsync()
                                   .ConfigureAwait(false);
-            var dto = _mapper.Map<List<DtoBrand>>(list);
+            var dto = _mapper.Map<List<DtoResponseBrand>>(list);
 
-            return new OperationResponse<DtoPagination<DtoBrand>>(new DtoPagination<DtoBrand>
+            return new OperationResponse<DtoPagination<DtoResponseBrand>>(new DtoPagination<DtoResponseBrand>
             {
                 Data = dto,
                 PageSize = request.PageSize,

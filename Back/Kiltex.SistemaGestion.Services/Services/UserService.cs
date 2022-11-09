@@ -21,17 +21,30 @@ namespace Kiltex.SistemaGestion.Services.Services
         //Login de Usuario
         public async Task<OperationResponse<User>> GetUserLogin(string userName, string password)
         {
-            var user = await _contextSql
-                            .Users
-                            .AsNoTracking()
-                            .Include(x => x.Rol)
-                            .FirstOrDefaultAsync(x => x.UserName == userName && !x.IsDeleted)
-                            .ConfigureAwait(false);
-            if (user == null || !SecurePasswordHasher.Verify(password, user.Password))
+            try
             {
-                return Error<User>(new OperationExceptions("001", "El usuario no es valido"));
+                var user = await _contextSql
+                         .Users
+                         .AsNoTracking()
+                         .Include(x => x.Rol)
+                         .FirstOrDefaultAsync(x => x.UserName == userName && !x.IsDeleted)
+                         .ConfigureAwait(false);
+               
+
+                if (user == null || !SecurePasswordHasher.Verify(password, user.Password))
+                {
+                    _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_S002_CLIENTID_INVALIDO), userName);
+                    return Error<User>(new OperationExceptions("001", "El usuario no es valido"));
+
+                }
+                return Ok(user);
             }
-            return Ok(user);
+            catch (Exception ex)
+            {
+                _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
+                throw;
+            }
+         
         }
         //Agregar usuario nuevo
         public async Task<OperationResponse<IdResponse<long>>> Add(RequestAddUser model, CancellationToken ct = default)

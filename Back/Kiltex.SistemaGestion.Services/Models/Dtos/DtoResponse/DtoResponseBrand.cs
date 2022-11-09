@@ -1,7 +1,6 @@
-﻿
-namespace Kiltex.SistemaGestion.Services.Models.Dtos
+﻿namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse
 {
-    public class DtoBrand
+    public class DtoResponseBrand
     {
         public long Id { get; set; }
 

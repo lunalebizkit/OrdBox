@@ -1,6 +1,6 @@
 ﻿namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse
 {
-    public class DtoInvoiceDetail
+    public class DtoResponseInvoiceDetail
     {
         public long Id { get; set; }
 

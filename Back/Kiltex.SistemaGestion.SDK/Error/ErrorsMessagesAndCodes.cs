@@ -28,9 +28,9 @@ namespace Kiltex.SistemaGestion.SDK.Error
             { "007_ERROR_SAP_CODE_DUPLICATE","Ya existe un producto con ese código de SAP" },
             { "008_ERROR_CLIENTE_DUPLICATE","Ya existe un cliente con el correo ingresado" },
             { "009_ERROR_DUPLICATE","{0}" },
-            { "010_ERROR_CREDENTIALS_IVALID","Los datos ingresados son iválidos" },
+            { "010_ERROR_CREDENTIALS_IVALID","Los datos ingresados son inválidos" },
             { "011_ERROR_MAIL_NO_VALIDATE","El mail no ha sido validado" },
-            { "999_ERROR_MOTOR_ELASTIC","Ups!! Hubo un error intentelo un unos segundo." },
+            { "999_ERROR_MOTOR_ELASTIC","Ups!! Hubo un error intentelo un unos segundos." },
             { "999_ERROR_GENERICO", "Ups!! Hubo un error intentelo un unos segundo." }
         };
 

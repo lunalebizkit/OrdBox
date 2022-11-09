@@ -1,8 +1,8 @@
 ﻿using Kiltex.SistemaGestion.Services.Common;
-using Kiltex.SistemaGestion.Services.Models.Dtos;
 using Kiltex.SistemaGestion.Services.Services;
 using Kiltex.SistemaGestion.Api.Controllers;
 using Microsoft.AspNetCore.Mvc;
+using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
 
 namespace Kiltex.SistemaGestion.Api.Controllers.Brand
 {
@@ -20,13 +20,13 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Brand
             return Return(await _service.GetById(id).ConfigureAwait(false));
         }
         [HttpPost]
-        public async Task<IActionResult> New([FromBody] DtoBrand model)
+        public async Task<IActionResult> New([FromBody] DtoResponseBrand model)
         {
             return Return(await _service.Add(model).ConfigureAwait(false));
         }
         [HttpPut]
         //[AllowAccess(Rols = new string[] { ERol.Admin })]
-        public async Task<IActionResult> Edit([FromBody] DtoBrand model)
+        public async Task<IActionResult> Edit([FromBody] DtoResponseBrand model)
         {
             return Return(await _service.Update(model).ConfigureAwait(false));
         }

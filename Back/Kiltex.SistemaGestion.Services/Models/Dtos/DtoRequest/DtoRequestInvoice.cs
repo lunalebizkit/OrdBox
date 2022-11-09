@@ -29,7 +29,7 @@ namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest
 
         public int Type { get; set; }
 
-        public List<DtoInvoiceDetail> InvoiceDetails { get; set; }
+        public List<DtoResponseInvoiceDetail> InvoiceDetails { get; set; }
 
     }
 }

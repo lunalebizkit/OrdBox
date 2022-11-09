@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Kiltex.SistemaGestion.Domain.Model;
-using Kiltex.SistemaGestion.Services.Models.Dtos;
+using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
 
 namespace Kiltex.SistemaGestion.Services.Mapper
 {
@@ -8,7 +8,7 @@ namespace Kiltex.SistemaGestion.Services.Mapper
     {
         public CategoryMapperProfile()
         {
-            CreateMap<Category, DtoCategory>().ReverseMap();
+            CreateMap<Category, DtoResponseCategory>().ReverseMap();
 
         }
     }

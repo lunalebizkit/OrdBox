@@ -1,5 +1,5 @@
 ﻿using Kiltex.SistemaGestion.Services.Common;
-using Kiltex.SistemaGestion.Services.Models.Dtos;
+using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
 using Kiltex.SistemaGestion.Services.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,13 +19,13 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Category
             return Return(await _service.GetById(id).ConfigureAwait(false));
         }
         [HttpPost]
-        public async Task<IActionResult> New([FromBody] DtoCategory model)
+        public async Task<IActionResult> New([FromBody] DtoResponseCategory model)
         {
             return Return(await _service.Add(model).ConfigureAwait(false));
         }
         [HttpPut]
         //[AllowAccess(Rols = new string[] { ERol.Admin })]
-        public async Task<IActionResult> Edit([FromBody] DtoCategory model)
+        public async Task<IActionResult> Edit([FromBody] DtoResponseCategory model)
         {
             return Return(await _service.Update(model).ConfigureAwait(false));
         }
