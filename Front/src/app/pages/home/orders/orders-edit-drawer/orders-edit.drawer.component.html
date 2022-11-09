@@ -40,6 +40,7 @@
                   (nzOnSearch)="onSearch($event)"
                   formControlName="supplierId"
                   style="width: 200px"
+                  (ngModelChange)="onChange($event)"
                 >
                   <ng-container *ngFor="let o of entityList">
                     <nz-option
@@ -114,36 +115,47 @@
               <div nz-row>
                 <div nz-col nzSpan="12">
                   <nz-form-item>
-                    <nz-form-label
-                      [nzSm]="12"
-                      [nzXs]="24"
-                      nzRequired
-                      nzFor="email"
-                    >
+                    <nz-form-label [nzSm]="12" [nzXs]="24">
                       Email {{ i + 1 }}
                     </nz-form-label>
-                    <nz-form-control [nzSm]="14" [nzXs]="24">
-                      <input
-                        [formControl]="data"
-                        nz-input
-                        formControlName="supplierEmail"
-                      /> </nz-form-control
+                    <nz-form-control [nzSm]="14" [nzXs]="24" nzFor="email">
+                      <input [formControl]="data" nz-input /> </nz-form-control
                   ></nz-form-item>
                 </div>
                 <div nz-col>
-                  <nz-form-item>
-                    <nz-switch
-                      [ngModel]="true"
-                      nzCheckedChildren="Enviar"
-                      nzUnCheckedChildren="No enviar"
-                      formControlName="isSend"
-                      [nzDisabled]="disabled"
-                    ></nz-switch>
-                  </nz-form-item>
+                  <nz-switch
+                    nzCheckedChildren="Enviar"
+                    nzUnCheckedChildren="No enviar"
+                    [nzDisabled]="disabled"
+                  ></nz-switch>
                 </div></div></ng-container
+          ></ng-container>
+
+          <ng-container formArrayName="emailEntity">
+            <ng-container
+              *ngFor="let data of emailsEntityControls; let i = index"
+            >
+              <div nz-row>
+                <div nz-col nzSpan="12">
+                  <nz-form-item>
+                    <nz-form-label [nzSm]="12" [nzXs]="24" nzRequired>
+                      Email {{ i + 1 }}
+                    </nz-form-label>
+                    <nz-form-control [nzSm]="14" [nzXs]="24">
+                      <input [formControl]="data" nz-input /> </nz-form-control
+                  ></nz-form-item>
+                </div>
+                <div nz-col>
+                  <nz-switch
+                    nzCheckedChildren="Enviar"
+                    nzUnCheckedChildren="No enviar"
+                  ></nz-switch>
+                </div>
+              </div> </ng-container
           ></ng-container>
         </form>
       </nz-content>
+
       <!-- Buscador de Productos -->
       <nz-divider
         nzText="Seleccionar productos"
@@ -152,7 +164,7 @@
 
       <div nz-row nzJustify="start" nzAlign="middle">
         <form nz-form [formGroup]="formProductSearch" col nzSpan="12">
-          <div>
+          <div *ngIf="viewOrder">
             <nz-form-item>
               <nz-form-label [nzSm]="12" [nzXs]="24"
                 >Búsqueda de Producto</nz-form-label

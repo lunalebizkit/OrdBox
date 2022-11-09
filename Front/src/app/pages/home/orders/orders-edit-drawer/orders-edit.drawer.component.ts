@@ -62,6 +62,7 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
   loading!: boolean;
   isVisible = false;
   switchValue = false;
+  switchSendValue = true;
   datetime = null;
   fecha = 'Elige una fecha';
   isConfirmLoading = false;
@@ -77,6 +78,7 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
   statusId!: number;
   allStatus = StatusType;
   status: number = 0;
+  email!: string;
 
   /*
    ** Fecha
@@ -86,6 +88,7 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
   startDate = Date.now();
   viewOrder: boolean = true;
   editOrder: boolean = false;
+  newOrder: boolean = false;
 
   /*
    ** Deshabilitar
@@ -137,10 +140,9 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
     this.form = this.fb.group({
       statusId: [''],
       isPaid: [''],
-      email: [''],
-      isSend: [''],
       datetime: [new Date(), [Validators.required]],
       supplierEmail: new FormArray([]),
+      emailEntity: new FormArray([]),
     });
     this.formProductSearch = this.fb.group({
       productSearchFilter: [''],
@@ -152,7 +154,6 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.id != null || this.id != undefined || this.id != 0) {
-      debugger;
       this.getOrder(this.id);
     }
   }
@@ -179,19 +180,31 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
     });
   }
 
+  onChange(id: number) {
+    if (id != 0)
+      this.entityService.getSupplierById(id).subscribe({
+        next: (r) => {
+          r.emailEntity.forEach((e: any) => {
+            this.emailsEntityArray.push(
+              new FormControl(`${e}`, [Validators.required])
+            );
+          });
+        },
+        error: () => {},
+      });
+  }
+
   getOrder(id: number): void {
     if (id != 0)
       this.ordersService.getById(id).subscribe({
         next: (r) => {
-          if (r.statusId != 1) this.disabled = true;
+          if (r.statusId != 2) this.disabled = true;
           this.viewOrder = false;
           this.editOrder = true;
           this.supplierName = r.supplierName;
           this.dateTime = r.dateTime;
           this.form.controls['statusId'].setValue(r.statusId);
           this.form.controls['isPaid'].setValue(r.isPaid);
-          this.form.controls['email'].setValue(r.description);
-          this.form.controls['isSend'].setValue(r.description);
 
           r.supplierEmail.forEach((e: any) => {
             this.emailsArray.push(
@@ -246,9 +259,16 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
   get emailsArray() {
     return this.form.controls['supplierEmail'] as FormArray;
   }
-
   get emailsControls() {
     return this.emailsArray.controls as FormControl[];
+  }
+
+  get emailsEntityArray() {
+    return this.form.controls['emailEntity'] as FormArray;
+  }
+
+  get emailsEntityControls() {
+    return this.emailsEntityArray.controls as FormControl[];
   }
 
   disabledDate = (current: Date): boolean =>

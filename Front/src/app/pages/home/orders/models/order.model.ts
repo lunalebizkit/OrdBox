@@ -45,7 +45,7 @@ export function orderDetailParser(value: any) {
     productId: value.id,
     productName: value.description,
     productCode: value.code,
-    orderedQuantity: 1,
+    orderedQuantity: value.quantity,
     statusId: 1,
   };
 }
