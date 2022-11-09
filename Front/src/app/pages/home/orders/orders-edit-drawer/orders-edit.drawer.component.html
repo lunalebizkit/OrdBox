@@ -32,6 +32,7 @@
                   >Proveedor
                 </nz-form-label>
                 <nz-select
+                  *ngIf="viewOrder"
                   nzPlaceHolder="Seleccione Proveedor"
                   nzAllowClear
                   nzShowSearch
@@ -52,22 +53,48 @@
                     Cargando ...
                   </nz-option>
                 </nz-select>
+                <nz-form-control [nzSm]="6" [nzXs]="24">
+                  <b *ngIf="editOrder"> {{ supplierName }}</b></nz-form-control
+                >
               </nz-form-item>
             </div>
           </form>
+
+          <div nzSpan="12" class="mb-2">
+            <nz-form-item>
+              <nz-form-label
+                [nzSm]="6"
+                [nzXs]="24"
+                nzRequired
+                nzFor="supplierId"
+                >Estado
+              </nz-form-label>
+              <nz-select
+                nzShowSearch
+                nzAllowClear
+                nzPlaceHolder="Estado"
+                id="status"
+                formControlName="statusId"
+                (ngModelChange)="statusSelectedChange($event)"
+                [nzOptions]="allStatus"
+                [nzDisabled]="disabled"
+              >
+              </nz-select>
+            </nz-form-item>
+          </div>
+
           <nz-form-item>
             <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="datetime"
               >Fecha
             </nz-form-label>
             <nz-form-control [nzSm]="6" [nzXs]="24">
-              <nz-date-picker
-                [(ngModel)]="datetime"
-                [nzPlaceHolder]="fecha"
-                formControlName="datetime"
-                [nzFormat]="dateFormat"
-                [nzDisabledDate]="disabledDate"
-              ></nz-date-picker
-            ></nz-form-control>
+              <b *ngIf="viewOrder">
+                {{ startDate ? (startDate | date: "YYYY-MM-dd") : "N/A" }}
+              </b>
+              <b *ngIf="editOrder">
+                {{ dateTime ? (dateTime | date: "YYYY-MM-dd") : "N/A" }}
+              </b>
+            </nz-form-control>
           </nz-form-item>
 
           <nz-form-item>
@@ -77,20 +104,18 @@
             <nz-switch
               formControlName="isPaid"
               [ngModel]="switchValue"
+              [nzDisabled]="disabled"
             ></nz-switch>
           </nz-form-item>
 
-          <!-- En caso  -->
-
-          <!-- En caso de que sea un pedido nuevo -->
-
-          <ng-container formArrayName="emailEntity">
-            <ng-container *ngFor="let e of emailsControls; let i = index">
+          <!-- Va creando divs segun la cantidad de mails creados que tenga el proveedor  -->
+          <ng-container formArrayName="supplierEmail">
+            <ng-container *ngFor="let data of emailsControls; let i = index">
               <div nz-row>
                 <div nz-col nzSpan="12">
                   <nz-form-item>
                     <nz-form-label
-                      [nzSm]="8"
+                      [nzSm]="12"
                       [nzXs]="24"
                       nzRequired
                       nzFor="email"
@@ -98,44 +123,25 @@
                       Email {{ i + 1 }}
                     </nz-form-label>
                     <nz-form-control [nzSm]="14" [nzXs]="24">
-                      <input [formControl]="e" nz-input />
-                      <i
-                        nz-icon
-                        nzType="minus-circle-o"
-                        class="dynamic-delete-button"
-                        style="
-                          color: rgb(243, 79, 79);
-                          position: absolute;
-                          margin-top: -7x;
-                          margin-left: 4px;
-                        "
-                        (click)="removeEmailField($event, i)"
-                      ></i>
-                    </nz-form-control>
-                  </nz-form-item>
+                      <input
+                        [formControl]="data"
+                        nz-input
+                        formControlName="supplierEmail"
+                      /> </nz-form-control
+                  ></nz-form-item>
                 </div>
-
                 <div nz-col>
                   <nz-form-item>
                     <nz-switch
                       [ngModel]="true"
                       nzCheckedChildren="Enviar"
                       nzUnCheckedChildren="No enviar"
-                      formControlName="send2"
+                      formControlName="isSend"
+                      [nzDisabled]="disabled"
                     ></nz-switch>
                   </nz-form-item>
-                </div>
-              </div>
-            </ng-container>
-            <button
-              nz-button
-              nzType="primary"
-              nzShape="circle"
-              style="margin-left: 146px"
-            >
-              <i nz-icon nzType="mail" (click)="addEmailField($event)"></i>
-            </button>
-          </ng-container>
+                </div></div></ng-container
+          ></ng-container>
         </form>
       </nz-content>
       <!-- Buscador de Productos -->
@@ -190,6 +196,7 @@
             nzSize="small"
             nzType="primary"
             (click)="openComponentProduct()"
+            [disabled]="disabled"
           >
             <i nz-icon nzType="search" nzTheme="outline"></i> Buscar
           </button>
