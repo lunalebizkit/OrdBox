@@ -88,7 +88,8 @@ export class UpdatePriceProductsComponent extends BaseComponent implements OnIni
   form!: FormGroup;
   formSearch!: FormGroup;
   
-
+  selectedIndex: number = 0; 
+  selectedProduct: any;
   /*
   ** Constructor
   */
@@ -253,6 +254,35 @@ supplierSelectedChange(id: any): void {
 }
 formatterPesoOPorcentaje =(value: number):string => (this.optionSelected == 1) ? `$ ${value}` : `${value} %`;
 
+onClick(datos:any, index:number): void {
+  this.selectedIndex = index 
+  this.selectedProduct = datos
+  }  
+
+/*
+  ** Evento navegaciòn por teclado en tablas
+  */
+
+  myNavegation(event:any) {
+    switch (event.key) {
+      case "ArrowDown":
+        let nextCell = this.productList.length > this.selectedIndex ? ++ this.selectedIndex : this.productList.length;
+        if(this.productList[nextCell] !== undefined){
+          this.selectedProduct= this.productList[nextCell];  
+      } 
+        break; 
+      case "ArrowUp":
+        let previousCell= this.selectedIndex > 0 ? -- this.selectedIndex : 0; 
+        if (this.productList[previousCell] !== undefined ){
+          this.selectedProduct= this.productList[previousCell];
+      }
+        break 
+    } 
+  }
+
+/*
+  ** Evento scroll infinito
+  */
 
 onScroll(event:any): void { 
   let scrollHeight= event.target.scrollHeight;
