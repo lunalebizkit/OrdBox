@@ -6,19 +6,18 @@
   box-shadow: -1px 1px 5px 1px #a3a1a3;
   margin-bottom: 10px;
   }
-  .table-list td{
-    overflow: auto;
-    padding: 8px;
-  }
-  th{
+  .tabla th{
     font-size: 12px;
   }
-  td{
-    font-size: 12px;
+  .tabla td{
+    font-size: 11px;
   }
   .table{
-    border-collapse: collapse;
+    height: 60vh;
+    overflow-y: scroll;
+    scroll-behavior: smooth;
   }
-  .highlighted{
-   cursor: pointer;
+  .tabla{
+    width: 100%;
+    table-layout: fixed;
   }

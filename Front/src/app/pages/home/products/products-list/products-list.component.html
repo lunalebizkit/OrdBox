@@ -1,4 +1,4 @@
- <nz-layout> 
+<nz-layout> 
     <nz-page-header class="list-header">
       <nz-page-header-title>Listado de Productos</nz-page-header-title>
       <nz-page-header-extra>
@@ -27,29 +27,30 @@
           </div>
       </nz-collapse-panel>
     </nz-collapse>   
-<div class="table" (scroll)="onScroll($event)"> 
-  <nz-table class="tabla" [nzData]="productList" nzBordered=true [nzLoading]="loading"  
-  [nzSize]="'small'" nzShowPagination="false" nzTableLayout="fixed">
+  <div class="table" (scroll)="onScroll($event)"> 
+  <nz-table class="tabla" [nzData]="productList" nzBordered="true" [nzLoading]="loading"
+  [nzSize]="'small'"
+  nzTableLayout="fixed" nzShowPagination="false">
   <thead>
     <tr>
       <th nzEllipsis nzWidth="275px">Producto</th>  
-      <th nzWidth="75px">Categoría</th>
-      <th nzEllipsis nzWidth="70px" >Marca</th>
-      <th nzEllipsis nzWidth="40px">Cantidad</th>
+      <th nzEllipsis nzWidth="75px" >Categoría</th>
+      <th nzEllipsis nzWidth="70px">Marca</th>
+      <th nzEllipsis nzWidth="45px">Cantidad</th>
       <th nzEllipsis nzWidth="65px">Precio Costo</th>
-      <th nzEllipsis nzWidth="65px">Precio Lista</th>
+      <th nzEllipsis nzWidth= "65px">Precio Lista</th>
       <th nzEllipsis nzWidth="65px">Precio Contado</th>
-      <th nzEllipsis nzWidth="65px" >Precio Tarjeta</th>  
-      <th nzEllipsis nzWidth="40px" >Código</th>
+      <th nzEllipsis nzWidth="65px">Precio Tarjeta</th>  
+      <th nzEllipsis nzWidth="45px">Código</th>
     </tr>
   </thead>
   <tbody>
     <tr *ngFor="let product of productList, let i=index" class="small-text" tabindex="-1" (click)="onClick(product, i)" (keydown)="myNavegation($event)"
-    [style.background-color]="product === selectedProduct ? 'lightblue' : ''"  (keydown.enter)="onKeyPress(product)" (dblclick)="onDoubleClicked(product)">
-      <td nzEllipsis>{{product.description}}</td>
-      <td nzEllipsis>{{product.categoryName}}</td>
-      <td nzEllipsis>{{product.brandName}}</td>
-      <td style="text-align: right;">{{product.quantity}}</td>
+    [style.background-color]="product === selectedProduct ? 'lightblue' : ''"  (keydown.enter)="onEnter(product, i)" (dblclick)="onDoubleClicked(product)">
+      <td nzEllipsis >{{product.description}}</td>
+      <td nzEllipsis >{{product.categoryName}}</td>
+      <td nzEllipsis  >{{product.brandName}}</td>
+      <td nzEllipsis style="text-align: right;">{{product.quantity}}</td>
       <td style="color:blue;text-align: right;font-weight: bold;">${{product.purchasePrice}}</td>
       <td style="color:green;text-align: right;font-weight: bold;">${{product.cashSalePrice}}</td>
       <td style="color: red; text-align: right;font-weight: bold;">${{product.salePrice}}</td>  
@@ -61,7 +62,6 @@
 </div> 
 </nz-layout>
  
-
 
 
 

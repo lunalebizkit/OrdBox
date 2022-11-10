@@ -36,35 +36,20 @@
       </nz-collapse> 
     
     <!-- Tabla -->
-    <div class="shadow"  (scroll)="onScroll($event)" >
-      <nz-table class="table-list" #filterTable [nzData]="categoryList" nzBordered=true [nzLoading]="loading" 
-      nzShowPagination="false">
+    <div class="table"  (scroll)="onScroll($event)" >
+      <nz-table class="tabla" [nzData]="categoryList" nzBordered= "true" [nzLoading]="loading" [nzSize]="'small'"
+      nzShowPagination="false"  nzTableLayout="fixed">
         <thead>
           <tr>
-            <th>#</th>
-            <th style="text-align: center;">Descripción</th>
-            <th style="text-align: center;">Acciones</th>
+            <th nzEllipsis nzWidth="380px">#</th>
+            <th nzEllipsis nzWidth="380px">Descripción</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let category of categoryList, let i= index" class="small-text" tabindex="-1" (keydown)="myNavegation($event) " [style.background-color]="category === selectedCategory ? 'lightblue' : ''" 
            (click)="onClick(category, i)" (dblclick)="onDoubleClicked(category)">
-            <td>{{ category.id}}</td>
-            <td>{{ category.description}}</td>
-            <td style="text-align: center;">
-              <nz-space [nzSplit]="spaceSplit">
-                <ng-template #spaceSplit>
-                  <nz-divider nzType="vertical"></nz-divider>
-                </ng-template>
-                <a *nzSpaceItem routerLink="/home/categories/edit/{{category.id}}">
-                  <i nz-tooltip nzTooltipTitle="Editar" nz-icon nzType="edit" style="font-size: 12px;"></i>
-                </a>
-                <a *nzSpaceItem (click)="popup.showDeleteConfirmation(category.id)">
-                  <i nz-tooltip nzTooltipTitle="Eliminar" nz-icon nzType="delete" [nzTheme]="'twotone'"
-                    [nzTwotoneColor]="'#FF0000'" style="font-size: 12px;"></i>
-                </a>
-              </nz-space>
-            </td>
+            <td nzEllipsis >{{ category.id}}</td>
+            <td nzEllipsis >{{ category.description}}</td>
           </tr>
         </tbody>
       </nz-table>

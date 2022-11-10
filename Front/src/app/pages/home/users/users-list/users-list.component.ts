@@ -6,6 +6,7 @@ import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import {eRol} from '../model/rol.enum'
 import { NzDrawerService } from 'ng-zorro-antd/drawer';
 import { UsersEditDrawerComponent } from '../users-edit-drawer/users-edit.drawer.component';
+
 @Component({
   selector: 'app-users-list',
   templateUrl: './users-list.component.html',
@@ -16,7 +17,9 @@ export class UsersListComponent implements OnInit {
   id!:number;
 
   constructor(private service: UserService,
-    private drawerService: NzDrawerService) { }
+    private drawerService: NzDrawerService,) { }
+  selectedIndex: number = 0; 
+  selectedUser: any;
 
   ngOnInit(): void {
     this.getData(this.queryData);
@@ -43,11 +46,11 @@ export class UsersListComponent implements OnInit {
    /*
    ** Evento que se ejecuta ante algun cambio en la grillas (sorting,paging or filtering)
    */
-   onQueryParamsChange(params: NzTableQueryParams): void {
+  /*  onQueryParamsChange(params: NzTableQueryParams): void {
     this.queryData.page = params.pageIndex - 1;
     this.queryData.pageSize = params.pageSize;
     this.getData(this.queryData);
-  }
+  } */
   queryData= {
     filter: '',
     page: 0,
@@ -118,9 +121,51 @@ export class UsersListComponent implements OnInit {
        }
     })
   };
-
   onDoubleClicked (datos:any) {
     this.id = datos.id;
     this.openComponentUserEdit();
   }
+
+  onClick(datos:any, index:number): void {
+    this.selectedIndex = index 
+    this.selectedUser = datos;
+  } 
+  myNavegation(event:any) {
+    switch (event.key) {
+      case "ArrowDown":
+        let nextCell = this.userList.length > this.selectedIndex ? ++ this.selectedIndex : this.userList.length;
+        if(this.userList[nextCell] !== undefined){
+          this.selectedUser = this.userList[nextCell];  
+      } 
+        break; 
+      case "ArrowUp":
+        let previousCell= this.selectedIndex > 0 ? -- this.selectedIndex : 0; 
+        if (this.userList[previousCell] !== undefined ){
+          this.selectedUser= this.userList[previousCell];
+      }
+        break 
+    } 
+  
+  }
+  onScroll(event:any): void { 
+    let scrollHeight= event.target.scrollHeight;
+    let scrolltop= event.target.scrollTop;
+    let client= event.target.clientHeight
+    let ScrollPosition= Math.abs(Math.round(scrollHeight - (scrolltop + client)));
+    if((ScrollPosition <= 5) && (this.totalItems / this.queryData.page) > this.queryData.page){ 
+    this.queryData.page= this.queryData.page +1; 
+      if(this.totalItems === undefined ||(this.queryData.page * this.queryData.pageSize <= this.totalItems)){ 
+        this.service.getByFilter(this.queryData)
+        .subscribe({
+          next:(r)=>{
+            r.data.map((user: ListUserModel)=>
+            this.userList.push(user))  
+            this.loading= false 
+          },
+          error: ()=>{  this.loading = false;
+          this.userList= [];}
+        }) 
+      }
+    }
+  } 
 }

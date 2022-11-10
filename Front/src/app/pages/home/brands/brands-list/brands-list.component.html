@@ -36,21 +36,21 @@
 
     <!-- Tabla --> 
 
-    <div class="shadow"    
+    <div class="table"    
      (scroll)="onScroll($event)">  
-       <nz-table [nzData]="brandList" nzBordered=true [nzLoading]="loading" 
-        [nzSize]="'small'" nzShowPagination="false"> 
+       <nz-table class="tabla"  [nzData]="brandList" nzBordered= "true"  [nzLoading]="loading" 
+        [nzSize]="'small'" nzShowPagination="false"  nzTableLayout="fixed"> 
         <thead>
           <tr>
-            <th>#</th>
-            <th>Marca</th>
+            <th nzEllipsis nzWidth="380px">#</th>
+            <th nzEllipsis nzWidth="380px"> Marca</th>
           </tr>
         </thead> 
         <tbody > 
           <tr  *ngFor="let brand of brandList ; let i = index " class="small-text" tabindex="-1" (click)="onClick(brand, i)" (keydown)="myNavegation($event) "
           [style.background-color]="brand === selectedBrand ? 'lightblue' : ''" (dblclick)="onDoubleClicked(brand)" >            
-          <td>{{brand.id }}</td>
-          <td>{{brand.description}}</td>
+          <td nzEllipsis >{{brand.id }}</td>
+          <td nzEllipsis >{{brand.description}}</td>
           </tr> 
         </tbody>
       </nz-table>
