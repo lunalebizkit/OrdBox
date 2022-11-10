@@ -17,6 +17,7 @@ export interface NewOrder {
   datetime: Date;
   email: string;
   statusId: number;
+  emailEntity?: any[];
   orderDetail: OrderDetail[];
 }
 
@@ -35,7 +36,7 @@ export interface OrderDetail {
   productId: number;
   orderedQuantity: number;
   productName: string;
-  statusId: number
+  statusId: number;
 }
 export function orderDetailParser(value: any) {
   return {
@@ -44,15 +45,17 @@ export function orderDetailParser(value: any) {
     productId: value.id,
     productName: value.description,
     productCode: value.code,
-    orderedQuantity: 1,
-    statusId: 1
-  }}
-  export function orderGridParser(value: any) {
-    return {
-      code: value.code,
-      id: value.id,
-      productName: value.description,
-      price: value.purchasePrice,
-      quantity: 1,
-     subTotal: value.purchasePrice * 1
-    }}
+    orderedQuantity: value.quantity,
+    statusId: 1,
+  };
+}
+export function orderGridParser(value: any) {
+  return {
+    code: value.code,
+    id: value.id,
+    productName: value.description,
+    price: value.purchasePrice,
+    quantity: 1,
+    subTotal: value.purchasePrice * 1,
+  };
+}

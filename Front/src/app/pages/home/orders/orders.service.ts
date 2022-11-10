@@ -12,14 +12,14 @@ export class OrdersService {
    */
   constructor(public api: ApiService) {}
 
-   /**
+  /**
    * Obtiene todos los productos por query text
    * @param queryParams
    * @returns
    */
-    public getOrders(queryParams: any): Observable<any> {
-      return this.api.post(`supplierorder/list`, queryParams, false);
-    }
+  public getOrders(queryParams: any): Observable<any> {
+    return this.api.post(`supplierorder/list`, queryParams, false);
+  }
 
   /**
    * Guarda un pedido
@@ -32,5 +32,14 @@ export class OrdersService {
     } else {
       return this.api.put(`supplierorder`, model, false);
     }
+  }
+
+  /**
+   * Obtiene un producto por ID
+   * @param id
+   * @returns
+   */
+  public getById(id: string | number): Observable<any> {
+    return this.api.get(`SupplierOrder?id=${id}`, false);
   }
 }
