@@ -204,7 +204,8 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let data of productList" class="small-text">
+          <tr *ngFor="let data of productList; let i= index" class="small-text" tabindex="-1" (click)="onClick(data, i)" (keydown)="myNavegation($event)"
+          [style.background-color]="data === selectedProduct ? 'lightblue' : ''" >
             <td nzEllipsis >{{ data.description }}</td>
             <td nzEllipsis >{{ data.categoryName }}</td>
             <td nzEllipsis >{{ data.brandName }}</td>

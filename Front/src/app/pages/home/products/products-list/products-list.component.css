@@ -13,7 +13,7 @@
   font-size: 11px; 
 }
 .table{
-  height: 60vh;
+  height: 65vh;
   overflow-y: scroll;
   scroll-behavior: smooth;
 } 
