@@ -84,7 +84,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             }
             catch (Exception ex)
             {
-
+                _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_010_ERROR_EXCEPTION), ex);
                 throw;
             }
            

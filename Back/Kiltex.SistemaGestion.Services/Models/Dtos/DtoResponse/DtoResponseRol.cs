@@ -1,6 +1,6 @@
 ﻿namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse
 {
-    public class DtoRol
+    public class DtoResponseRol
     {
         public long Id { get; set; }
         public string Name { get; set; }

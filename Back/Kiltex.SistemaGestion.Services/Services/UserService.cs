@@ -3,10 +3,10 @@ using Kiltex.SistemaGestion.Domain;
 using Kiltex.SistemaGestion.Domain.Model;
 using Kiltex.SistemaGestion.SDK.Error;
 using Kiltex.SistemaGestion.SDK.Security;
-using Kiltex.SistemaGestion.Services.Models.Dtos;
 using Microsoft.EntityFrameworkCore;
 using Kiltex.SistemaGestion.Services.Common;
 using Kiltex.SistemaGestion.Services.Dtos;
+using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
 
 namespace Kiltex.SistemaGestion.Services.Services
 {
@@ -53,7 +53,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             return await AddOrUpdate(model, ct).ConfigureAwait(false);
         }
         //Get usuario
-        public async Task<OperationResponse<DtoUser>> GetById(long id)
+        public async Task<OperationResponse<DtoResponseUser>> GetById(long id)
         {
             var user = await _contextSql
                                 .Users
@@ -63,22 +63,14 @@ namespace Kiltex.SistemaGestion.Services.Services
                                 .ConfigureAwait(false);
             if (user == null)
                 
-                return new OperationResponse<DtoUser>(null, false, new OperationExceptions("000", $"Usuario no encontrado {id}"));
+                return new OperationResponse<DtoResponseUser>(null, false, new OperationExceptions("000", $"Usuario no encontrado {id}"));
 
-            var result = new DtoUser()
-            {
-                Id = id,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                UserName = user.UserName,
-                Email = user.Email,
-                RoleId = user.RoleId
-            };
+            var result = _mapper.Map<DtoResponseUser>(user);           
 
-            return new OperationResponse<DtoUser>(result);
+            return new OperationResponse<DtoResponseUser>(result);
         }
         //get Lista Usuario
-        public async Task<OperationResponse<DtoPagination<DtoUser>>> ListUsers(RequestPaginatedData<string> request)
+        public async Task<OperationResponse<DtoPagination<DtoResponseUser>>> ListUsers(RequestPaginatedData<string> request)
         {
             var query = _contextSql
                                 .Users
@@ -93,9 +85,9 @@ namespace Kiltex.SistemaGestion.Services.Services
                                   //.Take(request.PageSize)                                
                                   .ToListAsync()
                                   .ConfigureAwait(false);
-            var dto = _mapper.Map<List<DtoUser>>(list);
+            var dto = _mapper.Map<List<DtoResponseUser>>(list);
 
-            return new OperationResponse<DtoPagination<DtoUser>>(new DtoPagination<DtoUser>
+            return new OperationResponse<DtoPagination<DtoResponseUser>>(new DtoPagination<DtoResponseUser>
             {
                 Data = dto,
                 PageSize = request.PageSize,

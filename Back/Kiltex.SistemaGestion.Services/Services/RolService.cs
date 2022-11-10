@@ -24,13 +24,13 @@ namespace Kiltex.SistemaGestion.Services.Services
             return await AddOrUpdate(model, ct).ConfigureAwait(false);
         }
    
-        public async Task<OperationResponse<List<DtoRol>>> ListRoles(CancellationToken ct = default)
+        public async Task<OperationResponse<List<DtoResponseRol>>> ListRoles(CancellationToken ct = default)
         {
-            return new OperationResponse<List<DtoRol>>(
+            return new OperationResponse<List<DtoResponseRol>>(
                 await _contextSql
                         .Rols
                         .AsNoTracking()
-                        .Select(p => new DtoRol()
+                        .Select(p => new DtoResponseRol()
                         {
                             Id = p.Id,
                             Name = p.Name,
@@ -82,7 +82,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             return await AddOrUpdate(model, ct).ConfigureAwait(false);
         }
         //Get Rol
-        public async Task<OperationResponse<DtoRol>> GetById(long id)
+        public async Task<OperationResponse<DtoResponseRol>> GetById(long id)
         {
             var rol = await _contextSql
                                 .Rols
@@ -91,17 +91,11 @@ namespace Kiltex.SistemaGestion.Services.Services
                                 .ConfigureAwait(false);
             if (rol == null)
 
-                return new OperationResponse<DtoRol>(null, false, new OperationExceptions("000", $"Rol no encontrado {id}"));
+                return new OperationResponse<DtoResponseRol>(null, false, new OperationExceptions("000", $"Rol no encontrado {id}"));
 
-            var result = new DtoRol()
-            {
-                Id = id,
-                Name = rol.Name,
-                Key = rol.Key,
-             
-            };
+            var result =_mapper.Map<DtoResponseRol>(rol);          
 
-            return new OperationResponse<DtoRol>(result);
+            return new OperationResponse<DtoResponseRol>(result);
         }
         //get Lista de Roles
         public async Task<OperationResponse<List<DtoPermission>>> ListPermissions(CancellationToken ct = default)
