@@ -72,8 +72,9 @@ namespace Kiltex.SistemaGestion.Services.Services
 
                             productDetail = _mapper.Map<Product>(oldProduct);
                             productDetail.UpdateStock( detail.OrderedQuantity);
+                            _contextSql.Products.Update(productDetail);
                         }
-                        _contextSql.Products.Update(productDetail);
+                        
                     }
 
                     

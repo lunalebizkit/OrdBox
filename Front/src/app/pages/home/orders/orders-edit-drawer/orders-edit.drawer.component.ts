@@ -30,9 +30,11 @@ import { ProductService } from '../../products/product.service';
 import {
   NewOrder,
   OrderDetailGrid,
-  orderDetailParser,
-  OrderDetail,
   orderGridParser,
+  orderGridProductParser,
+  NewOrderDetail,
+  orderNewProductParser,
+  orderOldProductParser,
 } from '../models/order.model';
 import { OrdersService } from '../orders.service';
 import { differenceInCalendarDays, setHours } from 'date-fns';
@@ -60,9 +62,8 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
   formSupplierSearch!: FormGroup;
   isSaving!: boolean;
   loading!: boolean;
-  isVisible = false;
-  switchValue = false;
-  switchSendValue = true;
+  switchValue!: boolean;
+  switchSendValue!: boolean;
   datetime = null;
   fecha = 'Elige una fecha';
   isConfirmLoading = false;
@@ -87,19 +88,20 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
   date = Date.now();
   startDate = Date.now();
   viewOrder: boolean = true;
-  editOrder: boolean = false;
-  newOrder: boolean = false;
-
+  editOrder!: boolean ;
+  newOrder!: boolean ;
+ 
+  
   /*
    ** Deshabilitar
    */
-  disabled: boolean = false;
+  disabled: boolean=false;
 
   /*
-   ** Lista de Productos
+   ** Lista de Detalle Productos/Orders 
    */
   orderDetailGrid: OrderDetailGrid[] = [];
-  orderDetail: OrderDetail[] = [];
+  orderDetail: NewOrderDetail[] = [];
 
   /*
    ** Cantidad total de productos
@@ -114,6 +116,7 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
    **Variables de la tabla detalle
    */
   editId: number | null = null;
+  editIdrecievedQuantity: number | null = null;
 
   /*
    ** Parametros de busqueda
@@ -121,7 +124,12 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
   queryParams = {
     filter: '',
     page: 0,
-    pageSize: 10,
+    pageSize: 100,
+  };
+  queryData = {
+    filter: '',
+    page: 0,
+    pageSize: 100,
   };
 
   constructor(
@@ -138,21 +146,21 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
   ) {
     super(notificacionService, el, message);
     this.form = this.fb.group({
-      statusId: [''],
+      statusId: [1, [Validators.required]],
       isPaid: [''],
       datetime: [new Date(), [Validators.required]],
       supplierEmail: new FormArray([]),
       emailEntity: new FormArray([]),
     });
     this.formProductSearch = this.fb.group({
-      productSearchFilter: [''],
+      productSearchFilter: ['', [Validators.required]],
     });
     this.formSupplierSearch = this.fb.group({
       supplierId: ['', [Validators.required]],
     });
   }
 
-  ngOnInit(): void {
+  ngOnInit(): void {  
     if (this.id != null || this.id != undefined || this.id != 0) {
       this.getOrder(this.id);
     }
@@ -197,21 +205,33 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
   getOrder(id: number): void {
     if (id != 0)
       this.ordersService.getById(id).subscribe({
-        next: (r) => {
-          if (r.statusId != 2) this.disabled = true;
-          this.viewOrder = false;
-          this.editOrder = true;
+        next: (r) => {          
+          this.viewOrder = false;       
           this.supplierName = r.supplierName;
           this.dateTime = r.dateTime;
           this.form.controls['statusId'].setValue(r.statusId);
           this.form.controls['isPaid'].setValue(r.isPaid);
-
+          this.formSupplierSearch.controls['supplierId'].setValue(r.supplierId),
           r.supplierEmail.forEach((e: any) => {
             this.emailsArray.push(
               new FormControl(`${e}`, [Validators.required])
             );
           });
-          this.orderDetailGrid = r.orderDetail;
+          /*Bindeo detalles*/
+          r.orderDetail.forEach( (orderDetail: OrderDetailGrid) => {    
+            /**Parseo viejo Producto a Grid */      
+            this.orderListGridTest.push(orderGridParser(orderDetail));           
+           this.orderDetailGrid.push(orderGridParser(orderDetail));
+           /* Parseo viejo Producto a Detalle*/
+           this.orderDetail.push(orderOldProductParser(orderDetail))
+          })    
+          if (r.statusId == 1) {
+            this.editOrder = false;
+            this.disabled = false;            
+            }  else{
+              this.editOrder= true;
+              this.disabled = true;   
+            }  
           this.totalCalculate();
           this.loading = false;
         },
@@ -221,16 +241,16 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
       });
   }
 
-  save(): void {
+  save(): void {    
     if (this.isValidForm(this.form) && this.orderDetail.length > 0) {
       const model: NewOrder = {
         id: this.id !== undefined ? this.id : 0,
         supplierId: this.formSupplierSearch.controls['supplierId'].value,
         isPaid: this.form.controls['isPaid'].value,
-        email: this.form.controls['email'].value,
-        statusId: 1,
+        statusId: (this.id != undefined && this.id == 0) ? 1 : this.form.controls['statusId'].value,
         orderDetail: this.orderDetail,
-        datetime: this.form.controls['datetime'].value,
+        dateTime: this.form.controls['datetime'].value,
+        supplierName: null
       };
       this.isSaving = true;
       this.ordersService.saveOrder(model).subscribe({
@@ -250,11 +270,7 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
       });
     }
   }
-  queryData = {
-    filter: '',
-    page: 0,
-    pageSize: 10,
-  };
+
 
   get emailsArray() {
     return this.form.controls['supplierEmail'] as FormArray;
@@ -280,7 +296,7 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
     this.total = 0;
     try {
       this.orderDetailGrid.forEach((detail) => {
-        this.subtotal += detail.price * detail.quantity;
+        this.subtotal += detail.price * detail.orderedQuantity;
         this.total += detail.subTotal;
       });
     } catch (error) {
@@ -315,6 +331,35 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
     this.orderDetail.filter(
       (detail) => detail.productId == this.editId
     )[0].orderedQuantity = quantity;
+  }; 
+
+  startEditrecievedQuantity(id: number): void {
+    this.editIdrecievedQuantity = id;
+  }
+
+  stopEditrecievedQuantity(): void {
+    this.editIdrecievedQuantity = null;
+  }
+
+  changeQuantityrecievedQuantity(quantity: number): void {
+    if (quantity == 0 || quantity == null) {
+      quantity = 1;
+    }
+    // let detail = this.orderDetail.filter(
+    //   (detail) => detail.id == this.editId
+    // )[0];
+    // let detailGrid = this.orderDetailGrid.filter(
+    //   (detail) => detail.id == this.editIdrecievedQuantity
+    // )[0];
+
+    // this.orderDetailGrid.filter(
+    //   (detail) => detail.id == this.editId
+    // )[0].subTotal = quantity * productGrid.price;
+
+    // this.totalCalculate();
+     this.orderDetail.filter(
+      (detail) => detail.productId == this.editIdrecievedQuantity
+    )[0].recievedQuantity = quantity;
   }
 
   searchProduct(): void {
@@ -334,7 +379,7 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
               /*Actualizo la lista de la tabla */
               this.orderDetailGrid.filter(
                 (item) => item.id == model.id
-              )[0].quantity += 1;
+              )[0].orderedQuantity += 1;
 
               this.orderDetailGrid.filter(
                 (item) => item.id == model.id
@@ -342,8 +387,12 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
               this.totalCalculate();
             } else {
               const product: ProductsModel = r.data[0];
-              const model: OrderDetail = orderDetailParser(product);
-              this.orderDetail.push(model);
+              /* Parseo un Producto a Grid*/
+              const model: OrderDetailGrid = orderGridProductParser(product);
+               this.orderDetailGrid.push(model);
+               /** Parse un Producto a OrderDetalle */
+              const modelDetail:NewOrderDetail =orderNewProductParser(product);
+              this.orderDetail.push(modelDetail);
               this.totalCalculate();
             }
           } else {
@@ -373,6 +422,7 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
 
       drawerRefProduct.afterClose.subscribe({
         next: (data: ProductsModel) => {
+
           if (data != undefined) {
             if (this.orderDetail.find((item) => item.productId == data.id)) {
               /*Actualizo la lista que envio al back */
@@ -385,18 +435,18 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
                 (item) => item.id == data.id
               )[0];
 
-              newListElement.quantity += 1;
+              newListElement.orderedQuantity += 1;
               newListElement.subTotal +=
-                data.purchasePrice * newListElement.quantity;
+                data.purchasePrice * newListElement.orderedQuantity;
 
               this.totalCalculate();
             } else {
-              /* Parseo dato a la grilla de Tabla */
-              const model: OrderDetailGrid = orderGridParser(data);
+              /* Parseo dato Producto a la grilla de Tabla */
+              const model: OrderDetailGrid = orderGridProductParser(data);
               this.orderListGridTest.push(model);
               this.orderDetailGrid = this.orderListGridTest;
-              /* Parseo dato a Dto Factura Detalle */
-              const modelDetail: OrderDetail = orderDetailParser(data);
+              /* Parseo dato a Dto Order Detalle */
+              const modelDetail: NewOrderDetail = orderNewProductParser(data);
               this.orderDetail.push(modelDetail);
               this.totalCalculate();
             }
@@ -433,9 +483,9 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
     }
   }
 
-  statusSelectedChange(id: number): void {
-    this.status = id;
-  }
+  // statusSelectedChange(id: number): void {
+  //   this.status = id;
+  // }
 
   getStatusName(id: number) {
     return eStatus[id];

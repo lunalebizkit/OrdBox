@@ -18,3 +18,18 @@
   display: grid;
   grid-template-columns: 50% 50%;
 }
+.tabla th{
+  font-size: 12px;
+}
+.tabla td{
+  font-size: 11px; 
+}
+.table{
+  height: 60vh;
+  overflow-y: scroll;
+  scroll-behavior: smooth;
+} 
+.tabla {
+  width: 100%;
+  table-layout: fixed;
+}

@@ -32,7 +32,7 @@
                   >Proveedor
                 </nz-form-label>
                 <nz-select
-                  *ngIf="viewOrder"
+                  *ngIf="viewOrder; else elseBlock"
                   nzPlaceHolder="Seleccione Proveedor"
                   nzAllowClear
                   nzShowSearch
@@ -54,9 +54,12 @@
                     Cargando ...
                   </nz-option>
                 </nz-select>
-                <nz-form-control [nzSm]="6" [nzXs]="24">
-                  <b *ngIf="editOrder"> {{ supplierName }}</b></nz-form-control
-                >
+                <ng-template #elseBlock>
+                  <nz-form-control [nzSm]="6" [nzXs]="24">
+                    <b > {{ supplierName }}</b>
+                    </nz-form-control>
+                </ng-template>
+              
               </nz-form-item>
             </div>
           </form>
@@ -74,11 +77,10 @@
                 nzShowSearch
                 nzAllowClear
                 nzPlaceHolder="Estado"
-                id="status"
-                formControlName="statusId"
-                (ngModelChange)="statusSelectedChange($event)"
+                id="statusId"
+                formControlName="statusId"              
                 [nzOptions]="allStatus"
-                [nzDisabled]="disabled"
+                [nzDisabled]="id == 0 ? true : editOrder"
               >
               </nz-select>
             </nz-form-item>
@@ -89,12 +91,15 @@
               >Fecha
             </nz-form-label>
             <nz-form-control [nzSm]="6" [nzXs]="24">
-              <b *ngIf="viewOrder">
+              <b *ngIf="viewOrder; else elseBlockDate">
                 {{ startDate ? (startDate | date: "YYYY-MM-dd") : "N/A" }}
               </b>
-              <b *ngIf="editOrder">
-                {{ dateTime ? (dateTime | date: "YYYY-MM-dd") : "N/A" }}
-              </b>
+              <ng-template #elseBlockDate>
+                <b >
+                  {{ dateTime ? (dateTime | date: "YYYY-MM-dd") : "N/A" }}
+                </b>
+              </ng-template>
+             
             </nz-form-control>
           </nz-form-item>
 
@@ -131,7 +136,7 @@
                 </div></div></ng-container
           ></ng-container>
 
-          <ng-container formArrayName="emailEntity">
+           <ng-container formArrayName="emailEntity">
             <ng-container
               *ngFor="let data of emailsEntityControls; let i = index"
             >
@@ -152,7 +157,7 @@
                   ></nz-switch>
                 </div>
               </div> </ng-container
-          ></ng-container>
+          ></ng-container> 
         </form>
       </nz-content>
 
@@ -164,7 +169,7 @@
 
       <div nz-row nzJustify="start" nzAlign="middle">
         <form nz-form [formGroup]="formProductSearch" col nzSpan="12">
-          <div *ngIf="viewOrder">
+          <div >
             <nz-form-item>
               <nz-form-label [nzSm]="12" [nzXs]="24"
                 >Búsqueda de Producto</nz-form-label
@@ -173,11 +178,10 @@
                 <nz-input-group [nzSuffix]="clearQuery">
                   <input
                     nzSize="small"
-                    type="text"
                     formControlName="productSearchFilter"
                     placeholder="Ingrese Marca, Código, Categoria o Producto"
                     nz-input
-                    (keydown.enter)="searchProduct()"
+                    (keydown.enter)="searchProduct()"                    
                   />
                 </nz-input-group>
 
@@ -232,38 +236,61 @@
               <th>Codigo</th>
               <th>Descripción</th>
               <th>Cantidad</th>
+              <th *ngIf="!viewOrder">Cantidad Recibida</th>
               <th>Precio</th>
               <th>Subtotal</th>
-              <th [nzAlign]="'center'">Accion</th>
+              <th *ngIf="viewOrder" [nzAlign]="'center'">Accion</th>             
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let data of orderDetailGrid" class="small-text">
               <td>{{ data.code }}</td>
               <td>{{ data.productName }}</td>
-              <td>
+              <td  *ngIf="viewOrder; else editOrderView">                
                 <div
                   class="editable-cell"
                   [hidden]="editId === data.id"
                   (click)="startEdit(data.id)"
                 >
-                  {{ data.quantity }}
+                  {{ data.orderedQuantity }}
                 </div>
                 <nz-input-number
                   [hidden]="editId !== data.id"
                   [nzMin]="1"
                   [nzMax]="10000"
-                  [(ngModel)]="data.quantity"
+                  [(ngModel)]="data.orderedQuantity"
                   (nzBlur)="stopEdit()"
                   (ngModelChange)="changeQuantity($event)"
                 >
                 </nz-input-number>
               </td>
-              <td [nzAlign]="'right'">{{ this.currencyFormat(data.price) }}</td>
-              <td [nzAlign]="'right'">
-                {{ this.currencyFormat(data.subTotal) }}
+              <ng-template #editOrderView>
+                <td> {{ data.orderedQuantity }}</td>
+              </ng-template>
+            
+              <td *ngIf="!viewOrder" [nzAlign]="'right'">
+                <div
+                  class="editable-cell"
+                  [hidden]="editIdrecievedQuantity === data.id"
+                  (click)="startEditrecievedQuantity(data.id)"
+                >
+                {{data.recievedQuantity}}
+                </div>
+                <nz-input-number
+                  [hidden]="editIdrecievedQuantity !== data.id"
+                  [nzMin]="1"
+                  [nzMax]="10000"
+                  [(ngModel)]="data.recievedQuantity"
+                  (nzBlur)="stopEditrecievedQuantity()"
+                  (ngModelChange)="changeQuantityrecievedQuantity($event)"
+                >
+                </nz-input-number>
               </td>
-              <td style="text-align: center">
+              <td [nzAlign]="'right'">{{data.price}}</td>
+              <td [nzAlign]="'right'">
+                {{ currencyFormat(data.subTotal) }}
+              </td>
+              <td *ngIf="viewOrder" style="text-align: center">
                 <nz-space [nzSplit]="spaceSplit">
                   <ng-template #spaceSplit>
                     <nz-divider nzType="vertical"></nz-divider>

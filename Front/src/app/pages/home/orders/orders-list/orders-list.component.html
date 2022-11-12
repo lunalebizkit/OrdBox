@@ -120,7 +120,7 @@
 
 <div class="row">
   <div>
-    <nz-table [nzBordered]="true" [nzData]="allOrders">
+    <nz-table class="tabla" [nzBordered]="true" [nzData]="allOrders">
       <thead>
         <tr>
           <th>N° Pedido</th>
@@ -141,7 +141,7 @@
   </div>
 
   <div>
-    <nz-table [nzBordered]="true" [nzData]="orderDetailList" >
+    <nz-table class="tabla" [nzBordered]="true" [nzData]="orderDetailList" >
       <thead>
         <tr>
           <th>Producto</th>
@@ -149,9 +149,9 @@
         </tr>
       </thead>
       <tbody>
-        <tr class="small-text" *ngFor="let data of orderDetailList" (dblclick)="onDoubleClicked(data)">
+        <tr class="small-text" *ngFor="let data of orderDetailList" >
           <td>{{data.productId}}</td>
-          <td>{{data.orderedQuantity}}</td>
+          <td  style="text-align: center;font-weight: bold;">{{data.orderedQuantity}}</td>
         </tr>
       </tbody>
     </nz-table>

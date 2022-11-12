@@ -35,6 +35,7 @@ namespace Kiltex.SistemaGestion.Services.Mapper
 
             CreateMap<SupplierOrderDetail, DtoResponseOrderByIdDetail>()
                 .ForMember(o => o.ProductCode, x => x.MapFrom(y => y.Product.Code))
+                .ForMember(o => o.ProductName, x => x.MapFrom(y => y.Product.Description))
                 .ForMember(o => o.ProductPrice, x => x.MapFrom(y => y.Product.PurchasePrice));
 
         }
