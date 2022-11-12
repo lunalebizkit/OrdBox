@@ -72,8 +72,9 @@ namespace Kiltex.SistemaGestion.Services.Services
 
                             productDetail = _mapper.Map<Product>(oldProduct);
                             productDetail.UpdateStock( detail.OrderedQuantity);
+                            _contextSql.Products.Update(productDetail);
                         }
-                        _contextSql.Products.Update(productDetail);
+                        
                     }
 
                     
@@ -84,7 +85,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             }
             catch (Exception ex)
             {
-
+                _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_010_ERROR_EXCEPTION), ex);
                 throw;
             }
            

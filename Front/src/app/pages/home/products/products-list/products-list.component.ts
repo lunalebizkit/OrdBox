@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { NzDrawerService } from 'ng-zorro-antd/drawer';
-import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { ProductsModel } from '../model/product.model';
 import { ProductService } from '../product.service';
 import { ProductsEditDrawerComponent } from '../products-edit-drawer/products-edit.drawer.component';

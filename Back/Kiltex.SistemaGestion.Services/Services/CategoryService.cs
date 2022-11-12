@@ -5,7 +5,7 @@ using Kiltex.SistemaGestion.Domain;
 using Kiltex.SistemaGestion.Domain.Model;
 using Kiltex.SistemaGestion.SDK.Error;
 using Kiltex.SistemaGestion.Services.Common;
-using Kiltex.SistemaGestion.Services.Models.Dtos;
+using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
 using Microsoft.EntityFrameworkCore;
 
 namespace Kiltex.SistemaGestion.Services.Services
@@ -18,7 +18,7 @@ namespace Kiltex.SistemaGestion.Services.Services
 
      
         //Get Categoria
-        public async Task<OperationResponse<DtoCategory>> GetById(long id)
+        public async Task<OperationResponse<DtoResponseCategory>> GetById(long id)
         {
             var categoria = await _contextSql
                                 .Category
@@ -27,22 +27,22 @@ namespace Kiltex.SistemaGestion.Services.Services
                                 .ConfigureAwait(false);
             if (categoria == null)
 
-                return new OperationResponse<DtoCategory>(null, false, new OperationExceptions("000", $"Usuario no encontrado {id}"));
+                return new OperationResponse<DtoResponseCategory>(null, false, new OperationExceptions("000", $"Usuario no encontrado {id}"));
 
-            var result = new DtoCategory()
+            var result = new DtoResponseCategory()
             {
                 Id = id,
               Description = categoria.Description
             };
 
-            return new OperationResponse<DtoCategory>(result);
+            return new OperationResponse<DtoResponseCategory>(result);
         }
-        public async Task<OperationResponse<IdResponse<long>>> Add(DtoCategory model, CancellationToken ct = default)
+        public async Task<OperationResponse<IdResponse<long>>> Add(DtoResponseCategory model, CancellationToken ct = default)
         {
             model.Id = 0;
             return await AddOrUpdate(model, ct).ConfigureAwait(false);
         }
-        public async Task<OperationResponse<IdResponse<long>>> AddOrUpdate(DtoCategory model, CancellationToken ct = default)
+        public async Task<OperationResponse<IdResponse<long>>> AddOrUpdate(DtoResponseCategory model, CancellationToken ct = default)
         {
             var countCategory = await _contextSql
                                 .Category
@@ -76,7 +76,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             return Ok(new IdResponse<long>(categoryModel.Id));
         }
 
-        public async Task<OperationResponse<IdResponse<long>>> Update(DtoCategory model, CancellationToken ct = default)
+        public async Task<OperationResponse<IdResponse<long>>> Update(DtoResponseCategory model, CancellationToken ct = default)
         {
             if (model.Id <= 0)
             {
@@ -85,7 +85,7 @@ namespace Kiltex.SistemaGestion.Services.Services
 
             return await AddOrUpdate(model, ct).ConfigureAwait(false);
         }
-        public async Task<OperationResponse<DtoPagination<DtoCategory>>> ListCategory(RequestPaginatedData<string> request)
+        public async Task<OperationResponse<DtoPagination<DtoResponseCategory>>> ListCategory(RequestPaginatedData<string> request)
         {
             var query = _contextSql
                                 .Category
@@ -99,9 +99,9 @@ namespace Kiltex.SistemaGestion.Services.Services
                                   .Take(request.PageSize)                                
                                   .ToListAsync()
                                   .ConfigureAwait(false);
-            var dto = _mapper.Map<List<DtoCategory>>(list);
+            var dto = _mapper.Map<List<DtoResponseCategory>>(list);
 
-            return new OperationResponse<DtoPagination<DtoCategory>>(new DtoPagination<DtoCategory>
+            return new OperationResponse<DtoPagination<DtoResponseCategory>>(new DtoPagination<DtoResponseCategory>
             {
                 Data = dto,
                 PageSize = request.PageSize,

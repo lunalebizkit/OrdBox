@@ -1,58 +1,80 @@
-export interface OrderList {
-  id: number;
-  supplierId: number;
-  supplierName: string;
-  date: Date;
-  isPaid: boolean;
-  dateTime: Date;
-  email: string;
-  statusId: number;
-  orderDetail: OrderDetail[];
-}
 
 export interface NewOrder {
   id: number;
   supplierId: number;
+  supplierName: string | null;
   isPaid: boolean;
-  datetime: Date;
-  email: string;
+  dateTime: Date;
   statusId: number;
-  orderDetail: OrderDetail[];
+  orderDetail: NewOrderDetail[];
+}
+export interface NewOrderDetail {
+  id: number;
+  productId: number;
+  orderedQuantity: number;
+  recievedQuantity: number;
+  statusId: number;
 }
 
 export interface OrderDetailGrid {
   id: number;
   code: number;
   productName: string;
-  quantity: number;
+  orderedQuantity: number;
   price: number;
   subTotal: number;
+  recievedQuantity: number;
 }
 
-export interface OrderDetail {
-  id: number;
-  supplierOrderId: number;
-  productId: number;
-  orderedQuantity: number;
-  productName: string;
-  statusId: number
-}
-export function orderDetailParser(value: any) {
+export function orderGridParser(value: any) {
   return {
-    id: 0,
-    supplierOrderId: 0,
-    productId: value.id,
-    productName: value.description,
-    productCode: value.code,
-    orderedQuantity: 1,
-    statusId: 1
-  }}
-  export function orderGridParser(value: any) {
+    code: value.productCode,
+    id: value.productId,
+    productName: value.productName,
+    price: value.productPrice,
+    orderedQuantity: value.orderedQuantity,
+    subTotal: Number(value.productPrice)  * Number(value.orderedQuantity),
+    recievedQuantity: value.recievedQuantity,
+  };}
+
+export function orderGridProductParser(value: any) {
     return {
       code: value.code,
       id: value.id,
       productName: value.description,
       price: value.purchasePrice,
       quantity: 1,
-     subTotal: value.purchasePrice * 1
-    }}
+      subTotal: Number(value.purchasePrice)  * 1,
+      recievedQuantity: 1,
+      orderedQuantity: 1,
+      
+    };
+};
+export function orderNewProductParser(value: any) {
+  return {
+    productId: value.id,
+    id: 0,
+    orderedQuantity: 1,
+    recievedQuantity: 1,
+    statusId: 3,
+  };
+};
+export function orderOldProductParser(value: any) {
+  return {
+    productId: value.productId,
+    id: value.id,
+    orderedQuantity: value.orderedQuantity,
+    recievedQuantity: value.recievedQuantity,
+    statusId: value.statusId,
+  };
+};
+/**Funcion para parsear OrderDetallebyId aOrderDetalle */
+export function orderDetailbyIdParser(value: any) {
+  return {
+    productId: value.productName,
+    id: value.id,
+    orderedQuantity: value.orderedQuantity,
+    recievedQuantity: value.recievedQuantity,
+    statusId: value.statusId,
+  };
+}

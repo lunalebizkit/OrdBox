@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Kiltex.SistemaGestion.Domain.Model;
-using Kiltex.SistemaGestion.Services.Models.Dtos;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
 
@@ -36,6 +35,7 @@ namespace Kiltex.SistemaGestion.Services.Mapper
 
             CreateMap<SupplierOrderDetail, DtoResponseOrderByIdDetail>()
                 .ForMember(o => o.ProductCode, x => x.MapFrom(y => y.Product.Code))
+                .ForMember(o => o.ProductName, x => x.MapFrom(y => y.Product.Description))
                 .ForMember(o => o.ProductPrice, x => x.MapFrom(y => y.Product.PurchasePrice));
 
         }

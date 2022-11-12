@@ -10,7 +10,7 @@ namespace Kiltex.SistemaGestion.SDK.Error
         public const string C_002_CLIENTE_INACTIVO = "002_CLIENTE_INACTIVO";
         public const string C_003_TOKEN_INACTIVO = "003_TOKEN_INACTIVO";
         public const string C_009_ERROR_DUPLICATE = "009_ERROR_DUPLICATE";
-
+        public const string C_010_ERROR_EXCEPTION = "010_ERROR_EXCEPTION";
         public const string C_999_ERROR_GENERICO = "999_ERROR_GENERICO";
     }
     public class ErrorsMessages
@@ -28,9 +28,9 @@ namespace Kiltex.SistemaGestion.SDK.Error
             { "007_ERROR_SAP_CODE_DUPLICATE","Ya existe un producto con ese código de SAP" },
             { "008_ERROR_CLIENTE_DUPLICATE","Ya existe un cliente con el correo ingresado" },
             { "009_ERROR_DUPLICATE","{0}" },
-            { "010_ERROR_CREDENTIALS_IVALID","Los datos ingresados son iválidos" },
+            { "010_ERROR_EXCEPTION","Ocurrio un error al ejecutar el metodo" },
             { "011_ERROR_MAIL_NO_VALIDATE","El mail no ha sido validado" },
-            { "999_ERROR_MOTOR_ELASTIC","Ups!! Hubo un error intentelo un unos segundo." },
+            { "999_ERROR_MOTOR_ELASTIC","Ups!! Hubo un error intentelo un unos segundos." },
             { "999_ERROR_GENERICO", "Ups!! Hubo un error intentelo un unos segundo." }
         };
 

@@ -8,7 +8,7 @@ import { BaseComponent } from 'src/app/common/components/base/base.component';
 import { CategoriesService } from '../../categories/category.services';
 import { EntityService } from '../../customers/customer.service';
 import { eStatus, StatusType } from '../enum/status-type.enum';
-import { OrderDetail, OrderList } from '../models/order.model';
+import { NewOrder, NewOrderDetail, orderDetailbyIdParser } from '../models/order.model';
 import { OrdersEditDrawerComponent } from '../orders-edit-drawer/orders-edit.drawer.component';
 import { OrdersService } from '../orders.service';
 
@@ -24,8 +24,8 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
   timeout!: any;
   allCategories = [];
   allSuppliers: { value: string; label: string }[] = [];
-  allOrders: OrderList[]= [];
-  orderDetailList:OrderDetail[]=[];
+  allOrders: NewOrder[]= [];
+  orderDetailList:NewOrderDetail[]=[];
   allStatus= StatusType;
      /*
    ** id del usuario a editar, si es nuevo...
@@ -209,21 +209,31 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
     });
     drawerRefCustomer.afterClose.subscribe({         
       next: (data) => {    
+        this.orderDetailList= [];
         this.id= 0;
-        // if (data != undefined && data != 0) {
-        //   this.service.getById(data).subscribe({
-        //     next: (r: OrderDetail) =>{
-        //       this.orderDetailList[this.orderDetailList.findIndex(r => r.id == data)] != undefined ?            
-        //      this.orderDetailList[this.orderDetailList.findIndex(r => r.id == data)] = r :
-        //      this.orderDetailList.push(r);                     
-        //     },
-        //     error: ()=>{
-        //       this.id= 0;
-        //     }
-        //   })
-        // }
+        if (data != undefined && data != 0) {
+          this.serviceOrders.getById(data).subscribe({
+            next: (r: NewOrder) =>{                        
+              let order = this.allOrders[this.allOrders.findIndex(r => r.id == data)];
+              if (order != undefined){
+               let newDetalle:NewOrderDetail[] =[];
+               r.orderDetail.forEach((e : NewOrderDetail) => 
+               newDetalle.push(orderDetailbyIdParser(e)));      
+                this.allOrders[this.allOrders.findIndex(r => r.id == data)]= order;
+                this.allOrders[this.allOrders.findIndex(r => r.id == data)].orderDetail= newDetalle;
+
+              } else {            
+             this.allOrders.push(r);                     
+            }
+          },
+            error: ()=>{
+              this.id= 0;
+            }
+          })
+        }
       },
       error: () => {
+        this.orderDetailList= [];
         this.id= 0;
        }
     })

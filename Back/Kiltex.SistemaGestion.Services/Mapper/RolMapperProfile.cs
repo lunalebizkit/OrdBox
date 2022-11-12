@@ -11,8 +11,8 @@ namespace Kiltex.SistemaGestion.Services.Mapper
     {
        public RolMapperProfile()
         {
-            CreateMap<Rol, DtoRol >().ReverseMap();
-            CreateMap<RequestAddRol, DtoRol >().ReverseMap();
+            CreateMap<Rol, DtoResponseRol >().ReverseMap();
+            CreateMap<RequestAddRol, DtoResponseRol >().ReverseMap();
             CreateMap<Permission, DtoPermission>().ReverseMap();
             CreateMap<DtoRequestAddPermissionXRol, DtoPermission>().ReverseMap();
         }

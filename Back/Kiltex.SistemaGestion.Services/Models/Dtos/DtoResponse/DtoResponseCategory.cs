@@ -1,10 +1,9 @@
 ﻿namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse
 {
-    public class DtoRol
+    public class DtoResponseCategory
     {
         public long Id { get; set; }
-        public string Name { get; set; }
-        public string Key { get; set; }
-    }
 
+        public string? Description { get; set; }
+    }
 }

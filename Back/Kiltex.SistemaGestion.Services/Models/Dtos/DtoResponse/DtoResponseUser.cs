@@ -1,8 +1,6 @@
-﻿
-
-namespace Kiltex.SistemaGestion.Services.Models.Dtos
+﻿namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse
 {
-    public class DtoUser
+    public class DtoResponseUser
     {
         public long Id { get; set; }
         public string? FirstName { get; set; }

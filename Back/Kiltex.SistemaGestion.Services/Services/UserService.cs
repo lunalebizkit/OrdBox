@@ -3,10 +3,10 @@ using Kiltex.SistemaGestion.Domain;
 using Kiltex.SistemaGestion.Domain.Model;
 using Kiltex.SistemaGestion.SDK.Error;
 using Kiltex.SistemaGestion.SDK.Security;
-using Kiltex.SistemaGestion.Services.Models.Dtos;
 using Microsoft.EntityFrameworkCore;
 using Kiltex.SistemaGestion.Services.Common;
 using Kiltex.SistemaGestion.Services.Dtos;
+using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
 
 namespace Kiltex.SistemaGestion.Services.Services
 {
@@ -21,17 +21,30 @@ namespace Kiltex.SistemaGestion.Services.Services
         //Login de Usuario
         public async Task<OperationResponse<User>> GetUserLogin(string userName, string password)
         {
-            var user = await _contextSql
-                            .Users
-                            .AsNoTracking()
-                            .Include(x => x.Rol)
-                            .FirstOrDefaultAsync(x => x.UserName == userName && !x.IsDeleted)
-                            .ConfigureAwait(false);
-            if (user == null || !SecurePasswordHasher.Verify(password, user.Password))
+            try
             {
-                return Error<User>(new OperationExceptions("001", "El usuario no es valido"));
+                var user = await _contextSql
+                         .Users
+                         .AsNoTracking()
+                         .Include(x => x.Rol)
+                         .FirstOrDefaultAsync(x => x.UserName == userName && !x.IsDeleted)
+                         .ConfigureAwait(false);
+               
+
+                if (user == null || !SecurePasswordHasher.Verify(password, user.Password))
+                {
+                    _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_S002_CLIENTID_INVALIDO), userName);
+                    return Error<User>(new OperationExceptions("001", "El usuario no es valido"));
+
+                }
+                return Ok(user);
             }
-            return Ok(user);
+            catch (Exception ex)
+            {
+                _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
+                throw;
+            }
+         
         }
         //Agregar usuario nuevo
         public async Task<OperationResponse<IdResponse<long>>> Add(RequestAddUser model, CancellationToken ct = default)
@@ -40,7 +53,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             return await AddOrUpdate(model, ct).ConfigureAwait(false);
         }
         //Get usuario
-        public async Task<OperationResponse<DtoUser>> GetById(long id)
+        public async Task<OperationResponse<DtoResponseUser>> GetById(long id)
         {
             var user = await _contextSql
                                 .Users
@@ -50,22 +63,14 @@ namespace Kiltex.SistemaGestion.Services.Services
                                 .ConfigureAwait(false);
             if (user == null)
                 
-                return new OperationResponse<DtoUser>(null, false, new OperationExceptions("000", $"Usuario no encontrado {id}"));
+                return new OperationResponse<DtoResponseUser>(null, false, new OperationExceptions("000", $"Usuario no encontrado {id}"));
 
-            var result = new DtoUser()
-            {
-                Id = id,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                UserName = user.UserName,
-                Email = user.Email,
-                RoleId = user.RoleId
-            };
+            var result = _mapper.Map<DtoResponseUser>(user);           
 
-            return new OperationResponse<DtoUser>(result);
+            return new OperationResponse<DtoResponseUser>(result);
         }
         //get Lista Usuario
-        public async Task<OperationResponse<DtoPagination<DtoUser>>> ListUsers(RequestPaginatedData<string> request)
+        public async Task<OperationResponse<DtoPagination<DtoResponseUser>>> ListUsers(RequestPaginatedData<string> request)
         {
             var query = _contextSql
                                 .Users
@@ -80,9 +85,9 @@ namespace Kiltex.SistemaGestion.Services.Services
                                   //.Take(request.PageSize)                                
                                   .ToListAsync()
                                   .ConfigureAwait(false);
-            var dto = _mapper.Map<List<DtoUser>>(list);
+            var dto = _mapper.Map<List<DtoResponseUser>>(list);
 
-            return new OperationResponse<DtoPagination<DtoUser>>(new DtoPagination<DtoUser>
+            return new OperationResponse<DtoPagination<DtoResponseUser>>(new DtoPagination<DtoResponseUser>
             {
                 Data = dto,
                 PageSize = request.PageSize,

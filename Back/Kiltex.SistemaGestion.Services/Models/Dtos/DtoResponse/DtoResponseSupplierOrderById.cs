@@ -9,6 +9,7 @@ namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse
         public long SupplierOrderNumber { get; set; }
 
         public string SupplierName { get; set; }
+        public long SupplierId { get; set; }
 
         public List<string> SupplierEmail { get; set; }
 
@@ -28,8 +29,9 @@ namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse
     {
         public long Id { get; set; }
         public string ProductCode { get; set; }
+        public string ProductName { get; set; }
         public string ProductId { get; set; }
-        public string ProductPrice { get; set; }
+        public decimal ProductPrice { get; set; }
         public int OrderedQuantity { get; set; }
         public int RecievedQuantity { get; set; }
         public long StatusId { get; set; }

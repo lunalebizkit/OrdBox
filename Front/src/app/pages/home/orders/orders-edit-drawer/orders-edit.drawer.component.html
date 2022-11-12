@@ -32,6 +32,7 @@
                   >Proveedor
                 </nz-form-label>
                 <nz-select
+                  *ngIf="viewOrder; else elseBlock"
                   nzPlaceHolder="Seleccione Proveedor"
                   nzAllowClear
                   nzShowSearch
@@ -39,6 +40,7 @@
                   (nzOnSearch)="onSearch($event)"
                   formControlName="supplierId"
                   style="width: 200px"
+                  (ngModelChange)="onChange($event)"
                 >
                   <ng-container *ngFor="let o of entityList">
                     <nz-option
@@ -52,22 +54,53 @@
                     Cargando ...
                   </nz-option>
                 </nz-select>
+                <ng-template #elseBlock>
+                  <nz-form-control [nzSm]="6" [nzXs]="24">
+                    <b > {{ supplierName }}</b>
+                    </nz-form-control>
+                </ng-template>
+              
               </nz-form-item>
             </div>
           </form>
+
+          <div nzSpan="12" class="mb-2">
+            <nz-form-item>
+              <nz-form-label
+                [nzSm]="6"
+                [nzXs]="24"
+                nzRequired
+                nzFor="supplierId"
+                >Estado
+              </nz-form-label>
+              <nz-select
+                nzShowSearch
+                nzAllowClear
+                nzPlaceHolder="Estado"
+                id="statusId"
+                formControlName="statusId"              
+                [nzOptions]="allStatus"
+                [nzDisabled]="id == 0 ? true : editOrder"
+              >
+              </nz-select>
+            </nz-form-item>
+          </div>
+
           <nz-form-item>
             <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="datetime"
               >Fecha
             </nz-form-label>
             <nz-form-control [nzSm]="6" [nzXs]="24">
-              <nz-date-picker
-                [(ngModel)]="datetime"
-                [nzPlaceHolder]="fecha"
-                formControlName="datetime"
-                [nzFormat]="dateFormat"
-                [nzDisabledDate]="disabledDate"
-              ></nz-date-picker
-            ></nz-form-control>
+              <b *ngIf="viewOrder; else elseBlockDate">
+                {{ startDate ? (startDate | date: "YYYY-MM-dd") : "N/A" }}
+              </b>
+              <ng-template #elseBlockDate>
+                <b >
+                  {{ dateTime ? (dateTime | date: "YYYY-MM-dd") : "N/A" }}
+                </b>
+              </ng-template>
+             
+            </nz-form-control>
           </nz-form-item>
 
           <nz-form-item>
@@ -77,67 +110,57 @@
             <nz-switch
               formControlName="isPaid"
               [ngModel]="switchValue"
+              [nzDisabled]="disabled"
             ></nz-switch>
           </nz-form-item>
 
-          <!-- En caso  -->
-
-          <!-- En caso de que sea un pedido nuevo -->
-
-          <ng-container formArrayName="emailEntity">
-            <ng-container *ngFor="let e of emailsControls; let i = index">
+          <!-- Va creando divs segun la cantidad de mails creados que tenga el proveedor  -->
+          <ng-container formArrayName="supplierEmail">
+            <ng-container *ngFor="let data of emailsControls; let i = index">
               <div nz-row>
                 <div nz-col nzSpan="12">
                   <nz-form-item>
-                    <nz-form-label
-                      [nzSm]="8"
-                      [nzXs]="24"
-                      nzRequired
-                      nzFor="email"
-                    >
+                    <nz-form-label [nzSm]="12" [nzXs]="24">
+                      Email {{ i + 1 }}
+                    </nz-form-label>
+                    <nz-form-control [nzSm]="14" [nzXs]="24" nzFor="email">
+                      <input [formControl]="data" nz-input /> </nz-form-control
+                  ></nz-form-item>
+                </div>
+                <div nz-col>
+                  <nz-switch
+                    nzCheckedChildren="Enviar"
+                    nzUnCheckedChildren="No enviar"
+                    [nzDisabled]="disabled"
+                  ></nz-switch>
+                </div></div></ng-container
+          ></ng-container>
+
+           <ng-container formArrayName="emailEntity">
+            <ng-container
+              *ngFor="let data of emailsEntityControls; let i = index"
+            >
+              <div nz-row>
+                <div nz-col nzSpan="12">
+                  <nz-form-item>
+                    <nz-form-label [nzSm]="12" [nzXs]="24" nzRequired>
                       Email {{ i + 1 }}
                     </nz-form-label>
                     <nz-form-control [nzSm]="14" [nzXs]="24">
-                      <input [formControl]="e" nz-input />
-                      <i
-                        nz-icon
-                        nzType="minus-circle-o"
-                        class="dynamic-delete-button"
-                        style="
-                          color: rgb(243, 79, 79);
-                          position: absolute;
-                          margin-top: -7x;
-                          margin-left: 4px;
-                        "
-                        (click)="removeEmailField($event, i)"
-                      ></i>
-                    </nz-form-control>
-                  </nz-form-item>
+                      <input [formControl]="data" nz-input /> </nz-form-control
+                  ></nz-form-item>
                 </div>
-
                 <div nz-col>
-                  <nz-form-item>
-                    <nz-switch
-                      [ngModel]="true"
-                      nzCheckedChildren="Enviar"
-                      nzUnCheckedChildren="No enviar"
-                      formControlName="send2"
-                    ></nz-switch>
-                  </nz-form-item>
+                  <nz-switch
+                    nzCheckedChildren="Enviar"
+                    nzUnCheckedChildren="No enviar"
+                  ></nz-switch>
                 </div>
-              </div>
-            </ng-container>
-            <button
-              nz-button
-              nzType="primary"
-              nzShape="circle"
-              style="margin-left: 146px"
-            >
-              <i nz-icon nzType="mail" (click)="addEmailField($event)"></i>
-            </button>
-          </ng-container>
+              </div> </ng-container
+          ></ng-container> 
         </form>
       </nz-content>
+
       <!-- Buscador de Productos -->
       <nz-divider
         nzText="Seleccionar productos"
@@ -146,7 +169,7 @@
 
       <div nz-row nzJustify="start" nzAlign="middle">
         <form nz-form [formGroup]="formProductSearch" col nzSpan="12">
-          <div>
+          <div >
             <nz-form-item>
               <nz-form-label [nzSm]="12" [nzXs]="24"
                 >Búsqueda de Producto</nz-form-label
@@ -155,11 +178,10 @@
                 <nz-input-group [nzSuffix]="clearQuery">
                   <input
                     nzSize="small"
-                    type="text"
                     formControlName="productSearchFilter"
                     placeholder="Ingrese Marca, Código, Categoria o Producto"
                     nz-input
-                    (keydown.enter)="searchProduct()"
+                    (keydown.enter)="searchProduct()"                    
                   />
                 </nz-input-group>
 
@@ -190,6 +212,7 @@
             nzSize="small"
             nzType="primary"
             (click)="openComponentProduct()"
+            [disabled]="disabled"
           >
             <i nz-icon nzType="search" nzTheme="outline"></i> Buscar
           </button>
@@ -213,38 +236,61 @@
               <th>Codigo</th>
               <th>Descripción</th>
               <th>Cantidad</th>
+              <th *ngIf="!viewOrder">Cantidad Recibida</th>
               <th>Precio</th>
               <th>Subtotal</th>
-              <th [nzAlign]="'center'">Accion</th>
+              <th *ngIf="viewOrder" [nzAlign]="'center'">Accion</th>             
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let data of orderDetailGrid" class="small-text">
               <td>{{ data.code }}</td>
               <td>{{ data.productName }}</td>
-              <td>
+              <td  *ngIf="viewOrder; else editOrderView">                
                 <div
                   class="editable-cell"
                   [hidden]="editId === data.id"
                   (click)="startEdit(data.id)"
                 >
-                  {{ data.quantity }}
+                  {{ data.orderedQuantity }}
                 </div>
                 <nz-input-number
                   [hidden]="editId !== data.id"
                   [nzMin]="1"
                   [nzMax]="10000"
-                  [(ngModel)]="data.quantity"
+                  [(ngModel)]="data.orderedQuantity"
                   (nzBlur)="stopEdit()"
                   (ngModelChange)="changeQuantity($event)"
                 >
                 </nz-input-number>
               </td>
-              <td [nzAlign]="'right'">{{ this.currencyFormat(data.price) }}</td>
-              <td [nzAlign]="'right'">
-                {{ this.currencyFormat(data.subTotal) }}
+              <ng-template #editOrderView>
+                <td> {{ data.orderedQuantity }}</td>
+              </ng-template>
+            
+              <td *ngIf="!viewOrder" [nzAlign]="'right'">
+                <div
+                  class="editable-cell"
+                  [hidden]="editIdrecievedQuantity === data.id"
+                  (click)="startEditrecievedQuantity(data.id)"
+                >
+                {{data.recievedQuantity}}
+                </div>
+                <nz-input-number
+                  [hidden]="editIdrecievedQuantity !== data.id"
+                  [nzMin]="1"
+                  [nzMax]="10000"
+                  [(ngModel)]="data.recievedQuantity"
+                  (nzBlur)="stopEditrecievedQuantity()"
+                  (ngModelChange)="changeQuantityrecievedQuantity($event)"
+                >
+                </nz-input-number>
               </td>
-              <td style="text-align: center">
+              <td [nzAlign]="'right'">{{data.price}}</td>
+              <td [nzAlign]="'right'">
+                {{ currencyFormat(data.subTotal) }}
+              </td>
+              <td *ngIf="viewOrder" style="text-align: center">
                 <nz-space [nzSplit]="spaceSplit">
                   <ng-template #spaceSplit>
                     <nz-divider nzType="vertical"></nz-divider>
