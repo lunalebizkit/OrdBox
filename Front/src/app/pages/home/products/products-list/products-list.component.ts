@@ -21,6 +21,8 @@ export class ProductsListComponent implements OnInit {
    ** id del usuario a editar, si es nuevo...
    */
    id!: number;
+   clickId!: number;
+   index!: number;
 
   /*
   ** Indicador de carga de la grilla
@@ -66,7 +68,7 @@ export class ProductsListComponent implements OnInit {
 
   }
 
-  selectedIndex: number = 0; 
+  selectedIndex!: number; 
   selectedProduct: any;
   productId!:number |null; 
 
@@ -87,6 +89,9 @@ export class ProductsListComponent implements OnInit {
         this.productList = r.data;
         this.totalItems = r.totalCount;
         this.loading = false;
+        this.selectedIndex = 0;
+        this.selectedProduct = this.productList[this.selectedIndex];
+        document.getElementById(this.selectedIndex.toString())?.focus()   
       },
       error: () => {
         this.loading = false;
@@ -103,18 +108,20 @@ export class ProductsListComponent implements OnInit {
     this.getData(this.queryParams); 
  
   }; 
-  onDoubleClicked (datos:any) {
+  onDoubleClicked (datos:ProductsModel) {
   this.id = datos.id
   this.openComponentProductsEdit();
   }
-  onClick(datos:any, index:number): void {
-  this.selectedIndex = index 
+
+  onClick(datos:ProductsModel, index:number): void {
+  this.index= index;
+  this.selectedIndex = index
   this.selectedProduct = datos
   }  
-  onEnter( data:any, index:number) {
-    var datos = data.id
-    console.log(data, index)
-    this.router.navigate(['home/products/edit/', datos]); 
+  onEnter(e: any ) {
+  this.selectedProduct =   this.productList[this.index]
+  this.id= this.productList[this.index].id;
+  this.openComponentProductsEdit();  
   } 
 
  /*
@@ -122,17 +129,22 @@ export class ProductsListComponent implements OnInit {
   */
 
   myNavegation(event:any) {
+  
     switch (event.key) {
       case "ArrowDown":
         let nextCell = this.productList.length > this.selectedIndex ? ++ this.selectedIndex : this.productList.length;
         if(this.productList[nextCell] !== undefined){
-          this.selectedProduct= this.productList[nextCell];  
+          this.selectedProduct= this.productList[nextCell];
+          this.index= nextCell;
+          document.getElementById(nextCell.toString())?.focus()          
       } 
         break; 
       case "ArrowUp":
         let previousCell= this.selectedIndex > 0 ? -- this.selectedIndex : 0; 
         if (this.productList[previousCell] !== undefined ){
           this.selectedProduct= this.productList[previousCell];
+          this.index = previousCell;
+          document.getElementById(previousCell.toString())?.focus()
       }
         break 
     } 
@@ -149,8 +161,7 @@ export class ProductsListComponent implements OnInit {
     let ScrollPosition= Math.abs(Math.round(scrollHeight - (scrolltop + client)));
     if((ScrollPosition <=5 ) && (this.totalItems / this.queryParams.page) > this.queryParams.page){ 
       let page= this.queryParams.page;
-      this.queryParams.page = this.queryParams.page +1;  
-      console.log(this.queryParams.page)
+      this.queryParams.page = this.queryParams.page +1; 
       if(this.totalItems === undefined ||(this.queryParams.page * this.queryParams.PageSize <= this.totalItems)){ 
         this.service.getProducts(this.queryParams)
         .subscribe({
@@ -176,8 +187,8 @@ export class ProductsListComponent implements OnInit {
       },
       nzClosable: false
     });
-    drawerRefCustomer.afterClose.subscribe({         
-      next: (data) => {    
+    drawerRefCustomer.afterClose.subscribe({   
+      next: (data) => {         
         this.id= 0;
         if (data != undefined && data != 0) {
           this.service.getById(data).subscribe({

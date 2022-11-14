@@ -38,7 +38,7 @@ import {
 } from '../models/order.model';
 import { OrdersService } from '../orders.service';
 import { differenceInCalendarDays, setHours } from 'date-fns';
-import { eStatus, StatusType } from '../enum/status-type.enum';
+import { eStatus, StatusType } from '../models/status-type.enum';
 
 @Component({
   selector: 'app-orders-edit-drawer',

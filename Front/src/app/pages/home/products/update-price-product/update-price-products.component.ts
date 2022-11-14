@@ -151,6 +151,8 @@ export class UpdatePriceProductsComponent extends BaseComponent implements OnIni
           this.showMessageError('No se pudo Actualizar los Productos')
         }
       })
+    } else{
+      this.showMessageError('No Selecciono Parametros de Actualización')
     }
   };
   getAllCategories(): void {
