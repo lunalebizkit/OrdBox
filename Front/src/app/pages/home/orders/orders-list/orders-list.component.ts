@@ -54,6 +54,8 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
     pageSize: 10,
   };
 
+  totalItems = 0;
+
   constructor(
     private serviceOrders: OrdersService,
     private serviceCategory: CategoriesService,
@@ -197,6 +199,31 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
   onDoubleClicked (datos:any) {
     this.id = datos.id
     this.openComponentOrdersEdit();
+  };
+
+  onScroll(event:any): void { 
+    let scrollHeight= event.target.scrollHeight;
+    let scrolltop= event.target.scrollTop;
+    let client= event.target.clientHeight
+    let ScrollPosition= Math.abs(Math.round(scrollHeight - (scrolltop + client)));
+    if((ScrollPosition <=5 ) && (this.totalItems / this.queryParams.page) > this.queryParams.page){ 
+      let page= this.queryParams.page;
+      this.queryParams.page = this.queryParams.page +1;  
+      if(this.totalItems === undefined ||(this.queryParams.page * this.queryParams.pageSize <= this.totalItems)){ 
+        this.serviceOrders.getOrders(this.queryParams)
+        .subscribe({
+          next:(r)=>{
+            r.data.map((order: NewOrder)=>
+            this.allOrders.push(order))  
+            this.isLoading= false 
+          },
+          error: ()=>{  this.isLoading = false;
+          this.allOrders= [];}
+        }) 
+      }else{
+        this.queryParams.page = page;  
+      }
+    }
   };
   openComponentOrdersEdit(): void {
     const drawerRefCustomer = this.drawerService.create<OrdersEditDrawerComponent, { filter: number}, number>({
