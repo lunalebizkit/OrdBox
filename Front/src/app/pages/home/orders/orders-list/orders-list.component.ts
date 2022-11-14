@@ -7,7 +7,7 @@ import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { BaseComponent } from 'src/app/common/components/base/base.component';
 import { CategoriesService } from '../../categories/category.services';
 import { EntityService } from '../../customers/customer.service';
-import { eStatus, StatusType } from '../enum/status-type.enum';
+import { eStatus, StatusType } from '../models/status-type.enum';
 import { NewOrder, NewOrderDetail, orderDetailbyIdParser } from '../models/order.model';
 import { OrdersEditDrawerComponent } from '../orders-edit-drawer/orders-edit.drawer.component';
 import { OrdersService } from '../orders.service';
