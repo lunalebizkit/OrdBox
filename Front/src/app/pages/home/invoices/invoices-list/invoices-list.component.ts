@@ -32,7 +32,7 @@ import { NzDrawerService } from 'ng-zorro-antd/drawer';
   queryParams = {
     filter: '',
     page: 0,
-    pageSize:10
+    pageSize:20
   };
 
       /*
