@@ -51,7 +51,7 @@
           </thead>
           <tbody>
             <tr *ngFor="let data of invoicesList, let i=index" class="small-text"  id="{{data.id}}" tabindex="-1" (click)="onClick(data, i)" (keydown)="myNavegation($event)"
-            [style.background-color]="data === selectedInvoice ? 'lightblue' : ''" >     
+            [style.background-color]="data === selectedInvoice ? 'lightblue' : ''" (dblclick)="onDoubleClicked(data)">     
               <td>{{data.id}}</td>
               <td>{{ this.formaterDate(data.dateTime) }}</td>
               <td>{{data.customerCuit}}</td>

@@ -3,6 +3,8 @@ import { InvoiceService } from '../invoices.service';
 import { eInvoiceType } from '../model/invoice-type.Enum';
 import { InvoiceModel, } from '../model/invoice.model';
 import { formatCurrency, formatDate } from '@angular/common';
+import { InvoicesViewComponent } from '../invoices-view/invoices-view.component';
+import { NzDrawerService } from 'ng-zorro-antd/drawer';
 
 @Component({
     selector: 'app-invoices-list',
@@ -37,12 +39,14 @@ import { formatCurrency, formatDate } from '@angular/common';
   ** Constructor
   */
   constructor(private service: InvoiceService, 
-    @Inject(LOCALE_ID) public locale: string) {}
+    @Inject(LOCALE_ID) public locale: string,
+    private drawerService: NzDrawerService) {}
 
     selectedIndex!: number; 
     selectedInvoice: any;
     productId!:number |null; 
     index!: number;
+    id!: number;
  /*
   ** Evento de inicio de angular
   */
@@ -87,6 +91,11 @@ import { formatCurrency, formatDate } from '@angular/common';
       return formatCurrency(data, this.locale!, '$', 'ARS', '1.1-2')
     }
 
+    onDoubleClicked (datos:InvoiceModel) {
+      this.id = datos.id
+      this.openComponentInvoicesView();
+      }
+      
     onClick(datos:InvoiceModel, index:number): void {
       this.index= index;
       this.selectedIndex = index
@@ -143,6 +152,36 @@ import { formatCurrency, formatDate } from '@angular/common';
           this.queryParams.page = page;  
         }
       }
-    };
+    }; 
 
-  }
+    openComponentInvoicesView(): void {
+      const drawerRefCustomer = this.drawerService.create<InvoicesViewComponent, { filter: number}, number>({
+        nzContent: InvoicesViewComponent,
+        nzSize: 'large',
+        nzContentParams: {
+          filter: this.id > 0 ? this.id : 0
+        },
+        nzClosable: false
+      });
+      drawerRefCustomer.afterClose.subscribe({   
+        next: (data) => {         
+          this.id= 0;
+          if (data != undefined && data != 0) {
+            this.service.getInvoices(data).subscribe({
+              next: (r: InvoiceModel) =>{
+                this.invoicesList[this.invoicesList.findIndex(r => r.id == data)] != undefined ?            
+               this.invoicesList[this.invoicesList.findIndex(r => r.id == data)] = r :
+               this.invoicesList.push(r);                     
+              },
+              error: ()=>{
+                this.id= 0;
+              }
+            })
+          }
+        },
+        error: () => {
+          this.id= 0;
+         }
+      })
+    };
+ }
