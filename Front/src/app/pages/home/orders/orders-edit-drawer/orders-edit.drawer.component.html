@@ -2,13 +2,13 @@
   #header
   [btnCancelText]="'Cancelar'"
   [btnSaveText]="'Guardar'"
-  [btnSaveSendText]="'Enviar'"
-  [hideSaveSend]="false"
+  [btnSendText]="'Enviar'"
+  [hideSend]="false"
   [title]="'Pedidos'"
   [iconBack]="'rollback'"
   [iconSave]="'save'"
   [iconTitle]="'shopping-cart'"
-  [iconSaveSend]="'mail'"
+  [iconSend]="'mail'"
   (onSaveClick)="save()"
   (onCloseClick)="close()"
   [hideClose]="true"
@@ -56,10 +56,9 @@
                 </nz-select>
                 <ng-template #elseBlock>
                   <nz-form-control [nzSm]="6" [nzXs]="24">
-                    <b > {{ supplierName }}</b>
-                    </nz-form-control>
+                    <b> {{ supplierName }}</b>
+                  </nz-form-control>
                 </ng-template>
-              
               </nz-form-item>
             </div>
           </form>
@@ -78,7 +77,7 @@
                 nzAllowClear
                 nzPlaceHolder="Estado"
                 id="statusId"
-                formControlName="statusId"              
+                formControlName="statusId"
                 [nzOptions]="allStatus"
                 [nzDisabled]="id == 0 ? true : editOrder"
               >
@@ -95,11 +94,10 @@
                 {{ startDate ? (startDate | date: "YYYY-MM-dd") : "N/A" }}
               </b>
               <ng-template #elseBlockDate>
-                <b >
+                <b>
                   {{ dateTime ? (dateTime | date: "YYYY-MM-dd") : "N/A" }}
                 </b>
               </ng-template>
-             
             </nz-form-control>
           </nz-form-item>
 
@@ -136,7 +134,7 @@
                 </div></div></ng-container
           ></ng-container>
 
-           <ng-container formArrayName="emailEntity">
+          <ng-container formArrayName="emailEntity">
             <ng-container
               *ngFor="let data of emailsEntityControls; let i = index"
             >
@@ -157,7 +155,7 @@
                   ></nz-switch>
                 </div>
               </div> </ng-container
-          ></ng-container> 
+          ></ng-container>
         </form>
       </nz-content>
 
@@ -181,7 +179,7 @@
                     formControlName="productSearchFilter"
                     placeholder="Ingrese Marca, Código, Categoria o Producto"
                     nz-input
-                    (keydown.enter)="searchProduct()"                    
+                    (keydown.enter)="searchProduct()"
                   />
                 </nz-input-group>
 
@@ -230,7 +228,11 @@
       [nzShowArrow]="false"
     >
       <nz-content>
-        <nz-table [nzBordered]="true" [nzData]="orderDetailGrid"  nzShowPagination="false">
+        <nz-table
+          [nzBordered]="true"
+          [nzData]="orderDetailGrid"
+          nzShowPagination="false"
+        >
           <thead>
             <tr>
               <th>Codigo</th>
@@ -239,14 +241,14 @@
               <th *ngIf="!viewOrder">Cantidad Recibida</th>
               <th>Precio</th>
               <th>Subtotal</th>
-              <th *ngIf="viewOrder" [nzAlign]="'center'">Accion</th>             
+              <th *ngIf="viewOrder" [nzAlign]="'center'">Accion</th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let data of orderDetailGrid" class="small-text">
               <td>{{ data.code }}</td>
               <td>{{ data.productName }}</td>
-              <td  *ngIf="viewOrder; else editOrderView">                
+              <td *ngIf="viewOrder; else editOrderView">
                 <div
                   class="editable-cell"
                   [hidden]="editId === data.id"
@@ -265,16 +267,16 @@
                 </nz-input-number>
               </td>
               <ng-template #editOrderView>
-                <td> {{ data.orderedQuantity }}</td>
+                <td>{{ data.orderedQuantity }}</td>
               </ng-template>
-            
+
               <td *ngIf="!viewOrder" [nzAlign]="'right'">
                 <div
                   class="editable-cell"
                   [hidden]="editIdrecievedQuantity === data.id"
                   (click)="startEditrecievedQuantity(data.id)"
                 >
-                {{data.recievedQuantity}}
+                  {{ data.recievedQuantity }}
                 </div>
                 <nz-input-number
                   [hidden]="editIdrecievedQuantity !== data.id"
@@ -286,7 +288,7 @@
                 >
                 </nz-input-number>
               </td>
-              <td [nzAlign]="'right'">{{data.price}}</td>
+              <td [nzAlign]="'right'">{{ data.price }}</td>
               <td [nzAlign]="'right'">
                 {{ currencyFormat(data.subTotal) }}
               </td>
