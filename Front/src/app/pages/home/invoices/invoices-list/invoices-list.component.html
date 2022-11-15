@@ -35,10 +35,9 @@
   
         <!-- Tabla -->
      
-      <div>
-        <nz-table  class="table-list" nzShowSizeChanger [nzData]="invoicesList" nzBordered=false [nzSize]="'small'" [nzLoading]="loading"
-          [nzTotal]="totalItems" [nzPageSize]="queryParams.pageSize" [nzPageIndex]="queryParams.page + 1" 
-          [nzPaginationType]="'small'" (nzQueryParams)="onQueryParamsChange($event)">
+      <div class="table" (scroll)="onScroll($event)">
+        <nz-table  class="tabla" nzShowSizeChanger [nzData]="invoicesList" nzBordered="false" [nzSize]="'small'" [nzLoading]="loading"
+          [nzPaginationType]="'small'" nzShowPagination="false">
           <thead>
             <tr>                     
               <th>Número</th>
@@ -51,7 +50,8 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let data of invoicesList" class="small-text"  id="{{data.id}}">     
+            <tr *ngFor="let data of invoicesList, let i=index" class="small-text"  id="{{data.id}}" tabindex="-1" (click)="onClick(data, i)" (keydown)="myNavegation($event)"
+            [style.background-color]="data === selectedInvoice ? 'lightblue' : ''" >     
               <td>{{data.id}}</td>
               <td>{{ this.formaterDate(data.dateTime) }}</td>
               <td>{{data.customerCuit}}</td>

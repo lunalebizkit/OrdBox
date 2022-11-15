@@ -1,5 +1,4 @@
 import { Component, OnInit, Inject, LOCALE_ID } from '@angular/core';
-import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { InvoiceService } from '../invoices.service';
 import { eInvoiceType } from '../model/invoice-type.Enum';
 import { InvoiceModel, } from '../model/invoice.model';
@@ -31,7 +30,7 @@ import { formatCurrency, formatDate } from '@angular/common';
   queryParams = {
     filter: '',
     page: 0,
-    pageSize: 50
+    pageSize:10
   };
 
       /*
@@ -39,6 +38,11 @@ import { formatCurrency, formatDate } from '@angular/common';
   */
   constructor(private service: InvoiceService, 
     @Inject(LOCALE_ID) public locale: string) {}
+
+    selectedIndex!: number; 
+    selectedInvoice: any;
+    productId!:number |null; 
+    index!: number;
  /*
   ** Evento de inicio de angular
   */
@@ -53,13 +57,6 @@ import { formatCurrency, formatDate } from '@angular/common';
      this.getData(this.queryParams);
   };
   /*
-  ** Evento que se ejecuta ante algun cambio en la grillas (sorting,paging or filtering)
-  */
-  onQueryParamsChange(params: NzTableQueryParams): void {
-    this.queryParams.page = params.pageIndex -1;
-    this.queryParams.pageSize = params.pageSize;
-  };
-    /*
   ** Evento de busqueda datos en el server
   */
  
@@ -89,5 +86,63 @@ import { formatCurrency, formatDate } from '@angular/common';
       if(!this.locale) return '';
       return formatCurrency(data, this.locale!, '$', 'ARS', '1.1-2')
     }
+
+    onClick(datos:InvoiceModel, index:number): void {
+      this.index= index;
+      this.selectedIndex = index
+      this.selectedInvoice = datos
+      }  
+
+      /*
+  ** Evento de navegacion por teclado
+  */
+    myNavegation(event:any) {
+      switch (event.key) {
+        case "ArrowDown":
+          let nextCell = this.invoicesList.length > this.selectedIndex ? ++ this.selectedIndex : this.invoicesList.length;
+          if(this.invoicesList[nextCell] !== undefined){
+            this.selectedInvoice= this.invoicesList[nextCell];
+            this.index= nextCell;
+            document.getElementById(nextCell.toString())?.focus()          
+        } 
+          break; 
+        case "ArrowUp":
+          let previousCell= this.selectedIndex > 0 ? -- this.selectedIndex : 0; 
+          if (this.invoicesList[previousCell] !== undefined ){
+            this.selectedInvoice= this.invoicesList[previousCell];
+            this.index = previousCell;
+            document.getElementById(previousCell.toString())?.focus()
+        }
+          break 
+      } 
+    }
+
+      /*
+  ** Evento scroll infinito con llamada a la api
+  */
+    onScroll(event:any): void { 
+      let scrollHeight= event.target.scrollHeight;
+      let scrolltop= event.target.scrollTop;
+      let client= event.target.clientHeight
+      let ScrollPosition= Math.abs(Math.round(scrollHeight - (scrolltop + client)));
+      if((ScrollPosition <=5 ) && (this.totalItems / this.queryParams.page) > this.queryParams.page){ 
+        let page= this.queryParams.page;
+        this.queryParams.page = this.queryParams.page +1; 
+        if(this.totalItems === undefined ||(this.queryParams.page * this.queryParams.pageSize <= this.totalItems)){ 
+          this.service.getInvoices(this.queryParams)
+          .subscribe({
+            next:(r)=>{
+              r.data.map((invoice: InvoiceModel)=>
+              this.invoicesList.push(invoice))  
+              this.loading= false 
+            },
+            error: ()=>{  this.loading = false;
+            this.invoicesList= [];}
+          }) 
+        }else{
+          this.queryParams.page = page;  
+        }
+      }
+    };
 
   }

@@ -124,12 +124,12 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
   queryParams = {
     filter: '',
     page: 0,
-    pageSize: 100,
+    pageSize: 5,
   };
   queryData = {
     filter: '',
     page: 0,
-    pageSize: 100,
+    pageSize: 5,
   };
 
   constructor(
