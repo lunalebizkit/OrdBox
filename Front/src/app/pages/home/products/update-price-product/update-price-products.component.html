@@ -9,6 +9,7 @@
     [iconBack]="'rollback'"
     [iconUpdate]="'check'"
     [iconTitle]="'redo'"
+    (onUpdateClick)="update()"
   >
   </app-header-op-buttons>
 
@@ -178,8 +179,7 @@
     </form>
     <!-- Tabla -->
 
-    <div class="table"    
-    (scroll)="onScroll($event)">
+    <div class="table" (scroll)="onScroll($event)">
       <nz-table
         class="tabla"
         [nzData]="productList"
@@ -188,39 +188,48 @@
         [nzLoading]="loading"
         nzShowPagination="false"
         nzTableLayout="fixed"
-        
       >
         <thead>
           <tr>
             <th nzEllipsis nzWidth="275px">Producto</th>
-            <th nzEllipsis nzWidth="75px" >Categoría</th>
+            <th nzEllipsis nzWidth="75px">Categoría</th>
             <th nzEllipsis nzWidth="70px">Marca</th>
             <th nzEllipsis nzWidth="65px">Proveedor</th>
-            <th nzEllipsis nzWidth="40px"> Código</th>
-            <th nzEllipsis nzWidth= "65px">Precio Costo</th>
-            <th nzEllipsis nzWidth= "65px">Precio Lista</th>
-            <th nzEllipsis nzWidth= "65px">Precio Tarjeta</th>
+            <th nzEllipsis nzWidth="40px">Código</th>
+            <th nzEllipsis nzWidth="65px">Precio Costo</th>
+            <th nzEllipsis nzWidth="65px">Precio Lista</th>
+            <th nzEllipsis nzWidth="65px">Precio Tarjeta</th>
             <th nzEllipsis nzWidth="65px">Precio Contado</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let data of productList; let i= index" class="small-text" tabindex="-1" (click)="onClick(data, i)" (keydown)="myNavegation($event)"
-          [style.background-color]="data === selectedProduct ? 'lightblue' : ''" >
-            <td nzEllipsis >{{ data.description }}</td>
-            <td nzEllipsis >{{ data.categoryName }}</td>
-            <td nzEllipsis >{{ data.brandName }}</td>
-            <td nzEllipsis >{{ data.supplierName }}</td>
-            <td nzEllipsis >{{ data.code }}</td>
-            <td  style="color: blue; text-align: right; font-weight: bold">
+          <tr
+            *ngFor="let data of productList; let i = index"
+            class="small-text"
+            tabindex="-1"
+            (click)="onClick(data, i)"
+            (keydown)="myNavegation($event)"
+            [style.background-color]="
+              data === selectedProduct ? 'lightblue' : ''
+            "
+          >
+            <td nzEllipsis>{{ data.description }}</td>
+            <td nzEllipsis>{{ data.categoryName }}</td>
+            <td nzEllipsis>{{ data.brandName }}</td>
+            <td nzEllipsis>{{ data.supplierName }}</td>
+            <td nzEllipsis>{{ data.code }}</td>
+            <td style="color: blue; text-align: right; font-weight: bold">
               $ {{ data.purchasePrice }}
             </td>
-            <td style="color: green; text-align: right; font-weight: bold;">
+            <td style="color: green; text-align: right; font-weight: bold">
               $ {{ data.salePrice }}
             </td>
-            <td style="color: red; text-align: right; font-weight: bold;">
+            <td style="color: red; text-align: right; font-weight: bold">
               $ {{ data.cardSalePrice }}
             </td>
-            <td  style="text-align: right ; font-weight: bold;">$ {{ data.cashSalePrice }}</td>
+            <td style="text-align: right; font-weight: bold">
+              $ {{ data.cashSalePrice }}
+            </td>
           </tr>
         </tbody>
       </nz-table>

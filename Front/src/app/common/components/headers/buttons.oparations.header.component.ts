@@ -9,7 +9,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 })
 export class HeaderOperationsButtonsComponent implements OnInit {
   @Input('btnSaveText') btnSaveText: string = 'Guardar';
-  @Input('btnSaveSendText') btnSaveSendText: string = 'Guardar y Enviar';
+  @Input('btnSendText') btnSendText: string = 'Enviar';
   @Input('btnCancelText') btnCancelText: string = 'Volver';
   @Input('btnCloseText') btnCloseText: string = 'Volver';
   @Input('btnDeleteText') btnDeleteText: string = 'Eliminar';
@@ -20,7 +20,7 @@ export class HeaderOperationsButtonsComponent implements OnInit {
   @Input('iconDelete') iconDelete!: string;
   @Input('iconTitle') iconTitle!: string;
   @Input('iconBack') iconBack!: string;
-  @Input('iconSaveSend') iconSaveSend!: string;
+  @Input('iconSend') iconSend!: string;
   @Input('iconUpdate') iconUpdate!: string;
   @Input('showSpinner') showSpinner!: boolean;
   @Input('hideTag') hideTag: boolean = true;
@@ -29,8 +29,10 @@ export class HeaderOperationsButtonsComponent implements OnInit {
   @Input('hideBack') hideBack: boolean = false;
   @Input('hideClose') hideClose: boolean = false;
   @Input('hideDelete') hideDelete: boolean = true;
-  @Input('hideSaveSend') hideSaveSend: boolean = true;
+  @Input('hideSend') hideSend: boolean = true;
   @Output('onSaveClick') onSaveClick: EventEmitter<any> =
+    new EventEmitter<any>();
+  @Output('onSendClick') onSendClick: EventEmitter<any> =
     new EventEmitter<any>();
   @Output('onCancelClick') onCancelClick: EventEmitter<any> =
     new EventEmitter<any>();

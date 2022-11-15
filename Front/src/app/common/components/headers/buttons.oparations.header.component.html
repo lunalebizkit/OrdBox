@@ -51,13 +51,13 @@
     </button>
     <!-- </div> -->
     <button
-      *ngIf="!hideSaveSend"
+      *ngIf="!hideSend"
       nz-button
       nzType="primary"
       [nzLoading]="showSpinner"
-      (click)="onSaveClick?.emit($event)"
+      (click)="onSendClick?.emit($event)"
     >
-      <i nz-icon [nzType]="iconSaveSend"></i>{{ btnSaveSendText }}
+      <i nz-icon [nzType]="iconSend"></i>{{ btnSendText }}
     </button>
     <button
       *ngIf="!hideUpdate"
