@@ -88,17 +88,16 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
   date = Date.now();
   startDate = Date.now();
   viewOrder: boolean = true;
-  editOrder!: boolean ;
-  newOrder!: boolean ;
- 
-  
+  editOrder!: boolean;
+  newOrder!: boolean;
+
   /*
    ** Deshabilitar
    */
-  disabled: boolean=false;
+  disabled: boolean = false;
 
   /*
-   ** Lista de Detalle Productos/Orders 
+   ** Lista de Detalle Productos/Orders
    */
   orderDetailGrid: OrderDetailGrid[] = [];
   orderDetail: NewOrderDetail[] = [];
@@ -160,7 +159,7 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {  
+  ngOnInit(): void {
     if (this.id != null || this.id != undefined || this.id != 0) {
       this.getOrder(this.id);
     }
@@ -205,33 +204,32 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
   getOrder(id: number): void {
     if (id != 0)
       this.ordersService.getById(id).subscribe({
-        next: (r) => {          
-          this.viewOrder = false;       
+        next: (r) => {
+          this.viewOrder = false;
           this.supplierName = r.supplierName;
           this.dateTime = r.dateTime;
           this.form.controls['statusId'].setValue(r.statusId);
           this.form.controls['isPaid'].setValue(r.isPaid);
-          this.formSupplierSearch.controls['supplierId'].setValue(r.supplierId),
           r.supplierEmail.forEach((e: any) => {
             this.emailsArray.push(
               new FormControl(`${e}`, [Validators.required])
             );
           });
           /*Bindeo detalles*/
-          r.orderDetail.forEach( (orderDetail: OrderDetailGrid) => {    
-            /**Parseo viejo Producto a Grid */      
-            this.orderListGridTest.push(orderGridParser(orderDetail));           
-           this.orderDetailGrid.push(orderGridParser(orderDetail));
-           /* Parseo viejo Producto a Detalle*/
-           this.orderDetail.push(orderOldProductParser(orderDetail))
-          })    
+          r.orderDetail.forEach((orderDetail: OrderDetailGrid) => {
+            /**Parseo viejo Producto a Grid */
+            this.orderListGridTest.push(orderGridParser(orderDetail));
+            this.orderDetailGrid.push(orderGridParser(orderDetail));
+            /* Parseo viejo Producto a Detalle*/
+            this.orderDetail.push(orderOldProductParser(orderDetail));
+          });
           if (r.statusId == 1) {
             this.editOrder = false;
-            this.disabled = false;            
-            }  else{
-              this.editOrder= true;
-              this.disabled = true;   
-            }  
+            this.disabled = false;
+          } else {
+            this.editOrder = true;
+            this.disabled = true;
+          }
           this.totalCalculate();
           this.loading = false;
         },
@@ -241,16 +239,19 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
       });
   }
 
-  save(): void {    
+  save(): void {
     if (this.isValidForm(this.form) && this.orderDetail.length > 0) {
       const model: NewOrder = {
         id: this.id !== undefined ? this.id : 0,
         supplierId: this.formSupplierSearch.controls['supplierId'].value,
         isPaid: this.form.controls['isPaid'].value,
-        statusId: (this.id != undefined && this.id == 0) ? 1 : this.form.controls['statusId'].value,
+        statusId:
+          this.id != undefined && this.id == 0
+            ? 1
+            : this.form.controls['statusId'].value,
         orderDetail: this.orderDetail,
         dateTime: this.form.controls['datetime'].value,
-        supplierName: null
+        supplierName: null,
       };
       this.isSaving = true;
       this.ordersService.saveOrder(model).subscribe({
@@ -270,7 +271,6 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
       });
     }
   }
-
 
   get emailsArray() {
     return this.form.controls['supplierEmail'] as FormArray;
@@ -331,7 +331,7 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
     this.orderDetail.filter(
       (detail) => detail.productId == this.editId
     )[0].orderedQuantity = quantity;
-  }; 
+  }
 
   startEditrecievedQuantity(id: number): void {
     this.editIdrecievedQuantity = id;
@@ -357,7 +357,7 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
     // )[0].subTotal = quantity * productGrid.price;
 
     // this.totalCalculate();
-     this.orderDetail.filter(
+    this.orderDetail.filter(
       (detail) => detail.productId == this.editIdrecievedQuantity
     )[0].recievedQuantity = quantity;
   }
@@ -389,9 +389,10 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
               const product: ProductsModel = r.data[0];
               /* Parseo un Producto a Grid*/
               const model: OrderDetailGrid = orderGridProductParser(product);
-               this.orderDetailGrid.push(model);
-               /** Parse un Producto a OrderDetalle */
-              const modelDetail:NewOrderDetail =orderNewProductParser(product);
+              this.orderDetailGrid.push(model);
+              /** Parse un Producto a OrderDetalle */
+              const modelDetail: NewOrderDetail =
+                orderNewProductParser(product);
               this.orderDetail.push(modelDetail);
               this.totalCalculate();
             }
@@ -422,7 +423,6 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
 
       drawerRefProduct.afterClose.subscribe({
         next: (data: ProductsModel) => {
-
           if (data != undefined) {
             if (this.orderDetail.find((item) => item.productId == data.id)) {
               /*Actualizo la lista que envio al back */

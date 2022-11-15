@@ -133,6 +133,29 @@
                   ></nz-switch>
                 </div></div></ng-container
           ></ng-container>
+
+          <ng-container formArrayName="emailEntity">
+            <ng-container
+              *ngFor="let data of emailsEntityControls; let i = index"
+            >
+              <div nz-row>
+                <div nz-col nzSpan="12">
+                  <nz-form-item>
+                    <nz-form-label [nzSm]="12" [nzXs]="24">
+                      Email {{ i + 1 }}
+                    </nz-form-label>
+                    <nz-form-control [nzSm]="14" [nzXs]="24">
+                      <input [formControl]="data" nz-input /> </nz-form-control
+                  ></nz-form-item>
+                </div>
+                <div nz-col>
+                  <nz-switch
+                    nzCheckedChildren="Enviar"
+                    nzUnCheckedChildren="No enviar"
+                  ></nz-switch>
+                </div>
+              </div> </ng-container
+          ></ng-container>
         </form>
       </nz-content>
 
