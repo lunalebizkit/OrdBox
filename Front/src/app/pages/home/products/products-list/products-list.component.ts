@@ -63,7 +63,6 @@ export class ProductsListComponent implements OnInit {
   ** Constructor
   */
   constructor(private service: ProductService,
-     private router: Router,
      private drawerService: NzDrawerService) {
 
   }
