@@ -129,9 +129,9 @@
         </tr>
       </thead>
       <tbody>
-        <tr class="small-text" *ngFor="let data of allOrders, let i=index" (click)="onSelect(data.id)" (dblclick)="onDoubleClicked(data)"
+        <tr id="{{i}}" class="small-text" *ngFor="let data of allOrders, let i=index"  (dblclick)="onDoubleClicked(data)"
          tabindex="-1" (click)="onClick(data, i)" (keydown)="myNavegation($event)"
-        [style.background-color]="data === selectedOrders ? 'lightblue' : ''" >
+        [style.background-color]="data === selectedOrders ? 'lightblue' : ''">
           <td>{{data.id}}</td>
           <td>{{ this.formaterDate(data.dateTime)}}</td>
           <td>{{data.supplierName}}</td>

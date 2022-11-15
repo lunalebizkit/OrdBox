@@ -30,7 +30,7 @@ import { formatCurrency, formatDate } from '@angular/common';
   queryParams = {
     filter: '',
     page: 0,
-    pageSize:10
+    pageSize:20
   };
 
       /*

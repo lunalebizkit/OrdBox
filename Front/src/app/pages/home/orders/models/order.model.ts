@@ -10,7 +10,7 @@ export interface NewOrder {
 }
 export interface NewOrderDetail {
   id: number;
-  productId: number;
+  productId: number | string;
   orderedQuantity: number;
   recievedQuantity: number;
   statusId: number;
