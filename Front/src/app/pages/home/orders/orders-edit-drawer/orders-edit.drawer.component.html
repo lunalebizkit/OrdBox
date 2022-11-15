@@ -169,7 +169,7 @@
 
       <div nz-row nzJustify="start" nzAlign="middle">
         <form nz-form [formGroup]="formProductSearch" col nzSpan="12">
-          <div >
+          <div>
             <nz-form-item>
               <nz-form-label [nzSm]="12" [nzXs]="24"
                 >Búsqueda de Producto</nz-form-label
@@ -230,7 +230,7 @@
       [nzShowArrow]="false"
     >
       <nz-content>
-        <nz-table [nzBordered]="true" [nzData]="orderDetailGrid">
+        <nz-table [nzBordered]="true" [nzData]="orderDetailGrid"  nzShowPagination="false">
           <thead>
             <tr>
               <th>Codigo</th>

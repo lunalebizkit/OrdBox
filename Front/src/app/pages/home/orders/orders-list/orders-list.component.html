@@ -46,7 +46,6 @@
                 </nz-form-control>
               </nz-form-item>
             </div>
-
             <div nz-col nzSpan="6" class="mb-2">
               <nz-form-item>
                 <nz-form-label nzFor="supplier">Proveedor</nz-form-label>
@@ -120,7 +119,7 @@
 
 <div class="row">
   <div class="table" (scroll)="onScroll($event)">
-    <nz-table class="tabla" [nzBordered]="true" [nzData]="allOrders">
+    <nz-table class="tabla" [nzBordered]="false" [nzData]="allOrders" nzShowPagination="false" [nzSize]="'small'">
       <thead>
         <tr>
           <th>N° Pedido</th>
@@ -130,7 +129,9 @@
         </tr>
       </thead>
       <tbody>
-        <tr class="small-text" *ngFor="let data of allOrders" (click)="onSelect(data.id)" (dblclick)="onDoubleClicked(data)">
+        <tr class="small-text" *ngFor="let data of allOrders, let i=index" (click)="onSelect(data.id)" (dblclick)="onDoubleClicked(data)"
+         tabindex="-1" (click)="onClick(data, i)" (keydown)="myNavegation($event)"
+        [style.background-color]="data === selectedOrders ? 'lightblue' : ''" >
           <td>{{data.id}}</td>
           <td>{{ this.formaterDate(data.dateTime)}}</td>
           <td>{{data.supplierName}}</td>
@@ -141,7 +142,7 @@
   </div>
 
   <div>
-    <nz-table class="tabla" [nzBordered]="true" [nzData]="orderDetailList" >
+    <nz-table class="tabla" [nzBordered]="true" [nzData]="orderDetailList" nzShowPagination="false" [nzSize]="'small'">
       <thead>
         <tr>
           <th>Producto</th>

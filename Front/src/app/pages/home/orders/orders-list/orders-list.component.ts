@@ -55,6 +55,9 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
   };
 
   totalItems = 0;
+  selectedIndex!: number; 
+  selectedOrders: any;
+  index!: number;
 
   constructor(
     private serviceOrders: OrdersService,
@@ -74,16 +77,11 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
       category: [0],
     });
   }
-
-  
   ngOnInit(): void {
     this.getAllCategories();
     this.getAllSupplier();
     this.getAllOrders();
   }
-
- 
-
   /*
    ** Indicador de carga de marcas y lineas
    */
@@ -100,7 +98,8 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
     this.serviceOrders.getOrders(this.queryParams).subscribe({
       next: (r) => {
         this.isLoading = false;
-        this.allOrders = r.data;          
+        this.allOrders = r.data;  
+        this.totalItems = r.totalCount;        
         
       },
       error: () => {
@@ -200,7 +199,39 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
     this.id = datos.id
     this.openComponentOrdersEdit();
   };
+  onClick(datos:NewOrder, index:number): void {
+    this.index= index;
+    this.selectedIndex = index
+    this.selectedOrders = datos
+    }  
 
+      /*
+  ** Evento de navegacion por teclado
+  */
+  myNavegation(event:any) {
+    switch (event.key) {
+      case "ArrowDown":
+        let nextCell = this.allOrders.length > this.selectedIndex ? ++ this.selectedIndex : this.allOrders.length;
+        if(this.allOrders[nextCell] !== undefined){
+          this.selectedOrders= this.allOrders[nextCell];
+          this.index= nextCell;
+          document.getElementById(nextCell.toString())?.focus()          
+      } 
+        break; 
+      case "ArrowUp":
+        let previousCell= this.selectedIndex > 0 ? -- this.selectedIndex : 0; 
+        if (this.allOrders[previousCell] !== undefined ){
+          this.selectedOrders= this.allOrders[previousCell];
+          this.index = previousCell;
+          document.getElementById(previousCell.toString())?.focus()
+      }
+        break 
+    } 
+  }
+
+  /*
+  ** Evento de scroll infinito
+  */
   onScroll(event:any): void { 
     let scrollHeight= event.target.scrollHeight;
     let scrolltop= event.target.scrollTop;
@@ -210,12 +241,14 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
       let page= this.queryParams.page;
       this.queryParams.page = this.queryParams.page +1;  
       if(this.totalItems === undefined ||(this.queryParams.page * this.queryParams.pageSize <= this.totalItems)){ 
+        console.log(this.totalItems)
         this.serviceOrders.getOrders(this.queryParams)
         .subscribe({
           next:(r)=>{
             r.data.map((order: NewOrder)=>
             this.allOrders.push(order))  
             this.isLoading= false 
+    
           },
           error: ()=>{  this.isLoading = false;
           this.allOrders= [];}
