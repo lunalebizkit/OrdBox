@@ -3,6 +3,8 @@ import { InvoiceService } from '../invoices.service';
 import { eInvoiceType } from '../model/invoice-type.Enum';
 import { InvoiceModel, } from '../model/invoice.model';
 import { formatCurrency, formatDate } from '@angular/common';
+import { NzDrawerService } from 'ng-zorro-antd/drawer';
+import { InvoicesViewDrawerComponent } from '../invoices-view-drawer/invoices-view.drawer.component';
 
 @Component({
     selector: 'app-invoices-list',
@@ -11,6 +13,8 @@ import { formatCurrency, formatDate } from '@angular/common';
   })
   export class InvoicesListComponent implements OnInit {
 
+    index!: number;
+    id!: number;
   /*
   ** Catidad total de entidades
   */
@@ -37,12 +41,12 @@ import { formatCurrency, formatDate } from '@angular/common';
   ** Constructor
   */
   constructor(private service: InvoiceService, 
-    @Inject(LOCALE_ID) public locale: string) {}
+    @Inject(LOCALE_ID) public locale: string,
+    private drawerService: NzDrawerService) {}
 
     selectedIndex!: number; 
     selectedInvoice: any;
-    productId!:number |null; 
-    index!: number;
+    
  /*
   ** Evento de inicio de angular
   */
@@ -67,6 +71,9 @@ import { formatCurrency, formatDate } from '@angular/common';
         this.invoicesList= r.data;
         this.totalItems = r.totalCount;
         this.loading = false;
+        this.selectedIndex = 0;
+        this.selectedInvoice = this.invoicesList[this.selectedIndex];
+        document.getElementById(this.selectedIndex.toString())?.focus() 
       },
       error: ()=>{
         this.loading = false;
@@ -87,11 +94,22 @@ import { formatCurrency, formatDate } from '@angular/common';
       return formatCurrency(data, this.locale!, '$', 'ARS', '1.1-2')
     }
 
+    onDoubleClicked (datos:InvoiceModel) {
+      this.id = datos.id
+      this.openComponentInvoicesView();
+      }
+      
     onClick(datos:InvoiceModel, index:number): void {
       this.index= index;
       this.selectedIndex = index
       this.selectedInvoice = datos
       }  
+
+      onEnter(e: any) {
+        this.selectedInvoice = this.invoicesList[this.index]
+        this.id= this.invoicesList[this.index].id;
+        this.openComponentInvoicesView();  
+        } 
 
       /*
   ** Evento de navegacion por teclado
@@ -143,6 +161,18 @@ import { formatCurrency, formatDate } from '@angular/common';
           this.queryParams.page = page;  
         }
       }
-    };
+    }; 
 
-  }
+    
+    openComponentInvoicesView(): void {
+      const drawerRefCustomer = this.drawerService.create<InvoicesViewDrawerComponent, { filter: number}, number>({
+        nzContent: InvoicesViewDrawerComponent,
+        nzSize: 'large',
+        nzContentParams: {
+          filter: this.id > 0 ? this.id : 0
+        },
+        nzClosable: false
+      });
+    
+    };
+ }

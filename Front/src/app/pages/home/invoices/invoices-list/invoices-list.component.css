@@ -11,10 +11,10 @@
   font-size: 12px;
 }
 .tabla td{
-  font-size: 11px; 
+font-size: 11px; 
 }
 .table{
-  height:55vh;
+  height:85vh;
   overflow-y: scroll;
   scroll-behavior: smooth;
   border-collapse: collapse;

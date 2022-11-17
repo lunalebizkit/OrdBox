@@ -1,20 +1,26 @@
-import { Component, ElementRef, Inject, LOCALE_ID, OnInit } from "@angular/core";
-import { FormBuilder } from "@angular/forms";
+import { formatCurrency } from "@angular/common";
+import { Component, ElementRef, Inject, Input, LOCALE_ID, OnInit, ViewChild } from "@angular/core";
+import { FormGroup } from "@angular/forms";
+import { NzDrawerRef } from "ng-zorro-antd/drawer";
 import { NzMessageService } from "ng-zorro-antd/message";
 import { NzNotificationService } from "ng-zorro-antd/notification";
 import { BaseComponent } from "src/app/common/components/base/base.component";
+import { HeaderOperationsButtonsComponent } from "src/app/common/components/headers/buttons.oparations.header.component";
 import { InvoiceService } from "../invoices.service";
-import { ActivatedRoute, Router } from "@angular/router";
 import { eInvoiceType } from "../model/invoice-type.Enum";
 import { InvoiceDetails, InvoiceModel } from "../model/invoice.model";
-import { formatCurrency } from "@angular/common";
+
 
 @Component({
-  selector: 'app-invoices-view',
-  templateUrl: './invoices-view.component.html',
-  styleUrls: ['./invoices-view.component.css']
+  selector: 'app-invoices-view-drawer',
+  templateUrl: './invoices-view.drawer.component.html',
 })
-export class InvoicesViewComponent extends BaseComponent implements OnInit {
+export class InvoicesViewDrawerComponent extends BaseComponent implements OnInit {
+  @Input() set filter(value: number) {
+    this.id = value;
+};
+
+@ViewChild('header') headerComponent!: HeaderOperationsButtonsComponent;
 
   // variables Generales
   isLoading=true;
@@ -35,36 +41,27 @@ export class InvoicesViewComponent extends BaseComponent implements OnInit {
   userId!: number;
   dateTime!: Date;
   subTotal!: number;
-
+  form!: FormGroup;
   constructor(
-    private fb: FormBuilder,
     notificacionService: NzNotificationService,
-    private serviceInvoice: InvoiceService,
+    private service: InvoiceService,
     el: ElementRef,
-    private router: Router,
-    private route: ActivatedRoute,
     message: NzMessageService,
+    private drawerRef: NzDrawerRef<string>,
     @Inject(LOCALE_ID) public locale: string
      ) {
     super(notificacionService, el, message);
-   
-   
   }
 
   ngOnInit(): void {
-    this.route.params.subscribe({
-      next: (p) => {
-        if (p['id']) {
-            this.isLoading = true;
-            this.getInvoice(p['id']);
-            this.id = p['id'];
-        }
-    },
-    error: () => { }
-    })
+    if (this.id != null || this.id != undefined || this.id != 0) {
+      this.getInvoice(this.id)
+  }
+
   }
   getInvoice(id: number): void {
-    this.serviceInvoice.getInvoiceById(id).subscribe({
+    if (id != 0)
+    this.service.getInvoiceById(id).subscribe({
         next: (r: InvoiceModel) => {
           this.type = r.type,
           this.customerAddress = r.customerAddress,
@@ -87,9 +84,7 @@ export class InvoicesViewComponent extends BaseComponent implements OnInit {
   invoiceType(id: any):string{
     return eInvoiceType[id]
   }
-  back(){    
-    this.router.navigate(['../../'], { relativeTo: this.route });
-  };
+
   totalCalculate(dato: InvoiceDetails[]): void {    
     this.subTotal = 0;
     try {
@@ -109,7 +104,9 @@ export class InvoicesViewComponent extends BaseComponent implements OnInit {
     if(!this.locale) return '';
     return formatCurrency(data, this.locale!, '$', 'ARS', '1.1-2')
   }
-
+  close(): void {
+    this.drawerRef.close();
+};
 }
 
 
