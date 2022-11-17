@@ -3,8 +3,8 @@ import { InvoiceService } from '../invoices.service';
 import { eInvoiceType } from '../model/invoice-type.Enum';
 import { InvoiceModel, } from '../model/invoice.model';
 import { formatCurrency, formatDate } from '@angular/common';
-import { InvoicesViewComponent } from '../invoices-view/invoices-view.component';
 import { NzDrawerService } from 'ng-zorro-antd/drawer';
+import { InvoicesViewDrawerComponent } from '../invoices-view-drawer/invoices-view.drawer.component';
 
 @Component({
     selector: 'app-invoices-list',
@@ -13,6 +13,8 @@ import { NzDrawerService } from 'ng-zorro-antd/drawer';
   })
   export class InvoicesListComponent implements OnInit {
 
+    index!: number;
+    id!: number;
   /*
   ** Catidad total de entidades
   */
@@ -44,9 +46,7 @@ import { NzDrawerService } from 'ng-zorro-antd/drawer';
 
     selectedIndex!: number; 
     selectedInvoice: any;
-    productId!:number |null; 
-    index!: number;
-    id!: number;
+    
  /*
   ** Evento de inicio de angular
   */
@@ -71,6 +71,9 @@ import { NzDrawerService } from 'ng-zorro-antd/drawer';
         this.invoicesList= r.data;
         this.totalItems = r.totalCount;
         this.loading = false;
+        this.selectedIndex = 0;
+        this.selectedInvoice = this.invoicesList[this.selectedIndex];
+        document.getElementById(this.selectedIndex.toString())?.focus() 
       },
       error: ()=>{
         this.loading = false;
@@ -101,6 +104,12 @@ import { NzDrawerService } from 'ng-zorro-antd/drawer';
       this.selectedIndex = index
       this.selectedInvoice = datos
       }  
+
+      onEnter(e: any) {
+        this.selectedInvoice = this.invoicesList[this.index]
+        this.id= this.invoicesList[this.index].id;
+        this.openComponentInvoicesView();  
+        } 
 
       /*
   ** Evento de navegacion por teclado
@@ -154,34 +163,16 @@ import { NzDrawerService } from 'ng-zorro-antd/drawer';
       }
     }; 
 
+    
     openComponentInvoicesView(): void {
-      const drawerRefCustomer = this.drawerService.create<InvoicesViewComponent, { filter: number}, number>({
-        nzContent: InvoicesViewComponent,
+      const drawerRefCustomer = this.drawerService.create<InvoicesViewDrawerComponent, { filter: number}, number>({
+        nzContent: InvoicesViewDrawerComponent,
         nzSize: 'large',
         nzContentParams: {
           filter: this.id > 0 ? this.id : 0
         },
         nzClosable: false
       });
-      drawerRefCustomer.afterClose.subscribe({   
-        next: (data) => {         
-          this.id= 0;
-          if (data != undefined && data != 0) {
-            this.service.getInvoices(data).subscribe({
-              next: (r: InvoiceModel) =>{
-                this.invoicesList[this.invoicesList.findIndex(r => r.id == data)] != undefined ?            
-               this.invoicesList[this.invoicesList.findIndex(r => r.id == data)] = r :
-               this.invoicesList.push(r);                     
-              },
-              error: ()=>{
-                this.id= 0;
-              }
-            })
-          }
-        },
-        error: () => {
-          this.id= 0;
-         }
-      })
+    
     };
  }
