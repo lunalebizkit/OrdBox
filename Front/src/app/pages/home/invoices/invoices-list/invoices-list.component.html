@@ -35,9 +35,10 @@
   
         <!-- Tabla -->
      
-      <div class="table" (scroll)="onScroll($event)">
+    <!--   <div > -->
+      <div  class="table" (scroll)="onScroll($event)">
         <nz-table  class="tabla" nzShowSizeChanger [nzData]="invoicesList" nzBordered="false" [nzSize]="'small'" [nzLoading]="loading"
-          [nzPaginationType]="'small'" nzShowPagination="false">
+          [nzPaginationType]="'small'" nzShowPagination="false">  
           <thead>
             <tr>                     
               <th>Número</th>
@@ -50,8 +51,8 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let data of invoicesList, let i=index" class="small-text"  id="{{data.id}}" tabindex="-1" (click)="onClick(data, i)" (keydown)="myNavegation($event)"
-            [style.background-color]="data === selectedInvoice ? 'lightblue' : ''" >     
+            <tr id="{{i}}" *ngFor="let data of invoicesList, let i=index" class="small-text"  tabindex="-1" (click)="onClick(data, i)" (keydown)="myNavegation($event)"
+            [style.background-color]="data === selectedInvoice ? 'lightblue' : ''" (keydown.enter)="onEnter($event)"(dblclick)="onDoubleClicked(data)">     
               <td>{{data.id}}</td>
               <td>{{ this.formaterDate(data.dateTime) }}</td>
               <td>{{data.customerCuit}}</td>
@@ -59,13 +60,13 @@
               <td [nzAlign]="'right'"><b>{{ this.currencyFormat(data.total) }}</b></td>
               <td [nzAlign]="'center'">{{ this.getInvoiceType(data.type) }}</td>                 
               <td style="text-align: center;">
-                   <a routerLink="/home/invoices/view/{{data.id}}">
-                    <i nz-icon nzType="eye" nzTheme="outline" style="font-size: 16px;"></i>
+                   <a>
+                    <i nz-icon nzType="eye" nzTheme="outline" style="font-size: 16px;" (click)="onDoubleClicked(data)"></i>
                   </a>                   
                 </td>         
             </tr>
           </tbody>
         </nz-table>
-      </div>
+       </div>
     </nz-content>
   </nz-layout>

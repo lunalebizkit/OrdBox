@@ -1,13 +1,13 @@
 <app-header-op-buttons
   #header
-  [btnCloseText]="'Volver'"
-  [btnUpdateText]="'Actualizar'"
-  [hideUpdate]="false"
+  (onCloseClick)="close()" 
+  [hideClose]="true"
+  [hideUpdate]="true"
   [hideSave]="true"
-  [title]="'Actualización de Productos'"
+  [hideBack]="true"
+  [title]="'Comprobantes'"
   [iconBack]="'rollback'"
-  [iconUpdate]="'check'"
-  [iconTitle]="'redo'"
+  [iconTitle]="'container'"
 >
 </app-header-op-buttons>
 
@@ -38,11 +38,11 @@
 
     <nz-divider></nz-divider>
 
-    <nz-table [nzBordered]="true" nzTemplateMode [nzSize]="'small'">
+    <nz-table [nzBordered]="true" nzTemplateMode [nzSize]="'small'" >
       <thead>
         <tr>
-          <th>Codigo</th>
-          <th>Codigo Interno</th>
+          <th>Código</th>
+          <th>Código Interno</th>
           <th>Producto</th>
           <th [nzAlign]="'center'">Cantidad</th>
           <th [nzAlign]="'center'">Precio Unidad</th>

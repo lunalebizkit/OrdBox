@@ -26,7 +26,8 @@ import { InvoicesEditComponent } from "./invoices-edit/invoices-edit.component";
 import { InvoiceCustomerSearchComponent } from './invoice-customer-search/invoice-customer-search.component';
 import { InvoiceProductSearchComponent } from "./invoice-product-search/invoice-product-search.component";
 import { InvoicesListComponent } from "./invoices-list/invoices-list.component";
-import { InvoicesViewComponent } from "./invoices-view/invoices-view.component";
+import { InvoicesViewDrawerComponent } from "./invoices-view-drawer/invoices-view.drawer.component";
+
 
 
 @NgModule({
@@ -41,7 +42,6 @@ import { InvoicesViewComponent } from "./invoices-view/invoices-view.component";
         NzInputNumberModule,
         NzInputModule,
         NzSelectModule,
-        CommonModule,
         AppCommonModule,
         NzIconModule,
         NzTableModule,
@@ -61,7 +61,7 @@ import { InvoicesViewComponent } from "./invoices-view/invoices-view.component";
          InvoiceCustomerSearchComponent, 
          InvoiceProductSearchComponent,
          InvoicesListComponent,
-         InvoicesViewComponent
+         InvoicesViewDrawerComponent
          ]
 })
 export class InvoicesModule { }

@@ -118,7 +118,7 @@ export class ProductsListComponent implements OnInit {
   this.selectedProduct = datos
   }  
   onEnter(e: any ) {
-  this.selectedProduct =   this.productList[this.index]
+  this.selectedProduct = this.productList[this.index]
   this.id= this.productList[this.index].id;
   this.openComponentProductsEdit();  
   } 
