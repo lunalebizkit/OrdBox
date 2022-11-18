@@ -45,6 +45,7 @@
       nz-button
       nzType="primary"
       [nzLoading]="showSpinner"
+      [disabled]="disabled"
       (click)="onSaveClick?.emit($event)"
     >
       <i nz-icon [nzType]="iconSave"></i>{{ btnSaveText }}
