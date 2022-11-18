@@ -225,7 +225,7 @@
     <nz-collapse-panel
       nzHeader="Detalle Pedido"
       [nzActive]="true"
-      [nzShowArrow]="false"
+      [nzShowArrow]="true"
     >
       <nz-content>
         <nz-table
@@ -235,13 +235,13 @@
         >
           <thead>
             <tr>
-              <th>Codigo</th>
+              <th>Código</th>
               <th>Descripción</th>
               <th>Cantidad</th>
               <th *ngIf="!viewOrder">Cantidad Recibida</th>
               <th>Precio</th>
               <th>Subtotal</th>
-              <th *ngIf="viewOrder" [nzAlign]="'center'">Accion</th>
+              <th *ngIf="viewOrder" [nzAlign]="'center'">Acción</th>
             </tr>
           </thead>
           <tbody>

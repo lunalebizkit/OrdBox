@@ -33,7 +33,7 @@
                     </nz-form-item>
 
                     <nz-form-item>
-                        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="address">Direccion
+                        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="address">Dirección
                         </nz-form-label>
                         <nz-form-control [nzSm]="14" [nzXs]="24">
                             <input formControlName="address" nz-input id="address" maxlength="250" />
@@ -41,7 +41,7 @@
                     </nz-form-item>
 
                     <nz-form-item>
-                        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="observation">Observacion
+                        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="observation">Observación
                         </nz-form-label>
                         <nz-form-control [nzSm]="14" [nzXs]="24">
                             <input formControlName="observation" nz-input id="observation" maxlength="250" />
@@ -53,7 +53,7 @@
                         <ng-container *ngFor="let ph of phoneNumberControls; let i = index">
                             <nz-form-item>
                                 <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="phoneNumber">
-                                    Numero Telefono {{i + 1}}
+                                    Número Teléfono {{i + 1}}
                                 </nz-form-label>
                                 <nz-form-control [nzSm]="14" [nzXs]="24">
                                     <input [formControl]="ph" nz-input />

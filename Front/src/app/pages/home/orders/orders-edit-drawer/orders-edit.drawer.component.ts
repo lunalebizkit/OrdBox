@@ -188,7 +188,7 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
   }
 
   onChange(id: number) {
-    if (id != 0)
+    if (id != 0 && id!= null)
       this.entityService.getSupplierById(id).subscribe({
         next: (r) => {
           r.emailEntity.forEach((e: any) => {
@@ -207,6 +207,7 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
         next: (r) => {
           this.viewOrder = false;
           this.supplierName = r.supplierName;
+          this.formSupplierSearch.controls['supplierId'].setValue(r.supplierId);
           this.dateTime = r.dateTime;
           this.form.controls['statusId'].setValue(r.statusId);
           this.form.controls['isPaid'].setValue(r.isPaid);
@@ -240,7 +241,11 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
   }
 
   save(): void {
-    if (this.isValidForm(this.form) && this.orderDetail.length > 0) {
+    if (this.isValidForm(this.form) && this.isValidForm(this.formSupplierSearch)) {
+      if (this.orderDetail.length === 0) {
+         this.showMessageError('No hay Productos Seleccionados'); 
+
+      } else {
       const model: NewOrder = {
         id: this.id !== undefined ? this.id : 0,
         supplierId: this.formSupplierSearch.controls['supplierId'].value,
@@ -269,6 +274,7 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
           this.close();
         },
       });
+    }
     }
   }
 
