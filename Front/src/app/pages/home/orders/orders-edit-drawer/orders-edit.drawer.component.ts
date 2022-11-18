@@ -57,23 +57,34 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
     drawerRef: NzDrawerRef<string>;
   }>;
 
+  /*
+   ** Formularios
+   */
+
   form!: FormGroup;
   formProductSearch!: FormGroup;
   formSupplierSearch!: FormGroup;
+  /*
+   ** Sppiner
+   */
+
   isSaving!: boolean;
   loading!: boolean;
+
+  /*
+   ** Switch
+   */
   switchValue!: boolean;
   switchSendValue!: boolean;
-  datetime = null;
-  fecha = 'Elige una fecha';
-  isConfirmLoading = false;
+
+  /*
+   ** Variables globales
+   */
   id!: number;
   product!: string;
   dateFormat = 'dd/MM/yyyy';
   today = new Date();
-  orderListGrid: OrderDetailGrid[] = [];
-  orderListGridTest: OrderDetailGrid[] = [];
-  entityList: CustomerModel[] = [];
+
   paymentSelected: any;
   supplierName!: string;
   statusId!: number;
@@ -87,9 +98,12 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
   dateTime!: Date;
   date = Date.now();
   startDate = Date.now();
+
+  /*
+   ** Si algunos campos son visibles o no
+   */
   viewOrder: boolean = true;
   editOrder!: boolean;
-  newOrder!: boolean;
 
   /*
    ** Deshabilitar
@@ -97,11 +111,13 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
   disabled: boolean = false;
 
   /*
-   ** Lista de Detalle Productos/Orders
+   ** Lista de Detalle Productos/Orders7Costumer
    */
   orderDetailGrid: OrderDetailGrid[] = [];
   orderDetail: NewOrderDetail[] = [];
-
+  orderListGrid: OrderDetailGrid[] = [];
+  orderListGridTest: OrderDetailGrid[] = [];
+  entityList: CustomerModel[] = [];
   /*
    ** Cantidad total de productos
    */
@@ -165,6 +181,9 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
     }
   }
 
+  /*
+   ** Busqueda Proveedor
+   */
   onSearch(data: string): void {
     if (data.length > 2) {
       this.queryParams.page = 0;
@@ -188,7 +207,7 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
   }
 
   onChange(id: number) {
-    if (id != 0 && id!= null)
+    if (id != 0 && id != null)
       this.entityService.getSupplierById(id).subscribe({
         next: (r) => {
           r.emailEntity.forEach((e: any) => {
@@ -200,6 +219,10 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
         error: () => {},
       });
   }
+
+  /*
+   ** Obtener orden
+   */
 
   getOrder(id: number): void {
     if (id != 0)
@@ -240,43 +263,53 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
       });
   }
 
-  save(): void {
-    if (this.isValidForm(this.form) && this.isValidForm(this.formSupplierSearch)) {
-      if (this.orderDetail.length === 0) {
-         this.showMessageError('No hay Productos Seleccionados'); 
+  /*
+   ** Guardar o actualizar una orden
+   */
 
+  save(): void {
+    if (
+      this.isValidForm(this.form) &&
+      this.isValidForm(this.formSupplierSearch)
+    ) {
+      if (this.orderDetail.length === 0) {
+        this.showMessageError('No hay Productos Seleccionados');
       } else {
-      const model: NewOrder = {
-        id: this.id !== undefined ? this.id : 0,
-        supplierId: this.formSupplierSearch.controls['supplierId'].value,
-        isPaid: this.form.controls['isPaid'].value,
-        statusId:
-          this.id != undefined && this.id == 0
-            ? 1
-            : this.form.controls['statusId'].value,
-        orderDetail: this.orderDetail,
-        dateTime: this.form.controls['datetime'].value,
-        supplierName: null,
-      };
-      this.isSaving = true;
-      this.ordersService.saveOrder(model).subscribe({
-        next: (r) => {
-          this.showNotificationSuccess(
-            'Guardado correcto',
-            `Se guardo correctamente el pedido`
-          );
-          this.isSaving = false;
-          this.close(r.id);
-        },
-        error: () => {
-          this.isSaving = false;
-          this.showMessageError('No se pudo Guardar el pedido');
-          this.close();
-        },
-      });
-    }
+        const model: NewOrder = {
+          id: this.id !== undefined ? this.id : 0,
+          supplierId: this.formSupplierSearch.controls['supplierId'].value,
+          isPaid: this.form.controls['isPaid'].value,
+          statusId:
+            this.id != undefined && this.id == 0
+              ? 1
+              : this.form.controls['statusId'].value,
+          orderDetail: this.orderDetail,
+          dateTime: this.form.controls['datetime'].value,
+          supplierName: null,
+        };
+        this.isSaving = true;
+        this.ordersService.saveOrder(model).subscribe({
+          next: (r) => {
+            this.showNotificationSuccess(
+              'Guardado correcto',
+              `Se guardo correctamente el pedido`
+            );
+            this.isSaving = false;
+            this.close(r.id);
+          },
+          error: () => {
+            this.isSaving = false;
+            this.showMessageError('No se pudo Guardar el pedido');
+            this.close();
+          },
+        });
+      }
     }
   }
+
+  /*
+   ** Obtener emails de proveedores
+   */
 
   get emailsArray() {
     return this.form.controls['supplierEmail'] as FormArray;
@@ -293,9 +326,9 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
     return this.emailsEntityArray.controls as FormControl[];
   }
 
-  disabledDate = (current: Date): boolean =>
-    // Can not select days before today and today
-    differenceInCalendarDays(current, this.today) < 0;
+  /*
+   ** Calcular el valor total de la orden
+   */
 
   totalCalculate(): void {
     this.subtotal = 0;
@@ -317,6 +350,10 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
   stopEdit(): void {
     this.editId = null;
   }
+
+  /*
+   ** Cambiar cantidades el pedido
+   */
 
   changeQuantity(quantity: number): void {
     if (quantity == 0 || quantity == null) {
@@ -368,6 +405,10 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
     )[0].recievedQuantity = quantity;
   }
 
+  /*
+   ** Busqueda Producto
+   */
+
   searchProduct(): void {
     this.product = this.formProductSearch.controls['productSearchFilter'].value;
     this.queryParams.filter = this.product;
@@ -410,6 +451,10 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
       });
     }
   }
+
+  /*
+   ** Abrir el Drawer
+   */
 
   openComponentProduct(): void {
     if (true) {
@@ -501,18 +546,6 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
     return formatCurrency(data, this.locale, '$', 'ARS', '1.1-2');
   }
 
-  addEmailField(e?: MouseEvent): void {
-    if (e) {
-      e.preventDefault();
-    }
-    let emailForm = this.form.controls['emailEntity'] as FormArray;
-    emailForm.push(new FormControl(''));
-  }
-
-  removeEmailField(e: MouseEvent, index: number): void {
-    e.preventDefault();
-    this.emailsArray.removeAt(index);
-  }
   close(id: number | void): void {
     this.drawerRef.close(id);
   }
