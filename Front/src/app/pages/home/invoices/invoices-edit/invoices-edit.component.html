@@ -17,7 +17,7 @@
     <nz-collapse-panel
       nzHeader="Encabezado"
       [nzActive]="true"
-      [nzShowArrow]="false"
+      [nzShowArrow]="true"
     >
       <nz-content>
         <div nz-row nzJustify="center">
@@ -100,7 +100,7 @@
 
         <nz-form-item>
           <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="customerName"
-            >Razon Social - Nombre
+            >Razón Social - Nombre
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24">
             <input
@@ -143,7 +143,7 @@
                 <input
                   nz-input
                   formControlName="productSearchFilter"
-                  placeholder="Ingrese Marca, Código, Categoria o Producto"
+                  placeholder="Ingrese Marca, Código, Categoría o Producto"
                   nzSize="small"
                   (keydown.enter)="searchProduct()"
                 />
@@ -186,7 +186,7 @@
 
 <!-- Tabla Detalle -->
 <nz-collapse>
-  <nz-collapse-panel nzHeader="Detalle" [nzActive]="true" [nzShowArrow]="false">
+  <nz-collapse-panel nzHeader="Detalle" [nzActive]="true" [nzShowArrow]="true">
     <nz-content>
       <nz-table
         [nzBordered]="true"
@@ -198,14 +198,14 @@
         <thead>
           <tr>
             <th></th>
-            <th>Codigo</th>
-            <th>Codigo Interno</th>
+            <th>Código</th>
+            <th>Código Interno</th>
             <th>Producto</th>
             <th>Cantidad</th>
             <th>Precio Unidad</th>
             <th>SubTotal</th>
             <th [nzAlign]="'center'" nzWidth="90px">Iva</th>
-            <th>Accion</th>
+            <th>Acción</th>
           </tr>
         </thead>
         <tbody>
