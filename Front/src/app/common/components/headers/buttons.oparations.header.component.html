@@ -10,6 +10,7 @@
   <nz-page-header-extra>
     <!-- <div class="buttons-save" style="padding-left: 25px;"> -->
     <button
+      style="margin: 2px"
       *ngIf="!hideDelete"
       nz-button
       nzDanger
@@ -21,6 +22,7 @@
     <!-- </div> -->
     <!-- <div class="buttons-save"> -->
     <button
+      style="margin: 2px"
       *ngIf="!hideBack"
       nz-button
       nzType="default"
@@ -30,6 +32,7 @@
       <i nz-icon [nzType]="iconBack"></i>{{ btnCancelText }}
     </button>
     <button
+      style="margin: 2px"
       *ngIf="hideClose"
       nz-button
       nzType="default"
@@ -41,6 +44,7 @@
     <!-- </div> -->
     <!-- <div class="buttons-save"> -->
     <button
+      style="margin: 2px"
       *ngIf="!hideSave"
       nz-button
       nzType="primary"
@@ -52,6 +56,7 @@
     </button>
     <!-- </div> -->
     <button
+      style="margin: 2px"
       *ngIf="!hideSend"
       nz-button
       nzType="primary"
@@ -61,6 +66,7 @@
       <i nz-icon [nzType]="iconSend"></i>{{ btnSendText }}
     </button>
     <button
+      style="margin: 2px"
       *ngIf="!hideUpdate"
       nz-button
       class="btnGreen"
