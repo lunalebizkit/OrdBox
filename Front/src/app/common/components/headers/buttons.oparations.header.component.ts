@@ -30,6 +30,7 @@ export class HeaderOperationsButtonsComponent implements OnInit {
   @Input('hideClose') hideClose: boolean = false;
   @Input('hideDelete') hideDelete: boolean = true;
   @Input('hideSend') hideSend: boolean = true;
+  @Input('disabled') disabled: boolean = false;
   @Output('onSaveClick') onSaveClick: EventEmitter<any> =
     new EventEmitter<any>();
   @Output('onSendClick') onSendClick: EventEmitter<any> =
