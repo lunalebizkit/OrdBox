@@ -14,6 +14,7 @@ import { CustomerModel } from '../model/customer.model';
 
     selectedIndex: number = 0; 
     selectedCustomers: any;
+    index!:number
   /*
   ** Catidad total de entidades
   */
@@ -90,6 +91,7 @@ import { CustomerModel } from '../model/customer.model';
        }
     })
   };
+
   getData(params: any): void {
     this.loading = true;
     this.service.getCustomers(params).subscribe({
@@ -97,6 +99,9 @@ import { CustomerModel } from '../model/customer.model';
         this.entityList= r.data;
         this.totalItems = r.totalCount;
         this.loading = false;
+        this.selectedIndex = 0;
+        this.selectedCustomers = this.entityList[this.selectedIndex];
+        document.getElementById(this.selectedIndex.toString())?.focus()  
       },
       error: ()=>{
         this.loading = false;
@@ -105,21 +110,35 @@ import { CustomerModel } from '../model/customer.model';
     })};
   
     onClick(datos:any, index:number): void {
+      this.index= index;
       this.selectedIndex = index 
       this.selectedCustomers = datos;
     }  
+    onDoubleClicked (datos:any) {
+      this.id = datos.id;
+      this.openComponentCustomerEdit();
+    }
+    onEnter(e: any ) {
+      this.selectedCustomers= this.entityList[this.index]
+      this.id= this.entityList[this.index].id; 
+      this.openComponentCustomerEdit();  
+      } 
     myNavegation(event:any) {
       switch (event.key) {
         case "ArrowDown":
           let nextCell = this.entityList.length > this.selectedIndex ? ++ this.selectedIndex : this.entityList.length;
           if(this.entityList[nextCell] !== undefined){
             this.selectedCustomers= this.entityList[nextCell];  
+            this.index= nextCell;
+            document.getElementById(nextCell.toString())?.focus()    
         } 
           break; 
         case "ArrowUp":
           let previousCell= this.selectedIndex > 0 ? -- this.selectedIndex : 0; 
           if (this.entityList[previousCell] !== undefined ){
             this.selectedCustomers= this.entityList[previousCell];
+            this.index= previousCell;
+            document.getElementById(previousCell.toString())?.focus()   
         }
           break 
       } 
@@ -147,9 +166,6 @@ import { CustomerModel } from '../model/customer.model';
       }
     }   
 
-    onDoubleClicked (datos:any) {
-      this.id = datos.id;
-      this.openComponentCustomerEdit();
-    }
+  
 
   }

@@ -47,8 +47,11 @@
           </tr>
         </thead> 
         <tbody > 
-          <tr  *ngFor="let brand of brandList ; let i = index " class="small-text" tabindex="-1" (click)="onClick(brand, i)" (keydown)="myNavegation($event) "
-          [style.background-color]="brand === selectedBrand ? 'lightblue' : ''" (dblclick)="onDoubleClicked(brand)" >            
+          <tr id="{{i}}" *ngFor="let brand of brandList ; let i=index " class="small-text" tabindex="-1"
+          (click)="onClick(brand, i)" (keydown)="myNavegation($event) "
+          [style.background-color]="brand === selectedBrand ? 'lightblue' : ''" 
+          (dblclick)="onDoubleClicked(brand)" 
+          (keydown.enter)="onEnter($event)" >            
           <td nzEllipsis >{{brand.id }}</td>
           <td nzEllipsis >{{brand.description}}</td>
           </tr> 

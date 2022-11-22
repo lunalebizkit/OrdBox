@@ -12,6 +12,7 @@ import { CategoriesService } from '../../categories/category.services';
 import { BrandsService } from '../../brands/brands.services';
 import { EntityService } from '../../customers/customer.service';
 import { HeaderOperationsButtonsComponent } from 'src/app/common/components/headers/buttons.oparations.header.component';
+import { PopupConfirmationComponent } from 'src/app/common/components/popup-confirmation/popup-confirmation.component';
 
 @Component({
   selector: 'app-products-list',
@@ -21,6 +22,7 @@ import { HeaderOperationsButtonsComponent } from 'src/app/common/components/head
 export class UpdatePriceProductsComponent extends BaseComponent implements OnInit {
  
   @ViewChild('header') headerComponent!: HeaderOperationsButtonsComponent;
+  @ViewChild('popup') popupComponent!: PopupConfirmationComponent;
 /*
   ** Listado de los productos
   */
@@ -50,6 +52,7 @@ export class UpdatePriceProductsComponent extends BaseComponent implements OnIni
   /*
   ** Lista de Productos
   */
+ 
   productLinesList = [];
   allCategories = [];
   allBrands= [];
@@ -90,6 +93,7 @@ export class UpdatePriceProductsComponent extends BaseComponent implements OnIni
   
   selectedIndex: number = 0; 
   selectedProduct: any;
+  productId!: number;
   /*
   ** Constructor
   */
@@ -155,6 +159,8 @@ export class UpdatePriceProductsComponent extends BaseComponent implements OnIni
       this.showMessageError('No Selecciono Parametros de Actualización')
     }
   };
+
+
   getAllCategories(): void {
     this.isLoadingCategory = true;
     this.serviceCategory.getByFilter(this.queryData).subscribe({
@@ -197,6 +203,22 @@ export class UpdatePriceProductsComponent extends BaseComponent implements OnIni
   back(){    
     this.router.navigate(['../list'], { relativeTo: this.route });
   };
+
+  handleOk() {
+    try {
+     this.updateList = this.updateList.
+      filter(element => element.value!= this.popupComponent.elementSelected);
+    this.popupComponent.isConfirmationvisible = false; 
+    if (this.isValidForm(this.form)){
+      this.update();
+    } else{
+      this.showMessageError('No Selecciono Parametros de Actualización')
+    }
+    } catch (error) {
+      console.log(error);
+      
+    }
+  }
   
   
 

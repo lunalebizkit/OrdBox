@@ -388,18 +388,6 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
     if (quantity == 0 || quantity == null) {
       quantity = 1;
     }
-    // let detail = this.orderDetail.filter(
-    //   (detail) => detail.id == this.editId
-    // )[0];
-    // let detailGrid = this.orderDetailGrid.filter(
-    //   (detail) => detail.id == this.editIdrecievedQuantity
-    // )[0];
-
-    // this.orderDetailGrid.filter(
-    //   (detail) => detail.id == this.editId
-    // )[0].subTotal = quantity * productGrid.price;
-
-    // this.totalCalculate();
     this.orderDetail.filter(
       (detail) => detail.productId == this.editIdrecievedQuantity
     )[0].recievedQuantity = quantity;
@@ -533,10 +521,6 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
       console.log(error);
     }
   }
-
-  // statusSelectedChange(id: number): void {
-  //   this.status = id;
-  // }
 
   getStatusName(id: number) {
     return eStatus[id];

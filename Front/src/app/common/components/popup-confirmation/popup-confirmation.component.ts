@@ -11,11 +11,14 @@ export class PopupConfirmationComponent implements OnInit {
    */
    isDeleteConfirmationVisible = false;
    elementSelectedToDelete!: number;
+   isConfirmationvisible= false;
+   elementSelected!: number;
 
    @Input('title') title!: string;
    @Input('header') header!: string;
    @Input('message') message!: string;
    @Output('handleOk') handleOk: EventEmitter<any> = new EventEmitter<any>();
+  
 
   constructor() { }
 
@@ -30,6 +33,14 @@ export class PopupConfirmationComponent implements OnInit {
   showDeleteConfirmation(id: number) {
     this.isDeleteConfirmationVisible = true;
     this.elementSelectedToDelete = id;
+  }
+  showConfirmation(){
+    this.isConfirmationvisible= true;
+    this.elementSelected = 0
+  }
+  handleCance() {
+    this.isConfirmationvisible = false;
+    this.elementSelectedToDelete = 0;
   }
 
 }
