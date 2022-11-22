@@ -13,6 +13,7 @@
   (onCloseClick)="close()"
   [hideClose]="true"
   [hideBack]="true"
+  [disabled]="this.disabled"
 >
 </app-header-op-buttons>
 
@@ -112,27 +113,33 @@
             ></nz-switch>
           </nz-form-item>
 
-          <!-- Va creando divs segun la cantidad de mails creados que tenga el proveedor  -->
-          <ng-container formArrayName="supplierEmail">
-            <ng-container *ngFor="let data of emailsControls; let i = index">
-              <div nz-row>
-                <div nz-col nzSpan="12">
-                  <nz-form-item>
-                    <nz-form-label [nzSm]="12" [nzXs]="24">
-                      Email {{ i + 1 }}
-                    </nz-form-label>
-                    <nz-form-control [nzSm]="14" [nzXs]="24" nzFor="email">
-                      <input [formControl]="data" nz-input /> </nz-form-control
-                  ></nz-form-item>
-                </div>
-                <div nz-col>
-                  <nz-switch
-                    nzCheckedChildren="Enviar"
-                    nzUnCheckedChildren="No enviar"
-                    [nzDisabled]="disabled"
-                  ></nz-switch>
-                </div></div></ng-container
-          ></ng-container>
+          <!-- Va creando divs segun la cantidad de mails creados que tenga el proveedor en caso de una orden existente  -->
+          <div *ngIf="viewOrder">
+            <ng-container formArrayName="supplierEmail">
+              <ng-container *ngFor="let data of emailsControls; let i = index">
+                <div nz-row>
+                  <div nz-col nzSpan="12">
+                    <nz-form-item>
+                      <nz-form-label [nzSm]="12" [nzXs]="24">
+                        Email {{ i + 1 }}
+                      </nz-form-label>
+                      <nz-form-control [nzSm]="14" [nzXs]="24" nzFor="email">
+                        <input
+                          [formControl]="data"
+                          nz-input
+                        /> </nz-form-control
+                    ></nz-form-item>
+                  </div>
+                  <div nz-col>
+                    <nz-switch
+                      nzCheckedChildren="Enviar"
+                      nzUnCheckedChildren="No enviar"
+                      [nzDisabled]="disabled"
+                    ></nz-switch>
+                  </div></div></ng-container
+            ></ng-container>
+          </div>
+          <!-- Va creando divs segun la cantidad de mails creados que tenga el proveedor en caso de una orden nueva  -->
 
           <ng-container formArrayName="emailEntity">
             <ng-container
@@ -161,11 +168,12 @@
 
       <!-- Buscador de Productos -->
       <nz-divider
+        [hidden]="editOrder"
         nzText="Seleccionar productos"
         nzOrientation="left"
       ></nz-divider>
 
-      <div nz-row nzJustify="start" nzAlign="middle">
+      <div [hidden]="editOrder" nz-row nzJustify="start" nzAlign="middle">
         <form nz-form [formGroup]="formProductSearch" col nzSpan="12">
           <div>
             <nz-form-item>
@@ -206,6 +214,7 @@
         </form>
         <div nz-col style="margin: 3px">
           <button
+            style="margin-bottom: 25px"
             nz-button
             nzSize="small"
             nzType="primary"
@@ -225,7 +234,7 @@
     <nz-collapse-panel
       nzHeader="Detalle Pedido"
       [nzActive]="true"
-      [nzShowArrow]="true"
+      [nzShowArrow]="false"
     >
       <nz-content>
         <nz-table
@@ -235,13 +244,13 @@
         >
           <thead>
             <tr>
-              <th>Código</th>
+              <th>Codigo</th>
               <th>Descripción</th>
               <th>Cantidad</th>
               <th *ngIf="!viewOrder">Cantidad Recibida</th>
               <th>Precio</th>
               <th>Subtotal</th>
-              <th *ngIf="viewOrder" [nzAlign]="'center'">Acción</th>
+              <th *ngIf="viewOrder" [nzAlign]="'center'">Accion</th>
             </tr>
           </thead>
           <tbody>
@@ -272,6 +281,7 @@
 
               <td *ngIf="!viewOrder" [nzAlign]="'right'">
                 <div
+                  *ngIf="!editOrder; else viewOrders"
                   class="editable-cell"
                   [hidden]="editIdrecievedQuantity === data.id"
                   (click)="startEditrecievedQuantity(data.id)"
@@ -288,6 +298,9 @@
                 >
                 </nz-input-number>
               </td>
+              <ng-template #viewOrders>
+                <td>{{ data.orderedQuantity }}</td>
+              </ng-template>
               <td [nzAlign]="'right'">{{ data.price }}</td>
               <td [nzAlign]="'right'">
                 {{ currencyFormat(data.subTotal) }}
