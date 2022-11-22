@@ -16,6 +16,7 @@ import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { SecurityAuthModule } from './pages/auth/security-auth.module';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { HttpAuthAddTokenInterceptor } from './common/auth/interceptors/auth.http.addtoken.interceptor';
 
 
 registerLocaleData(en);
@@ -37,7 +38,8 @@ registerLocaleData(en);
     SecurityAuthModule,
     HomeModule,
   ],
-  providers: [{ provide: NZ_I18N, useValue: en_US }, NzMessageService],
+  providers: [{ provide: NZ_I18N, useValue: en_US }, NzMessageService,
+     {provide: HTTP_INTERCEPTORS, useClass: HttpAuthAddTokenInterceptor, multi:true}],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

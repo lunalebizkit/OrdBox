@@ -11,9 +11,6 @@ export class AuthService {
   /* Modal para log in de usuario */
   // @Output() activateAuthModal = new EventEmitter();
 
-  /** Subject usado para obtener el usuario*/
-  //  private userSubject!: BehaviorSubject<AuthUserModel>;
-
   /** Usuario de la aplicacion*/
    public user: BehaviorSubject<AuthUserModel>;
 
@@ -21,7 +18,6 @@ export class AuthService {
    * Constructor
    */
   constructor() {
-    //  this.userSubject = new BehaviorSubject<AuthUserModel>(JSON.parse(localStorage.getItem('auth-user')!));
      this.user = new BehaviorSubject<AuthUserModel>(JSON.parse(localStorage.getItem('auth-user')!));
   }
   /* Medtodo para setear Token y Obtener */
@@ -49,11 +45,6 @@ export class AuthService {
     //  this.user = new BehaviorSubject<AuthUserModel>(new AuthUserModel());
   }
 
-  /*
-  public set userLogin(value: any) {
-    localStorage.setItem('auth-user', JSON.stringify(value));
-    this.userSubject.next(JSON.parse(localStorage.getItem('auth-user')!))
-    //  this.userSubject = new BehaviorSubject<AuthUserModel>();
-  } */
+
 
 }

@@ -68,6 +68,8 @@ getYear() {
     this.service.login(model).subscribe({
       next: (r)=>{
         this.isSaving = false;
+        this.token.tokenLS= r.token;
+        this.token.currentUser= r;
         if (r.rol === new RolesConst().admin) {
           this.router.navigate(['/home'], { relativeTo: this.route})
           this.message.success('Bienvenido' + ' ' + r.userName)
