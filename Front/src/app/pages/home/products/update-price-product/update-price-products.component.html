@@ -9,7 +9,7 @@
     [iconBack]="'rollback'"
     [iconUpdate]="'check'"
     [iconTitle]="'redo'"
-    (onUpdateClick)="update()"
+    (click)="popup.showConfirmation()"
   >
   </app-header-op-buttons>
 
@@ -236,3 +236,12 @@
     </div>
   </nz-content>
 </nz-layout>
+
+<app-popup-confirmation
+  #popup
+  [title]="'Confirmar Actualización'"
+  [header]="'¿Está seguro de que desea actualizar los productos?'"
+  [message]="'Esta acción no se puede revertir'"
+  (handleOk)="handleOk()"
+>
+</app-popup-confirmation>

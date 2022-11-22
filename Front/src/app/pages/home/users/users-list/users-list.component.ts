@@ -15,6 +15,7 @@ import { UsersEditDrawerComponent } from '../users-edit-drawer/users-edit.drawer
 export class UsersListComponent implements OnInit {
 
   id!:number;
+  index!:number
 
   constructor(private service: UserService,
     private drawerService: NzDrawerService,) { }
@@ -43,14 +44,7 @@ export class UsersListComponent implements OnInit {
    ** Catidad total de usuarios
    */
   totalItems = 0;
-   /*
-   ** Evento que se ejecuta ante algun cambio en la grillas (sorting,paging or filtering)
-   */
-  /*  onQueryParamsChange(params: NzTableQueryParams): void {
-    this.queryData.page = params.pageIndex - 1;
-    this.queryData.pageSize = params.pageSize;
-    this.getData(this.queryData);
-  } */
+  
   queryData= {
     filter: '',
     page: 0,
@@ -72,6 +66,9 @@ export class UsersListComponent implements OnInit {
 
         // Saca spinner de carga
         this.loading = false;
+        this.selectedIndex = 0;
+        this.selectedUser = this.userList[this.selectedIndex];
+        document.getElementById(this.selectedIndex.toString())?.focus()  
       },
       error:() => {
         this.loading = false;
@@ -127,21 +124,33 @@ export class UsersListComponent implements OnInit {
   }
 
   onClick(datos:any, index:number): void {
+    this.index= index;
     this.selectedIndex = index 
     this.selectedUser = datos;
   } 
+  
+  onEnter(e: any ) {
+    this.selectedUser = this.userList[this.index]
+    this.id= this.userList[this.index].id; 
+    this.openComponentUserEdit();  
+    } 
+
   myNavegation(event:any) {
     switch (event.key) {
       case "ArrowDown":
         let nextCell = this.userList.length > this.selectedIndex ? ++ this.selectedIndex : this.userList.length;
         if(this.userList[nextCell] !== undefined){
           this.selectedUser = this.userList[nextCell];  
+          this.index= nextCell;
+          document.getElementById(nextCell.toString())?.focus()    
       } 
         break; 
       case "ArrowUp":
         let previousCell= this.selectedIndex > 0 ? -- this.selectedIndex : 0; 
         if (this.userList[previousCell] !== undefined ){
           this.selectedUser= this.userList[previousCell];
+          this.index= previousCell;
+          document.getElementById(previousCell.toString())?.focus()    
       }
         break 
     } 

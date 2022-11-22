@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { NzDrawerService } from 'ng-zorro-antd/drawer';
-import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { EntityService } from '../../customers/customer.service';
 import { CustomerModel } from '../../customers/model/customer.model';
 import { SuppliersEditDrawerComponent } from '../suppliers-edit-drawer/suppliers-edit.drawer.component';
@@ -27,6 +26,7 @@ import { SuppliersEditDrawerComponent } from '../suppliers-edit-drawer/suppliers
   */
   entityList: CustomerModel[] = [];
   id!:number;
+  index!:number
     /*
   ** Parametros de busqueda
   */
@@ -56,14 +56,6 @@ import { SuppliersEditDrawerComponent } from '../suppliers-edit-drawer/suppliers
     this.queryParams.page = 0;
      this.getData(this.queryParams);
   }
-  /*
-  ** Evento que se ejecuta ante algun cambio en la grillas (sorting,paging or filtering)
-  */
-/*   onQueryParamsChange(params: NzTableQueryParams): void {
-    this.queryParams.page = params.pageIndex -1;
-    this.queryParams.pageSize = params.pageSize;
-     this.getData(this.queryParams);
-  } */
     /*
   ** Evento de busqueda datos en el server
   */
@@ -75,6 +67,9 @@ import { SuppliersEditDrawerComponent } from '../suppliers-edit-drawer/suppliers
         this.entityList= r.data;
         this.totalItems = r.totalCount;
         this.loading = false;
+        this.selectedIndex = 0;
+        this.selectedSuppliers = this.entityList[this.selectedIndex];
+        document.getElementById(this.selectedIndex.toString())?.focus()  
       },
       error: ()=>{
         this.loading = false;
@@ -83,21 +78,31 @@ import { SuppliersEditDrawerComponent } from '../suppliers-edit-drawer/suppliers
     })};
 
     onClick(datos:any, index:number): void {
+      this.index= index;
       this.selectedIndex = index 
       this.selectedSuppliers = datos;
     } 
+    onEnter(e: any ) {
+      this.selectedSuppliers = this.entityList[this.index]
+      this.id= this.entityList[this.index].id; 
+      this.openComponentSupplierEdit();  
+      } 
     myNavegation(event:any) {
       switch (event.key) {
         case "ArrowDown":
           let nextCell = this.entityList.length > this.selectedIndex ? ++ this.selectedIndex : this.entityList.length;
           if(this.entityList[nextCell] !== undefined){
             this.selectedSuppliers = this.entityList[nextCell];  
+            this.index= nextCell;
+            document.getElementById(nextCell.toString())?.focus()   
         } 
           break; 
         case "ArrowUp":
           let previousCell= this.selectedIndex > 0 ? -- this.selectedIndex : 0; 
           if (this.entityList[previousCell] !== undefined ){
             this.selectedSuppliers= this.entityList[previousCell];
+            this.index= previousCell;
+            document.getElementById(previousCell.toString())?.focus()   
         }
           break 
       } 

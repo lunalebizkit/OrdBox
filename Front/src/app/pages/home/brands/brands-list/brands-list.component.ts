@@ -23,6 +23,7 @@ export class BrandsListComponent implements OnInit{
   selectedIndex: number = 0; 
   selectedBrand: any;
   id!: number;
+  index!: number;
   
 queryData= {
   filter: '',
@@ -43,7 +44,10 @@ queryData= {
     next: (r)=>{
       this.brandList= r.data;
       this.totalItems= r.totalCount; 
-      this.loading= false
+      this.loading= false;
+      this.selectedIndex = 0;
+      this.selectedBrand = this.brandList[this.selectedIndex];
+      document.getElementById(this.selectedIndex.toString())?.focus()   
     },
     error: ()=>{  this.loading = false;
      this.brandList= []; }
@@ -62,9 +66,15 @@ onDoubleClicked (datos:any) {
   this.openComponentBrandEdit();
 }
 onClick(datos:any, index:number): void {
+  this.index= index;
   this.selectedIndex = index 
   this.selectedBrand = datos;
 }  
+  onEnter(e: any ) {
+    this.selectedBrand = this.brandList[this.index]
+    this.id= this.brandList[this.index].id; 
+    this.openComponentBrandEdit();  
+    } 
 
 /*
    ** Evento de navegación por teclado en la tabla
@@ -76,12 +86,16 @@ myNavegation(event:any) {
       let nextCell = this.brandList.length > this.selectedIndex ? ++ this.selectedIndex : this.brandList.length;
       if(this.brandList[nextCell] !== undefined){
         this.selectedBrand= this.brandList[nextCell];  
+        this.index= nextCell;
+        document.getElementById(nextCell.toString())?.focus()    
     } 
       break; 
     case "ArrowUp":
       let previousCell= this.selectedIndex > 0 ? -- this.selectedIndex : 0; 
       if (this.brandList[previousCell] !== undefined ){
         this.selectedBrand= this.brandList[previousCell];
+        this.index= previousCell;
+        document.getElementById(previousCell.toString())?.focus()    
     }
       break 
   } 

@@ -47,8 +47,9 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let data of entityList; let i=index" class="small-text" (dblclick)="onDoubleClicked(data)" tabindex="-1" (click)="onClick(data, i)" (keydown)="myNavegation($event) "
-            [style.background-color]="data === selectedSuppliers ? 'lightblue' : ''" >          
+            <tr id="{{i}}" *ngFor="let data of entityList; let i=index" class="small-text" (dblclick)="onDoubleClicked(data)" tabindex="-1" (click)="onClick(data, i)" (keydown)="myNavegation($event) "
+            [style.background-color]="data === selectedSuppliers ? 'lightblue' : ''" 
+            (keydown.enter)="onEnter($event)" >          
               <td nzEllipsis>{{data.name}}</td>
               <td nzEllipsis >{{data.dni}}</td>
               <td nzEllipsis>{{data.cuit}}</td>

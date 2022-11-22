@@ -25,6 +25,7 @@ export class CategoriesListComponent implements OnInit {
    selectedIndex: number = 0; 
    selectedCategory: any;
    id!: number;
+   index!: number
 
   categoryList: CategoryModel[]= []
 
@@ -66,9 +67,16 @@ queryData= {
    */
 
   onClick(datos:any, index:number): void {
+    this.index= index;
     this.selectedIndex = index 
     this.selectedCategory= datos;
   } 
+
+  onEnter(e: any ) {
+    this.selectedCategory = this.categoryList[this.index]
+    this.id= this.categoryList[this.index].id; 
+    this. openComponentCategoryEdit();  
+    } 
 
   /*
    ** Evento de navegación por teclado
@@ -78,13 +86,17 @@ queryData= {
       case "ArrowDown":
         let nextCell = this.categoryList.length > this.selectedIndex ? ++ this.selectedIndex : this.categoryList.length;
         if(this.categoryList[nextCell] !== undefined){
-          this.selectedCategory= this.categoryList[nextCell];  
+          this.selectedCategory= this.categoryList[nextCell]; 
+          this.index= nextCell; 
+          document.getElementById(nextCell.toString())?.focus()    
       } 
         break; 
       case "ArrowUp":
         let previousCell= this.selectedIndex > 0 ? -- this.selectedIndex : 0; 
         if (this.categoryList[previousCell] !== undefined ){
           this.selectedCategory= this.categoryList[previousCell];
+          this.index= previousCell;
+          document.getElementById(previousCell.toString())?.focus()    
       }
         break 
     }   

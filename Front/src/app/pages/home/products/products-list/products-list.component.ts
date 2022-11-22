@@ -22,7 +22,7 @@ export class ProductsListComponent implements OnInit {
    */
    id!: number;
    clickId!: number;
-   index!: number;
+   
 
   /*
   ** Indicador de carga de la grilla
@@ -70,6 +70,7 @@ export class ProductsListComponent implements OnInit {
   selectedIndex!: number; 
   selectedProduct: any;
   productId!:number |null; 
+  index!: number;
 
   /*
   ** Evento de inicio de angular
@@ -117,6 +118,7 @@ export class ProductsListComponent implements OnInit {
   this.selectedIndex = index
   this.selectedProduct = datos
   }  
+
   onEnter(e: any ) {
   this.selectedProduct = this.productList[this.index]
   this.id= this.productList[this.index].id;
