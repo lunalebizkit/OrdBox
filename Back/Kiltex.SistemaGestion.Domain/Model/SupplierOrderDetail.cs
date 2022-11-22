@@ -8,17 +8,16 @@ namespace Kiltex.SistemaGestion.Domain.Model
     [Table("supplier_order_detail")]
     public class SupplierOrderDetail : BaseModel
     {
-        [Required]
         [Column("product_id")]
         public long ProductId { get; set; }
 
-        [ForeignKey("ProductId")]
+        [ForeignKey(nameof(ProductId))]
         public Product Product { get; set; }
 
         [Column("supplier_order_id")]
         public long SupplierOrderId { get; set; }
 
-        [ForeignKey("SupplierOrderId")]
+        [ForeignKey(nameof(SupplierOrderId))]
         public SupplierOrder SupplierOrder { get; set; }
 
         [Required]
