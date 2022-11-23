@@ -5,6 +5,7 @@ import { NzMessageService } from "ng-zorro-antd/message";
 import { NzNotificationService } from "ng-zorro-antd/notification";
 import { BaseComponent } from "src/app/common/components/base/base.component";
 import { HeaderOperationsButtonsComponent } from "src/app/common/components/headers/buttons.oparations.header.component";
+import { PopupConfirmationComponent } from "src/app/common/components/popup-confirmation/popup-confirmation.component";
 import { CategoriesService } from "../category.services";
 import { CategoryModel } from "../model/category.model";
 
@@ -22,6 +23,8 @@ export class CategoryEditDrawerComponent extends BaseComponent implements OnInit
   ** Header
   */
   @ViewChild('header') headerComponent!: HeaderOperationsButtonsComponent;
+  @ViewChild('popup') popupComponent!: PopupConfirmationComponent;
+
     /*
    ** Determina si esta en proceso de guardado
    */
@@ -97,6 +100,19 @@ export class CategoryEditDrawerComponent extends BaseComponent implements OnInit
 }
     close(id: number | void): void {
         this.drawerRef.close(id);
+    }
+
+    msjConfirmOk(){
+      try {
+       if (this.isValidForm(this.form)){
+         this.save();
+       } else{
+         this.showMessageError('Formulario Vacío')
+       }
+       } catch (error) {
+         console.log(error);
+         
+       }
     }
 
 }

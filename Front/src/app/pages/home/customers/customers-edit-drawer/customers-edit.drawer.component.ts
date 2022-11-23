@@ -5,6 +5,7 @@ import { NzMessageService } from "ng-zorro-antd/message";
 import { NzNotificationService } from "ng-zorro-antd/notification";
 import { BaseComponent } from "src/app/common/components/base/base.component";
 import { HeaderOperationsButtonsComponent } from "src/app/common/components/headers/buttons.oparations.header.component";
+import { PopupConfirmationComponent } from "src/app/common/components/popup-confirmation/popup-confirmation.component";
 import { EntityService } from "../customer.service";
 
 
@@ -21,6 +22,7 @@ export class CustomersEditDrawerComponent extends BaseComponent implements OnIni
 ** Header
 */
     @ViewChild('header') headerComponent!: HeaderOperationsButtonsComponent;
+    @ViewChild('popup') popupComponent!: PopupConfirmationComponent;
     /*
    ** Determina si esta en proceso de guardado
    */
@@ -154,5 +156,17 @@ export class CustomersEditDrawerComponent extends BaseComponent implements OnIni
         this.phoneNumberArray.removeAt(index);   
     };
 
+    msjConfirmOk(){
+        try {
+         if (this.isValidForm(this.form)) {
+           this.save();
+         } else{
+           this.showMessageError('Formulario vacío')
+         }
+         } catch (error) {
+           console.log(error);
+           
+         }
+      }
 
 }

@@ -522,6 +522,24 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
     }
   }
 
+  msjConfirmOk(){
+    try {
+      this.orderDetail = this.orderDetail.
+       filter(element => element.productId != this.popupComponent.elementSelected);
+     this.popupComponent.isConfirmationvisible = false; 
+     if (
+      this.isValidForm(this.form)
+    || (this.orderDetailGrid.length === 0) ){
+       this.save();
+     } else{
+       this.showMessageError('No ha seleccionado producto')
+     }
+     } catch (error) {
+       console.log(error);
+       
+     }
+  }
+
   getStatusName(id: number) {
     return eStatus[id];
   }

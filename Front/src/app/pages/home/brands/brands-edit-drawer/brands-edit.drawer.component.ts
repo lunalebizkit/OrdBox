@@ -6,6 +6,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { BaseComponent } from 'src/app/common/components/base/base.component';
 import { HeaderOperationsButtonsComponent } from 'src/app/common/components/headers/buttons.oparations.header.component';
+import { PopupConfirmationComponent } from 'src/app/common/components/popup-confirmation/popup-confirmation.component';
 import { BrandsService } from '../brands.services';
 import { BrandsModel } from '../model/brands.model';
 
@@ -19,6 +20,8 @@ export class BrandsEditDrawerComponent extends BaseComponent implements OnInit {
   }
 
   @ViewChild('header') headerComponent!: HeaderOperationsButtonsComponent;
+  @ViewChild('popup') popupComponent!: PopupConfirmationComponent;
+
   isLoading!: boolean;
   isSaving!: boolean;
   form!: FormGroup;
@@ -86,5 +89,18 @@ export class BrandsEditDrawerComponent extends BaseComponent implements OnInit {
   }
   close(id: number | void): void {
     this.drawerRef.close(id);
+  }
+
+  msjConfirmOk(){
+    try {
+     if (this.isValidForm(this.form)){
+       this.save();
+     } else{
+       this.showMessageError('Formulario Vacío')
+     }
+     } catch (error) {
+       console.log(error);
+       
+     }
   }
 }
