@@ -1,9 +1,9 @@
-import { Permission } from "src/app/pages/auth/permission/permissions.enum";
+import { Permission } from 'src/app/common/auth/models/permissions.enum';
 export class AuthUserModel {
-    userName!: string;
-    fullName!: string;
-    refreshToken!: string;
-    token!: string;
-    rol!: string;
-    permissions!: Permission[];
+  userName!: string;
+  fullName!: string;
+  refreshToken!: string;
+  token!: string;
+  rol!: string;
+  permissions!: Permission[];
 }

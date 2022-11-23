@@ -1,52 +1,120 @@
 import { AuthService } from '../interceptors/auth.service';
-import { Injectable } from "@angular/core";
-import { PermissionModel } from '../../../pages/auth/permission/permission.model';
-import { Permission } from '../../../pages/auth/permission/permissions.enum';
+import { Injectable } from '@angular/core';
+import { PermissionModel } from '../models/permission.model';
+import { Permission } from '../models/permissions.enum';
 import { Router } from '@angular/router';
 
 @Injectable()
 export class PermissionService {
-
-  constructor(private auth: AuthService, private router: Router) { }
+  constructor(private auth: AuthService, private router: Router) {}
 
   permission: PermissionModel[] = [
+    //#region Users
+    {
+      url: new RegExp('/home/users'),
+      permissions: [
+        Permission.ListUser,
+        Permission.GetUser,
+        Permission.CreateUser,
+        Permission.DeleteUser,
+        Permission.EditUser,
+      ],
+    },
+    //#endregion
 
-    //#region Commission
-    { url:  new RegExp ('/home/commission'), permissions: [Permission.visualizeCommission] },
+    //#region Brand
+    {
+      url: new RegExp('/home/brands'),
+      permissions: [
+        Permission.GetBrand,
+        Permission.CreaterBrand,
+        Permission.ListBrand,
+        Permission.EditBrand,
+      ],
+    },
+    //#endregion
+
+    //#region Category
+    {
+      url: new RegExp('home/categories'),
+      permissions: [
+        Permission.GetCategory,
+        Permission.CreateCategory,
+        Permission.ListCategory,
+        Permission.EditCategory,
+      ],
+    },
+    //#endregion
+
+    //#region Customer
+    {
+      url: new RegExp('/home/customers'),
+      permissions: [
+        Permission.CreaterCustomer,
+        Permission.ListCustomer,
+        Permission.GetCustomerByCuit,
+        Permission.GetCustomerByCuit,
+      ],
+    },
     //#endregion
 
     //#region Entity
-    { url: new RegExp ('/home/entity/list'), permissions: [Permission.visualizeEntity] },
-    { url: new RegExp ('/home/entity/new'), permissions: [Permission.editEntity] },
-    { url: new RegExp ('/home/entity/edit/[1-9](\\d*)'), permissions: [Permission.editEntity] },
-    { url: new RegExp ('/home/entity/[1-9](\\d*)/bills'), permissions: [Permission.visualizeBillingEntity] },
+    {
+      url: new RegExp('/home/entityt'),
+      permissions: [
+        Permission.GetEntity,
+        Permission.CreateEntity,
+        Permission.EditEntity,
+        Permission.ListEntity,
+      ],
+    },
     //#endregion
 
-    //#region Operations
-    { url: new RegExp ('/home/entity/[1-9](\\d*)/operations/pay-order'), permissions: [Permission.payOrder] },
-    { url: new RegExp ('/home/entity/[1-9](\\d*)/operations/withdraw'), permissions: [Permission.withdraw] },
-    { url: new RegExp ('/home/entity/[1-9](\\d*)/operations/check'), permissions: [Permission.check] },
-    { url: new RegExp ('/home/entity/[1-9](\\d*)/operations/bill'), permissions: [Permission.instrument] },
-    { url: new RegExp ('/home/entity/[1-9](\\d*)/operations/pay-order/payment/[1-9](\\d*)'), permissions: [Permission.payOrderProv] }, //Pagar Prov
-    { url: new RegExp ('/home/entity/[1-9](\\d*)/operations'), permissions: [Permission.visualizeOperations] },
+    //#region Invoice
+    {
+      url: new RegExp('/home/invoices'),
+      permissions: [Permission.GetInvoice, Permission.CreateInvoice],
+    },
     //#endregion
 
-    //#region User
-    { url: new RegExp ('/home/user/list'), permissions: [Permission.visualizeUser] },
-    { url: new RegExp ('/home/user/new'), permissions: [Permission.editUser] },
-    { url: new RegExp ('/home/user/edit/[1-9](\\d*)'), permissions: [Permission.editUser] },
+    //#region Product
+    {
+      url: new RegExp('/home/products/list'),
+      permissions: [
+        Permission.GetProduct,
+        Permission.CreateProduct,
+        Permission.EditProduct,
+        Permission.ListProduct,
+      ],
+    },
     //#endregion
-
-    //#region Instrument Management
-    { url:  new RegExp ('/home/instrument-management/list'), permissions: [Permission.visualizeInstrument] },
+    //#region Suppliers
+    {
+      url: new RegExp('/home/suppliers'),
+      permissions: [
+        Permission.GetSupplier,
+        Permission.EditSupplier,
+        Permission.ListSupplier,
+        Permission.CreateSupplier,
+      ],
+    },
     //#endregion
-
-    //#region Massive
-    { url:  new RegExp ('/home/massive-billing/list'), permissions: [Permission.visualizeMassiveEntity] },
+    //#region OrderSupplier
+    {
+      url: new RegExp('/home/orders'),
+      permissions: [
+        Permission.GetOrderSupplier,
+        Permission.CreateOrderSupplier,
+        Permission.EditOrderSupplier,
+        Permission.ListOrderSupplier,
+      ],
+    },
     //#endregion
-
-    //#region Processes
-    { url:  new RegExp ('/home/process'), permissions: [Permission.visualizeProcesses] },
+    //#region UpdatePrice
+    {
+      url: new RegExp('/home/products/updateprice'),
+      permissions: [Permission.ListUpdatePrice, Permission.EditUpdatePrice],
+    },
     //#endregion
   ];
 
@@ -58,7 +126,7 @@ export class PermissionService {
     let permissions = this.auth.currentUser.permissions;
 
     let hasPermission = this.checkPermissions(url, permissions);
-    if(!hasPermission){
+    if (!hasPermission) {
       this.router.navigate(['home/entity']);
     }
 
@@ -66,17 +134,20 @@ export class PermissionService {
   }
 
   private checkPermissions(url: string, permissions: Permission[]): boolean {
-    let permissionUrl = this.permission.find(p => p.url.test(url))?.permissions;
+    let permissionUrl = this.permission.find((p) =>
+      p.url.test(url)
+    )?.permissions;
 
-    if(!permissionUrl) return false;
+    if (!permissionUrl) return false;
 
-    return permissions.findIndex( i => permissionUrl?.includes(i)) !== -1;
+    return permissions.findIndex((i) => permissionUrl?.includes(i)) !== -1;
   }
 
-  public validatePermissionKey(permissionKey: Permission[]): boolean{
+  public validatePermissionKey(permissionKey: Permission[]): boolean {
     let userPerms = this.auth.currentUser.permissions;
 
-    let valid = userPerms && permissionKey.findIndex( i => userPerms.includes(i)) !== -1;
+    let valid =
+      userPerms && permissionKey.findIndex((i) => userPerms.includes(i)) !== -1;
 
     return valid;
   }
