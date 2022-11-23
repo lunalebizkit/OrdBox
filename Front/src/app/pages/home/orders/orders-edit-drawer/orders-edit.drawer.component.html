@@ -9,7 +9,7 @@
   [iconSave]="'save'"
   [iconTitle]="'shopping-cart'"
   [iconSend]="'mail'"
-  (onSaveClick)="save()"
+  (onSaveClick)="pop.showConfirmation()"
   (onCloseClick)="close()"
   [hideClose]="true"
   [hideBack]="true"
@@ -244,13 +244,13 @@
         >
           <thead>
             <tr>
-              <th>Codigo</th>
+              <th>Código</th>
               <th>Descripción</th>
               <th>Cantidad</th>
               <th *ngIf="!viewOrder">Cantidad Recibida</th>
               <th>Precio</th>
               <th>Subtotal</th>
-              <th *ngIf="viewOrder" [nzAlign]="'center'">Accion</th>
+              <th *ngIf="viewOrder" [nzAlign]="'center'">Acción</th>
             </tr>
           </thead>
           <tbody>
@@ -350,5 +350,13 @@
   [header]="'¿Está seguro de que desea eliminar el producto seleccionado?'"
   [message]="'Esta acción no se puede revertir'"
   (handleOk)="handleOk()"
+>
+</app-popup-confirmation>
+<app-popup-confirmation
+  #pop
+  [title]="'Confirmar Pedido'"
+  [header]="'¿Está seguro que desea guardar pedido?'"
+  [message]="'Esta acción no se puede revertir'"
+  (handleOk)="msjConfirmOk()"
 >
 </app-popup-confirmation>
