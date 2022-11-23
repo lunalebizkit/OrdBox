@@ -14,6 +14,14 @@ namespace Kiltex.SistemaGestion.Domain
         {
 
         }
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+            builder.Entity<SupplierOrder>()
+                .HasMany(i => i.SupplierOrderDetail)
+                .WithOne(i => i.SupplierOrder)
+                .OnDelete(DeleteBehavior.NoAction);
+        }
         public virtual DbSet<Rol> Rols { get; set; }
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<Permission> Permissions { get; set; }
@@ -31,10 +39,7 @@ namespace Kiltex.SistemaGestion.Domain
         public virtual DbSet<Invoice> Invoices { get; set; }
         public virtual DbSet<InvoiceDetail> InvoiceDetails { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder builder)
-        {
-            base.OnModelCreating(builder);
-        }
+     
         //private static void InitialRoles(ModelBuilder modelBuilder)
         //{
         //    modelBuilder.Entity<Rol>().HasData(
