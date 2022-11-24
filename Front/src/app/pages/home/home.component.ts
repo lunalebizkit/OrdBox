@@ -1,27 +1,25 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from 'src/app/common/auth/interceptors/auth.service';
-import { RolesConst } from '../auth/permission/permission-rol.enum';
+import { RolesConst } from 'src/app/common/auth/models/permission-rol.enum';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+  styleUrls: ['./home.component.css'],
 })
 export class HomeComponent implements OnInit {
-
   isCollapsed = true;
 
   constRol: RolesConst = new RolesConst();
 
-  constructor(public token: AuthService,
+  constructor(
+    public token: AuthService,
     private router: Router,
     private route: ActivatedRoute
-    ) { }
+  ) {}
 
-  ngOnInit() {
-
-  }
+  ngOnInit() {}
 
   getYear() {
     return new Date().getFullYear();
