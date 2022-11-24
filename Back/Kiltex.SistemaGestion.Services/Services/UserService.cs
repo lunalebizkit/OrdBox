@@ -107,16 +107,8 @@ namespace Kiltex.SistemaGestion.Services.Services
                 return Error<IdResponse<long>>(ErrorsCodes.C_009_ERROR_DUPLICATE, "Ya existe un usuario con ese correo");
             }
 
-            var usermodel = new User()
-            {
-                Id = model.Id,
-                FirstName = model.FirstName,
-                LastName = model.LastName,
-                UserName = model.UserName,
-                Email = model.Email,
-                RoleId = model.RoleId,
-                Password = model.Password,
-            };
+            var usermodel = _mapper.Map<User>(model);
+          
             if (usermodel.Id == 0)
             {
                 usermodel.Password = SecurePasswordHasher.Hash(usermodel.Password, 100);

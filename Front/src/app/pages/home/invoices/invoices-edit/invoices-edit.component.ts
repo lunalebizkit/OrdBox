@@ -42,7 +42,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
   subtotal: number=0;
   iva: number=21;
   total: number=0;
-  userId = 5;
+  userId = 2;
   invoiceListTest: InvoiceDetailList[] = [];
 
   isLoading: boolean= false;
