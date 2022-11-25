@@ -1,5 +1,4 @@
-﻿using Kiltex.SistemaGestion.Domain.Enum;
-using Kiltex.SistemaGestion.SDK.Security;
+﻿
 using Kiltex.SistemaGestion.Services.Services;
 using Kiltex.SistemaGestion.Api.Model;
 using Microsoft.AspNetCore.Authorization;

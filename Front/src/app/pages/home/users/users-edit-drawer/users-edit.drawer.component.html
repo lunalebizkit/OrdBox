@@ -1,6 +1,6 @@
 <app-header-op-buttons #header [btnCancelText]="'Cancelar'" [btnSaveText]="'Guardar'" [title]="'Usuarios'"
 [showSpinner]="isSaving" [iconBack]="'rollback'" [iconSave]="'save'" [iconTitle]="'user'"
-(onSaveClick)="save()"
+(onSaveClick)="pop.showConfirmation()"
 (onCloseClick)="close()" [hideClose]="true" [hideBack]="true">
 </app-header-op-buttons>
 <nz-spin [nzSpinning]="isLoading" style="margin-top: 20px;">
@@ -89,3 +89,12 @@
     </nz-collapse>
 
 </nz-spin>
+
+<app-popup-confirmation
+  #pop
+  [title]="'Confirmar Usuario'"
+  [header]="'¿Está seguro que desea guardar Cliente?'"
+  [message]="'Esta acción no se puede revertir'"
+  (handleOk)="msjConfirmOk()"
+>
+</app-popup-confirmation>

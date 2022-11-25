@@ -308,7 +308,7 @@
                 nz-button
                 nzSize="large"
                 style="background-color: #24ce41"
-                (click)="save()"
+                (click)="pop.showConfirmation()"
               >
                 <i nz-icon nzType="save" nzTheme="outline"></i>Grabar
               </button>
@@ -323,7 +323,7 @@
       <form nz-form [formGroup]="formInvoice">
         <nz-form-item>
           <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="observation"
-            >Observacion
+            >Observación
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24">
             <input
@@ -339,11 +339,19 @@
   </nz-collapse-panel>
 </nz-collapse>
 
-<app-popup-confirmation
+ <app-popup-confirmation
   #popup
   [title]="'Confirmar eliminación'"
-  [header]="'¿Está seguro de que desea eliminar el producto seleccionado?'"
+  [header]="'¿Está seguro que desea eliminar el producto seleccionado?'"
   [message]="'Esta acción no se puede revertir'"
   (handleOk)="handleOk()"
+>
+</app-popup-confirmation> 
+<app-popup-confirmation
+  #pop
+  [title]="'Confirmar Guardado de comprobante'"
+  [header]="'¿Está seguro que desea guardar el comprobante?'"
+  [message]="'Esta acción no se puede revertir'"
+  (handleOk)="msjConfirmOk()"
 >
 </app-popup-confirmation>

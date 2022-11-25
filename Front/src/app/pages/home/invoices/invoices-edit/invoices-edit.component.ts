@@ -42,7 +42,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
   subtotal: number=0;
   iva: number=21;
   total: number=0;
-  userId = 5;
+  userId = 1;
   invoiceListTest: InvoiceDetailList[] = [];
 
   isLoading: boolean= false;
@@ -349,6 +349,22 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
       
     }
   };
+
+  msjConfirmOk(){
+    try {
+      this.invoiceDetailsList = this.invoiceDetailsList.
+       filter(element => element.ownCode != this.popupComponent.elementSelected);
+     this.popupComponent.isConfirmationvisible = false; 
+     if (this.invoiceDetailsList.length != 0 ){
+       this.save();
+     } else{
+       this.showMessageError('No ha seleccionado producto')
+     }
+     } catch (error) {
+       console.log(error);
+       
+     }
+  }
   save(): void {
     if (this.isValidForm(this.formInvoice)) {
       if (this.invoiceDetails.length == 0) {

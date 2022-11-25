@@ -47,9 +47,10 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let user of userList; let i= index" class="small-text" tabindex="-1" (click)="onClick(user, i)" (keydown)="myNavegation($event) "
+          <tr id="{{i}}" *ngFor="let user of userList; let i= index" class="small-text" tabindex="-1" (click)="onClick(user, i)" (keydown)="myNavegation($event) "
           [style.background-color]="user === selectedUser ? 'lightblue' : ''" 
-          (dblclick)="onDoubleClicked(user)">
+          (dblclick)="onDoubleClicked(user)"
+          (keydown.enter)="onEnter($event)" >
             <td nzEllipsis >{{ user.firstName }}</td>
             <td nzEllipsis >{{ user.lastName }}</td>
             <td nzEllipsis >{{ user.userName }}</td>

@@ -46,8 +46,9 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let category of categoryList, let i= index" class="small-text" tabindex="-1" (keydown)="myNavegation($event) " [style.background-color]="category === selectedCategory ? 'lightblue' : ''" 
-           (click)="onClick(category, i)" (dblclick)="onDoubleClicked(category)">
+          <tr id="{{i}}" *ngFor="let category of categoryList, let i= index" class="small-text" tabindex="-1" (keydown)="myNavegation($event) " 
+          [style.background-color]="category === selectedCategory ? 'lightblue' : ''" 
+           (click)="onClick(category, i)" (dblclick)="onDoubleClicked(category)" (keydown.enter)="onEnter($event)" >
             <td nzEllipsis >{{ category.id}}</td>
             <td nzEllipsis >{{ category.description}}</td>
           </tr>

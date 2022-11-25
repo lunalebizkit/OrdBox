@@ -210,6 +210,12 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
     this.onSelect(datos.id);
   }
 
+  onEnter(e: any ) {
+    this.selectedOrders = this.allOrders[this.index]
+    this.id= this.allOrders[this.index].id;
+    this.openComponentOrdersEdit();  
+    } 
+
   /*
 ** Evento de navegacion por teclado
 */

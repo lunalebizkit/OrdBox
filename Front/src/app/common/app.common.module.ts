@@ -20,6 +20,7 @@ import { NzImageModule } from 'ng-zorro-antd/image';
 import { PopupConfirmationComponent } from './components/popup-confirmation/popup-confirmation.component';
  import { HeaderOperationsButtonsComponent } from './components/headers/buttons.oparations.header.component';
  import { BaseComponent } from './components/base/base.component';
+ import { AuthModule } from './auth/auth.module';
 
 
 @NgModule({
@@ -59,7 +60,7 @@ import { PopupConfirmationComponent } from './components/popup-confirmation/popu
     NzTypographyModule,
     NzTagModule,
      PopupConfirmationComponent,
-     
+     AuthModule
  
   ],
   declarations: [

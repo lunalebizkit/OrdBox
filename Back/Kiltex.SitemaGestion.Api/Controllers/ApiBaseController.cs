@@ -7,8 +7,8 @@ namespace Kiltex.SistemaGestion.Api.Controllers
 {
     [ApiVersion("1")]
     [Route("api/v1/[controller]")]
-    //[ApiController]
-    //[Authorize]
+    [ApiController]
+    [Authorize]
     public class ApiBaseController : ControllerBase
     {
         [NonAction]
