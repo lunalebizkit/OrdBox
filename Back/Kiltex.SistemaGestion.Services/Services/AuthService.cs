@@ -2,6 +2,7 @@
 using Kiltex.SistemaGestion.Domain;
 using Kiltex.SistemaGestion.Domain.Model;
 using Kiltex.SistemaGestion.SDK.Error;
+using Kiltex.SistemaGestion.SDK.Security;
 using Kiltex.SistemaGestion.Services.Common;
 using Microsoft.EntityFrameworkCore;
 
@@ -23,10 +24,10 @@ namespace Kiltex.SistemaGestion.Services.Services
                                         .FirstOrDefaultAsync(p => p.Email == email && !p.IsDeleted)
                                         .ConfigureAwait(false);
 
-                //if (user == null || !SecurePasswordHasher.Verify(password, user.Password))
-                //{
-                //    return Error<User>(new OperationExceptions("001", "El usuario no es válido"));
-                //}
+                if (user == null || !SecurePasswordHasher.Verify(password, user.Password))
+                {
+                    return Error<User>(new OperationExceptions("001", "El usuario no es válido"));
+                }
 
                 return Ok(user);
             }
