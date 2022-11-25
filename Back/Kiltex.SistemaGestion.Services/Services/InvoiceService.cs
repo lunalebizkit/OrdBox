@@ -16,57 +16,84 @@ namespace Kiltex.SistemaGestion.Services.Services
         { }
         public async Task<OperationResponse<DtoRequestInvoice>> GetById(long id)
         {
-            var factura = await _contextSql
-                               .Invoices
-                               .Include(x => x.InvoiceDetails)
-                               .AsNoTracking()
-                               .FirstOrDefaultAsync(p => p.Id == id)
-                               .ConfigureAwait(false);
-            if (factura == null)
+            try
+            {
+                var factura = await _contextSql
+                                   .Invoices
+                                   .Include(x => x.InvoiceDetails)
+                                   .AsNoTracking()
+                                   .FirstOrDefaultAsync(p => p.Id == id)
+                                   .ConfigureAwait(false);
+                if (factura == null)
+                {
+                    _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
+                    return Error<DtoRequestInvoice>(new OperationExceptions("000", $"Factura no encontrada {id}"));
+                }
 
-                return new OperationResponse<DtoRequestInvoice>(null, false, new OperationExceptions("000", $"Factura no encontrada {id}"));
-
-            var result = _mapper.Map<DtoRequestInvoice>(factura);
+                var result = _mapper.Map<DtoRequestInvoice>(factura);
            
 
-            return new OperationResponse<DtoRequestInvoice>(result);
+                return new OperationResponse<DtoRequestInvoice>(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
+                throw;
+            }
         }
 
         public async Task<OperationResponse<IdResponse<long>>> NewInvoice(DtoRequestInvoice model, CancellationToken ct = default)
         {
-            model.Id = 0;
-            if (String.IsNullOrEmpty(model.CustomerName) )
+            try
             {
-                return Error<IdResponse<long>>("000", "Datos incompletos");
+                model.Id = 0;
+                if (String.IsNullOrEmpty(model.CustomerName) )
+                {
+                    _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
+                    return Error<IdResponse<long>>(new OperationExceptions("000", "Datos incompletos")); ;
+                }
+                return await AddOrUpdate(model, ct).ConfigureAwait(false);
             }
-            return await AddOrUpdate(model, ct).ConfigureAwait(false);
+            catch (Exception ex)
+            {
+                _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
+                throw;
+            }
         }
 
         public async Task<OperationResponse<DtoPagination<DtoRequestInvoice>>> ListInvoices(RequestPaginatedData<string> request)
         {
-            var query = _contextSql
-                                .Invoices
-                                .AsNoTracking()
-                                .Include(p => p.InvoiceDetails)
-                                .Where(p => p.CustomerCuit.ToLower().Contains(request.Filter ?? ""));
-
-            var count = await query.CountAsync().ConfigureAwait(false);
-
-            var list = await query.OrderByDescending(p => p.DateTime)
-                                  .Skip(request.Page * request.PageSize)
-                                  .Take(request.PageSize)
-                                  .ToListAsync()
-                                  .ConfigureAwait(false);
-
-            var result = _mapper.Map<List<DtoRequestInvoice>>(list);
-
-
-            return new OperationResponse<DtoPagination<DtoRequestInvoice>>(new DtoPagination<DtoRequestInvoice>
+            try
             {
-                Data = result,
-                PageSize = request.PageSize,
-                TotalCount = count
-            });
+                var query = _contextSql
+                                    .Invoices
+                                    .AsNoTracking()
+                                    .Include(p => p.InvoiceDetails)
+                                    .Where(p => p.CustomerCuit.ToLower().Contains(request.Filter ?? ""));
+
+                var count = await query.CountAsync().ConfigureAwait(false);
+
+                var list = await query.OrderByDescending(p => p.DateTime)
+                                      .Skip(request.Page * request.PageSize)
+                                      .Take(request.PageSize)
+                                      .ToListAsync()
+                                      .ConfigureAwait(false);
+
+                var result = _mapper.Map<List<DtoRequestInvoice>>(list);
+
+
+                return new OperationResponse<DtoPagination<DtoRequestInvoice>>(new DtoPagination<DtoRequestInvoice>
+                {
+                    Data = result,
+                    PageSize = request.PageSize,
+                    TotalCount = count
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
+                throw;
+            }
         }
         public async Task<OperationResponse<IdResponse<long>>> AddOrUpdate(DtoRequestInvoice model, CancellationToken ct = default)
         {
@@ -102,7 +129,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             }
             catch (Exception ex)
             {
-
+                _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
                 throw;
             }         
          

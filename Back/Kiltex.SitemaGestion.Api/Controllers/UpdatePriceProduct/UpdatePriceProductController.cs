@@ -3,6 +3,9 @@ using Kiltex.SistemaGestion.Services.Models.Dtos;
 using Kiltex.SistemaGestion.Services.Services;
 using Kiltex.SistemaGestion.Api.Controllers;
 using Microsoft.AspNetCore.Mvc;
+using Kiltex.SistemaGestion.Api.Filter;
+using Kiltex.SistemaGestion.Domain.Enum;
+using Kiltex.SistemaGestion.Domain.Model;
 
 namespace Kiltex.SistemaGestion.Api.Controllers.UpdatePriceProduct
 {
@@ -14,12 +17,14 @@ namespace Kiltex.SistemaGestion.Api.Controllers.UpdatePriceProduct
             _service = service;
         }
         [HttpPost]
+        [AllowAccess(Permission = new EPermission[] { EPermission.ListUpdatePrice })]
         [Route("[action]")]
         public async Task<IActionResult> List([FromBody] RequestPaginatedData<ProductFilter> filter)
         {
             return Return(await _service.ListProduct(filter).ConfigureAwait(false));
         }
         [HttpPut]
+        [AllowAccess(Permission = new EPermission[] { EPermission.EditUpdatePrice })]
         [Route("[action]")]
         public async Task<IActionResult> UpdatePriceProduct([FromBody] DtoUpdatePriceProduct model)
         {

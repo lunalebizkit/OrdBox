@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using Newtonsoft.Json;
 
 namespace Kiltex.SistemaGestion.Api.Controllers.Authentication
 {
@@ -30,15 +31,9 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Authentication
                     new Claim(ClaimTypes.Role, usuario.Data.Rol.Key),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
                 };
-            //if (usuario.Data.Rol.Key == ERol.Admin)
-            //{
-            //    if (user.Data.UserPharmacy.Count > 0)
-            //    {
-            //        authClaims.Add(new Claim("pharmacyId", user.Data.UserPharmacy.First().PharmacyId.ToString()));
-            //        authClaims.Add(new Claim("pharmacySapCode", user.Data.UserPharmacy.First().Pharmacy.SapCode.ToString()));
-            //    }
-            //}
-            authClaims.Add(new Claim(ClaimTypes.Role, $"{usuario.Data.Rol.Key}"));
+            
+
+            authClaims.Add(new Claim(ClaimTypes.Role,  JsonConvert.SerializeObject(usuario.Data.Rol.PermissionXRols.Select(a => a.PermissionId).ToArray())));
 
             var token = JWTService.CreateDefaultToken(
                 configuration["Jwt:Issuer"],
@@ -50,7 +45,7 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Authentication
             {
                 userName = usuario.Data.UserName,
                 firstName = usuario.Data.FirstName,
-                rol = usuario.Data.Rol.Key,
+                permisos = JsonConvert.SerializeObject(usuario.Data.Rol.PermissionXRols.Select(a => a.PermissionId).ToArray()),
                 token = new JwtSecurityTokenHandler().WriteToken(token),
                 expiration = token.ValidTo
             });
