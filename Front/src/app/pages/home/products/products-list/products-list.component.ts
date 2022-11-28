@@ -91,7 +91,6 @@ export class ProductsListComponent implements OnInit {
         this.loading = false;
         this.selectedIndex = 0;
         this.selectedProduct = this.productList[this.selectedIndex];
-        document.getElementById(this.selectedIndex.toString())?.focus()   
       },
       error: () => {
         this.loading = false;

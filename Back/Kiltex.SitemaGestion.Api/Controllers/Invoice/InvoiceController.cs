@@ -3,6 +3,9 @@ using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
 using Kiltex.SistemaGestion.Services.Services;
 using Kiltex.SistemaGestion.Api.Controllers;
 using Microsoft.AspNetCore.Mvc;
+using Kiltex.SistemaGestion.Api.Filter;
+using Kiltex.SistemaGestion.Domain.Enum;
+using Kiltex.SistemaGestion.Domain.Model;
 
 namespace Kiltex.SistemaGestion.Api.Controllers.Invoice
 {
@@ -15,14 +18,14 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Invoice
             _service = service;
         }
         [HttpGet]
-        //[AllowAccess(Rols = new string[] { ERol.Admin })]
+        [AllowAccess(Permission = new EPermission[] { EPermission.GetInvoice })]
         public async Task<IActionResult> Get(long id)
         {
             return Return(await _service.GetById(id).ConfigureAwait(false));
         }
         [HttpPost]
         [Route("[action]")]
-        //[AllowAccess(Rols = new string[] { ERol.Admin })]
+        [AllowAccess(Permission = new EPermission[] { EPermission.CreateInvoice })]
         public async Task<IActionResult> List([FromBody] RequestPaginatedData<string> filter)
         {
             return Return(await _service.ListInvoices(filter).ConfigureAwait(false));

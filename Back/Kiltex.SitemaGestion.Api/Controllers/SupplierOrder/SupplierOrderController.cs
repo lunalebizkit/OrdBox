@@ -3,6 +3,9 @@ using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
 using Kiltex.SistemaGestion.Services.Services;
 using Kiltex.SistemaGestion.Api.Controllers;
 using Microsoft.AspNetCore.Mvc;
+using Kiltex.SistemaGestion.Api.Filter;
+using Kiltex.SistemaGestion.Domain.Enum;
+using Kiltex.SistemaGestion.Domain.Model;
 
 namespace Kiltex.SistemaGestion.Api.Controllers.SupplierOrder
 {
@@ -14,21 +17,25 @@ namespace Kiltex.SistemaGestion.Api.Controllers.SupplierOrder
             _service = service;
         }
         [HttpGet]
+        [AllowAccess(Permission = new EPermission[] { EPermission.GetOrderSupplier })]
         public async Task<IActionResult> GetById(long id)
         {
             return Return(await _service.GetById(id));
         }
         [HttpPost]
+        [AllowAccess(Permission = new EPermission[] { EPermission.CreateOrderSupplier })]
         public async Task<IActionResult> New([FromBody] DtoRequestSupplierOrder model)
         {
             return Return(await _service.AddOrUpdate(model).ConfigureAwait(false));
         }
         [HttpPut]
+        [AllowAccess(Permission = new EPermission[] { EPermission.EditOrderSupplier })]
         public async Task<IActionResult> Edit([FromBody] DtoRequestSupplierOrder model)
         {
             return Return(await _service.AddOrUpdate(model).ConfigureAwait(false));
         }
         [HttpPost]
+        [AllowAccess(Permission = new EPermission[] { EPermission.ListOrderSupplier })]
         [Route("[action]")]
         public async Task<IActionResult> List([FromBody] RequestPaginatedData<ProductFilter> filter)
         {
