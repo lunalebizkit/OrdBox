@@ -1,0 +1,18 @@
+USE [Gestion_Stock]
+GO
+
+INSERT INTO [dbo].[permission]
+           ([name]
+           ,[key])
+     VALUES
+           	   ('ViewUser','ViewUser'),('EditUser', 'EditUser'),('DeleteUser', 'DeleteUser'),('CreateUser', 'CreateUser'),
+		   ('ViewBrand','ViewBrand'),('CreateBrand','CreateBrand'),('EditBrand','EditBrand'),
+		   ('ViewCategory','ViewCategory'),('CreateCategory','CreateCategory'),('EditCategory','EditCategory'),
+		   ('ViewCustomer','ViewCustomer'),('CreateCustomer','CreateCustomer'),('EditCustomer','EditCustomer'),
+		   ('ViewEntity','ViewEntity'),('CreateEntity','CreateEntity'),('EditEntity','EditEntity'),
+		   ('GetInvoice','GetInvoice'),('CreateInvoice','CreateInvoice'),
+		   ('ViewProduct','ViewProduct'),('CreateProduct','CreateProduct'),('EditProduct','EditProduct'),
+		   ('ViewSupplier','ViewSupplier'),('EditSupplier','EditSupplier'),('CreateSupplier','CreateSupplier')
+		   ('ViewOrderSupplier','ViewOrderSupplier'),('CreateOrderSupplier','CreateOrderSupplier'),('EditOrderSupplier','EditOrderSupplier'),
+		   ('ListUpdatePrice','ListUpdatePrice'),('EditUpdatePrice','EditUpdatePrice')
+GO
