@@ -17,7 +17,7 @@ namespace Kiltex.SistemaGestion.Api.Controllers.SupplierOrder
             _service = service;
         }
         [HttpGet]
-        [AllowAccess(Permission = new EPermission[] { EPermission.GetOrderSupplier })]
+        [AllowAccess(Permission = new EPermission[] { EPermission.ViewOrderSupplier })]
         public async Task<IActionResult> GetById(long id)
         {
             return Return(await _service.GetById(id));
@@ -35,7 +35,7 @@ namespace Kiltex.SistemaGestion.Api.Controllers.SupplierOrder
             return Return(await _service.AddOrUpdate(model).ConfigureAwait(false));
         }
         [HttpPost]
-        [AllowAccess(Permission = new EPermission[] { EPermission.ListOrderSupplier })]
+        [AllowAccess(Permission = new EPermission[] { EPermission.ViewOrderSupplier })]
         [Route("[action]")]
         public async Task<IActionResult> List([FromBody] RequestPaginatedData<ProductFilter> filter)
         {

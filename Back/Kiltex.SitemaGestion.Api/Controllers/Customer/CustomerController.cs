@@ -17,27 +17,27 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Customer
             _service = service;
         }
         [HttpGet]
-        [AllowAccess(Permission = new EPermission[] { EPermission.GetCustomerById })]
+        [AllowAccess(Permission = new EPermission[] { EPermission.ViewCustomer })]
         public async Task<IActionResult> Get([FromQuery] long id)
         {
             return Return(await _service.GetById(id).ConfigureAwait(false));
         }
         [HttpGet]
-        [AllowAccess(Permission = new EPermission[] { EPermission.GetCustomerByCuit })]
+        [AllowAccess(Permission = new EPermission[] { EPermission.ViewCustomer })]
         [Route("[action]")]
         public async Task<IActionResult> GetCustomerByCuit([FromQuery] string cuit)
         {
             return Return(await _service.GetCustomerByCuit(cuit).ConfigureAwait(false));
         }
         [HttpPost]
-        [AllowAccess(Permission = new EPermission[] { EPermission.ListCustomer })]
+        [AllowAccess(Permission = new EPermission[] { EPermission.ViewCustomer })]
         [Route("[action]")]
         public async Task<IActionResult> List([FromBody] RequestPaginatedData<string> filter)
         {
             return Return(await _service.List(filter).ConfigureAwait(false));
         }
         [HttpPost]
-        [AllowAccess(Permission = new EPermission[] { EPermission.CreaterCustomer })]
+        [AllowAccess(Permission = new EPermission[] { EPermission.CreateCustomer })]
         public async Task<IActionResult> New([FromBody] DtoSupplier model)
         {
             return Return(await _service.Add(model).ConfigureAwait(false));

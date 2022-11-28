@@ -17,7 +17,7 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Product
             _service = service;
         }
         [HttpGet]
-        [AllowAccess(Permission = new EPermission[] { EPermission.CreateUser })]
+        [AllowAccess(Permission = new EPermission[] { EPermission.ViewProduct })]
         public async Task<IActionResult> GetById(long id)
         {
             return Return(await _service.GetById(id));
@@ -30,7 +30,7 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Product
             return Return(await _service.Add(model).ConfigureAwait(false));
         }
         [HttpPost]
-        [AllowAccess(Permission = new EPermission[] { EPermission.ListProduct })]
+        [AllowAccess(Permission = new EPermission[] { EPermission.ViewProduct })]
         [Route("[action]")]
         public async Task<IActionResult> List([FromBody] RequestPaginatedData<string> filter)
         {

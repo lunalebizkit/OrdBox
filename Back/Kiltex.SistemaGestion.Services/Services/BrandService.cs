@@ -27,7 +27,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                 if (marca == null) 
                 {
                     _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
-                    return Error<DtoResponseBrand>(new OperationExceptions("000", $"Marca no encontrada Id:{id}"));
+                    return Error<DtoResponseBrand>(new OperationExceptions("000", $"Marca no encontrada Id: {id}"));
                     
                 }
 

@@ -5,53 +5,44 @@ namespace Kiltex.SistemaGestion.Domain.Enum
     public enum EPermission
     {
         //User
-        GetUser = 1,
+        ViewUser = 1,
         EditUser = 2,
         DeleteUser = 3,
         CreateUser = 4,
-        ListUser = 5,
         //Brand
-        GetBrand = 6,
-        CreaterBrand = 7,
-        EditBrand = 8,
-        ListBrand = 9,
+        ViewBrand = 5,
+        CreateBrand = 6,
+        EditBrand = 7,
         //Category
-        GetCategory = 10,
-        CreateCategory = 11,
-        EditCategory = 12,
-        ListCategory = 13,
+        ViewCategory = 8,
+        CreateCategory = 9,
+        EditCategory = 10,
         //Customer
-        GetCustomerById = 14,
-        GetCustomerByCuit = 15,
-        CreaterCustomer = 16,
-        EditCustomer = 17,
-        ListCustomer = 18,
+        ViewCustomer = 11,
+        CreateCustomer = 12,
+        EditCustomer = 13,
         //Entity
-        GetEntity = 19,
-        CreateEntity = 20,
-        EditEntity = 21,
-        ListEntity = 22,
+        ViewEntity = 14,
+        CreateEntity = 15,
+        EditEntity = 16,
         //Image hay que agregar permiso???
         //Invoice
-        GetInvoice = 23,
-        CreateInvoice = 24,
+        GetInvoice = 17,
+        CreateInvoice = 18,
         //Product
-        GetProduct = 25,
-        CreateProduct = 26,
-        EditProduct = 27,
-        ListProduct = 28,
+        ViewProduct = 19,
+        CreateProduct = 20,
+        EditProduct = 21,
         //Supplier
-        GetSupplier = 29,
-        EditSupplier = 30,
-        ListSupplier = 31,
-        CreateSupplier = 32,
+        ViewSupplier = 22,
+        EditSupplier = 23,
+        CreateSupplier = 24,
         //OrderSupplier
-        GetOrderSupplier = 33,
-        CreateOrderSupplier = 34,
-        EditOrderSupplier = 35,
-        ListOrderSupplier = 36,
+        ViewOrderSupplier = 25,
+        CreateOrderSupplier = 26,
+        EditOrderSupplier = 27,
         //UpdatePrice
-        ListUpdatePrice = 37,
-        EditUpdatePrice = 38,
+        ListUpdatePrice = 28,
+        EditUpdatePrice = 29,
     }
 }

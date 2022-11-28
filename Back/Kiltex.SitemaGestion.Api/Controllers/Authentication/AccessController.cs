@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Newtonsoft.Json;
+using Kiltex.SistemaGestion.SDK.Jwt;
+using Kiltex.SistemaGestion.Api.Extension;
 
 namespace Kiltex.SistemaGestion.Api.Controllers.Authentication
 {
@@ -31,8 +33,8 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Authentication
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
                 };
             
-
-            authClaims.Add(new Claim(ClaimTypes.Role,  JsonConvert.SerializeObject(usuario.Data.Rol.PermissionXRols.Select(a => a.PermissionId).ToArray())));
+            var permission = usuario.Data.Rol.PermissionXRols.Select(a => a.PermissionId).ToArray();
+            authClaims.Add(new Claim(UserExtension.claimPermission,  JsonConvert.SerializeObject(permission)));
 
             var token = JWTService.CreateDefaultToken(
                 configuration["Jwt:Issuer"],
@@ -42,9 +44,10 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Authentication
                 authClaims);
             return Ok(new
             {
+                id = usuario.Data.Id,
                 userName = usuario.Data.UserName,
                 firstName = usuario.Data.FirstName,
-                permisos = JsonConvert.SerializeObject(usuario.Data.Rol.PermissionXRols.Select(a => a.PermissionId).ToArray()),
+                permisos = permission,
                 token = new JwtSecurityTokenHandler().WriteToken(token),
                 expiration = token.ValidTo
             });
