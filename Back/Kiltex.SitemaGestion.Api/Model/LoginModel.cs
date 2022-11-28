@@ -10,7 +10,6 @@ namespace Kiltex.SistemaGestion.Api.Model
         [Required]
         public string Password { get; set; }
 
-        //[Required]
         public string Recaptcha { get; set; }
     }
 }

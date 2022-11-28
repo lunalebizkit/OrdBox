@@ -17,13 +17,13 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Brand
             _service = service;
         }
         [HttpGet]
-        [AllowAccess(Permission = new EPermission[] { EPermission.GetBrand })]
+        [AllowAccess(Permission = new EPermission[] { EPermission.ViewBrand })]
         public async Task<IActionResult> Get([FromQuery] long id)
         {
             return Return(await _service.GetById(id).ConfigureAwait(false));
         }
         [HttpPost]
-        [AllowAccess(Permission = new EPermission[] { EPermission.CreaterBrand })]
+        [AllowAccess(Permission = new EPermission[] { EPermission.CreateBrand })]
         public async Task<IActionResult> New([FromBody] DtoResponseBrand model)
         {
             return Return(await _service.Add(model).ConfigureAwait(false));
@@ -36,7 +36,7 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Brand
         }
         [HttpPost]
         [Route("[action]")]
-        [AllowAccess(Permission = new EPermission[] { EPermission.ListBrand })]
+        [AllowAccess(Permission = new EPermission[] { EPermission.ViewBrand })]
         public async Task<IActionResult> List([FromBody] RequestPaginatedData<string> filter)
         {
             return Return(await _service.ListBrands(filter).ConfigureAwait(false));

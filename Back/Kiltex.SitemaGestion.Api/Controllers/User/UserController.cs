@@ -32,7 +32,7 @@ namespace Kiltex.SistemaGestion.Api.Controllers.User
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet]
-        [AllowAccess(Permission = new EPermission[] { EPermission.GetUser })]
+        [AllowAccess(Permission = new EPermission[] { EPermission.ViewUser })]
         public async Task<IActionResult> Get([FromQuery] long id)
         {
             return Return(await _service.GetById(id).ConfigureAwait(false));
@@ -52,7 +52,7 @@ namespace Kiltex.SistemaGestion.Api.Controllers.User
         }
         [HttpPost]
         [Route("[action]")]
-        [AllowAccess(Permission = new EPermission[] { EPermission.ListUser })]
+        [AllowAccess(Permission = new EPermission[] { EPermission.ViewUser })]
         public async Task<IActionResult> List([FromBody] RequestPaginatedData<string> filter)
         {
             return Return(await _service.ListUsers(filter).ConfigureAwait(false));

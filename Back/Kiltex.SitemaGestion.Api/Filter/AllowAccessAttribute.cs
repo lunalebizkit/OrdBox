@@ -1,5 +1,8 @@
-﻿using Kiltex.SistemaGestion.Domain.Enum;
+﻿using Kiltex.SistemaGestion.Api.Extension;
+using Kiltex.SistemaGestion.Domain.Enum;
 using Kiltex.SistemaGestion.Domain.Model;
+using Kiltex.SistemaGestion.SDK.Security;
+using Microsoft.AspNetCore.Authentication.OAuth.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Linq;
@@ -15,27 +18,24 @@ namespace Kiltex.SistemaGestion.Api.Filter
         {
             var isLogin = actionContext.HttpContext.User.Identity.IsAuthenticated;
 
-            //if (!isLogin)
-            //{
-            //    actionContext.Result = new ContentResult { Content = "403", StatusCode = 401 };
-            //}
-            //else
-            //{
-            //    if (!HasPermission(actionContext.HttpContext.User.Claims.First(p=> p.Type == ClaimTypes.Role)))
-            //    {
-            //        actionContext.Result = new ContentResult { Content = "403", StatusCode = 401 };
-            //    }
-            //}
+            if (!isLogin)
+            {
+                actionContext.Result = new ContentResult { Content = "403", StatusCode = 401 };
+            }
+            else
+            {
+                if (!HasPermission(actionContext.HttpContext.User.GetPermission()))
+                {
+                    actionContext.Result = new ContentResult { Content = "403", StatusCode = 401 };
+                }
+            }
 
             base.OnActionExecuting(actionContext);
         }
 
-        private bool HasPermission(int[] claim)
+        private bool HasPermission(int[] permission)
         {
-            if (claim == null)
-                return false;
-
-            return Permission.Any(r => claim.Contains((int)r));
+            return Permission.Any(r => permission.Contains((int)r));
         }
     }
 }

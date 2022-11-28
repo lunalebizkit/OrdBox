@@ -17,14 +17,14 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Supplier
             _service = service;
         }
         [HttpGet]
-        [AllowAccess(Permission = new EPermission[] { EPermission.GetSupplier })]
+        [AllowAccess(Permission = new EPermission[] { EPermission.ViewSupplier })]
         public async Task<IActionResult> Get([FromQuery] long id)
         {
             return Return(await _service.GetSupplierById(id).ConfigureAwait(false));
         }
         [HttpPost]
         [Route("[action]")]
-        [AllowAccess(Permission = new EPermission[] { EPermission.ListSupplier })]
+        [AllowAccess(Permission = new EPermission[] { EPermission.ViewSupplier })]
         public async Task<IActionResult> List([FromBody] RequestPaginatedData<string> filter)
         {
             return Return(await _service.ListSupplier(filter).ConfigureAwait(false));

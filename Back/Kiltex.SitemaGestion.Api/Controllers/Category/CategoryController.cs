@@ -16,7 +16,7 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Category
             _service = service;
         }
         [HttpGet]
-        [AllowAccess(Permission = new EPermission[] { EPermission.GetCategory })]
+        [AllowAccess(Permission = new EPermission[] { EPermission.ViewCategory })]
         public async Task<IActionResult> Get([FromQuery] long id)
         {
             return Return(await _service.GetById(id).ConfigureAwait(false));
@@ -34,7 +34,7 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Category
             return Return(await _service.Update(model).ConfigureAwait(false));
         }
         [HttpPost]
-        [AllowAccess(Permission = new EPermission[] { EPermission.ListCategory })]
+        [AllowAccess(Permission = new EPermission[] { EPermission.ViewCategory })]
         [Route("[action]")]
         public async Task<IActionResult> List([FromBody] RequestPaginatedData<string> filter)
         {
