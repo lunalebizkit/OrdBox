@@ -38,7 +38,5 @@ namespace Kiltex.SistemaGestion.Domain.Model
 
         [NotMapped]
         public ESupplierOrderStatuses Status { get => (ESupplierOrderStatuses)StatusId; }
-
-
     }
 }
