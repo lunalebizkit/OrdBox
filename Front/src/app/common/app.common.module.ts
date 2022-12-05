@@ -21,6 +21,7 @@ import { PopupConfirmationComponent } from './components/popup-confirmation/popu
  import { HeaderOperationsButtonsComponent } from './components/headers/buttons.oparations.header.component';
  import { BaseComponent } from './components/base/base.component';
  import { AuthModule } from './auth/auth.module';
+ import { PermissionDirective } from './directives/permission.directive';
 
 
 @NgModule({
@@ -40,7 +41,7 @@ import { PopupConfirmationComponent } from './components/popup-confirmation/popu
     NzNotificationModule,
     NzTypographyModule,
     NzTagModule,
-    NzImageModule
+    NzImageModule,
     ], 
     exports: [
     CommonModule,
@@ -60,13 +61,15 @@ import { PopupConfirmationComponent } from './components/popup-confirmation/popu
     NzTypographyModule,
     NzTagModule,
      PopupConfirmationComponent,
-     AuthModule
+     AuthModule,
+     PermissionDirective
  
   ],
   declarations: [
      HeaderOperationsButtonsComponent, 
      BaseComponent, 
-     PopupConfirmationComponent
+     PopupConfirmationComponent,
+     PermissionDirective
      
 
   ],

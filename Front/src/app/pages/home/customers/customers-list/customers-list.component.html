@@ -1,64 +1,106 @@
 <nz-layout>
-    <nz-page-header class="list-header">
-      <nz-page-header-title>Listado de Clientes</nz-page-header-title>
-      <nz-page-header-extra>
-        <button nz-tooltip nzTooltipTitle="Nuevo" nz-button nzType="primary"
-          nzShape="circle"><i nz-icon nzType="plus" nzTheme="outline" (click)="openComponentCustomerEdit()"></i></button>
-      </nz-page-header-extra>
-    </nz-page-header>
-  
-     <nz-content>   
-        <nz-collapse>
-          <nz-collapse-panel nzSize="small" nzHeader="Filtros">
-              <div nz-row [nzGutter]="[8,1]">
-                <div nz-col nzSpan="24">
-                  <nz-form-item>
-                    <nz-form-label>Búsqueda</nz-form-label>
-                    <nz-form-control>                  
-                      <nz-input-group [nzSuffix]="clearQuery">
-                        <input [ngModelOptions]="{standalone: true}" type="text" placeholder="Ingrese Nombre o CUIT-DNI" nz-input
-                          (keydown.enter)="search()" [(ngModel)]="queryParams.filter" />
-                      </nz-input-group>
-                      
-                      <ng-template #clearQuery>
-                        <i nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle"
-                          *ngIf="queryParams.filter" (click)="queryParams.filter = ''; search()"></i>
-                      </ng-template>
-                    </nz-form-control>
-                  </nz-form-item>
-                </div>
-              </div>
-          </nz-collapse-panel>
-        </nz-collapse> 
-  
-        <!-- Tabla -->
-     
-      <div class="table" (scroll)="onScroll($event)">
-        <nz-table  class="tabla" [nzData]="entityList" [nzSize]="'small'" 
-        [nzLoading]="loading" nzShowPagination="false"  nzTableLayout="fixed" >
-          <thead>
-            <tr>                     
-              <th nzEllipsis nzWidth="60px">Nombre</th>
-              <th nzEllipsis nzWidth="60px">Dni</th>
-              <th nzEllipsis nzWidth="60px">Cuit</th>
-              <th nzEllipsis nzWidth="100px">Dirección</th>          
-              <th nzEllipsis nzWidth="70px">Teléfono/s</th>       
-              <th nzEllipsis nzWidth="110px">Email/s</th>    
-            </tr>
-          </thead>
-          <tbody>
-            <tr #td  id="{{i}}"*ngFor="let data of entityList ; let i = index" class="small-text" tabindex="-1" (click)="onClick(data, i)" (keydown)="myNavegation($event) "
-            [style.background-color]="data === selectedCustomers? 'lightblue' : ''" 
-            (dblclick)="onDoubleClicked(data)" (keydown.enter)="onEnter($event)" >     
-              <td nzEllipsis >{{data.name}}</td>
-              <td nzEllipsis >{{data.dni}}</td>
-              <td nzEllipsis >{{data.cuit}}</td>
-              <td nzEllipsis >{{data.address}}</td> 
-              <td nzEllipsis >{{data.phoneEntity}}</td>
-              <td nzEllipsis >{{data.emailEntity}}</td>                            
-            </tr>
-          </tbody>
-        </nz-table>
-      </div>
-     </nz-content> 
-  </nz-layout>
+  <nz-page-header class="list-header">
+    <nz-page-header-title>Listado de Clientes</nz-page-header-title>
+    <nz-page-header-extra>
+      <button
+        *authPermission="[permissions.CreateCustomer, permissions.EditCustomer]"
+        nz-tooltip
+        nzTooltipTitle="Nuevo"
+        nz-button
+        nzType="primary"
+        nzShape="circle"
+      >
+        <i
+          nz-icon
+          nzType="plus"
+          nzTheme="outline"
+          (click)="openComponentCustomerEdit()"
+        ></i>
+      </button>
+    </nz-page-header-extra>
+  </nz-page-header>
+
+  <nz-content>
+    <nz-collapse>
+      <nz-collapse-panel nzSize="small" nzHeader="Filtros">
+        <div nz-row [nzGutter]="[8, 1]">
+          <div nz-col nzSpan="24">
+            <nz-form-item>
+              <nz-form-label>Búsqueda</nz-form-label>
+              <nz-form-control>
+                <nz-input-group [nzSuffix]="clearQuery">
+                  <input
+                    [ngModelOptions]="{ standalone: true }"
+                    type="text"
+                    placeholder="Ingrese Nombre o CUIT-DNI"
+                    nz-input
+                    (keydown.enter)="search()"
+                    [(ngModel)]="queryParams.filter"
+                  />
+                </nz-input-group>
+
+                <ng-template #clearQuery>
+                  <i
+                    nz-icon
+                    class="ant-input-clear-icon"
+                    nzTheme="fill"
+                    nzType="close-circle"
+                    *ngIf="queryParams.filter"
+                    (click)="queryParams.filter = ''; search()"
+                  ></i>
+                </ng-template>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+      </nz-collapse-panel>
+    </nz-collapse>
+
+    <!-- Tabla -->
+
+    <div class="table" (scroll)="onScroll($event)">
+      <nz-table
+        class="tabla"
+        [nzData]="entityList"
+        [nzSize]="'small'"
+        [nzLoading]="loading"
+        nzShowPagination="false"
+        nzTableLayout="fixed"
+      >
+        <thead>
+          <tr>
+            <th nzEllipsis nzWidth="60px">Nombre</th>
+            <th nzEllipsis nzWidth="60px">Dni</th>
+            <th nzEllipsis nzWidth="60px">Cuit</th>
+            <th nzEllipsis nzWidth="100px">Dirección</th>
+            <th nzEllipsis nzWidth="70px">Teléfono/s</th>
+            <th nzEllipsis nzWidth="110px">Email/s</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            #td
+            id="{{ i }}"
+            *ngFor="let data of entityList; let i = index"
+            class="small-text"
+            tabindex="-1"
+            (click)="onClick(data, i)"
+            (keydown)="myNavegation($event)"
+            [style.background-color]="
+              data === selectedCustomers ? 'lightblue' : ''
+            "
+            (dblclick)="onDoubleClicked(data)"
+            (keydown.enter)="onEnter($event)"
+          >
+            <td nzEllipsis>{{ data.name }}</td>
+            <td nzEllipsis>{{ data.dni }}</td>
+            <td nzEllipsis>{{ data.cuit }}</td>
+            <td nzEllipsis>{{ data.address }}</td>
+            <td nzEllipsis>{{ data.phoneEntity }}</td>
+            <td nzEllipsis>{{ data.emailEntity }}</td>
+          </tr>
+        </tbody>
+      </nz-table>
+    </div>
+  </nz-content>
+</nz-layout>

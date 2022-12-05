@@ -5,5 +5,5 @@ export class AuthUserModel {
   refreshToken!: string;
   token!: string;
   rol!: string;
-  permissions!: Permission[];
+  permisos!: Permission[];
 }
