@@ -1,30 +1,53 @@
 <nz-layout>
   <nz-page-header class="list-header">
-    <nz-page-header-title>
-      Listado de Usuarios
-    </nz-page-header-title>
+    <nz-page-header-title> Listado de Usuarios </nz-page-header-title>
     <nz-page-header-extra>
-       <button nz-tooltip nzTooltipTitle="Nuevo" nz-button nzType="primary"
-          nzShape="circle"><i nz-icon nzType="plus" nzTheme="outline" (click)="openComponentUserEdit()"></i></button>
+      <button
+        *authPermission="[permissions.CreateUser, permissions.EditUser]"
+        nz-tooltip
+        nzTooltipTitle="Nuevo"
+        nz-button
+        nzType="primary"
+        nzShape="circle"
+      >
+        <i
+          nz-icon
+          nzType="plus"
+          nzTheme="outline"
+          (click)="openComponentUserEdit()"
+        ></i>
+      </button>
     </nz-page-header-extra>
   </nz-page-header>
   <nz-content>
     <nz-collapse>
       <nz-collapse-panel nzSize="small" nzHeader="Filtros">
         <form nz-form (ngSubmit)="search()">
-          <div nz-row [nzGutter]="[8,1]">
+          <div nz-row [nzGutter]="[8, 1]">
             <div nz-col nzSpan="24">
               <nz-form-item>
                 <nz-form-label>Búsqueda</nz-form-label>
-                <nz-form-control>                  
+                <nz-form-control>
                   <nz-input-group [nzSuffix]="clearQuery">
-                    <input [ngModelOptions]="{standalone: true}" type="text" placeholder="Ingrese descripcion o Categoria" nz-input
-                      (keydown.enter)="search()" [(ngModel)]="queryData.filter" />
+                    <input
+                      [ngModelOptions]="{ standalone: true }"
+                      type="text"
+                      placeholder="Ingrese descripcion o Categoria"
+                      nz-input
+                      (keydown.enter)="search()"
+                      [(ngModel)]="queryData.filter"
+                    />
                   </nz-input-group>
-                  
+
                   <ng-template #clearQuery>
-                    <i nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle"
-                      *ngIf="queryData.filter" (click)="queryData.filter = ''; search()"></i>
+                    <i
+                      nz-icon
+                      class="ant-input-clear-icon"
+                      nzTheme="fill"
+                      nzType="close-circle"
+                      *ngIf="queryData.filter"
+                      (click)="queryData.filter = ''; search()"
+                    ></i>
                   </ng-template>
                 </nz-form-control>
               </nz-form-item>
@@ -32,30 +55,44 @@
           </div>
         </form>
       </nz-collapse-panel>
-    </nz-collapse> 
+    </nz-collapse>
     <!-- Tabla -->
-    <div (scroll)="onScroll($event)"class="table">
-      <nz-table class="tabla"  [nzData]="userList" nzBordered="true" [nzSize]="'small'" [nzLoading]="loading"
-      nzShowPagination="false"  nzTableLayout="fixed">
+    <div (scroll)="onScroll($event)" class="table">
+      <nz-table
+        class="tabla"
+        [nzData]="userList"
+        nzBordered="true"
+        [nzSize]="'small'"
+        [nzLoading]="loading"
+        nzShowPagination="false"
+        nzTableLayout="fixed"
+      >
         <thead>
           <tr>
             <th nzEllipsis nzWidth="45px">Nombre</th>
-            <th nzEllipsis nzWidth= "45px">Apellido</th>
-            <th nzEllipsis nzWidth= "45px">Usuario</th>
-            <th nzEllipsis nzWidth= "85px">Email</th>
-            <th nzEllipsis nzWidth= "45px">Rol</th>
+            <th nzEllipsis nzWidth="45px">Apellido</th>
+            <th nzEllipsis nzWidth="45px">Usuario</th>
+            <th nzEllipsis nzWidth="85px">Email</th>
+            <th nzEllipsis nzWidth="45px">Rol</th>
           </tr>
         </thead>
         <tbody>
-          <tr id="{{i}}" *ngFor="let user of userList; let i= index" class="small-text" tabindex="-1" (click)="onClick(user, i)" (keydown)="myNavegation($event) "
-          [style.background-color]="user === selectedUser ? 'lightblue' : ''" 
-          (dblclick)="onDoubleClicked(user)"
-          (keydown.enter)="onEnter($event)" >
-            <td nzEllipsis >{{ user.firstName }}</td>
-            <td nzEllipsis >{{ user.lastName }}</td>
-            <td nzEllipsis >{{ user.userName }}</td>
-            <td nzEllipsis >{{ user.email }}</td>
-            <td nzEllipsis >{{ this.getRolName(user.roleId) }}</td>       
+          <tr
+            id="{{ i }}"
+            *ngFor="let user of userList; let i = index"
+            class="small-text"
+            tabindex="-1"
+            (click)="onClick(user, i)"
+            (keydown)="myNavegation($event)"
+            [style.background-color]="user === selectedUser ? 'lightblue' : ''"
+            (dblclick)="onDoubleClicked(user)"
+            (keydown.enter)="onEnter($event)"
+          >
+            <td nzEllipsis>{{ user.firstName }}</td>
+            <td nzEllipsis>{{ user.lastName }}</td>
+            <td nzEllipsis>{{ user.userName }}</td>
+            <td nzEllipsis>{{ user.email }}</td>
+            <td nzEllipsis>{{ this.getRolName(user.roleId) }}</td>
           </tr>
         </tbody>
       </nz-table>

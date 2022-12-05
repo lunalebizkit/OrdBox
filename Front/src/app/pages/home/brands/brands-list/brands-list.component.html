@@ -1,62 +1,94 @@
-<nz-layout > 
+<nz-layout>
   <nz-page-header class="list-header">
     <nz-page-header-title>Listado de Marcas</nz-page-header-title>
     <nz-page-header-extra>
-     
-        <button nz-tooltip nzTooltipTitle="Nuevo" nz-button nzType="primary" nzShape="circle" (click)="openComponentBrandEdit()">
-          <i nz-icon nzType="plus"
-            nzTheme="outline">
-          </i></button>
+      <button
+        *authPermission="[permissions.CreateBrand, permissions.EditBrand]"
+        nz-tooltip
+        nzTooltipTitle="Nuevo"
+        nz-button
+        nzType="primary"
+        nzShape="circle"
+        (click)="openComponentBrandEdit()"
+      >
+        <i nz-icon nzType="plus" nzTheme="outline"> </i>
+      </button>
     </nz-page-header-extra>
   </nz-page-header>
   <nz-content>
-      <!-- Busqueda -->
-      <nz-collapse>
-        <nz-collapse-panel nzSize="small" nzHeader="Filtros">
-            <div nz-row [nzGutter]="[8,1]">
-              <div nz-col nzSpan="24">
-                <nz-form-item>
-                  <nz-form-label>Búsqueda</nz-form-label>
-                  <nz-form-control>                  
-                    <nz-input-group [nzSuffix]="clearQuery">
-                      <input [ngModelOptions]="{standalone: true}" type="text" placeholder="Ingrese Marca" nz-input
-                        (keydown.enter)="search()" [(ngModel)]="queryData.filter" >
-                    </nz-input-group>
-                    
-                    <ng-template #clearQuery>
-                      <i nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle"
-                        *ngIf="queryData.filter" (click)="queryData.filter = ''; search()"></i>
-                    </ng-template>
-                  </nz-form-control>
-                </nz-form-item>
-              </div>
-            </div>
-        </nz-collapse-panel>
-      </nz-collapse> 
+    <!-- Busqueda -->
+    <nz-collapse>
+      <nz-collapse-panel nzSize="small" nzHeader="Filtros">
+        <div nz-row [nzGutter]="[8, 1]">
+          <div nz-col nzSpan="24">
+            <nz-form-item>
+              <nz-form-label>Búsqueda</nz-form-label>
+              <nz-form-control>
+                <nz-input-group [nzSuffix]="clearQuery">
+                  <input
+                    [ngModelOptions]="{ standalone: true }"
+                    type="text"
+                    placeholder="Ingrese Marca"
+                    nz-input
+                    (keydown.enter)="search()"
+                    [(ngModel)]="queryData.filter"
+                  />
+                </nz-input-group>
 
-    <!-- Tabla --> 
+                <ng-template #clearQuery>
+                  <i
+                    nz-icon
+                    class="ant-input-clear-icon"
+                    nzTheme="fill"
+                    nzType="close-circle"
+                    *ngIf="queryData.filter"
+                    (click)="queryData.filter = ''; search()"
+                  ></i>
+                </ng-template>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+      </nz-collapse-panel>
+    </nz-collapse>
 
-    <div class="table"    
-     (scroll)="onScroll($event)">  
-       <nz-table class="tabla"  [nzData]="brandList" nzBordered= "true"  [nzLoading]="loading" 
-        [nzSize]="'small'" nzShowPagination="false"  nzTableLayout="fixed"> 
+    <!-- Tabla -->
+
+    <div class="table" (scroll)="onScroll($event)">
+      <nz-table
+        class="tabla"
+        [nzData]="brandList"
+        nzBordered="true"
+        [nzLoading]="loading"
+        [nzSize]="'small'"
+        nzShowPagination="false"
+        nzTableLayout="fixed"
+      >
         <thead>
           <tr>
             <th nzEllipsis nzWidth="380px">#</th>
-            <th nzEllipsis nzWidth="380px"> Marca</th>
+            <th nzEllipsis nzWidth="380px">Marca</th>
           </tr>
-        </thead> 
-        <tbody > 
-          <tr id="{{i}}" *ngFor="let brand of brandList ; let i=index " class="small-text" tabindex="-1"
-          (click)="onClick(brand, i)" (keydown)="myNavegation($event) "
-          [style.background-color]="brand === selectedBrand ? 'lightblue' : ''" 
-          (dblclick)="onDoubleClicked(brand)" 
-          (keydown.enter)="onEnter($event)" >            
-          <td nzEllipsis >{{brand.id }}</td>
-          <td nzEllipsis >{{brand.description}}</td>
-          </tr> 
+        </thead>
+        <tbody>
+          <tr
+            id="{{ i }}"
+            *ngFor="let brand of brandList; let i = index"
+            class="small-text"
+            tabindex="-1"
+            (click)="onClick(brand, i)"
+            (keydown)="myNavegation($event)"
+            [style.background-color]="
+              brand === selectedBrand ? 'lightblue' : ''
+            "
+            (dblclick)="onDoubleClicked(brand)"
+            (keydown.enter)="onEnter($event)"
+          >
+            <td nzEllipsis>{{ brand.id }}</td>
+            <td nzEllipsis>{{ brand.description }}</td>
+          </tr>
         </tbody>
       </nz-table>
-    </div> 
+    </div>
   </nz-content>
- </nz-layout> 
+</nz-layout>

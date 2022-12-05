@@ -1,69 +1,113 @@
-<nz-layout> 
-    <nz-page-header class="list-header">
-      <nz-page-header-title>Listado de Productos</nz-page-header-title>
-      <nz-page-header-extra>
-        <button nz-tooltip nzTooltipTitle="Nuevo" nz-button nzType="primary"
-            nzShape="circle"><i nz-icon nzType="plus" nzTheme="outline" (click)="openComponentProductsEdit()"></i></button>
-      </nz-page-header-extra>
-    </nz-page-header> 
-    <nz-collapse>
-      <nz-collapse-panel nzSize="small" nzHeader="Filtros">
-          <div nz-row [nzGutter]="[8,1]">
-            <div nz-col nzSpan="24">
-              <nz-form-item>
-                <nz-form-label>Búsqueda</nz-form-label>
-                <nz-form-control>                  
-                  <nz-input-group [nzSuffix]="clearQuery">
-                    <input [ngModelOptions]="{standalone: true}" type="text" placeholder="Ingrese descripcion o Categoria" nz-input
-                      (keydown)="search()" [(ngModel)]="queryParams.filter" />
-                  </nz-input-group>
-                  <ng-template #clearQuery>
-                    <i nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle"
-                      *ngIf="queryParams.filter" (click)="queryParams.filter = ''; search()"></i>
-                  </ng-template>
-                </nz-form-control>
-              </nz-form-item>
-            </div>
-          </div>
-      </nz-collapse-panel>
-    </nz-collapse>   
-  <div class="table" (scroll)="onScroll($event)"> 
-  <nz-table class="tabla" [nzData]="productList" nzBordered="false" [nzLoading]="loading"
-  [nzSize]="'small'" 
-  nzTableLayout="fixed" nzShowPagination="false">
-  <thead>
-    <tr>
-      <th nzEllipsis nzWidth="275px">Producto</th>  
-      <th nzEllipsis nzWidth="75px" >Categoría</th>
-      <th nzEllipsis nzWidth="70px">Marca</th>
-      <th nzEllipsis nzWidth="45px">Cantidad</th>
-      <th nzEllipsis nzWidth="65px">Precio Costo</th>
-      <th nzEllipsis nzWidth= "65px">Precio Lista</th>
-      <th nzEllipsis nzWidth="65px">Precio Contado</th>
-      <th nzEllipsis nzWidth="65px">Precio Tarjeta</th>  
-      <th nzEllipsis nzWidth="45px">Código</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr id="{{i}}" *ngFor="let product of productList, let i=index" class="small-text" tabindex="-1" (click)="onClick(product, i)" (keydown)="myNavegation($event)"
-    [style.background-color]="product === selectedProduct ? 'lightblue' : ''"  (keydown.enter)="onEnter($event)" (dblclick)="onDoubleClicked(product)">
-      <td nzEllipsis >{{product.description}}</td>
-      <td nzEllipsis >{{product.categoryName}}</td>
-      <td nzEllipsis  >{{product.brandName}}</td>
-      <td nzEllipsis style="text-align: right;">{{product.quantity}}</td>
-      <td style="color:blue;text-align: right;font-weight: bold;">${{product.purchasePrice}}</td>
-      <td style="color:green;text-align: right;font-weight: bold;">${{product.cashSalePrice}}</td>
-      <td style="color: red; text-align: right;font-weight: bold;">${{product.salePrice}}</td>  
-      <td style="text-align: right;font-weight: bold;">${{product.cardSalePrice}}</td>    
-      <td nzEllipsis style="text-align: right;">{{product.code}}</td>
-    </tr>
-  </tbody>
-</nz-table>  
-</div> 
+<nz-layout>
+  <nz-page-header class="list-header">
+    <nz-page-header-title>Listado de Productos</nz-page-header-title>
+    <nz-page-header-extra>
+      <button
+        *authPermission="[permissions.CreateProduct, permissions.EditProduct]"
+        nz-tooltip
+        nzTooltipTitle="Nuevo"
+        nz-button
+        nzType="primary"
+        nzShape="circle"
+      >
+        <i
+          nz-icon
+          nzType="plus"
+          nzTheme="outline"
+          (click)="openComponentProductsEdit()"
+        ></i>
+      </button>
+    </nz-page-header-extra>
+  </nz-page-header>
+  <nz-collapse>
+    <nz-collapse-panel nzSize="small" nzHeader="Filtros">
+      <div nz-row [nzGutter]="[8, 1]">
+        <div nz-col nzSpan="24">
+          <nz-form-item>
+            <nz-form-label>Búsqueda</nz-form-label>
+            <nz-form-control>
+              <nz-input-group [nzSuffix]="clearQuery">
+                <input
+                  [ngModelOptions]="{ standalone: true }"
+                  type="text"
+                  placeholder="Ingrese descripcion o Categoria"
+                  nz-input
+                  (keydown)="search()"
+                  [(ngModel)]="queryParams.filter"
+                />
+              </nz-input-group>
+              <ng-template #clearQuery>
+                <i
+                  nz-icon
+                  class="ant-input-clear-icon"
+                  nzTheme="fill"
+                  nzType="close-circle"
+                  *ngIf="queryParams.filter"
+                  (click)="queryParams.filter = ''; search()"
+                ></i>
+              </ng-template>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+    </nz-collapse-panel>
+  </nz-collapse>
+  <div class="table" (scroll)="onScroll($event)">
+    <nz-table
+      class="tabla"
+      [nzData]="productList"
+      nzBordered="false"
+      [nzLoading]="loading"
+      [nzSize]="'small'"
+      nzTableLayout="fixed"
+      nzShowPagination="false"
+    >
+      <thead>
+        <tr>
+          <th nzEllipsis nzWidth="275px">Producto</th>
+          <th nzEllipsis nzWidth="75px">Categoría</th>
+          <th nzEllipsis nzWidth="70px">Marca</th>
+          <th nzEllipsis nzWidth="45px">Cantidad</th>
+          <th nzEllipsis nzWidth="65px">Precio Costo</th>
+          <th nzEllipsis nzWidth="65px">Precio Lista</th>
+          <th nzEllipsis nzWidth="65px">Precio Contado</th>
+          <th nzEllipsis nzWidth="65px">Precio Tarjeta</th>
+          <th nzEllipsis nzWidth="45px">Código</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          id="{{ i }}"
+          *ngFor="let product of productList; let i = index"
+          class="small-text"
+          tabindex="-1"
+          (click)="onClick(product, i)"
+          (keydown)="myNavegation($event)"
+          [style.background-color]="
+            product === selectedProduct ? 'lightblue' : ''
+          "
+          (keydown.enter)="onEnter($event)"
+          (dblclick)="onDoubleClicked(product)"
+        >
+          <td nzEllipsis>{{ product.description }}</td>
+          <td nzEllipsis>{{ product.categoryName }}</td>
+          <td nzEllipsis>{{ product.brandName }}</td>
+          <td nzEllipsis style="text-align: right">{{ product.quantity }}</td>
+          <td style="color: blue; text-align: right; font-weight: bold">
+            ${{ product.purchasePrice }}
+          </td>
+          <td style="color: green; text-align: right; font-weight: bold">
+            ${{ product.cashSalePrice }}
+          </td>
+          <td style="color: red; text-align: right; font-weight: bold">
+            ${{ product.salePrice }}
+          </td>
+          <td style="text-align: right; font-weight: bold">
+            ${{ product.cardSalePrice }}
+          </td>
+          <td nzEllipsis style="text-align: right">{{ product.code }}</td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </div>
 </nz-layout>
- 
-
-
-
-
-

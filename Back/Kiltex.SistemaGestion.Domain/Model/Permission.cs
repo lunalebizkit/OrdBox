@@ -16,7 +16,7 @@ namespace Kiltex.SistemaGestion.Domain.Model
         public string? Key { get; set; }
 
         [Column("enumPermission")]
-        public int? EnumPermission { get; set; }
-        public List<PermissionXRol>? PermissionXRols { get; set; }
+        public int EnumPermission { get; set; }
+        public List<PermissionXRol> PermissionXRols { get; set; }
     }
 }

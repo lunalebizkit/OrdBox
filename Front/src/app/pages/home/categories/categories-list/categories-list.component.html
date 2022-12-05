@@ -1,44 +1,72 @@
 <nz-layout>
   <nz-page-header class="list-header">
-    <nz-page-header-title>
-      Listado de Categorías
-    </nz-page-header-title>
+    <nz-page-header-title> Listado de Categorías </nz-page-header-title>
     <nz-page-header-extra>
-      <button nz-tooltip nzTooltipTitle="Nuevo" nz-button nzType="primary"
-        nzShape="circle"><i nz-icon nzType="plus" nzTheme="outline"
-        (click)="openComponentCategoryEdit()"  ></i></button>
+      <button
+        *authPermission="[permissions.CreateCategory, permissions.EditCategory]"
+        nz-tooltip
+        nzTooltipTitle="Nuevo"
+        nz-button
+        nzType="primary"
+        nzShape="circle"
+      >
+        <i
+          nz-icon
+          nzType="plus"
+          nzTheme="outline"
+          (click)="openComponentCategoryEdit()"
+        ></i>
+      </button>
     </nz-page-header-extra>
   </nz-page-header>
   <nz-content>
-   
-      <!-- Busqueda -->
-      <nz-collapse>
-        <nz-collapse-panel nzSize="small" nzHeader="Filtros">
-            <div nz-row [nzGutter]="[8,1]">
-              <div nz-col nzSpan="24">
-                <nz-form-item>
-                  <nz-form-label>Búsqueda</nz-form-label>
-                  <nz-form-control>                  
-                    <nz-input-group [nzSuffix]="clearQuery">
-                      <input [ngModelOptions]="{standalone: true}" type="text" placeholder="Ingrese descripción o Categoría" nz-input
-                        (keydown.enter)="search()" [(ngModel)]="queryData.filter" />
-                    </nz-input-group>
-                    
-                    <ng-template #clearQuery>
-                      <i nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle"
-                        *ngIf="queryData.filter" (click)="queryData.filter = ''; search()"></i>
-                    </ng-template>
-                  </nz-form-control>
-                </nz-form-item>
-              </div>
-            </div>
-        </nz-collapse-panel>
-      </nz-collapse> 
-    
+    <!-- Busqueda -->
+    <nz-collapse>
+      <nz-collapse-panel nzSize="small" nzHeader="Filtros">
+        <div nz-row [nzGutter]="[8, 1]">
+          <div nz-col nzSpan="24">
+            <nz-form-item>
+              <nz-form-label>Búsqueda</nz-form-label>
+              <nz-form-control>
+                <nz-input-group [nzSuffix]="clearQuery">
+                  <input
+                    [ngModelOptions]="{ standalone: true }"
+                    type="text"
+                    placeholder="Ingrese descripción o Categoría"
+                    nz-input
+                    (keydown.enter)="search()"
+                    [(ngModel)]="queryData.filter"
+                  />
+                </nz-input-group>
+
+                <ng-template #clearQuery>
+                  <i
+                    nz-icon
+                    class="ant-input-clear-icon"
+                    nzTheme="fill"
+                    nzType="close-circle"
+                    *ngIf="queryData.filter"
+                    (click)="queryData.filter = ''; search()"
+                  ></i>
+                </ng-template>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+      </nz-collapse-panel>
+    </nz-collapse>
+
     <!-- Tabla -->
-    <div class="table"  (scroll)="onScroll($event)" >
-      <nz-table class="tabla" [nzData]="categoryList" nzBordered= "true" [nzLoading]="loading" [nzSize]="'small'"
-      nzShowPagination="false"  nzTableLayout="fixed">
+    <div class="table" (scroll)="onScroll($event)">
+      <nz-table
+        class="tabla"
+        [nzData]="categoryList"
+        nzBordered="true"
+        [nzLoading]="loading"
+        [nzSize]="'small'"
+        nzShowPagination="false"
+        nzTableLayout="fixed"
+      >
         <thead>
           <tr>
             <th nzEllipsis nzWidth="380px">#</th>
@@ -46,11 +74,21 @@
           </tr>
         </thead>
         <tbody>
-          <tr id="{{i}}" *ngFor="let category of categoryList, let i= index" class="small-text" tabindex="-1" (keydown)="myNavegation($event) " 
-          [style.background-color]="category === selectedCategory ? 'lightblue' : ''" 
-           (click)="onClick(category, i)" (dblclick)="onDoubleClicked(category)" (keydown.enter)="onEnter($event)" >
-            <td nzEllipsis >{{ category.id}}</td>
-            <td nzEllipsis >{{ category.description}}</td>
+          <tr
+            id="{{ i }}"
+            *ngFor="let category of categoryList; let i = index"
+            class="small-text"
+            tabindex="-1"
+            (keydown)="myNavegation($event)"
+            [style.background-color]="
+              category === selectedCategory ? 'lightblue' : ''
+            "
+            (click)="onClick(category, i)"
+            (dblclick)="onDoubleClicked(category)"
+            (keydown.enter)="onEnter($event)"
+          >
+            <td nzEllipsis>{{ category.id }}</td>
+            <td nzEllipsis>{{ category.description }}</td>
           </tr>
         </tbody>
       </nz-table>
@@ -58,7 +96,11 @@
   </nz-content>
 </nz-layout>
 
-<app-popup-confirmation #popup [title]="'Confirmar eliminación'"
-    [header]="'¿Está seguro de que desea eliminar el usuario seleccionado?'"
-    [message]="'Esta acción no se puede revertir'" (handleOk)="handleOk()">
-  </app-popup-confirmation>
+<app-popup-confirmation
+  #popup
+  [title]="'Confirmar eliminación'"
+  [header]="'¿Está seguro de que desea eliminar el usuario seleccionado?'"
+  [message]="'Esta acción no se puede revertir'"
+  (handleOk)="handleOk()"
+>
+</app-popup-confirmation>

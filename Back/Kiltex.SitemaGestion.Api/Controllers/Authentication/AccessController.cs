@@ -47,7 +47,7 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Authentication
                 id = usuario.Data.Id,
                 userName = usuario.Data.UserName,
                 firstName = usuario.Data.FirstName,
-                permisos = permission,
+                permission = permission,
                 token = new JwtSecurityTokenHandler().WriteToken(token),
                 expiration = token.ValidTo
             });

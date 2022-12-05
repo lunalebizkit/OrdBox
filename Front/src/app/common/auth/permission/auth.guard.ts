@@ -7,6 +7,7 @@ import {
 import { Injectable } from '@angular/core';
 import { AuthService } from '../interceptors/auth.service';
 import { PermissionService } from './permission-manager.service';
+import { Permission } from '../models/permissions.enum';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -18,6 +19,7 @@ export class AuthGuard implements CanActivate {
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
     const user = this.authService.currentUser;
+    console.log(user);
 
     if (!user) {
       this.router.navigate(['auth/login']);

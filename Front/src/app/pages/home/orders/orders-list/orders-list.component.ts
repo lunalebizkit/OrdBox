@@ -1,5 +1,11 @@
 import { formatDate } from '@angular/common';
-import { Component, ElementRef, Inject, LOCALE_ID, OnInit } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  Inject,
+  LOCALE_ID,
+  OnInit,
+} from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { NzDrawerService } from 'ng-zorro-antd/drawer';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -8,9 +14,14 @@ import { BaseComponent } from 'src/app/common/components/base/base.component';
 import { CategoriesService } from '../../categories/category.services';
 import { EntityService } from '../../customers/customer.service';
 import { eStatus, StatusType } from '../models/status-type.enum';
-import { NewOrder, NewOrderDetail, orderDetailbyIdParser } from '../models/order.model';
+import {
+  NewOrder,
+  NewOrderDetail,
+  orderDetailbyIdParser,
+} from '../models/order.model';
 import { OrdersEditDrawerComponent } from '../orders-edit-drawer/orders-edit.drawer.component';
 import { OrdersService } from '../orders.service';
+import { Permission } from 'src/app/common/auth/models/permissions.enum';
 
 @Component({
   selector: 'app-orders-list',
@@ -18,7 +29,7 @@ import { OrdersService } from '../orders.service';
   styleUrls: ['./orders-list.component.css'],
 })
 export class OrdersListComponent extends BaseComponent implements OnInit {
-
+  permissions = Permission;
   formSearch!: FormGroup;
   isLoading = false;
   timeout!: any;
@@ -28,8 +39,8 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
   orderDetailList: NewOrderDetail[] = [];
   allStatus = StatusType;
   /*
-** id del usuario a editar, si es nuevo...
-*/
+   ** id del usuario a editar, si es nuevo...
+   */
   id!: number;
 
   /*
@@ -41,10 +52,10 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
       brand: 0,
       category: 0,
       status: 0,
-      supplier: [0]
+      supplier: [0],
     },
     page: 0,
-    pageSize: 20
+    pageSize: 20,
   };
   /*
    ** Parametros de busqueda
@@ -92,8 +103,6 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
   isLoadingEntity = false;
   isSaving = false;
 
-
-
   getAllOrders(): void {
     this.isLoading = true;
     this.serviceOrders.getOrders(this.queryParams).subscribe({
@@ -103,8 +112,7 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
         this.totalItems = r.totalCount;
         this.selectedIndex = 0;
         this.selectedOrders = this.allOrders[this.selectedIndex];
-        document.getElementById(this.selectedIndex.toString())?.focus()
-
+        document.getElementById(this.selectedIndex.toString())?.focus();
       },
       error: () => {
         this.isLoading = false;
@@ -112,7 +120,6 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
       },
     });
   }
-
 
   getAllCategories(): void {
     this.isLoadingCategory = true;
@@ -162,8 +169,9 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
     }, 1000);
   }
   onSelect(id: number): void {
-    this.orderDetailList = this.allOrders.filter(order => order.id == id)[0].orderDetail;
-
+    this.orderDetailList = this.allOrders.filter(
+      (order) => order.id == id
+    )[0].orderDetail;
   }
 
   supplierSelectedChange(id: any): void {
@@ -171,58 +179,63 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
     if (id == 0 || id == null) {
       this.queryParams.filter.supplier = [0];
     } else {
-      this.queryParams.filter.supplier.push(this.formSearch.controls['supplier'].value);
+      this.queryParams.filter.supplier.push(
+        this.formSearch.controls['supplier'].value
+      );
     }
   }
 
   categorySelectedChange(id: number): void {
     this.queryParams.filter.category = id;
-  };
+  }
 
   statusSelectedChange(id: number): void {
     this.queryParams.filter.status = id;
-  };
+  }
 
   formaterDate(date: string | number | Date): string {
-    return formatDate(date, 'YYYY-MM-dd', this.locale)
-  };
+    return formatDate(date, 'YYYY-MM-dd', this.locale);
+  }
 
   /*
-** Evento al presionar buscar o presionar enter
-*/
+   ** Evento al presionar buscar o presionar enter
+   */
   search(): void {
     this.queryParams.page = 0;
     this.orderDetailList = [];
     this.getAllOrders();
-  };
+  }
 
   getStatusName(id: number) {
     return eStatus[id];
-  };
+  }
   onDoubleClicked(datos: any) {
-    this.id = datos.id
+    this.id = datos.id;
     this.openComponentOrdersEdit();
-  };
+  }
   onClick(datos: NewOrder, index: number): void {
     this.index = index;
-    this.selectedIndex = index
-    this.selectedOrders = datos
+    this.selectedIndex = index;
+    this.selectedOrders = datos;
     this.onSelect(datos.id);
   }
 
-  onEnter(e: any ) {
-    this.selectedOrders = this.allOrders[this.index]
-    this.id= this.allOrders[this.index].id;
-    this.openComponentOrdersEdit();  
-    } 
+  onEnter(e: any) {
+    this.selectedOrders = this.allOrders[this.index];
+    this.id = this.allOrders[this.index].id;
+    this.openComponentOrdersEdit();
+  }
 
   /*
-** Evento de navegacion por teclado
-*/
+   ** Evento de navegacion por teclado
+   */
   myNavegation(event: any) {
     switch (event.key) {
-      case "ArrowDown":
-        let nextCell = this.allOrders.length > this.selectedIndex ? ++this.selectedIndex : this.allOrders.length;
+      case 'ArrowDown':
+        let nextCell =
+          this.allOrders.length > this.selectedIndex
+            ? ++this.selectedIndex
+            : this.allOrders.length;
         if (this.allOrders[nextCell] !== undefined) {
           this.selectedOrders = this.allOrders[nextCell];
           this.index = nextCell;
@@ -230,7 +243,7 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
           this.onSelect(this.selectedOrders.id);
         }
         break;
-      case "ArrowUp":
+      case 'ArrowUp':
         let previousCell = this.selectedIndex > 0 ? --this.selectedIndex : 0;
         if (this.allOrders[previousCell] !== undefined) {
           this.selectedOrders = this.allOrders[previousCell];
@@ -238,48 +251,57 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
           document.getElementById(previousCell.toString())?.focus();
           this.onSelect(this.selectedOrders.id);
         }
-        break
+        break;
     }
   }
 
   /*
-  ** Evento de scroll infinito
-  */
+   ** Evento de scroll infinito
+   */
   onScroll(event: any): void {
     let scrollHeight = event.target.scrollHeight;
     let scrolltop = event.target.scrollTop;
-    let client = event.target.clientHeight
-    let ScrollPosition = Math.abs(Math.round(scrollHeight - (scrolltop + client)));
-    if ((ScrollPosition <= 5) && (this.totalItems / this.queryParams.page) > this.queryParams.page) {
+    let client = event.target.clientHeight;
+    let ScrollPosition = Math.abs(
+      Math.round(scrollHeight - (scrolltop + client))
+    );
+    if (
+      ScrollPosition <= 5 &&
+      this.totalItems / this.queryParams.page > this.queryParams.page
+    ) {
       let page = this.queryParams.page;
       this.queryParams.page = this.queryParams.page + 1;
-      if (this.totalItems === undefined || (this.queryParams.page * this.queryParams.pageSize <= this.totalItems)) {
-        this.serviceOrders.getOrders(this.queryParams)
-          .subscribe({
-            next: (r) => {
-              r.data.map((order: NewOrder) =>
-                this.allOrders.push(order))
-              this.isLoading = false
-
-            },
-            error: () => {
-              this.isLoading = false;
-              this.allOrders = [];
-            }
-          })
+      if (
+        this.totalItems === undefined ||
+        this.queryParams.page * this.queryParams.pageSize <= this.totalItems
+      ) {
+        this.serviceOrders.getOrders(this.queryParams).subscribe({
+          next: (r) => {
+            r.data.map((order: NewOrder) => this.allOrders.push(order));
+            this.isLoading = false;
+          },
+          error: () => {
+            this.isLoading = false;
+            this.allOrders = [];
+          },
+        });
       } else {
         this.queryParams.page = page;
       }
     }
-  };
+  }
   openComponentOrdersEdit(): void {
-    const drawerRefCustomer = this.drawerService.create<OrdersEditDrawerComponent, { filter: number }, number>({
+    const drawerRefCustomer = this.drawerService.create<
+      OrdersEditDrawerComponent,
+      { filter: number },
+      number
+    >({
       nzContent: OrdersEditDrawerComponent,
       nzSize: 'large',
       nzContentParams: {
-        filter: this.id > 0 ? this.id : 0
+        filter: this.id > 0 ? this.id : 0,
       },
-      nzClosable: false
+      nzClosable: false,
     });
     drawerRefCustomer.afterClose.subscribe({
       next: (data) => {
@@ -288,34 +310,37 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
         if (data != undefined && data != 0) {
           this.serviceOrders.getById(data).subscribe({
             next: (r: NewOrder) => {
-              let order = this.allOrders[this.allOrders.findIndex(r => r.id == data)];
+              let order =
+                this.allOrders[this.allOrders.findIndex((r) => r.id == data)];
               if (order != undefined) {
                 let newDetalle: NewOrderDetail[] = [];
-                r.orderDetail.forEach((e: NewOrderDetail) => {                  
-                  newDetalle.push(orderDetailbyIdParser(e))
+                r.orderDetail.forEach((e: NewOrderDetail) => {
+                  newDetalle.push(orderDetailbyIdParser(e));
                 });
-                this.allOrders[this.allOrders.findIndex(r => r.id == data)] = order;
-                this.allOrders[this.allOrders.findIndex(r => r.id == data)].orderDetail = newDetalle;
-
+                this.allOrders[this.allOrders.findIndex((r) => r.id == data)] =
+                  order;
+                this.allOrders[
+                  this.allOrders.findIndex((r) => r.id == data)
+                ].orderDetail = newDetalle;
               } else {
                 let newDetalle: NewOrderDetail[] = [];
-                r.orderDetail.forEach((e: NewOrderDetail) => {                  
-                  newDetalle.push(orderDetailbyIdParser(e))
-                });                
-                 r.orderDetail = newDetalle;
+                r.orderDetail.forEach((e: NewOrderDetail) => {
+                  newDetalle.push(orderDetailbyIdParser(e));
+                });
+                r.orderDetail = newDetalle;
                 this.allOrders.push(r);
               }
             },
             error: () => {
               this.id = 0;
-            }
-          })
+            },
+          });
         }
       },
       error: () => {
         this.orderDetailList = [];
         this.id = 0;
-      }
-    })
-  };
+      },
+    });
+  }
 }
