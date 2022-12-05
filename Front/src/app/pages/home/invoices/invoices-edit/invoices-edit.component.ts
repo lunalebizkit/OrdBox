@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, TemplateRef, ViewChild } from "@angular/core";
+import { Component, ElementRef, Input, OnInit, TemplateRef, ViewChild } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { NzMessageService } from "ng-zorro-antd/message";
 import { NzNotificationService } from "ng-zorro-antd/notification";
@@ -20,13 +20,14 @@ import { InvoiceType } from "../model/invoice-type.Enum";
 import { formatCurrency } from '@angular/common';
 import { Inject, LOCALE_ID } from '@angular/core';
 import { ProductService } from "../../products/product.service";
+import { AuthService } from "src/app/common/auth/interceptors/auth.service";
+
 @Component({
   selector: 'app-invoices-edit',
   templateUrl: './invoices-edit.component.html',
   styleUrls: ['./invoices-edit.component.css']
 })
 export class InvoicesEditComponent extends BaseComponent implements OnInit {
-
   @ViewChild('popup') popupComponent!: PopupConfirmationComponent;
   @ViewChild('header') headerComponent!: HeaderOperationsButtonsComponent;
 
@@ -42,9 +43,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
   subtotal: number=0;
   iva: number=21;
   total: number=0;
-  userId = 1;
   invoiceListTest: InvoiceDetailList[] = [];
-
   isLoading: boolean= false;
   loading!: boolean;
   isSaving!: boolean;
@@ -68,6 +67,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
   customer: CustomerModel[] = [];
   invoiceDetailsList: InvoiceDetailList[] = [];
   invoiceDetails: InvoiceDetails[] = [];
+ 
 
   /*
   **Variables de la tabla detalle
@@ -94,14 +94,14 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
     page: 0,
     pageSize: 10
   };
-
-
+ 
   constructor(
     private fb: FormBuilder,
     notificacionService: NzNotificationService,
     private serviceEntity: EntityService,
     private serviceProduct: ProductService,
     private serviceInvoice: InvoiceService,
+    public serviceUser: AuthService,
     el: ElementRef,
     private router: Router,
     private route: ActivatedRoute,
@@ -124,8 +124,9 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
       productSearchFilter: ['']
     })
   }
+  userId:number= this.serviceUser.currentUser.id
 
-  ngOnInit(): void {       
+  ngOnInit(): void {    
   }
 
   typeSelectedChange(id: any): void {
@@ -365,6 +366,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
        
      }
   }
+  
   save(): void {
     if (this.isValidForm(this.formInvoice)) {
       if (this.invoiceDetails.length == 0) {
@@ -374,7 +376,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
         const model: InvoiceModel = {
           id: 0,
           customerId: this.customerId,
-          userId: this.userId,
+          userId:this.userId,
           invoiceNumber: this.totalItems,
           customerName: this.formInvoice.controls['customerName'].value,          
           customerCuit: this.formInvoice.controls['customerCuit'].value,  
@@ -384,7 +386,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
           total: this.totalItems,
           ivaTotal: this.ivaTotal,
           type: this.formInvoice.controls['type'].value,
-          invoiceDetails: this.invoiceDetails
+          invoiceDetails: this.invoiceDetails,
         };
         this.isSaving = true;
         this.serviceInvoice.saveInvoice(model)
@@ -454,8 +456,4 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
     return formatCurrency(data, this.locale, '$', 'ARS', '1.1-2')
   }
 }
-
-
-
-
 

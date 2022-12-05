@@ -80,7 +80,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                                                     .ConfigureAwait(false);
 
                             productDetail = _mapper.Map<Product>(oldProduct);
-                            productDetail.UpdateStock( detail.OrderedQuantity);
+                            productDetail.UpdateStock( detail.RecievedQuantity);
                             _contextSql.Products.Update(productDetail);
                         }
                         
