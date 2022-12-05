@@ -115,7 +115,7 @@ export class PermissionService {
       return this.router.navigate(['auth/login']);
     }
 
-    let permissions = this.auth.currentUser.permisos;
+    let permissions = this.auth.currentUser.permission;
 
     let hasPermission = this.checkPermissions(url, permissions);
     if (!hasPermission) {
@@ -135,7 +135,7 @@ export class PermissionService {
   }
 
   public validatePermissionKey(permissionKey: Permission[]): boolean {
-    let userPerms = this.auth.currentUser.permisos;
+    let userPerms = this.auth.currentUser.permission;
 
     let valid =
       userPerms && permissionKey.findIndex((i) => userPerms.includes(i)) !== -1;
