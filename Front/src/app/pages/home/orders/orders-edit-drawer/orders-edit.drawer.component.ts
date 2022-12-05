@@ -385,12 +385,13 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
   }
 
   changeQuantityrecievedQuantity(quantity: number): void {
-    if (quantity == null) {
+    if (quantity==0 ||quantity == null ) {
       quantity = 0;
     }
     this.orderDetail.filter(
       (detail) => detail.productId == this.editIdrecievedQuantity
     )[0].recievedQuantity = quantity;
+    console.log(quantity)
   }
 
   /*
