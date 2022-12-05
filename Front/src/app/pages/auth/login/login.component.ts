@@ -67,10 +67,8 @@ export class LoginComponent implements OnInit, OnDestroy {
         this.isSaving = false;
         this.token.tokenLS = r.token;
         this.token.currentUser = r;
-        if (r.rol === new RolesConst().admin) {
-          this.router.navigate(['/home'], { relativeTo: this.route });
-          this.message.success('Bienvenido' + ' ' + r.userName);
-        }
+        this.router.navigate(['/home'], { relativeTo: this.route });
+        this.message.success('Bienvenido' + ' ' + r.userName);
       },
       error: () => {
         this.isSaving = false;

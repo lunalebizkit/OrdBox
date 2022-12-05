@@ -2,18 +2,21 @@
   <div class="sticky">
     <nz-page-header class="list-header">
       <nz-page-header-title>Listado de Pedidos</nz-page-header-title>
-      <nz-page-header-extra>       
-          <button
-            nz-tooltip
-            nzTooltipTitle="Nuevo Pedido"
-            nz-button
-            nzType="primary"
-            nzShape="circle"
-            (click)="openComponentOrdersEdit()"
-          >
-            <i nz-icon nzType="plus" nzTheme="outline"
-            ></i></button
+      <nz-page-header-extra>
+        <button
+          *authPermission="[
+            permissions.CreateOrderSupplier,
+            permissions.EditOrderSupplier
+          ]"
+          nz-tooltip
+          nzTooltipTitle="Nuevo Pedido"
+          nz-button
+          nzType="primary"
+          nzShape="circle"
+          (click)="openComponentOrdersEdit()"
         >
+          <i nz-icon nzType="plus" nzTheme="outline"></i>
+        </button>
       </nz-page-header-extra>
     </nz-page-header>
   </div>
@@ -27,10 +30,15 @@
               <nz-form-item>
                 <nz-form-label>Estado</nz-form-label>
                 <nz-form-control>
-                  <nz-select nzShowSearch nzAllowClear nzPlaceHolder="Estado" id="status"
-                  formControlName="status"
-                  (ngModelChange)="statusSelectedChange($event)"
-                  [nzOptions]="allStatus">
+                  <nz-select
+                    nzShowSearch
+                    nzAllowClear
+                    nzPlaceHolder="Estado"
+                    id="status"
+                    formControlName="status"
+                    (ngModelChange)="statusSelectedChange($event)"
+                    [nzOptions]="allStatus"
+                  >
                   </nz-select>
 
                   <ng-template #clearQuery>
@@ -54,21 +62,21 @@
                     id="supplier"
                     nzPlaceHolder="Seleccione Proveedor"
                     nzAllowClear
-                    nzShowSearch                   
+                    nzShowSearch
                     formControlName="supplier"
                     (ngModelChange)="supplierSelectedChange($event)"
                     [nzOptions]="allSuppliers"
-                  >                
-                  <ng-template #clearQuery>
-                    <i
-                      nz-icon
-                      class="ant-input-clear-icon"
-                      nzTheme="fill"
-                      nzType="close-circle"
-                      *ngIf="formSearch.get('supplier')?.value"
-                      (click)="formSearch.get('supplier')?.setValue([])"
-                    ></i>
-                  </ng-template>
+                  >
+                    <ng-template #clearQuery>
+                      <i
+                        nz-icon
+                        class="ant-input-clear-icon"
+                        nzTheme="fill"
+                        nzType="close-circle"
+                        *ngIf="formSearch.get('supplier')?.value"
+                        (click)="formSearch.get('supplier')?.setValue([])"
+                      ></i>
+                    </ng-template>
                   </nz-select>
                 </nz-form-control>
               </nz-form-item>
@@ -119,7 +127,13 @@
 
 <div class="row">
   <div class="table" (scroll)="onScroll($event)">
-    <nz-table class="tabla" [nzBordered]="false" [nzData]="allOrders" nzShowPagination="false" [nzSize]="'small'">
+    <nz-table
+      class="tabla"
+      [nzBordered]="false"
+      [nzData]="allOrders"
+      nzShowPagination="false"
+      [nzSize]="'small'"
+    >
       <thead>
         <tr>
           <th>N° Pedido</th>
@@ -129,12 +143,20 @@
         </tr>
       </thead>
       <tbody>
-        <tr id="{{i}}" class="small-text" *ngFor="let data of allOrders, let i=index"  (dblclick)="onDoubleClicked(data)"
-         tabindex="-1" (click)="onClick(data, i)" (keydown)="myNavegation($event)" (keydown.enter)="onEnter($event)" 
-        [style.background-color]="data === selectedOrders ? 'lightblue' : ''">
-          <td>{{data.id}}</td>
-          <td>{{ this.formaterDate(data.dateTime)}}</td>
-          <td>{{data.supplierName}}</td>
+        <tr
+          id="{{ i }}"
+          class="small-text"
+          *ngFor="let data of allOrders; let i = index"
+          (dblclick)="onDoubleClicked(data)"
+          tabindex="-1"
+          (click)="onClick(data, i)"
+          (keydown)="myNavegation($event)"
+          (keydown.enter)="onEnter($event)"
+          [style.background-color]="data === selectedOrders ? 'lightblue' : ''"
+        >
+          <td>{{ data.id }}</td>
+          <td>{{ this.formaterDate(data.dateTime) }}</td>
+          <td>{{ data.supplierName }}</td>
           <td>{{ this.getStatusName(data.statusId) }}</td>
         </tr>
       </tbody>
@@ -142,7 +164,13 @@
   </div>
 
   <div>
-    <nz-table class="tabla" [nzBordered]="true" [nzData]="orderDetailList" nzShowPagination="false" [nzSize]="'small'">
+    <nz-table
+      class="tabla"
+      [nzBordered]="true"
+      [nzData]="orderDetailList"
+      nzShowPagination="false"
+      [nzSize]="'small'"
+    >
       <thead>
         <tr>
           <th>Producto</th>
@@ -150,9 +178,11 @@
         </tr>
       </thead>
       <tbody>
-        <tr class="small-text" *ngFor="let data of orderDetailList" >
-          <td>{{data.productId}}</td>
-          <td  style="text-align: center;font-weight: bold;">{{data.orderedQuantity}}</td>
+        <tr class="small-text" *ngFor="let data of orderDetailList">
+          <td>{{ data.productId }}</td>
+          <td style="text-align: center; font-weight: bold">
+            {{ data.orderedQuantity }}
+          </td>
         </tr>
       </tbody>
     </nz-table>

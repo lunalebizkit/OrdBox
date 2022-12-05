@@ -13,8 +13,7 @@ export class PermissionService {
     {
       url: new RegExp('/home/users'),
       permissions: [
-        Permission.ListUser,
-        Permission.GetUser,
+        Permission.ViewUser,
         Permission.CreateUser,
         Permission.DeleteUser,
         Permission.EditUser,
@@ -26,10 +25,9 @@ export class PermissionService {
     {
       url: new RegExp('/home/brands'),
       permissions: [
-        Permission.GetBrand,
-        Permission.CreaterBrand,
-        Permission.ListBrand,
         Permission.EditBrand,
+        Permission.ViewBrand,
+        Permission.CreateBrand,
       ],
     },
     //#endregion
@@ -38,9 +36,8 @@ export class PermissionService {
     {
       url: new RegExp('home/categories'),
       permissions: [
-        Permission.GetCategory,
+        Permission.ViewCategory,
         Permission.CreateCategory,
-        Permission.ListCategory,
         Permission.EditCategory,
       ],
     },
@@ -50,10 +47,9 @@ export class PermissionService {
     {
       url: new RegExp('/home/customers'),
       permissions: [
-        Permission.CreaterCustomer,
-        Permission.ListCustomer,
-        Permission.GetCustomerByCuit,
-        Permission.GetCustomerByCuit,
+        Permission.ViewCustomer,
+        Permission.CreateCustomer,
+        Permission.EditCustomer,
       ],
     },
     //#endregion
@@ -62,10 +58,9 @@ export class PermissionService {
     {
       url: new RegExp('/home/entityt'),
       permissions: [
-        Permission.GetEntity,
+        Permission.ViewEntity,
         Permission.CreateEntity,
         Permission.EditEntity,
-        Permission.ListEntity,
       ],
     },
     //#endregion
@@ -81,10 +76,9 @@ export class PermissionService {
     {
       url: new RegExp('/home/products/list'),
       permissions: [
-        Permission.GetProduct,
+        Permission.ViewProduct,
         Permission.CreateProduct,
         Permission.EditProduct,
-        Permission.ListProduct,
       ],
     },
     //#endregion
@@ -92,9 +86,8 @@ export class PermissionService {
     {
       url: new RegExp('/home/suppliers'),
       permissions: [
-        Permission.GetSupplier,
+        Permission.ViewSupplier,
         Permission.EditSupplier,
-        Permission.ListSupplier,
         Permission.CreateSupplier,
       ],
     },
@@ -103,10 +96,9 @@ export class PermissionService {
     {
       url: new RegExp('/home/orders'),
       permissions: [
-        Permission.GetOrderSupplier,
+        Permission.ViewOrderSupplier,
         Permission.CreateOrderSupplier,
         Permission.EditOrderSupplier,
-        Permission.ListOrderSupplier,
       ],
     },
     //#endregion
@@ -123,7 +115,7 @@ export class PermissionService {
       return this.router.navigate(['auth/login']);
     }
 
-    let permissions = this.auth.currentUser.permissions;
+    let permissions = this.auth.currentUser.permisos;
 
     let hasPermission = this.checkPermissions(url, permissions);
     if (!hasPermission) {
@@ -137,14 +129,13 @@ export class PermissionService {
     let permissionUrl = this.permission.find((p) =>
       p.url.test(url)
     )?.permissions;
-
     if (!permissionUrl) return false;
 
     return permissions.findIndex((i) => permissionUrl?.includes(i)) !== -1;
   }
 
   public validatePermissionKey(permissionKey: Permission[]): boolean {
-    let userPerms = this.auth.currentUser.permissions;
+    let userPerms = this.auth.currentUser.permisos;
 
     let valid =
       userPerms && permissionKey.findIndex((i) => userPerms.includes(i)) !== -1;

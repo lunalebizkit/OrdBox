@@ -34,7 +34,6 @@ export class PermissionDirective {
     const isPermitted = this.permission.validatePermissionKey(
       this._permissionKey
     );
-
     if (!isPermitted) return;
 
     this._viewRef = this.viewContainerRef.createEmbeddedView(this.templateRef);
