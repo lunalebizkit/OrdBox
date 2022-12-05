@@ -6,4 +6,5 @@ export class AuthUserModel {
   token!: string;
   rol!: string;
   permissions!: Permission[];
+  id!: number;
 }

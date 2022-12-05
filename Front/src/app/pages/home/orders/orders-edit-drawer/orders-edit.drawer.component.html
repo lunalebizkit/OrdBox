@@ -290,7 +290,7 @@
                 </div>
                 <nz-input-number
                   [hidden]="editIdrecievedQuantity !== data.id"
-                  [nzMin]="1"
+                  [nzMin]="0"
                   [nzMax]="10000"
                   [(ngModel)]="data.recievedQuantity"
                   (nzBlur)="stopEditrecievedQuantity()"
