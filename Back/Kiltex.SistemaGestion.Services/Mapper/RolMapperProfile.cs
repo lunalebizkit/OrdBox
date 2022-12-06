@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Kiltex.SistemaGestion.Domain.Model;
 using Kiltex.SistemaGestion.Services.Dtos;
-using Kiltex.SistemaGestion.Services.Models.Dtos;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
 
@@ -13,8 +12,8 @@ namespace Kiltex.SistemaGestion.Services.Mapper
         {
             CreateMap<Rol, DtoResponseRol >().ReverseMap();
             CreateMap<RequestAddRol, DtoResponseRol >().ReverseMap();
-            CreateMap<Permission, DtoPermission>().ReverseMap();
-            CreateMap<DtoRequestAddPermissionXRol, DtoPermission>().ReverseMap();
+            CreateMap<Permission, DtoResponsePermission>().ReverseMap();
+            CreateMap<DtoRequestAddPermissionXRol, DtoResponsePermission>().ReverseMap();
         }
     }
 }

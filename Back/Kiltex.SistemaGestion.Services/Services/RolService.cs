@@ -144,19 +144,20 @@ namespace Kiltex.SistemaGestion.Services.Services
             }
         }
         //get Lista de Roles
-        public async Task<OperationResponse<List<DtoPermission>>> ListPermissions(CancellationToken ct = default)
+        public async Task<OperationResponse<List<DtoResponsePermission>>> ListPermissions(CancellationToken ct = default)
         {       
             try
             {
-                return new OperationResponse<List<DtoPermission>>(
+                return new OperationResponse<List<DtoResponsePermission>>(
                     await _contextSql
                         .Permissions
                         .AsNoTracking()
-                        .Select(p => new DtoPermission()
+                        .Select(p => new DtoResponsePermission()
                         {
                             Id = p.Id,
                             Name = p.Name,
-                            Key = p.Key
+                            Key = p.Key,
+                            EnumPermission = p.EnumPermission,
                         }).ToListAsync(cancellationToken: ct));
             }
             catch (Exception ex)

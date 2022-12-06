@@ -26,9 +26,10 @@ namespace Kiltex.SistemaGestion.Services.Services
             {
                 var user = await _contextSql
                          .Users
-                         .AsNoTracking()
+                         .AsNoTracking()                         
                          .Include(x => x.Rol)
                          .ThenInclude(y => y.PermissionXRols)
+                         .ThenInclude(y => y.Permission)
                          .FirstOrDefaultAsync(x => x.UserName == userName && !x.IsDeleted)
                          .ConfigureAwait(false);
                
