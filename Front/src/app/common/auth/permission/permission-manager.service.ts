@@ -70,6 +70,10 @@ export class PermissionService {
       url: new RegExp('/home/invoices'),
       permissions: [Permission.GetInvoice, Permission.CreateInvoice],
     },
+    {
+      url: new RegExp('/home/invoices/invoices-sale/new'),
+      permissions: [Permission.CreateInvoice],
+    },
     //#endregion
 
     //#region Product

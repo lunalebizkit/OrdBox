@@ -24,7 +24,7 @@
           </li>
           <li nz-menu-item nzMatchRouter>
             <a routerLink="/home/customers">Clientes</a>
-          </li>         
+          </li>
           <li nz-menu-item nzMatchRouter>
             <a routerLink="/home/suppliers">Proveedores</a>
           </li>
@@ -47,7 +47,7 @@
           </li>
           <li nz-menu-item nzMatchRouter>
             <a routerLink="/home/products/updateprice">Actualizar Precio</a>
-          </li>         
+          </li>
         </ul>
       </li>
       <li nz-submenu nzOpen nzTitle="Pedidos" nzIcon="shopping-cart">
@@ -60,7 +60,12 @@
       <li nz-submenu nzOpen nzTitle="Comprobantes" nzIcon="file-excel">
         <ul>
           <li nz-menu-item nzMatchRouter>
-            <a routerLink="/home/invoices">Comprobantes</a>
+            <a routerLink="/home/invoices/invoices-sale"
+              >Comprobantes de Venta</a
+            >
+          </li>
+          <li nz-menu-item nzMatchRouter>
+            <a routerLink="/home/invoices/receipt">Comprobantes de Compra</a>
           </li>
         </ul>
       </li>
@@ -89,6 +94,6 @@
     <nz-content>
       <router-outlet></router-outlet>
     </nz-content>
-    <nz-footer > ©{{ getYear() }}</nz-footer>
+    <nz-footer> ©{{ getYear() }}</nz-footer>
   </nz-layout>
 </nz-layout>

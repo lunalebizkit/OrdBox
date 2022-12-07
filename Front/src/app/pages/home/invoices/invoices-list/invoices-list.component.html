@@ -1,8 +1,10 @@
 <nz-layout>
   <nz-page-header class="list-header">
-    <nz-page-header-title>Listado de Comprobantes</nz-page-header-title>
+    <nz-page-header-title
+      >Listado de Comprobantes de Venta</nz-page-header-title
+    >
     <nz-page-header-extra>
-      <a routerLink="/home/invoices/new">
+      <a routerLink="/home/invoices/invoices-sale/new">
         <button
           *authPermission="[permissions.CreateInvoice]"
           nz-tooltip

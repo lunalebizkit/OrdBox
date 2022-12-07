@@ -3,6 +3,7 @@
   [btnCancelText]="'Volver'"
   [hideSave]="true"
   [hideTag]="false"
+  [color]="'blue'"
   [tagText]="'Comprobante'"
   [title]="'Refrigeraciones Dante'"
   [iconBack]="'rollback'"
@@ -26,7 +27,7 @@
               <nz-form-label>Fecha</nz-form-label>
               <nz-form-control>
                 <b>
-                  {{ startDate ? (startDate | date: "YYYY-MM-dd") : "N/A" }}
+                  {{ startDate ? (startDate | date : "YYYY-MM-dd") : "N/A" }}
                 </b>
               </nz-form-control>
             </nz-form-item>
@@ -178,6 +179,26 @@
               </button>
             </div>
           </nz-form-item>
+          <br />
+          <nz-divider
+            nzText="Observaciones"
+            nzOrientation="left"
+            style="margin-top: 0"
+          ></nz-divider>
+
+          <nz-form-item>
+            <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="observation"
+              >Observación
+            </nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="24">
+              <input
+                nz-input
+                id="observation"
+                maxlength="250"
+                formControlName="observation"
+              />
+            </nz-form-control>
+          </nz-form-item>
         </form>
       </nz-content>
     </nz-collapse-panel>
@@ -319,34 +340,18 @@
           </tr>
         </tfoot>
       </nz-table>
-
-      <form nz-form [formGroup]="formInvoice">
-        <nz-form-item>
-          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="observation"
-            >Observación
-          </nz-form-label>
-          <nz-form-control [nzSm]="14" [nzXs]="24">
-            <input
-              formControlName="observation"
-              nz-input
-              id="observation"
-              maxlength="250"
-            />
-          </nz-form-control>
-        </nz-form-item>
-      </form>
     </nz-content>
   </nz-collapse-panel>
 </nz-collapse>
 
- <app-popup-confirmation
+<app-popup-confirmation
   #popup
   [title]="'Confirmar eliminación'"
   [header]="'¿Está seguro que desea eliminar el producto seleccionado?'"
   [message]="'Esta acción no se puede revertir'"
   (handleOk)="handleOk()"
 >
-</app-popup-confirmation> 
+</app-popup-confirmation>
 <app-popup-confirmation
   #pop
   [title]="'Confirmar Guardado de comprobante'"
