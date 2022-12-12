@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Kiltex.SistemaGestion.Domain.Migrations
 {
-    public partial class EnumPermission : Migration
+    public partial class periodo : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -52,6 +52,21 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "period",
+                columns: table => new
+                {
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    init_period = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    end_period = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    status = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_period", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "permission",
                 columns: table => new
                 {
@@ -59,7 +74,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     key = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    enumPermission = table.Column<int>(type: "int", nullable: true)
+                    enumPermission = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -451,6 +466,9 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
 
             migrationBuilder.DropTable(
                 name: "invoice_detail");
+
+            migrationBuilder.DropTable(
+                name: "period");
 
             migrationBuilder.DropTable(
                 name: "permission_x_rol");
