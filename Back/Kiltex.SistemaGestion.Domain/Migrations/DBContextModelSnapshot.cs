@@ -4,7 +4,6 @@ using Kiltex.SistemaGestion.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -12,10 +11,9 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Kiltex.SistemaGestion.Domain.Migrations
 {
     [DbContext(typeof(DBContext))]
-    [Migration("20221129145715_EnumPermission")]
-    partial class EnumPermission
+    partial class DBContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -226,6 +224,32 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                     b.ToTable("invoice_detail");
                 });
 
+            modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.Period", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
+                    b.Property<DateTime>("EndPeriod")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("end_period");
+
+                    b.Property<DateTime>("InitPeriod")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("init_period");
+
+                    b.Property<bool>("Status")
+                        .HasColumnType("bit")
+                        .HasColumnName("status");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("period");
+                });
+
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.Permission", b =>
                 {
                     b.Property<long>("Id")
@@ -235,7 +259,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
 
-                    b.Property<int?>("EnumPermission")
+                    b.Property<int>("EnumPermission")
                         .HasColumnType("int")
                         .HasColumnName("enumPermission");
 
