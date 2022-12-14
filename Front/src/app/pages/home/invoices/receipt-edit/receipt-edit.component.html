@@ -37,7 +37,13 @@
             <nz-form-item>
               <nz-form-label>Tipo de Factura</nz-form-label>
               <nz-form-control>
-                <nz-select id="type"> </nz-select>
+                <nz-select
+                  id="type"
+                  formControlName="type"
+                  [nzOptions]="type"
+                  (ngModelChange)="typeSelectedChange($event)"
+                >
+                </nz-select>
               </nz-form-control>
             </nz-form-item>
           </div>
@@ -60,7 +66,7 @@
         ></nz-divider>
 
         <nz-form-item>
-          <nz-form-label [nzSm]="6" [nzXs]="14" nzRequired nzFor="customerCuit"
+          <nz-form-label [nzSm]="6" [nzXs]="14" nzRequired nzFor="supplierCuit"
             >Cuit - Cuil
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="14">
@@ -68,7 +74,7 @@
           </nz-form-control>
 
           <!-- Boton que abre el buscador de CLiente en drawer -->
-          <form nz-form [formGroup]="formCustomerSearch">
+          <form nz-form [formGroup]="formSupplierSearch">
             <div style="margin: 3px">
               <button nz-button nzSize="small" nzType="primary">
                 <i nz-icon nzType="search" nzTheme="outline"></i>Buscar
@@ -78,7 +84,7 @@
         </nz-form-item>
 
         <nz-form-item>
-          <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="customerName"
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="supplierName"
             >Razón Social - Nombre
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24">
@@ -87,7 +93,11 @@
         </nz-form-item>
 
         <nz-form-item>
-          <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="address"
+          <nz-form-label
+            [nzSm]="6"
+            [nzXs]="24"
+            nzRequired
+            nzFor="supplierAddress"
             >Domicilio
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24">
@@ -164,8 +174,7 @@
         [nzLoading]="loading"
       >
         <thead>
-          <tr>
-            <th></th>
+          <tr class="small-text">
             <th>Código</th>
             <th>Código Interno</th>
             <th>Producto</th>
@@ -177,19 +186,20 @@
           </tr>
         </thead>
         <tbody>
-          <tr class="small-text">
+          <tr *ngFor="let data of receiptDetailsList" class="small-text">
+            <td>{{ data.productCode }}</td>
+            <td>{{ data.productName }}</td>
             <td>
-              <i
-                nz-icon
-                nzType="exclamation-circle"
-                nzTheme="outline"
-                [title]="'Este producto no cuenta con stock'"
-                style="color: brown"
-              ></i>
+              <div class="editable-cell"></div>
+              <nz-input-number
+                [nzMin]="1"
+                [nzMax]="10000"
+                [(ngModel)]="data.quantity"
+                (nzBlur)="stopEdit()"
+                (ngModelChange)="changeQuantity($event)"
+              ></nz-input-number>
             </td>
-            <td></td>
-            <td></td>
-            <td nzBreakWord></td>
+
             <td>
               <div class="editable-cell"></div>
               <nz-input-number [nzMin]="1" [nzMax]="10000"></nz-input-number>
@@ -221,14 +231,13 @@
         </tbody>
         <tfoot style="background-color: #fafafa">
           <tr>
-            <td></td>
             <td colspan="1"><b>Iva </b><b style="color: red"></b></td>
             <td colspan="1"><b>SubTotal </b><b style="color: red"></b></td>
             <td colspan="1">
               <b>Conc. No Gravado</b><b style="color: red"></b>
             </td>
             <td colspan="1"><b>Perc. Iva</b><b style="color: red"></b></td>
-            <td colspan="1">
+            <td colspan="2">
               <b>Perc. Ing. Brutos</b><b style="color: red"></b>
             </td>
             <td colspan="1"><b>Total </b><b style="color: red"></b></td>
@@ -258,6 +267,7 @@
   [title]="'Confirmar eliminación'"
   [header]="'¿Está seguro que desea eliminar el producto seleccionado?'"
   [message]="'Esta acción no se puede revertir'"
+  (handleOk)="handleOk()"
 >
 </app-popup-confirmation>
 <app-popup-confirmation
@@ -265,5 +275,7 @@
   [title]="'Confirmar Guardado de comprobante'"
   [header]="'¿Está seguro que desea guardar el comprobante?'"
   [message]="'Esta acción no se puede revertir'"
+  (handleOk)="msjConfirmOk()"
 >
+  >
 </app-popup-confirmation>

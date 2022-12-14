@@ -4,23 +4,22 @@ import { Observable } from 'rxjs';
 import { CustomerAddModel } from './model/customer.add.model';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class EntityService {
   /**
    * Constructor
    */
-  constructor(public api: ApiService) {
-  }
-   /**
+  constructor(public api: ApiService) {}
+  /**
    * Obtiene todas los Proveedores
    * @param queryParams
    * @returns
    */
-    public getSuppliers(queryParams: any): Observable<any> {
-      return this.api.post(`Supplier/list`, queryParams, false);
-    }
-      /**
+  public getSuppliers(queryParams: any): Observable<any> {
+    return this.api.post(`Supplier/list`, queryParams, false);
+  }
+  /**
    * Obtiene un proveedor por Id
    * @param id
    * @returns
@@ -29,18 +28,27 @@ export class EntityService {
     return this.api.get(`supplier?id=${id}`, false);
   }
 
-    /**
+  /**
+   * Obtiene un Proveedor por Cuit
+   * @param cuit
+   * @returns
+   */
+  public getSupplierByCuit(cuit: string | number): Observable<any> {
+    return this.api.get(`Customer/GetSupplierByCuit?cuit=${cuit}`, false);
+  }
+
+  /**
    * Guarda un Proveedor
    * @param model
    * @returns
    */
-     public saveSupplier(model: CustomerAddModel): Observable<any> {
-      if (model.id === 0) {
-        return this.api.post(`supplier`, model, false);
-      } else {
-        return this.api.put(`supplier`, model, false);
-      }
+  public saveSupplier(model: CustomerAddModel): Observable<any> {
+    if (model.id === 0) {
+      return this.api.post(`supplier`, model, false);
+    } else {
+      return this.api.put(`supplier`, model, false);
     }
+  }
   /**
    * Obtiene todos los Clientes
    * @param queryParams
@@ -49,7 +57,6 @@ export class EntityService {
   public getCustomers(queryParams: any): Observable<any> {
     return this.api.post(`Customer/list`, queryParams, false);
   }
-  
 
   /**
    * Obtiene un Cliente por Id
@@ -60,15 +67,14 @@ export class EntityService {
     return this.api.get(`Customer?id=${id}`, false);
   }
 
-   /**
+  /**
    * Obtiene un Cliente por Cuit
    * @param cuit
    * @returns
    */
-    public getByCuit(cuit: string | number): Observable<any> {
-      return this.api.get(`Customer/GetCustomerByCuit?cuit=${cuit}`, false);    
-    }
- 
+  public getByCuit(cuit: string | number): Observable<any> {
+    return this.api.get(`Customer/GetCustomerByCuit?cuit=${cuit}`, false);
+  }
 
   /**
    * Guarda un Cliente
@@ -82,7 +88,4 @@ export class EntityService {
       return this.api.put(`Customer`, model, false);
     }
   }
-
-
-
 }

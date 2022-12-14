@@ -2,15 +2,15 @@ import { Injectable } from '@angular/core';
 import { ApiService } from '../../../common/services/api.base.service';
 import { Observable } from 'rxjs';
 import { InvoiceModel } from './model/invoice.model';
+import { receiptModel } from './model/receipt.model';
 
 @Injectable({
-    providedIn: 'root'
+  providedIn: 'root',
 })
 export class InvoiceService {
+  constructor(public api: ApiService) {}
 
-    constructor(public api: ApiService) { }
-
-        /**
+  /**
    * Obtiene un Comprobante por Id
    * @param id
    * @returns
@@ -19,23 +19,48 @@ export class InvoiceService {
     return this.api.get(`invoice?id=${id}`, false);
   }
 
-     /**
+  /**
    * Obtiene todos los Comprobantes
    * @param queryParams
    * @returns
    */
-      public getInvoices(queryParams: any): Observable<any> {
-        return this.api.post(`invoice/list`, queryParams, false);
-      }
+  public getInvoices(queryParams: any): Observable<any> {
+    return this.api.post(`invoice/list`, queryParams, false);
+  }
 
-    /**
-  * Guarda una Factura/Comprobante
-  * @param model
-  * @returns
-  */
-    public saveInvoice(model: InvoiceModel): Observable<any> {        
-        return this.api.post(`invoice`, model, false);        
+  /**
+   * Guarda una Factura/Comprobante
+   * @param model
+   * @returns
+   */
+  public saveInvoice(model: InvoiceModel): Observable<any> {
+    return this.api.post(`invoice`, model, false);
+  }
 
-    }
+  /**
+   * Obtiene un Comprobante de compra por Id
+   * @param id
+   * @returns
+   */
+  public getReceiptById(id: number): Observable<any> {
+    return this.api.get(`Receipt?id=${id}`, false);
+  }
 
-};
+  /**
+   * Obtiene todos los Comprobantes de venta
+   * @param queryParams
+   * @returns
+   */
+  public getReceipt(queryParams: any): Observable<any> {
+    return this.api.post(`receipt/list`, queryParams, false);
+  }
+
+  /**
+   * Guarda una Factura/Comprobante
+   * @param model
+   * @returns
+   */
+  public saveReceipt(model: receiptModel): Observable<any> {
+    return this.api.post(`receipt`, model, false);
+  }
+}
