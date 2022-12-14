@@ -9,7 +9,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
+            /*migrationBuilder.CreateTable(
                 name: "brand",
                 columns: table => new
                 {
@@ -49,7 +49,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_entity", x => x.id);
-                });
+                });*/
 
             migrationBuilder.CreateTable(
                 name: "period",
@@ -66,7 +66,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                     table.PrimaryKey("PK_period", x => x.id);
                 });
 
-            migrationBuilder.CreateTable(
+            /*migrationBuilder.CreateTable(
                 name: "permission",
                 columns: table => new
                 {
@@ -456,7 +456,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_user_role_id",
                 table: "user",
-                column: "role_id");
+                column: "role_id");*/
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
