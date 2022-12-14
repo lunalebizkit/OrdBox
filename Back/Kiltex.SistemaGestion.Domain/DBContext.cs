@@ -38,6 +38,7 @@ namespace Kiltex.SistemaGestion.Domain
         public virtual DbSet<SupplierOrderDetail> SupplierOrderDetails { get; set; }
         public virtual DbSet<Invoice> Invoices { get; set; }
         public virtual DbSet<InvoiceDetail> InvoiceDetails { get; set; }
+        public virtual DbSet<Period> Periods { get; set; }
 
      
         //private static void InitialRoles(ModelBuilder modelBuilder)
