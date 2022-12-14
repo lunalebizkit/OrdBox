@@ -21,6 +21,12 @@ namespace Kiltex.SistemaGestion.Domain
                 .HasMany(i => i.SupplierOrderDetail)
                 .WithOne(i => i.SupplierOrder)
                 .OnDelete(DeleteBehavior.NoAction);
+
+            base.OnModelCreating(builder);
+            builder.Entity<Receipt>()
+                .HasMany(i => i.ReceiptDetails)
+                .WithOne(i => i.Receipt)
+                .OnDelete(DeleteBehavior.NoAction);
         }
         public virtual DbSet<Rol> Rols { get; set; }
         public virtual DbSet<User> Users { get; set; }
@@ -38,6 +44,10 @@ namespace Kiltex.SistemaGestion.Domain
         public virtual DbSet<SupplierOrderDetail> SupplierOrderDetails { get; set; }
         public virtual DbSet<Invoice> Invoices { get; set; }
         public virtual DbSet<InvoiceDetail> InvoiceDetails { get; set; }
+        public virtual DbSet<Receipt> Receipts { get; set; }
+        public virtual DbSet<ReceiptDetails> ReceiptDetails { get; set; }
+
+
         public virtual DbSet<Period> Periods { get; set; }
 
      

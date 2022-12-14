@@ -62,6 +62,7 @@ builder.Services.AddSingleton<ErrorManager>();
 builder.Services.AddScoped<InvoiceService>();
 builder.Services.AddScoped<EntityService>();
 builder.Services.AddScoped<SupplierOrderService>();
+builder.Services.AddScoped<ReceiptService>();
 builder.Services.AddScoped<PeriodService>();
 builder.Services.AddScoped<IvaService>();
 builder.Services.AddDbContext<DBContext>(x => x.UseSqlServer(connectionString));
