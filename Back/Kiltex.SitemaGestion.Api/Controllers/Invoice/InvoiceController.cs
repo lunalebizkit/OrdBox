@@ -25,12 +25,13 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Invoice
         }
         [HttpPost]
         [Route("[action]")]
-        [AllowAccess(Permission = new EPermission[] { EPermission.CreateInvoice })]
+        [AllowAccess(Permission = new EPermission[] { EPermission.GetInvoice })]
         public async Task<IActionResult> List([FromBody] RequestPaginatedData<string> filter)
         {
             return Return(await _service.ListInvoices(filter).ConfigureAwait(false));
         }
         [HttpPost]
+        [AllowAccess(Permission = new EPermission[] { EPermission.CreateInvoice })]
         public async Task<IActionResult> New([FromBody] DtoRequestInvoice model)
         {
             return Return(await _service.NewInvoice(model).ConfigureAwait(false));
