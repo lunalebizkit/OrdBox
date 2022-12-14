@@ -44,5 +44,8 @@ namespace Kiltex.SistemaGestion.Domain.Enum
         //UpdatePrice
         ListUpdatePrice = 28,
         EditUpdatePrice = 29,
+        //Receipt
+        GetReceipt = 30,
+        CreateReceipt = 31,
     }
 }
