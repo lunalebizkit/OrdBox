@@ -29,6 +29,7 @@ import { InvoicesListComponent } from './invoices-list/invoices-list.component';
 import { InvoicesViewDrawerComponent } from './invoices-view-drawer/invoices-view.drawer.component';
 import { ReceiptComponent } from './receipt/receipt.component';
 import { ReceiptEditComponent } from './receipt-edit/receipt-edit.component';
+import { ReceiptSupplierSearchComponent } from './receipt-supplier-search/receipt-supplier-search.component';
 
 @NgModule({
   imports: [
@@ -64,6 +65,7 @@ import { ReceiptEditComponent } from './receipt-edit/receipt-edit.component';
     InvoicesViewDrawerComponent,
     ReceiptComponent,
     ReceiptEditComponent,
+    ReceiptSupplierSearchComponent,
   ],
 })
 export class InvoicesModule {}

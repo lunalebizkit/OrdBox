@@ -21,14 +21,11 @@ import { AuthService } from 'src/app/common/auth/interceptors/auth.service';
 import { ProductService } from '../../products/product.service';
 import { InvoiceService } from '../invoices.service';
 import { EntityService } from '../../customers/customer.service';
-import { InvoiceProductSearchComponent } from '../invoice-product-search/invoice-product-search.component';
+import { receiptDetails, receiptModel } from '../model/receipt.model';
+import { CustomerAddModel } from '../../customers/model/customer.add.model';
 import { ProductsModel } from '../../products/model/product.model';
-import {
-  InvoiceDetailList,
-  invoiceGridParser,
-  invoiceDetailParser,
-} from '../model/invoice.model';
-import { receiptDetails } from '../model/receipt.model';
+import { InvoiceProductSearchComponent } from '../invoice-product-search/invoice-product-search.component';
+import { ReceiptSupplierSearchComponent } from '../receipt-supplier-search/receipt-supplier-search.component';
 
 @Component({
   selector: 'app-receipt-edit',
@@ -48,6 +45,7 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
    ** Indicador de carga de la grilla
    */
   loading = false;
+  isSaving!: boolean;
 
   type = InvoiceType;
   typeSelectedId: number = 1;
@@ -58,6 +56,7 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
   iva: number = 21;
   total: number = 0;
   ivaTotal: number = 0;
+  totalItems: number = 0;
 
   today = new Date();
 
@@ -68,12 +67,13 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
   formReceiptModel!: FormGroup;
 
   receiptDetailsList: receiptDetails[] = [];
-
   /*
    **Variables de la tabla detalle
    */
   editId: number | null = null;
   editIdIva: number | null = null;
+
+  userId: number = this.serviceUser.currentUser.id;
 
   constructor(
     private fb: FormBuilder,
@@ -144,30 +144,28 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
     }
   }
 
-  //TODO agregar el componente que falta
-  openComponentCustomer(): void {
-    //   const drawerRefCustomer = this.drawerService.create<
-    //     InvoiceCustomerSearchComponent,
-    //     {},
-    //     CustomerModel
-    //   >({
-    //     nzTitle: 'Cliente',
-    //     nzContent: InvoiceCustomerSearchComponent,
-    //     nzSize: 'large',
-    //     nzClosable: false,
-    //   });
-    //   drawerRefCustomer.afterClose.subscribe({
-    //     next: (data) => {
-    //       if (data != undefined) {
-    //         this.customerId = data.id;
-    //         this.formInvoice.controls['address'].setValue(data.address);
-    //         this.formInvoice.controls['customerCuit'].setValue(data.cuit);
-    //         this.formInvoice.controls['customerName'].setValue(data.name);
-    //       }
-    //     },
-    //     error: () => {},
-    //   });
-    // }
+  openComponentSupplier(): void {
+    const drawerRefSupplier = this.drawerService.create<
+      ReceiptSupplierSearchComponent,
+      {},
+      CustomerAddModel
+    >({
+      nzTitle: 'Proveedor',
+      nzContent: ReceiptSupplierSearchComponent,
+      nzSize: 'large',
+      nzClosable: false,
+    });
+    drawerRefSupplier.afterClose.subscribe({
+      next: (data) => {
+        if (data != undefined) {
+          this.supplierId = data.id;
+          this.formReceipt.controls['supplierAddress'].setValue(data.address);
+          this.formReceipt.controls['supplierCuit'].setValue(data.cuit);
+          this.formReceipt.controls['supplierName'].setValue(data.name);
+        }
+      },
+      error: () => {},
+    });
   }
 
   stopEdit(): void {
@@ -222,45 +220,65 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
   }
 
   save(): void {
-    // if (this.isValidForm(this.formInvoice)) {
-    //   if (this.invoiceDetails.length == 0) {
-    //     this.showMessageError('No hay Productos Seleccionados');
-    //   } else {
-    //     const model: InvoiceModel = {
-    //       id: 0,
-    //       customerId: this.customerId,
-    //       userId: this.userId,
-    //       invoiceNumber: this.totalItems,
-    //       customerName: this.formInvoice.controls['customerName'].value,
-    //       customerCuit: this.formInvoice.controls['customerCuit'].value,
-    //       customerAddress: this.formInvoice.controls['address'].value,
-    //       observation: this.formInvoice.controls['observation'].value,
-    //       dateTime: this.formInvoice.controls['dateTime'].value,
-    //       total: this.totalItems,
-    //       ivaTotal: this.ivaTotal,
-    //       type: this.formInvoice.controls['type'].value,
-    //       invoiceDetails: this.invoiceDetails,
-    //     };
-    //     this.isSaving = true;
-    //     this.serviceInvoice.saveInvoice(model).subscribe({
-    //       next: () => {
-    //         this.showNotificationSuccess(
-    //           'Guardado correcto',
-    //           `Comprobante creado correctamente`
-    //         );
-    //         this.isSaving = false;
-    //         this.router.navigate(['/home/invoices']);
-    //       },
-    //       error: () => {
-    //         this.isSaving = false;
-    //         this.showMessageError('No se pudo crear el Comprobante');
-    //       },
-    //     });
-    //   }
-    // }
+    if (this.isValidForm(this.formReceipt)) {
+      if (this.receiptDetailsList.length == 0) {
+        this.showMessageError('No hay Productos Seleccionados');
+      } else {
+        const model: receiptModel = {
+          id: 0,
+          supplierId: this.supplierId,
+          userId: this.userId,
+          receiptNumber: this.totalItems,
+          supplierName: this.formReceipt.controls['supplierName'].value,
+          supplierCuit: this.formReceipt.controls['supplierCuit'].value,
+          supplierAddress: this.formReceipt.controls['supplierAddress'].value,
+          observation: this.formReceipt.controls['observation'].value,
+          dateTime: this.formReceipt.controls['dateTime'].value,
+          total: this.totalItems,
+          ivaTotal: this.ivaTotal,
+          type: this.formReceipt.controls['type'].value,
+          receiptDetails: this.receiptDetailsList,
+        };
+        this.isSaving = true;
+        this.serviceInvoice.saveReceipt(model).subscribe({
+          next: () => {
+            this.showNotificationSuccess(
+              'Guardado correcto',
+              `Comprobante creado correctamente`
+            );
+            this.isSaving = false;
+            this.router.navigate(['/home/receipt']);
+          },
+          error: () => {
+            this.isSaving = false;
+            this.showMessageError('No se pudo crear el Comprobante');
+          },
+        });
+      }
+    }
   }
 
-  handleOk() {}
+  handleOk() {
+    // try {
+    //   this.receiptListTest = this.receiptDetailsList.filter(
+    //     (element) =>
+    //       element.productCode != this.popupComponent.elementSelectedToDelete
+    //   );
+    //   this.invoiceDetails = this.invoiceDetails.filter(
+    //     (element) =>
+    //       element.productId != this.popupComponent.elementSelectedToDelete
+    //   );
+    //   this.popupComponent.isDeleteConfirmationVisible = false;
+    //   if (this.invoiceListTest.length == 0) {
+    //     this.receiptDetailsList = [];
+    //   } else {
+    //     this.receiptDetailsList = this.invoiceListTest;
+    //   }
+    //   this.totalCalculate();
+    // } catch (error) {
+    //   console.log(error);
+    // }
+  }
 
   msjConfirmOk() {
     try {
@@ -279,62 +297,62 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
   }
 
   openComponentProduct(): void {
-    // if (this.isValidForm(this.formReceipt)) {
-    //   const drawerRefProduct = this.drawerService.create<
-    //     InvoiceProductSearchComponent,
-    //     { filter: string },
-    //     ProductsModel
-    //   >({
-    //     nzTitle: 'Productos',
-    //     nzContent: InvoiceProductSearchComponent,
-    //     nzSize: 'large',
-    //     nzContentParams: {
-    //       filter: this.formProductSearch.controls['productSearchFilter'].value,
-    //     },
-    //     nzClosable: false,
-    //   });
-    //   drawerRefProduct.afterClose.subscribe({
-    //     next: (data: ProductsModel) => {
-    //       if (data != undefined) {
-    //         if (
-    //           this.receiptDetailsList.find((item) => item.productId == data.id)
-    //         ) {
-    //           /*Actualizo la lista que envio al back */
-    //           this.receiptDetailsList.filter(
-    //             (item) => item.productId == data.id
-    //           )[0].quantity += 1;
-    //           /*Actualizo la lista de la tabla */
-    //           let newListElement = this.receiptDetailsList.filter(
-    //             (item) => item.productCode == data.id
-    //           )[0];
-    //           newListElement.quantity += 1;
-    //           newListElement.subTotal +=
-    //             this.bindPrice(data) * newListElement.quantity;
-    //           this.totalCalculate();
-    //           this.loading = false;
-    //           this.formProductSearch.controls['productSearchFilter'].setValue(
-    //             ''
-    //           );
-    //         } else {
-    //           this.receiptDetailsList.push();
-    //           /* Parseo dato a Dto Factura Detalle */
-    //           this.receiptDetailsList.push();
-    //           this.totalCalculate();
-    //           this.loading = false;
-    //           this.formProductSearch.controls['productSearchFilter'].setValue(
-    //             ''
-    //           );
-    //         }
-    //       }
-    //     },
-    //     error: () => {
-    //       this.loading = false;
-    //       this.receiptDetailsList = [];
-    //       this.formProductSearch.controls['productSearchFilter'].setValue('');
-    //     },
-    //   });
-    // } else {
-    //   return;
-    // }
+    if (true) {
+      const drawerRefProduct = this.drawerService.create<
+        InvoiceProductSearchComponent,
+        { filter: string },
+        ProductsModel
+      >({
+        nzTitle: 'Productos',
+        nzContent: InvoiceProductSearchComponent,
+        nzSize: 'large',
+        nzContentParams: {
+          filter: this.formProductSearch.controls['productSearchFilter'].value,
+        },
+        nzClosable: false,
+      });
+      drawerRefProduct.afterClose.subscribe({
+        next: (data: ProductsModel) => {
+          if (data != undefined) {
+            if (
+              this.receiptDetailsList.find((item) => item.productId == data.id)
+            ) {
+              /*Actualizo la lista que envio al back */
+              this.receiptDetailsList.filter(
+                (item) => item.productId == data.id
+              )[0].quantity += 1;
+              /*Actualizo la lista de la tabla */
+              let newListElement = this.receiptDetailsList.filter(
+                (item) => item.productCode == data.id
+              )[0];
+              newListElement.quantity += 1;
+              newListElement.subTotal +=
+                data.purchasePrice * newListElement.quantity;
+              this.totalCalculate();
+              this.loading = false;
+              this.formProductSearch.controls['productSearchFilter'].setValue(
+                ''
+              );
+            } else {
+              this.receiptDetailsList.push();
+              /* Parseo dato a Dto Factura Detalle */
+              this.receiptDetailsList.push();
+              this.totalCalculate();
+              this.loading = false;
+              this.formProductSearch.controls['productSearchFilter'].setValue(
+                ''
+              );
+            }
+          }
+        },
+        error: () => {
+          this.loading = false;
+          this.receiptDetailsList = [];
+          this.formProductSearch.controls['productSearchFilter'].setValue('');
+        },
+      });
+    } else {
+      return;
+    }
   }
 }

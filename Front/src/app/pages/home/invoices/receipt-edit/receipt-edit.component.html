@@ -70,13 +70,24 @@
             >Cuit - Cuil
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="14">
-            <input nz-input maxlength="250" nzSize="small" />
+            <input
+              formControlName="supplierCuit"
+              nz-input
+              maxlength="250"
+              nzSize="small"
+              (keydown.enter)="searchSupplier(); $event.preventDefault()"
+            />
           </nz-form-control>
 
           <!-- Boton que abre el buscador de CLiente en drawer -->
           <form nz-form [formGroup]="formSupplierSearch">
             <div style="margin: 3px">
-              <button nz-button nzSize="small" nzType="primary">
+              <button
+                nz-button
+                nzSize="small"
+                nzType="primary"
+                (click)="openComponentSupplier()"
+              >
                 <i nz-icon nzType="search" nzTheme="outline"></i>Buscar
               </button>
             </div>
@@ -88,7 +99,12 @@
             >Razón Social - Nombre
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24">
-            <input nz-input maxlength="250" nzSize="small" />
+            <input
+              formControlName="supplierName"
+              nz-input
+              maxlength="250"
+              nzSize="small"
+            />
           </nz-form-control>
         </nz-form-item>
 
@@ -101,14 +117,19 @@
             >Domicilio
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24">
-            <input nz-input nzSize="small" maxlength="250" />
+            <input
+              formControlName="supplierAddress"
+              nz-input
+              nzSize="small"
+              maxlength="250"
+            />
           </nz-form-control>
         </nz-form-item>
 
         <!-- Buscador de Productos -->
         <nz-divider nzText="Producto" nzOrientation="left"></nz-divider>
 
-        <form nz-form [formGroup]="formProduct">
+        <form nz-form [formGroup]="formProductSearch">
           <nz-form-item>
             <nz-form-label
               [nzSm]="6"
@@ -132,11 +153,26 @@
                   class="ant-input-clear-icon"
                   nzTheme="fill"
                   nzType="close-circle"
+                  *ngIf="
+                    this.formProductSearch.controls['productSearchFilter']
+                      .value !== ''
+                  "
+                  (click)="
+                    this.formProductSearch.controls[
+                      'productSearchFilter'
+                    ].setValue('')
+                  "
                 ></i>
               </ng-template>
             </nz-form-control>
             <div nz-col style="margin: 3px">
-              <button nz-button nzSize="small" nzType="primary">
+              <button
+                nz-button
+                nzSize="small"
+                nzType="primary"
+                nzType="primary"
+                (click)="openComponentProduct()"
+              >
                 <i nz-icon nzType="search" nzTheme="outline"></i> Buscar
               </button>
             </div>
@@ -231,7 +267,21 @@
         </tbody>
         <tfoot style="background-color: #fafafa">
           <tr>
-            <td colspan="1"><b>Iva </b><b style="color: red"></b></td>
+            <td colspan="1">
+              <b>Iva </b><b style="color: red"></b
+              ><nz-select
+                nzShowSearch
+                nzAllowClear
+                nzPlaceHolder="Iva"
+                formControlName="ivaTotal"
+                nz-input
+                id="ivaTotal"
+              >
+                <nz-option nzLabel="21%" nzValue="21"></nz-option>
+                <nz-option nzLabel="27%" nzValue="27"></nz-option>
+                <nz-option nzLabel="10,5%" nzValue="10.5"></nz-option>
+              </nz-select>
+            </td>
             <td colspan="1"><b>SubTotal </b><b style="color: red"></b></td>
             <td colspan="1">
               <b>Conc. No Gravado</b><b style="color: red"></b>

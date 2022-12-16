@@ -41,5 +41,12 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Supplier
         {
             return Return(await _service.UpdateSupplier(model).ConfigureAwait(false));
         }
+        [HttpGet]
+        [AllowAccess(Permission = new EPermission[] { EPermission.ViewSupplier })]
+        [Route("[action]")]
+        public async Task<IActionResult> GetSupplierByCuit([FromQuery] string cuit)
+        {
+            return Return(await _service.GetSupplierByCuit(cuit).ConfigureAwait(false));
+        }
     }
 }
