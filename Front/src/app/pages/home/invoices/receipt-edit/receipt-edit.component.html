@@ -23,7 +23,7 @@
         <div nz-row nzJustify="center">
           <div nz-col class="gutter-row" [nzSpan]="4" style="margin-right: 5px">
             <nz-form-item>
-              <nz-form-label>Fecha</nz-form-label>
+              <nz-form-label nzRequired>Fecha</nz-form-label>
               <nz-form-control>
                 <nz-date-picker
                   nzFormat="dd/MM/yyyy"
@@ -35,7 +35,7 @@
           </div>
           <div nz-col class="gutter-row" style="margin-right: 14px">
             <nz-form-item>
-              <nz-form-label>Tipo de Factura</nz-form-label>
+              <nz-form-label nzRequired>Tipo de Factura</nz-form-label>
               <nz-form-control>
                 <nz-select
                   id="type"
@@ -50,7 +50,7 @@
 
           <div nz-col class="gutter-row" [nzSpan]="8">
             <nz-form-item>
-              <nz-form-label>Nro</nz-form-label>
+              <nz-form-label nzRequired>Nro</nz-form-label>
               <nz-form-control>
                 <input nz-input maxlength="250" nzSize="small" />
               </nz-form-control>
@@ -273,24 +273,44 @@
                 nzShowSearch
                 nzAllowClear
                 nzPlaceHolder="Iva"
-                formControlName="ivaTotal"
                 nz-input
                 id="ivaTotal"
+                [(ngModel)]="value"
+                (ngModelChange)="ngChange($event)"
               >
                 <nz-option nzLabel="21%" nzValue="21"></nz-option>
                 <nz-option nzLabel="27%" nzValue="27"></nz-option>
                 <nz-option nzLabel="10,5%" nzValue="10.5"></nz-option>
               </nz-select>
             </td>
-            <td colspan="1"><b>SubTotal </b><b style="color: red"></b></td>
             <td colspan="1">
-              <b>Conc. No Gravado</b><b style="color: red"></b>
+              <b>SubTotal </b
+              ><b style="color: red">{{
+                this.currencyFormat(this.subtotal)
+              }}</b>
             </td>
-            <td colspan="1"><b>Perc. Iva</b><b style="color: red"></b></td>
+            <td colspan="1">
+              <b>Conc. No Gravado</b
+              ><b style="color: red">
+                <nz-input-number [nzMin]="1" [nzStep]="1"></nz-input-number>
+              </b>
+            </td>
+            <td colspan="1">
+              <b style="margin-right: 5px">Perc. Iva</b
+              ><b style="color: red">
+                <nz-input-number [nzMin]="1" [nzStep]="1"></nz-input-number
+              ></b>
+            </td>
             <td colspan="2">
-              <b>Perc. Ing. Brutos</b><b style="color: red"></b>
+              <b>Perc. Ing. Brutos</b
+              ><b style="color: red">
+                <nz-input-number [nzMin]="1" [nzStep]="1"></nz-input-number
+              ></b>
             </td>
-            <td colspan="1"><b>Total </b><b style="color: red"></b></td>
+            <td colspan="1">
+              <b>Total </b
+              ><b style="color: red"> {{ this.currencyFormat(this.total) }}</b>
+            </td>
             <td colspan="2" [nzAlign]="'left'">
               <button
                 id="actualizarbutton"

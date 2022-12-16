@@ -11,6 +11,9 @@ export interface receiptModel {
   total: number;
   ivaTotal: number;
   type: number;
+  concNoGravado: number;
+  percIva: number;
+  percIngBrutos: number;
   receiptDetails: receiptDetails[];
 }
 

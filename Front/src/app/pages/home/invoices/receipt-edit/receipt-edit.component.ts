@@ -8,6 +8,7 @@ import {
   LOCALE_ID,
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { formatCurrency } from '@angular/common';
 import { NzDrawerRef, NzDrawerService } from 'ng-zorro-antd/drawer';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
@@ -57,6 +58,9 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
   total: number = 0;
   ivaTotal: number = 0;
   totalItems: number = 0;
+  percIngBrutos: number = 0;
+  percIva: number = 0;
+  concNoGravado: number = 0;
 
   today = new Date();
 
@@ -72,6 +76,7 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
    */
   editId: number | null = null;
   editIdIva: number | null = null;
+  value!: string;
 
   userId: number = this.serviceUser.currentUser.id;
 
@@ -168,6 +173,10 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
     });
   }
 
+  ngChange(event: any) {
+    console.log(event);
+  }
+
   stopEdit(): void {
     this.editId = null;
   }
@@ -193,6 +202,10 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
     )[0].quantity = quantity;
   }
 
+  currencyFormat(data: any): string {
+    return formatCurrency(data, this.locale, '$', 'ARS', '1.1-2');
+  }
+
   ivaCalculate(data: number, iva: number): number {
     return (data * iva) / 100;
   }
@@ -201,6 +214,9 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
     this.subtotal = 0;
     this.total = 0;
     this.ivaTotal = 0;
+    this.concNoGravado = 0;
+    this.percIngBrutos = 0;
+    this.percIva = 0;
     try {
       this.receiptDetailsList.forEach((detail) => {
         this.subtotal +=
@@ -228,7 +244,7 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
           id: 0,
           supplierId: this.supplierId,
           userId: this.userId,
-          receiptNumber: this.totalItems,
+          receiptNumber: this.formReceipt.controls['receiptNumber'].value,
           supplierName: this.formReceipt.controls['supplierName'].value,
           supplierCuit: this.formReceipt.controls['supplierCuit'].value,
           supplierAddress: this.formReceipt.controls['supplierAddress'].value,
@@ -237,6 +253,9 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
           total: this.totalItems,
           ivaTotal: this.ivaTotal,
           type: this.formReceipt.controls['type'].value,
+          concNoGravado: this.concNoGravado,
+          percIva: this.percIva,
+          percIngBrutos: this.percIngBrutos,
           receiptDetails: this.receiptDetailsList,
         };
         this.isSaving = true;
