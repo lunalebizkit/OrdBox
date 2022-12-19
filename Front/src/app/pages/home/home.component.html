@@ -64,6 +64,13 @@
           </li>
         </ul>
       </li>
+      <li nz-submenu nzOpen nzTitle="Reportes" nzIcon="dashboard">
+        <ul>
+          <li nz-menu-item nzMatchRouter>
+            <a routerLink="/home/periods">Períodos</a>
+          </li>
+        </ul>
+      </li>
       <li nz-submenu nzOpen nzTitle="Mi perfil" nzIcon="user">
         <ul>
           <li nz-menu-item (click)="logOut()" nzIcon="logout">
