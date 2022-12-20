@@ -1,10 +1,10 @@
 <nz-layout>
   <nz-page-header class="list-header">
     <nz-page-header-title
-      >Listado de Comprobantes de Venta</nz-page-header-title
+      >Listado de Comprobantes de Compra</nz-page-header-title
     >
     <nz-page-header-extra>
-      <a routerLink="/home/invoices/invoices-sale/new">
+      <a routerLink="/home/invoices/receipt/new">
         <button
           *authPermission="[permissions.CreateInvoice]"
           nz-tooltip
@@ -44,8 +44,6 @@
                       class="ant-input-clear-icon"
                       nzTheme="fill"
                       nzType="close-circle"
-                      *ngIf="queryParams.filter"
-                      (click)="queryParams.filter = ''; search()"
                     ></i>
                   </ng-template>
                 </nz-form-control>
@@ -59,11 +57,11 @@
     <!-- Tabla -->
 
     <!--   <div > -->
-    <div class="table" (scroll)="onScroll($event)">
+    <div class="table">
       <nz-table
         class="tabla"
         nzShowSizeChanger
-        [nzData]="invoicesList"
+        [nzData]="receiptList"
         nzBordered="false"
         [nzSize]="'small'"
         [nzLoading]="loading"
@@ -84,25 +82,22 @@
         <tbody>
           <tr
             id="{{ i }}"
-            *ngFor="let data of invoicesList; let i = index"
+            *ngFor="let data of receiptList; let i = index"
             class="small-text"
             tabindex="-1"
-            (click)="onClick(data, i)"
-            (keydown)="myNavegation($event)"
             [style.background-color]="
-              data === selectedInvoice ? 'lightblue' : ''
+              data === selectedReceipt ? 'lightblue' : ''
             "
-            (keydown.enter)="onEnter($event)"
-            (dblclick)="onDoubleClicked(data)"
           >
             <td>{{ data.id }}</td>
             <td>{{ this.formaterDate(data.dateTime) }}</td>
-            <td>{{ data.customerCuit }}</td>
-            <td>{{ data.customerName }}</td>
+            <td>{{ data.supplierCuit }}</td>
+            <td>{{ data.supplierName }}</td>
+            <td [nzAlign]="'right'"></td>
             <td [nzAlign]="'right'">
               <b>{{ this.currencyFormat(data.total) }}</b>
             </td>
-            <td [nzAlign]="'center'">{{ this.getInvoiceType(data.type) }}</td>
+            <td [nzAlign]="'center'"></td>
             <td style="text-align: center">
               <a>
                 <i
@@ -110,7 +105,6 @@
                   nzType="eye"
                   nzTheme="outline"
                   style="font-size: 16px"
-                  (click)="onDoubleClicked(data)"
                 ></i>
               </a>
             </td>

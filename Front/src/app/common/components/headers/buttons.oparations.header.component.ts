@@ -16,6 +16,7 @@ export class HeaderOperationsButtonsComponent implements OnInit {
   @Input('btnUpdateText') btnUpdateText: string = 'Actualizar';
   @Input('tagText') tagText: string = '';
   @Input('title') title!: string;
+  @Input('color') color!: string;
   @Input('iconSave') iconSave!: string;
   @Input('iconDelete') iconDelete!: string;
   @Input('iconTitle') iconTitle!: string;
