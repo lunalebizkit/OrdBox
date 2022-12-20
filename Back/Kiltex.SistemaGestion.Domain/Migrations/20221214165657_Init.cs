@@ -8,7 +8,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
     public partial class Init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
-        {
+        { /*
             migrationBuilder.CreateTable(
                 name: "brand",
                 columns: table => new
@@ -322,7 +322,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                         principalTable: "user",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
-                });
+                }); */
 
             migrationBuilder.CreateTable(
                 name: "receipt",
@@ -358,7 +358,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
-
+            /*
             migrationBuilder.CreateTable(
                 name: "supplier_order_detail",
                 columns: table => new
@@ -417,7 +417,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
-
+            */
             migrationBuilder.CreateTable(
                 name: "receipt_details",
                 columns: table => new
@@ -447,7 +447,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                         principalTable: "receipt",
                         principalColumn: "id");
                 });
-
+            /*
             migrationBuilder.CreateIndex(
                 name: "IX_email_entity_entity_id",
                 table: "email_entity",
@@ -502,7 +502,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                 name: "IX_product_supplier_id",
                 table: "product",
                 column: "supplier_id");
-
+            */
             migrationBuilder.CreateIndex(
                 name: "IX_receipt_supplier_id",
                 table: "receipt",
@@ -522,7 +522,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                 name: "IX_receipt_details_receipt_id",
                 table: "receipt_details",
                 column: "receipt_id");
-
+            /*
             migrationBuilder.CreateIndex(
                 name: "IX_supplier_order_supplier_id",
                 table: "supplier_order",
@@ -541,7 +541,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_user_role_id",
                 table: "user",
-                column: "role_id");
+                column: "role_id");*/
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
