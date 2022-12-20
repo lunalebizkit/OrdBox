@@ -1,0 +1,40 @@
+<app-header-op-buttons #header [btnCloseText]="'Cancelar'" [btnSaveText]="'Guardar'" [title]="'Período'"
+    [showSpinner]="isSaving"  [iconBack]="'rollback'" [iconSave]="'save'" [iconTitle]="'tags'" (onSaveClick)="pop.showConfirmation()" 
+    (onCloseClick)="close()" [hideClose]="true" [hideBack]="true">
+</app-header-op-buttons>
+<nz-spin [nzSpinning]="isLoading" style="margin-top: 20px;">
+   <nz-collapse>
+        <nz-collapse-panel nzHeader="Crear" [nzActive]="true">
+            <form nz-form [formGroup]="form" style="margin-top: 26px">
+
+                <nz-form-item *ngIf="editPeriod == false disabled">
+                    <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="initPeriod">Inicio Período </nz-form-label>
+                    <nz-form-control [nzSm]="14" [nzXs]="24">
+                      <nz-input-group nzCompact>
+                        <input formControlName="initPeriod" type="date" nz-input style="width:50%;" />
+                      </nz-input-group>
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item>
+                  <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="endPeriod">Fin Período </nz-form-label>
+                  <nz-form-control [nzSm]="14" [nzXs]="24">
+                    <nz-input-group nzCompact>
+                      <input formControlName="endPeriod" type="date" nz-input style="width:50%;" />
+                    </nz-input-group>
+                  </nz-form-control>
+              </nz-form-item>
+              
+            </form>
+        </nz-collapse-panel>
+    </nz-collapse>
+
+</nz-spin>
+
+<app-popup-confirmation
+  #pop
+  [title]="'Confirmar Creación de Período'"
+  [header]="'¿Está seguro que desea Crear el Período?'"
+  [message]="'Esta acción no se puede revertir'"
+  (handleOk)="msjConfirmOk()"
+>
+</app-popup-confirmation>

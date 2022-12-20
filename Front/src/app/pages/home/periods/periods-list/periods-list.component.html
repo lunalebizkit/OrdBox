@@ -1,0 +1,130 @@
+<nz-layout>
+    <nz-page-header class="list-header">
+      <nz-page-header-title>Listado de Períodos</nz-page-header-title>
+      <nz-page-header-extra>
+        <button
+          nz-tooltip
+          nzTooltipTitle="Nuevo"
+          nz-button
+          nzType="primary"
+          nzShape="circle"
+          (click)="openComponentPeriod()"
+        >
+          <i
+            nz-icon
+            nzType="plus"
+            nzTheme="outline"
+
+          ></i>
+        </button>
+      </nz-page-header-extra>
+    </nz-page-header>
+    <nz-collapse>
+      <nz-collapse-panel nzSize="small" nzHeader="Filtros">
+        <div nz-row [nzGutter]="[8, 1]">
+          <div nz-col nzSpan="24">
+            <nz-form-item>
+              <nz-form-label>Búsqueda</nz-form-label>
+              <nz-form-control>
+                <nz-input-group [nzSuffix]="clearQuery">
+                  <input
+                    [ngModelOptions]="{ standalone: true }"
+                    type="text"
+                    placeholder="Ingrese inicio o fin de periodo"
+                    nz-input
+                    (keydown)="search()"
+                    [(ngModel)]="queryData.filter"
+                  />
+                </nz-input-group>
+                <ng-template #clearQuery>
+                  <i
+                    nz-icon
+                    class="ant-input-clear-icon"
+                    nzTheme="fill"
+                    nzType="close-circle"
+                    *ngIf="queryData.filter"
+                    (click)="queryData.filter = ''; search()"
+                  ></i>
+                </ng-template>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+      </nz-collapse-panel>
+    </nz-collapse>
+    <div class="table" (scroll)="onScroll($event)">
+      <nz-table
+        class="tabla" 
+        [nzData]="periodList"
+        nzBordered="false"
+        [nzSize]="'small'"
+        nzTableLayout="fixed"
+        nzShowPagination="false"
+      >
+        <thead>
+          <tr>
+            <th nzEllipsis nzWidth="75px">Inicio período</th>
+            <th nzEllipsis nzWidth="70px">Fin período</th>
+            <th nzEllipsis nzWidth="45px">Estado</th>
+            <th nzEllipsis nzWidth="45px">Acción</th>
+          
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            id="{{ i }}"
+            *ngFor="let period of periodList; let i = index"
+            class="small-text"
+            (dblclick)="onDoubleClicked(period)"
+            tabindex="-1"
+            (click)="onClick(period, i)"
+            (keydown)="myNavegation($event)"
+            [style.background-color]="
+              period === selectedPeriod ? 'lightblue' : ''
+            "
+            (keydown.enter)="onEnter($event, period)"
+            
+          >
+            <td nzEllipsis>{{ this.formaterDate(period.initPeriod)}}</td>
+            <td nzEllipsis>{{ this.formaterDate(period.endPeriod )}}</td>
+            <td nzEllipsis *ngIf="period.status === true">Activado</td>
+            <td nzEllipsis *ngIf="period.status === false">Cerrado</td>
+            
+           
+            <td nzEllipsis *ngIf="period.status === true">
+        
+              <a nz-tooltip
+              nzTooltipTitle="Cerrado"
+              nzTooltipPlacement="rightTop" 
+              style="color: rgb(248, 46, 46);"
+              (click)="popup.showDeleteConfirmation(period.id)">
+                <span #active nz-icon nzType="close-circle" nzTheme="outline" style="font-size: 18px">
+                </span>
+              </a>
+            
+            
+        
+        </td>
+        <td nzEllipsis *ngIf="period.status === false">
+          <a nz-tooltip
+          nzTooltipTitle="Cerrado"
+          nzTooltipPlacement="rightTop" 
+          style="color: darkgrey;">
+            <span #close nz-icon nzType="close-circle" nzTheme="outline" style="font-size: 18px">
+            </span>
+          </a>
+          
+
+        </td>
+        </tbody>
+      </nz-table>
+    </div>
+  </nz-layout>
+  <app-popup-confirmation 
+  #popup 
+  [title]="'Confirmar Cierre Período'"
+  [header]="'¿Está seguro de que desea cerrar el Período seleccionado?'"
+  [message]="'Esta acción no se puede revertir'" 
+  (handleOk)="handleOk()">
+</app-popup-confirmation>
+
