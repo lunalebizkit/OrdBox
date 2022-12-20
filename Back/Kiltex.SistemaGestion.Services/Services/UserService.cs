@@ -7,7 +7,6 @@ using Microsoft.EntityFrameworkCore;
 using Kiltex.SistemaGestion.Services.Common;
 using Kiltex.SistemaGestion.Services.Dtos;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
-using static Google.Apis.Requests.BatchRequest;
 
 namespace Kiltex.SistemaGestion.Services.Services
 {
@@ -26,9 +25,10 @@ namespace Kiltex.SistemaGestion.Services.Services
             {
                 var user = await _contextSql
                          .Users
-                         .AsNoTracking()
+                         .AsNoTracking()                         
                          .Include(x => x.Rol)
                          .ThenInclude(y => y.PermissionXRols)
+                         .ThenInclude(y => y.Permission)
                          .FirstOrDefaultAsync(x => x.UserName == userName && !x.IsDeleted)
                          .ConfigureAwait(false);
                

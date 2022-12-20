@@ -49,7 +49,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_entity", x => x.id);
-                });
+                });*/
 
             migrationBuilder.CreateTable(
                 name: "period",
@@ -66,7 +66,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                     table.PrimaryKey("PK_period", x => x.id);
                 });
 
-            migrationBuilder.CreateTable(
+            /*migrationBuilder.CreateTable(
                 name: "permission",
                 columns: table => new
                 {
