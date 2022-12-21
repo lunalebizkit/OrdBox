@@ -1,0 +1,16 @@
+.container{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo{
+  height: 200px;
+  width: 210px;
+  transform: scale(1.35);
+}
+
+button{
+  display: block;
+  margin: 0 auto;
+}
