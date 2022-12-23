@@ -32,7 +32,6 @@ import { NzImageModule } from 'ng-zorro-antd/image';
     NzSelectModule,
     AppCommonModule,
     NzTableModule,
-    NzGridModule,
     NzSwitchModule,
     NzPaginationModule,
     NzInputNumberModule,

@@ -54,21 +54,14 @@ export class PermissionService {
     },
     //#endregion
 
-    //#region Entity
-    {
-      url: new RegExp('/home/entityt'),
-      permissions: [
-        Permission.ViewEntity,
-        Permission.CreateEntity,
-        Permission.EditEntity,
-      ],
-    },
-    //#endregion
-
     //#region Invoice
     {
       url: new RegExp('/home/invoices'),
       permissions: [Permission.GetInvoice, Permission.CreateInvoice],
+    },
+    {
+      url: new RegExp('/home/invoices/invoices-sale/new'),
+      permissions: [Permission.CreateInvoice],
     },
     //#endregion
 
@@ -119,7 +112,7 @@ export class PermissionService {
 
     let hasPermission = this.checkPermissions(url, permissions);
     if (!hasPermission) {
-      this.router.navigate(['home/entity']);
+      this.router.navigate(['home']);
     }
 
     return hasPermission;

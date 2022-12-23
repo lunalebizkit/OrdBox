@@ -33,7 +33,7 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Authentication
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
                 };
             
-            var permission = usuario.Data.Rol.PermissionXRols.Select(a => a.PermissionId).ToArray();
+            var permission = usuario.Data.Rol.PermissionXRols.Select(y => y.Permission.EnumPermission).ToArray();
             authClaims.Add(new Claim(UserExtension.claimPermission,  JsonConvert.SerializeObject(permission)));
 
             var token = JWTService.CreateDefaultToken(

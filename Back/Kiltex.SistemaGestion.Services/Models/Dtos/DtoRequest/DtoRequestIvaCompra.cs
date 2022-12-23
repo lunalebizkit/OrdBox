@@ -25,7 +25,7 @@ namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest
         public DateTime DateTime { get; set; }
         public decimal? Total { get; set; }
         public decimal Iva { get; set; }
-        public string IvaType { get; set; }
+        public decimal IvaPrice { get; set; }
         public int Type { get; set; }
     }
 }
