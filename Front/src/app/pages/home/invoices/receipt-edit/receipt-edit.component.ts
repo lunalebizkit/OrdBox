@@ -22,11 +22,18 @@ import { AuthService } from 'src/app/common/auth/interceptors/auth.service';
 import { ProductService } from '../../products/product.service';
 import { InvoiceService } from '../invoices.service';
 import { EntityService } from '../../customers/customer.service';
-import { receiptDetails, receiptModel } from '../model/receipt.model';
+import {
+  receiptDetailParser,
+  receiptDetails,
+  receiptDetailsGrid,
+  receiptGridParser,
+  receiptModel,
+} from '../model/receipt.model';
 import { CustomerAddModel } from '../../customers/model/customer.add.model';
 import { ProductsModel } from '../../products/model/product.model';
 import { InvoiceProductSearchComponent } from '../invoice-product-search/invoice-product-search.component';
 import { ReceiptSupplierSearchComponent } from '../receipt-supplier-search/receipt-supplier-search.component';
+import { IvaType } from '../model/iva-type.Enum';
 
 @Component({
   selector: 'app-receipt-edit',
@@ -49,7 +56,13 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
   isSaving!: boolean;
 
   type = InvoiceType;
+  ivaType = IvaType;
   typeSelectedId: number = 1;
+  ivaSelectedId: number = 1;
+  ivaSelected!: number;
+  iva10: number = parseFloat('10.5');
+  iva21: number = 21;
+  iva27: number = 27;
   invoiceA: boolean = true;
   cuit!: string;
   supplierId!: number;
@@ -61,6 +74,7 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
   percIngBrutos: number = 0;
   percIva: number = 0;
   concNoGravado: number = 0;
+  product!: string;
 
   today = new Date();
 
@@ -70,15 +84,30 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
   formSupplierSearch!: FormGroup;
   formReceiptModel!: FormGroup;
 
-  receiptDetailsList: receiptDetails[] = [];
+  receiptDetailsGrid: receiptDetailsGrid[] = [];
+  receiptDetailsGridTest: receiptDetailsGrid[] = [];
+  receiptDetails: receiptDetails[] = [];
+  receiptDetailsTest: receiptDetails[] = [];
   /*
    **Variables de la tabla detalle
    */
   editId: number | null = null;
   editIdIva: number | null = null;
   value!: string;
+  value1!: string;
+  value2!: string;
+  value3!: string;
 
   userId: number = this.serviceUser.currentUser.id;
+
+  /*
+   ** Parametros de busqueda
+   */
+  queryParams = {
+    filter: '',
+    page: 0,
+    pageSize: 10,
+  };
 
   constructor(
     private fb: FormBuilder,
@@ -119,6 +148,59 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
     } else {
       this.invoiceA = false;
     }
+  }
+
+  startEdit(id: number): void {
+    this.editId = id;
+  }
+
+  startEditIva(id: number): void {
+    this.editIdIva = id;
+    console.log(this.editIdIva);
+  }
+  stopEdit(): void {
+    this.editId = null;
+  }
+  stopEditIva(): void {
+    this.editIdIva = null;
+    console.log('Este es el stop', this.editIdIva);
+  }
+  changeIvaValue(iva: number, productId: number): void {
+    this.ivaSelectedId = iva;
+    if (this.ivaSelectedId == 0 || this.ivaSelectedId == null) {
+      this.ivaSelectedId = 1;
+    }
+    if (this.ivaSelectedId == 1) this.ivaSelected = 10.5;
+    if (this.ivaSelectedId == 2) this.ivaSelected = 21;
+    if (this.ivaSelectedId == 3) this.ivaSelected = 27;
+    try {
+      this.receiptDetails.filter(
+        (detail) => detail.productId == productId
+      )[0].iva = this.ivaSelected;
+
+      this.receiptDetailsGrid.filter(
+        (detail) => detail.productId == productId
+      )[0].iva = this.ivaSelected;
+      this.totalCalculate();
+      this.stopEditIva();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  concNoGravadoChange(id: any): any {
+    this.concNoGravado = id;
+    this.totalCalculate();
+  }
+
+  percIvaChange(id: any): any {
+    this.percIva = id;
+    this.totalCalculate();
+  }
+
+  percIngBrutosChange(id: any): any {
+    this.percIngBrutos = id;
+    this.totalCalculate();
   }
 
   disabledDate = (current: Date): boolean =>
@@ -173,31 +255,20 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
     });
   }
 
-  ngChange(event: any) {
-    console.log(event);
-  }
-
-  stopEdit(): void {
-    this.editId = null;
-  }
-  stopEditIva(): void {
-    this.editIdIva = null;
-  }
-
   changeQuantity(quantity: number): void {
     if (quantity == 0 || quantity == null) {
       quantity = 1;
     }
-    let product = this.receiptDetailsList.filter(
-      (detail) => detail.productCode == this.editId
+    let product = this.receiptDetailsGrid.filter(
+      (detail) => detail.productId == this.editId
     )[0];
 
-    this.receiptDetailsList.filter(
-      (detail) => detail.productCode == this.editId
+    this.receiptDetailsGrid.filter(
+      (detail) => detail.productId == this.editId
     )[0].subTotal = quantity * product.price;
 
     this.totalCalculate();
-    this.receiptDetailsList.filter(
+    this.receiptDetailsGrid.filter(
       (detail) => detail.productId == this.editId
     )[0].quantity = quantity;
   }
@@ -207,6 +278,7 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
   }
 
   ivaCalculate(data: number, iva: number): number {
+    console.log((data * iva) / 100);
     return (data * iva) / 100;
   }
 
@@ -214,72 +286,69 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
     this.subtotal = 0;
     this.total = 0;
     this.ivaTotal = 0;
-    this.concNoGravado = 0;
-    this.percIngBrutos = 0;
-    this.percIva = 0;
     try {
-      this.receiptDetailsList.forEach((detail) => {
+      this.receiptDetailsGrid.forEach((detail) => {
         this.subtotal +=
           detail.price * detail.quantity -
           this.ivaCalculate(detail.price * detail.quantity, detail.iva);
       });
-      this.receiptDetailsList.forEach((dato) => {
+      this.receiptDetailsGrid.forEach((dato) => {
         this.ivaTotal += this.ivaCalculate(
           dato.price * dato.quantity,
           dato.iva
         );
         this.total += dato.price * dato.quantity;
       });
+      this.total += this.concNoGravado + this.percIngBrutos + this.percIva;
     } catch (error) {
       console.log(error);
     }
   }
 
   save(): void {
-    if (this.isValidForm(this.formReceipt)) {
-      if (this.receiptDetailsList.length == 0) {
-        this.showMessageError('No hay Productos Seleccionados');
-      } else {
-        const model: receiptModel = {
-          id: 0,
-          supplierId: this.supplierId,
-          userId: this.userId,
-          receiptNumber: this.formReceipt.controls['receiptNumber'].value,
-          supplierName: this.formReceipt.controls['supplierName'].value,
-          supplierCuit: this.formReceipt.controls['supplierCuit'].value,
-          supplierAddress: this.formReceipt.controls['supplierAddress'].value,
-          observation: this.formReceipt.controls['observation'].value,
-          dateTime: this.formReceipt.controls['dateTime'].value,
-          total: this.totalItems,
-          ivaTotal: this.ivaTotal,
-          type: this.formReceipt.controls['type'].value,
-          concNoGravado: this.concNoGravado,
-          percIva: this.percIva,
-          percIngBrutos: this.percIngBrutos,
-          receiptDetails: this.receiptDetailsList,
-        };
-        this.isSaving = true;
-        this.serviceInvoice.saveReceipt(model).subscribe({
-          next: () => {
-            this.showNotificationSuccess(
-              'Guardado correcto',
-              `Comprobante creado correctamente`
-            );
-            this.isSaving = false;
-            this.router.navigate(['/home/receipt']);
-          },
-          error: () => {
-            this.isSaving = false;
-            this.showMessageError('No se pudo crear el Comprobante');
-          },
-        });
-      }
-    }
+    // if (this.isValidForm(this.formReceipt)) {
+    //   if (this.receiptDetailsGrid.length == 0) {
+    //     this.showMessageError('No hay Productos Seleccionados');
+    //   } else {
+    const model: receiptModel = {
+      id: 0,
+      supplierId: this.supplierId,
+      userId: this.userId,
+      receiptNumber: this.formReceipt.controls['receiptNumber'].value,
+      supplierName: this.formReceipt.controls['supplierName'].value,
+      supplierCuit: this.formReceipt.controls['supplierCuit'].value,
+      supplierAddress: this.formReceipt.controls['supplierAddress'].value,
+      observation: this.formReceipt.controls['observation'].value,
+      dateTime: this.formReceipt.controls['dateTime'].value,
+      total: this.totalItems,
+      ivaTotal: this.ivaTotal,
+      type: this.formReceipt.controls['type'].value,
+      concNoGravado: this.concNoGravado,
+      percIva: this.percIva,
+      percIngBrutos: this.percIngBrutos,
+      receiptDetails: this.receiptDetails,
+    };
+    console.log(model);
+    // this.isSaving = true;
+    // this.serviceInvoice.saveReceipt(model).subscribe({
+    //   next: () => {
+    //     this.showNotificationSuccess(
+    //       'Guardado correcto',
+    //       `Comprobante creado correctamente`
+    //     );
+    //     this.isSaving = false;
+    //     this.router.navigate(['/home/receipt']);
+    //   },
+    //   error: () => {
+    //     this.isSaving = false;
+    //     this.showMessageError('No se pudo crear el Comprobante');
+    //   },
+    // });
   }
 
   handleOk() {
     // try {
-    //   this.receiptListTest = this.receiptDetailsList.filter(
+    //   this.receiptListTest = this.receiptDetailsGrid.filter(
     //     (element) =>
     //       element.productCode != this.popupComponent.elementSelectedToDelete
     //   );
@@ -289,9 +358,9 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
     //   );
     //   this.popupComponent.isDeleteConfirmationVisible = false;
     //   if (this.invoiceListTest.length == 0) {
-    //     this.receiptDetailsList = [];
+    //     this.receiptDetailsGrid = [];
     //   } else {
-    //     this.receiptDetailsList = this.invoiceListTest;
+    //     this.receiptDetailsGrid = this.invoiceListTest;
     //   }
     //   this.totalCalculate();
     // } catch (error) {
@@ -301,17 +370,85 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
 
   msjConfirmOk() {
     try {
-      this.receiptDetailsList = this.receiptDetailsList.filter(
-        (element) => element.productCode != this.popupComponent.elementSelected
+      this.receiptDetailsGrid = this.receiptDetailsGrid.filter(
+        (element) => element.productId != this.popupComponent.elementSelected
       );
       this.popupComponent.isConfirmationvisible = false;
-      if (this.receiptDetailsList.length != 0) {
+      if (this.receiptDetailsGrid.length != 0) {
         this.save();
       } else {
         this.showMessageError('No ha seleccionado producto');
       }
     } catch (error) {
       console.log(error);
+    }
+  }
+
+  searchProduct(): void {
+    this.product = this.formProductSearch.controls['productSearchFilter'].value;
+    this.queryParams.filter = this.product;
+    if (this.product.length > 0) {
+      this.serviceProduct.getProducts(this.queryParams).subscribe({
+        next: (r) => {
+          this.loading = true;
+          if (r.data.length == 1) {
+            const model: ProductsModel = r.data[0];
+            if (
+              this.receiptDetailsGrid.find((item) => item.productId == model.id)
+            ) {
+              /*Actualizo la lista que envio al back */
+              this.receiptDetailsGrid.filter(
+                (item) => item.productId == model.id
+              )[0].quantity += 1;
+
+              /*Actualizo la lista de la tabla */
+              this.receiptDetails.filter(
+                (item) => item.productId == model.id
+              )[0].quantity += 1;
+
+              this.receiptDetailsGrid.filter(
+                (item) => item.productId == model.id
+              )[0].subTotal += model.purchasePrice * model.quantity;
+              this.totalCalculate();
+              this.loading = false;
+              this.formProductSearch.controls['productSearchFilter'].setValue(
+                ''
+              );
+            } else {
+              const product: ProductsModel = r.data[0];
+              /* Parseo el Producto a la grilla de Tabla */
+              const model: receiptDetailsGrid = receiptGridParser(
+                product,
+                this.iva
+              );
+              this.receiptDetailsGridTest.push(model);
+              this.receiptDetailsGrid = this.receiptDetailsGridTest;
+              /* Parseo dato a Dto Factura Detalle */
+              const modelDetail: receiptDetails = receiptDetailParser(
+                product,
+                this.iva
+              );
+              this.receiptDetails.push(modelDetail);
+              this.totalCalculate();
+              this.loading = false;
+              this.formProductSearch.controls['productSearchFilter'].setValue(
+                ''
+              );
+            }
+          } else {
+            this.loading = false;
+            this.openComponentProduct();
+          }
+        },
+        error: () => {
+          this.loading = false;
+          this.formProductSearch.controls['productSearchFilter'].setValue('');
+        },
+      });
+    } else {
+      this.loading = false;
+      this.queryParams.filter = '';
+      this.openComponentProduct();
     }
   }
 
@@ -333,29 +470,41 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
       drawerRefProduct.afterClose.subscribe({
         next: (data: ProductsModel) => {
           if (data != undefined) {
-            if (
-              this.receiptDetailsList.find((item) => item.productId == data.id)
-            ) {
+            if (this.receiptDetails.find((item) => item.productId == data.id)) {
               /*Actualizo la lista que envio al back */
-              this.receiptDetailsList.filter(
+              this.receiptDetails.filter(
                 (item) => item.productId == data.id
               )[0].quantity += 1;
+
               /*Actualizo la lista de la tabla */
-              let newListElement = this.receiptDetailsList.filter(
-                (item) => item.productCode == data.id
+              let newListElement = this.receiptDetailsGrid.filter(
+                (item) => item.productId == data.id
               )[0];
+
               newListElement.quantity += 1;
               newListElement.subTotal +=
                 data.purchasePrice * newListElement.quantity;
+
               this.totalCalculate();
               this.loading = false;
               this.formProductSearch.controls['productSearchFilter'].setValue(
                 ''
               );
             } else {
-              this.receiptDetailsList.push();
+              /* Parseo dato a la grilla de Tabla */
+              const model: receiptDetailsGrid = receiptGridParser(
+                data,
+                this.iva
+              );
+              this.receiptDetailsGridTest.push(model);
+              this.receiptDetailsGrid = this.receiptDetailsGridTest;
               /* Parseo dato a Dto Factura Detalle */
-              this.receiptDetailsList.push();
+              const modelDetail: receiptDetails = receiptDetailParser(
+                data,
+                this.iva
+              );
+              this.receiptDetails.push(modelDetail);
+              console.log(this.receiptDetails);
               this.totalCalculate();
               this.loading = false;
               this.formProductSearch.controls['productSearchFilter'].setValue(
@@ -366,7 +515,7 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
         },
         error: () => {
           this.loading = false;
-          this.receiptDetailsList = [];
+          this.receiptDetailsGrid = [];
           this.formProductSearch.controls['productSearchFilter'].setValue('');
         },
       });
