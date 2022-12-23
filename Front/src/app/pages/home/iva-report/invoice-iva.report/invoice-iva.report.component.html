@@ -1,0 +1,162 @@
+<nz-layout>
+  <nz-page-header class="list-header">
+    <nz-page-header-title>Libro Iva Venta </nz-page-header-title>
+    <nz-page-header-extra>
+      <button nz-button routerLink="/home/periods" type="submit" nzSize="default" 
+      ><i nz-icon nzType="arrow-left" nzTheme="outline"></i>volver</button>
+    </nz-page-header-extra>
+   
+  </nz-page-header>
+  
+  <form nz-form [formGroup]="formReport">
+    <nz-collapse>
+      <nz-collapse-panel nzSize="small" nzHeader="Datos de la Consulta">
+        <div nz-row [nzGutter]="[8, 1]">
+          <div nz-col nzSpan="24">
+            <nz-form-item>
+              <nz-form-label>Período</nz-form-label>
+              <nz-form-control>
+                <b>
+                  {{ initPeriod }}
+                </b>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+        <div nz-row>
+          <div nz-col class="gutter-row" [nzSpan]="8">
+            <nz-form-item>
+              <nz-form-label [nzSm]="10" [nzXs]="24" nzRequired nzFor="initPeriod">Desde </nz-form-label>
+              <nz-form-control [nzSm]="14" [nzXs]="24">
+                <nz-input-group nzCompact>
+                  <input formControlName="initPeriod" type="date" nz-input style="width:120%;" 
+                  [ngModel]='initPeriod | date:"yyyy-MM-dd" ' (ngModelChange)='initPeriod=$event' value="initPeriod"/>
+                </nz-input-group>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div nz-col class="gutter-row" [nzSpan]="8">
+            <nz-form-item>
+              <nz-form-label [nzSm]="10" [nzXs]="24" nzRequired nzFor="endPeriod">Hasta </nz-form-label>
+              <nz-form-control [nzSm]="14" [nzXs]="30">
+                <nz-input-group nzCompact>
+                  <input formControlName="endPeriod" type="date" nz-input style="width:120%;" 
+                  [ngModel]='endPeriod | date:"yyyy-MM-dd" ' (ngModelChange)='endPeriod=$event' value="endPeriod" />
+                </nz-input-group>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+      </nz-collapse-panel>
+    </nz-collapse>
+  </form>
+  <nz-collapse>
+    <nz-collapse-panel nzHeader="Resumen" [nzActive]="true" [nzShowArrow]="true">
+      <div>
+        <nz-table [nzBordered]="true" [nzSize]="'small'" nzShowPagination="false" style="overflow: auto"
+          [nzData]="periodIvaList">
+          <thead>
+            <tr>
+              <th>Resumen</th>
+              <th style="background-color: lightblue;">Neto Grabado</th>
+              <th style="background-color: lightblue;">Iva</th>
+              <th style="background-color: lightblue;">Total</th>
+            </tr>
+
+          </thead>
+          <tbody class="small-text">
+            <tr style="background-color:aquamarine;">
+              <td>ventas responsables ins Iva 10,5%</td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr style="background-color:aquamarine;">
+              <td> ventas responsables ins Iva 21%</td>
+              <td></td>
+              <td></td>
+              <td> </td>
+            </tr>
+            <tr style="background-color:aquamarine;">
+              <td>ventas responsables ins Iva 27%</td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+
+            <tr style="background-color:lightskyblue;">
+              <td>ventas Monotributistas Iva 10,5%</td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr style="background-color:lightskyblue;">
+              <td> ventas Monotributistas Iva 21%</td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr style="background-color:lightskyblue;">
+              <td>ventas Monotributistas Iva 27%</td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr style="background-color: lightpink;">
+              <td>ventas Final Iva 10,5%</td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr style="background-color: lightpink;">
+              <td> ventas Final Iva 21%</td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr style="background-color: lightpink;">
+              <td>ventas Final Iva 27%</td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr style="background-color: lightcoral;">
+              <td>Total</td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+          </tbody>
+        </nz-table>
+
+      </div>
+    </nz-collapse-panel>
+  </nz-collapse>
+  <nz-collapse>
+    <nz-collapse-panel nzHeader="Datos de IVA Venta" [nzActive]="true" [nzShowArrow]="true">
+      <nz-content>
+        <nz-table [nzBordered]="true" [nzSize]="'small'" nzShowPagination="false" style="overflow: auto"
+          [nzData]="periodIvaList">
+          <thead>
+            <tr>
+              <th style="background-color:lightgrey;">Fecha</th>
+              <th style="background-color: lightgrey;">N° Factura</th>
+              <th style="background-color: lightgrey;">Tipo</th>
+              <th style="background-color: lightgrey;">Cliente</th>
+              <th style="background-color: lightgrey;">CUIT/CUIL</th>
+              <th style="background-color: lightblue;">Imp.Neto</th>
+              <th style="background-color: lightblue;">IVA 10,5 %</th>
+              <th style="background-color: lightblue;">IVA 21 %</th>
+              <th style="background-color: lightblue;">IVA 27 %</th>
+              <th style="background-color: lightblue;">Total</th>
+            </tr>
+          </thead>
+          <tbody class="small-text">
+          </tbody>
+        </nz-table>
+
+      </nz-content>
+    </nz-collapse-panel>
+  </nz-collapse>
+
+</nz-layout>
