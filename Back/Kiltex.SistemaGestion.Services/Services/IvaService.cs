@@ -36,17 +36,16 @@ namespace Kiltex.SistemaGestion.Services.Services
             decimal totalAmount = 0;
             foreach (var item in list)
             {
-                var porcentaje = (item.Iva * 100) / item.Price;
-                switch (porcentaje)
+                switch (item.Iva)
                 {
                     case 21:
-                        total21 += item.Iva;
+                        total21 += ((item.Iva*item.Price)/100);
                         break;
                     case 27:
-                        total27 += item.Iva;
+                        total27 += ((item.Iva * item.Price) / 100);
                         break;
                     case (decimal)10.5:
-                        total10 += item.Iva;
+                        total10 += ((item.Iva * item.Price) / 100);
                         break;
                 }
                 totalAmount += item.Invoice.Total;
@@ -63,14 +62,16 @@ namespace Kiltex.SistemaGestion.Services.Services
                     DateTime = x.Invoice.DateTime,
                     Id = x.Invoice.Id,
                     Iva = x.Iva,
-                    IvaType = differentiateIva(x.Price, x.Iva),
+                    Iva10 = (x.Iva == (decimal)10.5) ? ((x.Price*x.Iva)/100) : 0 ,
+                    Iva21 = (x.Iva == 21) ? ((x.Price * x.Iva) / 100) : 0,
+                    Iva27 = (x.Iva == 27) ? ((x.Price * x.Iva) / 100) : 0,
                     Total = x.Invoice.Total,
                 }).ToList(),
                 TotalIva10 = total10,
                 TotalIva21 = total21,
                 TotalIva27 = total27,
                 PeriodTotal = totalAmount
-            });
+            }); ;
 
             ;
         }
@@ -92,17 +93,16 @@ namespace Kiltex.SistemaGestion.Services.Services
             decimal? totalAmount = 0;
             foreach (var item in list)
             {
-                var porcentaje = (item.Iva * 100) / item.Price;
-                switch (porcentaje)
+                switch (item.Iva)
                 {
                     case 21:
-                        total21 += item.Iva;
+                        total21 += ((item.Iva * item.Price) / 100);
                         break;
                     case 27:
-                        total27 += item.Iva;
+                        total27 += ((item.Iva * item.Price) / 100);
                         break;
                     case (decimal)10.5:
-                        total10 += item.Iva;
+                        total10 += ((item.Iva * item.Price) / 100);
                         break;
                 }
                 totalAmount += item.Receipt.Total;
@@ -120,7 +120,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                     DateTime = x.Receipt.DateTime,
                     Id = x.Receipt.Id,
                     Iva = x.Iva,
-                    IvaType = differentiateIva(x.Price, x.Iva),
+                    IvaPrice = ((x.Iva * x.Price) / 100),
                     Total = x.Receipt.Total,
                 }).ToList(),
                 TotalIva10 = total10,
@@ -130,22 +130,6 @@ namespace Kiltex.SistemaGestion.Services.Services
             });
 
             ;
-        }
-        private string differentiateIva(decimal price, decimal iva)
-        {
-            switch ((iva * 100 )/price)
-            {
-                case 21:
-                    return "21";
-                    break;
-                case 27:
-                    return "27";
-                    break;
-                case (decimal)10.5:
-                    return "10.5";
-                    break;
-            }
-            return null;
         }
     }
 }
