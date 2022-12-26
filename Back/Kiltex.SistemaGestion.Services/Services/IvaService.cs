@@ -30,24 +30,10 @@ namespace Kiltex.SistemaGestion.Services.Services
             var list = await query.OrderBy(p => p.Invoice.DateTime)
                                   .ToListAsync()
                                   .ConfigureAwait(false);
-            decimal total21 = 0;
-            decimal total10 = 0;
-            decimal total27 = 0;
+
             decimal totalAmount = 0;
             foreach (var item in list)
             {
-                switch (item.Iva)
-                {
-                    case 21:
-                        total21 += ((item.Iva*item.Price)/100);
-                        break;
-                    case 27:
-                        total27 += ((item.Iva * item.Price) / 100);
-                        break;
-                    case (decimal)10.5:
-                        total10 += ((item.Iva * item.Price) / 100);
-                        break;
-                }
                 totalAmount += item.Invoice.Total;
             }
 
@@ -62,14 +48,12 @@ namespace Kiltex.SistemaGestion.Services.Services
                     DateTime = x.Invoice.DateTime,
                     Id = x.Invoice.Id,
                     Iva = x.Iva,
-                    Iva10 = (x.Iva == (decimal)10.5) ? ((x.Price*x.Iva)/100) : 0 ,
-                    Iva21 = (x.Iva == 21) ? ((x.Price * x.Iva) / 100) : 0,
-                    Iva27 = (x.Iva == 27) ? ((x.Price * x.Iva) / 100) : 0,
+                    Iva10 = (x.Iva == (decimal)10.5) ? (((x.Price*x.Iva)/100) * x.Quantity) : 0 ,
+                    Iva21 = (x.Iva == 21) ? (((x.Price * x.Iva) / 100) * x.Quantity): 0,
+                    Iva27 = (x.Iva == 27) ? (((x.Price * x.Iva) / 100) * x.Quantity): 0,
                     Total = x.Invoice.Total,
                 }).ToList(),
-                TotalIva10 = total10,
-                TotalIva21 = total21,
-                TotalIva27 = total27,
+
                 PeriodTotal = totalAmount
             }); ;
 
