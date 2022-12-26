@@ -139,6 +139,9 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
     });
   }
 
+  formatter = (data: number = 0) =>
+    formatCurrency(data, this.locale, '$', 'ARS', '1.1-2');
+
   ngOnInit(): void {}
 
   typeSelectedChange(id: any): void {
@@ -156,14 +159,12 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
 
   startEditIva(id: number): void {
     this.editIdIva = id;
-    console.log(this.editIdIva);
   }
   stopEdit(): void {
     this.editId = null;
   }
   stopEditIva(): void {
     this.editIdIva = null;
-    console.log('Este es el stop', this.editIdIva);
   }
   changeIvaValue(iva: number, productId: number): void {
     this.ivaSelectedId = iva;
@@ -278,7 +279,6 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
   }
 
   ivaCalculate(data: number, iva: number): number {
-    console.log((data * iva) / 100);
     return (data * iva) / 100;
   }
 
@@ -300,72 +300,71 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
         this.total += dato.price * dato.quantity;
       });
       this.total += this.concNoGravado + this.percIngBrutos + this.percIva;
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   }
 
   save(): void {
-    // if (this.isValidForm(this.formReceipt)) {
-    //   if (this.receiptDetailsGrid.length == 0) {
-    //     this.showMessageError('No hay Productos Seleccionados');
-    //   } else {
-    const model: receiptModel = {
-      id: 0,
-      supplierId: this.supplierId,
-      userId: this.userId,
-      receiptNumber: this.formReceipt.controls['receiptNumber'].value,
-      supplierName: this.formReceipt.controls['supplierName'].value,
-      supplierCuit: this.formReceipt.controls['supplierCuit'].value,
-      supplierAddress: this.formReceipt.controls['supplierAddress'].value,
-      observation: this.formReceipt.controls['observation'].value,
-      dateTime: this.formReceipt.controls['dateTime'].value,
-      total: this.totalItems,
-      ivaTotal: this.ivaTotal,
-      type: this.formReceipt.controls['type'].value,
-      concNoGravado: this.concNoGravado,
-      percIva: this.percIva,
-      percIngBrutos: this.percIngBrutos,
-      receiptDetails: this.receiptDetails,
-    };
-    console.log(model);
-    // this.isSaving = true;
-    // this.serviceInvoice.saveReceipt(model).subscribe({
-    //   next: () => {
-    //     this.showNotificationSuccess(
-    //       'Guardado correcto',
-    //       `Comprobante creado correctamente`
-    //     );
-    //     this.isSaving = false;
-    //     this.router.navigate(['/home/receipt']);
-    //   },
-    //   error: () => {
-    //     this.isSaving = false;
-    //     this.showMessageError('No se pudo crear el Comprobante');
-    //   },
-    // });
+    if (this.isValidForm(this.formReceipt)) {
+      if (this.receiptDetailsGrid.length == 0) {
+        this.showMessageError('No hay Productos Seleccionados');
+      } else {
+        const model: receiptModel = {
+          id: 0,
+          supplierId: this.supplierId,
+          userId: this.userId,
+          receiptNumber: this.formReceipt.controls['receiptNumber'].value,
+          supplierName: this.formReceipt.controls['supplierName'].value,
+          supplierCuit: this.formReceipt.controls['supplierCuit'].value,
+          supplierAddress: this.formReceipt.controls['supplierAddress'].value,
+          observation: this.formReceipt.controls['observation'].value,
+          dateTime: this.formReceipt.controls['dateTime'].value,
+          total: this.total,
+          ivaTotal: this.ivaTotal,
+          type: this.formReceipt.controls['type'].value,
+          concNoGravado: this.concNoGravado,
+          percIva: this.percIva,
+          percIngBrutos: this.percIngBrutos,
+          receiptDetails: this.receiptDetails,
+        };
+        this.isSaving = true;
+        this.serviceInvoice.saveReceipt(model).subscribe({
+          next: () => {
+            this.showNotificationSuccess(
+              'Guardado correcto',
+              `Comprobante creado correctamente`
+            );
+            this.isSaving = false;
+            this.router.navigate(['/home/invoices/receipt']);
+          },
+          error: () => {
+            this.isSaving = false;
+            this.showMessageError('No se pudo crear el Comprobante');
+          },
+        });
+      }
+    }
   }
 
   handleOk() {
-    // try {
-    //   this.receiptListTest = this.receiptDetailsGrid.filter(
-    //     (element) =>
-    //       element.productCode != this.popupComponent.elementSelectedToDelete
-    //   );
-    //   this.invoiceDetails = this.invoiceDetails.filter(
-    //     (element) =>
-    //       element.productId != this.popupComponent.elementSelectedToDelete
-    //   );
-    //   this.popupComponent.isDeleteConfirmationVisible = false;
-    //   if (this.invoiceListTest.length == 0) {
-    //     this.receiptDetailsGrid = [];
-    //   } else {
-    //     this.receiptDetailsGrid = this.invoiceListTest;
-    //   }
-    //   this.totalCalculate();
-    // } catch (error) {
-    //   console.log(error);
-    // }
+    try {
+      this.receiptDetailsGrid = this.receiptDetailsGrid.filter(
+        (element) =>
+          element.productId != this.popupComponent.elementSelectedToDelete
+      );
+      this.receiptDetails = this.receiptDetails.filter(
+        (element) =>
+          element.productId != this.popupComponent.elementSelectedToDelete
+      );
+      this.popupComponent.isDeleteConfirmationVisible = false;
+      if (this.receiptDetailsGrid.length == 0) {
+        this.receiptDetailsGrid = [];
+      } else {
+        this.receiptDetailsGrid = this.receiptDetailsGrid;
+      }
+      this.totalCalculate();
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   msjConfirmOk() {
@@ -379,9 +378,7 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
       } else {
         this.showMessageError('No ha seleccionado producto');
       }
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   }
 
   searchProduct(): void {
@@ -504,7 +501,6 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
                 this.iva
               );
               this.receiptDetails.push(modelDetail);
-              console.log(this.receiptDetails);
               this.totalCalculate();
               this.loading = false;
               this.formProductSearch.controls['productSearchFilter'].setValue(

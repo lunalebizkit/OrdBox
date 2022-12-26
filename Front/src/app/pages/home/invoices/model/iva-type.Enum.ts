@@ -4,7 +4,7 @@ export const IvaType = [
   { value: 3, label: '27%' },
 ];
 
-export enum eInvoiceType {
+export enum eIvaType {
   '10,5%' = 1,
   '21%' = 2,
   '27%' = 3,

@@ -2,6 +2,7 @@ import { formatCurrency, formatDate } from '@angular/common';
 import { Component, Inject, LOCALE_ID, OnInit } from '@angular/core';
 import { Permission } from 'src/app/common/auth/models/permissions.enum';
 import { InvoiceService } from '../invoices.service';
+import { eInvoiceType } from '../model/invoice-type.Enum';
 import { receiptModel } from '../model/receipt.model';
 
 @Component({
@@ -83,5 +84,9 @@ export class ReceiptComponent implements OnInit {
   currencyFormat(data: any): string {
     if (!this.locale) return '';
     return formatCurrency(data, this.locale!, '$', 'ARS', '1.1-2');
+  }
+
+  getInvoiceType(id: number) {
+    return eInvoiceType[id];
   }
 }

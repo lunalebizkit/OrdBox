@@ -29,6 +29,7 @@
                   nzFormat="dd/MM/yyyy"
                   [nzDisabledDate]="disabledDate"
                   [nzPlaceHolder]="'Elige una fecha'"
+                  formControlName="dateTime"
                 ></nz-date-picker>
               </nz-form-control>
             </nz-form-item>
@@ -52,7 +53,12 @@
             <nz-form-item>
               <nz-form-label nzRequired>Nro</nz-form-label>
               <nz-form-control>
-                <input nz-input maxlength="250" nzSize="small" />
+                <input
+                  formControlName="receiptNumber"
+                  nz-input
+                  maxlength="250"
+                  nzSize="small"
+                />
               </nz-form-control>
             </nz-form-item>
           </div>
@@ -275,6 +281,7 @@
                     nzType="delete"
                     [nzTheme]="'twotone'"
                     [nzTwotoneColor]="'#FF0000'"
+                    (click)="popup.showDeleteConfirmation(data.productId)"
                   ></i>
                 </a>
               </nz-space>
@@ -297,6 +304,7 @@
               <b>Conc. No Gravado</b
               ><b style="color: red">
                 <nz-input-number
+                  [nzFormatter]="formatter"
                   (ngModelChange)="concNoGravadoChange($event)"
                   [(ngModel)]="value1"
                   [nzMin]="1"
@@ -308,6 +316,7 @@
               <b style="margin-right: 5px">Perc. Iva</b
               ><b style="color: red">
                 <nz-input-number
+                  [nzFormatter]="formatter"
                   (ngModelChange)="percIvaChange($event)"
                   [(ngModel)]="value2"
                   [nzMin]="1"
@@ -319,6 +328,7 @@
               <b>Perc. Ing. Brutos</b
               ><b style="color: red">
                 <nz-input-number
+                  [nzFormatter]="formatter"
                   (ngModelChange)="percIngBrutosChange($event)"
                   [(ngModel)]="value3"
                   [nzMin]="1"
