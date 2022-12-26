@@ -47,7 +47,7 @@ namespace Kiltex.SistemaGestion.Services.Services
 
         public async Task<OperationResponse<IdResponse<long>>> Add(DtoRequestPeriod model, CancellationToken ct = default)
         {
-            //model.Id = 0;
+            model.Id = 0;
             return await AddOrUpdate(model, ct).ConfigureAwait(false);
         }
         public async Task<OperationResponse<IdResponse<long>>> AddOrUpdate(DtoRequestPeriod model, CancellationToken ct = default)
@@ -154,6 +154,35 @@ namespace Kiltex.SistemaGestion.Services.Services
                     PageSize = request.PageSize,
                     TotalCount = count
                 });
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
+                throw;
+            }
+        }
+        public async Task<OperationResponse<IdResponse<long>>> Delete(long id, CancellationToken ct = default)
+        {
+            try
+            {
+                var period = await _contextSql
+                                             .Periods
+                                             .FirstOrDefaultAsync(p => p.Id == id && p.Status, ct)
+                                             .ConfigureAwait(false);
+                if (period != null)
+                {
+                    period.Status = false;
+
+                    await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
+                }
+                else
+                {
+                    _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_009_ERROR_DUPLICATE));
+                    return Error<IdResponse<long>>(new OperationExceptions("009", "No existe period"));
+                }
+
+                 return Ok(new IdResponse<long>(id));
 
             }
             catch (Exception ex)

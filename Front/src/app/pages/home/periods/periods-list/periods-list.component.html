@@ -29,10 +29,10 @@
                 <nz-input-group [nzSuffix]="clearQuery">
                   <input
                     [ngModelOptions]="{ standalone: true }"
-                    type="text"
+                    type="int"
                     placeholder="Ingrese inicio o fin de periodo"
                     nz-input
-                    (keydown)="search()"
+                    (keydown.enter)="search()"
                     [(ngModel)]="queryData.filter"
                   />
                 </nz-input-group>
@@ -54,6 +54,7 @@
     </nz-collapse>
     <div class="table" (scroll)="onScroll($event)">
       <nz-table
+        #groupingTable
         class="tabla" 
         [nzData]="periodList"
         nzBordered="false"
@@ -63,12 +64,13 @@
       >
         <thead>
           <tr>
-            <th nzEllipsis nzWidth="75px">Inicio período</th>
-            <th nzEllipsis nzWidth="70px">Fin período</th>
-            <th nzEllipsis nzWidth="45px">Estado</th>
-            <th nzEllipsis nzWidth="45px">Acción</th>
-          
+            <th nzEllipsis nzWidth="200px">Inicio período</th>
+            <th nzEllipsis nzWidth="200px">Fin período</th>
+            <th nzEllipsis nzWidth="150px">Estado</th>
+            <th nzEllipsis nzWidth="100px">Acción</th>
+            <th nzEllipsis nzWidth="150px" colspan="2">Reportes</th>
           </tr>
+
         </thead>
         <tbody>
           <tr
@@ -89,33 +91,50 @@
             <td nzEllipsis>{{ this.formaterDate(period.endPeriod )}}</td>
             <td nzEllipsis *ngIf="period.status === true">Activado</td>
             <td nzEllipsis *ngIf="period.status === false">Cerrado</td>
-            
-           
             <td nzEllipsis *ngIf="period.status === true">
         
-              <a nz-tooltip
-              nzTooltipTitle="Cerrado"
+              <a #active nz-tooltip
+              nzTooltipTitle="Abierto"
               nzTooltipPlacement="rightTop" 
               style="color: rgb(248, 46, 46);"
               (click)="popup.showDeleteConfirmation(period.id)">
-                <span #active nz-icon nzType="close-circle" nzTheme="outline" style="font-size: 18px">
-                </span>
+                <i  nz-icon nzType="close-circle" nzTheme="outline" style="font-size: 18px">
+                </i>
               </a>
             
             
         
         </td>
         <td nzEllipsis *ngIf="period.status === false">
-          <a nz-tooltip
+          <a #close nz-tooltip
           nzTooltipTitle="Cerrado"
           nzTooltipPlacement="rightTop" 
-          style="color: darkgrey;">
-            <span #close nz-icon nzType="close-circle" nzTheme="outline" style="font-size: 18px">
-            </span>
+          style="color: darkgrey;"
+          >
+          <i  nz-icon nzType="close-circle" nzTheme="outline" style="font-size: 18px">
+          </i>
           </a>
-          
-
         </td>
+        <ng-container>
+          <td style="text-align: center;">
+            <a >
+              <button nz-button nzType="primary" nzSize="small" style="background-color: rgb(2, 118, 2); font-size: small;">
+                Iva Compra
+             </button>
+            </a>
+             
+           
+          </td>
+          <td style="text-align: center; ">
+    
+            <button nz-button  nzSize="small" nzType="primary" style="font-size: small;"
+             routerLink="/home/IvaVenta" [queryParams]="{from: this.formaterDate( period.initPeriod), to: this.formaterDate(period.endPeriod)}">
+              Iva venta
+            </button>
+          
+          </td>
+        </ng-container>
+       
         </tbody>
       </nz-table>
     </div>
