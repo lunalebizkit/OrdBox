@@ -38,4 +38,15 @@ export class PeriodsService {
           return this.api.put(`period`, model, false);
         }
       }
+
+       /**
+     * cambio estado de un  Periodo
+     * @param id
+     * @returns
+     */
+
+      public delete(id:number): Observable<any> {
+        return this.api.delete(`Period/${id}`, false)
+       } 
+      
 }

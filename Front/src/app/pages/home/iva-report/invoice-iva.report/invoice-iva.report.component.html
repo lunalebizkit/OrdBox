@@ -1,0 +1,174 @@
+ <nz-layout>
+  <nz-page-header class="list-header">
+    <nz-page-header-title>Libro Iva Venta </nz-page-header-title>
+    <nz-page-header-extra>
+      <button nz-button routerLink="/home/periods" type="submit" nzSize="default" 
+      ><i nz-icon nzType="arrow-left" nzTheme="outline"></i>volver</button>
+    </nz-page-header-extra>
+   
+  </nz-page-header>
+  
+  <form nz-form [formGroup]="formReport">
+    <nz-collapse>
+      <nz-collapse-panel nzSize="small" nzHeader="Datos de la Consulta">
+        <div nz-row [nzGutter]="[8, 1]">
+          <div nz-col nzSpan="24">
+            <nz-form-item>
+              <nz-form-label>Período</nz-form-label>
+              <nz-form-control>
+                <b>
+                  {{ initPeriod }}
+                </b>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+        <div nz-row>
+          <div nz-col class="gutter-row" [nzSpan]="8">
+            <nz-form-item>
+              <nz-form-label [nzSm]="10" [nzXs]="24" nzRequired nzFor="initPeriod">Desde </nz-form-label>
+              <nz-form-control [nzSm]="14" [nzXs]="24">
+                <nz-input-group nzCompact>
+                  <input formControlName="initPeriod" type="date" nz-input style="width:120%;" 
+                  [ngModel]='initPeriod | date:"MM/dd/YYYY" ' (ngModelChange)='initPeriod=$event' value="initPeriod"/>
+                </nz-input-group>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div nz-col class="gutter-row" [nzSpan]="8">
+            <nz-form-item>
+              <nz-form-label [nzSm]="10" [nzXs]="24" nzRequired nzFor="endPeriod">Hasta </nz-form-label>
+              <nz-form-control [nzSm]="14" [nzXs]="30">
+                <nz-input-group nzCompact>
+                  <input formControlName="endPeriod" type="date" nz-input style="width:120%;" 
+                  [ngModel]='endPeriod | date:"MM/dd/YYYY" ' (ngModelChange)='endPeriod=$event' value="endPeriod" />
+                </nz-input-group>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+      </nz-collapse-panel>
+    </nz-collapse>
+  </form>
+  <nz-collapse>
+    <nz-collapse-panel nzHeader="Resumen" [nzActive]="true" [nzShowArrow]="true">
+      <div>
+        <nz-table [nzBordered]="true" [nzData]="periodListaVentas"  [nzSize]="'small'" nzShowPagination="false" style="overflow: auto">
+          <thead>
+            <tr>
+              <th>Resumen</th>
+              <th style="background-color: lightblue;">Neto Grabado</th>
+              <th style="background-color: lightblue;">Iva</th>
+              <th style="background-color: lightblue;">Total</th>
+            </tr>
+
+          </thead>
+          <tbody class="small-text">
+            <tr style="background-color:aquamarine;">
+              <td>ventas responsables ins Iva 10,5%</td>
+              <td>{{ iva10Type1NetoGravado || null}}</td>
+              <td>{{iva10Type1 || null}}</td>
+              <td>{{ iva10Type1Total || null }}</td>
+            </tr>
+            <tr style="background-color:aquamarine;">
+              <td> ventas responsables ins Iva 21%</td>
+              <td>{{ iva21Type1NetoGravado || null }}</td>
+              <td>{{iva21Type1 || null}}</td>
+              <td> {{ iva21Type1Total || null }}</td>
+            </tr>
+            <tr style="background-color:aquamarine;">
+              <td>ventas responsables ins Iva 27%</td>
+              <td>{{ iva27Type1NetoGravado || null }}</td>
+              <td>{{iva27Type1 || null}}</td>
+              <td>{{ iva27Type1Total || null }}</td>
+            </tr>
+
+            <tr style="background-color:lightskyblue;">
+              <td>ventas Monotributistas Iva 10,5%</td>
+              <td>{{ iva10Type2NetoGravado || null}}</td>
+              <td>{{iva10Type2 || null}}</td>
+              <td>{{ iva10Type2Total || null }}</td>
+            </tr>
+            <tr style="background-color:lightskyblue;">
+              <td> ventas Monotributistas Iva 21%</td>
+              <td>{{ iva21Type2NetoGravado || null }}</td>
+              <td>{{iva21Type2 || null}}</td>
+              <td> {{ iva21Type2Total || null }}</td>
+            </tr>
+            <tr style="background-color:lightskyblue;">
+              <td>ventas Monotributistas Iva 27%</td>
+              <td>{{ iva27Type2NetoGravado || null }}</td>
+              <td>{{iva27Type2 || null}}</td>
+              <td>{{ iva27Type2Total || null }}</td>
+            </tr>
+            <tr style="background-color: lightpink;">
+              <td>ventas Final Iva 10,5%</td>
+              <td>{{ iva10Type3NetoGravado || null}}</td>
+              <td>{{iva10Type3 || null}}</td>
+              <td>{{ iva10Type3Total || null }}</td>
+            </tr>
+            <tr style="background-color: lightpink;">
+              <td> ventas Final Iva 21%</td>
+              <td>{{ iva21Type3NetoGravado || null }}</td>
+              <td>{{iva21Type3 || null}}</td>
+              <td> {{ iva21Type3Total || null }}</td>
+            </tr>
+            <tr style="background-color: lightpink;">
+              <td>ventas Final Iva 27%</td>
+              <td>{{ iva27Type3NetoGravado || null }}</td>
+              <td>{{iva27Type3 || null}}</td>
+              <td>{{ iva27Type3Total || null }}</td>
+            </tr>
+            <tr style="background-color: lightcoral;">
+              <td>Total</td>
+              <td>{{TotalNetoGravado || null}}</td>
+              <td>{{TotalIva || null}}</td>
+              <td>{{PeriodTotal || null}}</td>
+             
+            </tr>
+          </tbody>
+        </nz-table>
+
+      </div>
+    </nz-collapse-panel>
+  </nz-collapse>
+  <nz-collapse>
+    <nz-collapse-panel nzHeader="Datos de IVA Venta" [nzActive]="true" [nzShowArrow]="true">
+      <nz-content>
+        <nz-table [nzBordered]="true" [nzSize]="'small'" nzShowPagination="false" style="overflow: auto"
+          [nzData]="periodListaVentas">
+          <thead>
+            <tr>
+              <th style="background-color:lightgrey;">Fecha</th>
+              <th style="background-color: lightgrey;">N° Factura</th>
+              <th style="background-color: lightgrey;">Tipo</th>
+              <th style="background-color: lightgrey;">Cliente</th>
+              <th style="background-color: lightgrey;">CUIT/CUIL</th>
+              <th style="background-color: lightblue;">Imp.Neto</th>
+              <th style="background-color: lightblue;">IVA 10,5 %</th>
+              <th style="background-color: lightblue;">IVA 21 %</th>
+              <th style="background-color: lightblue;">IVA 27 %</th>
+              <th style="background-color: lightblue;">Total</th>
+            </tr>
+          </thead>
+          <tbody class="small-text" >
+            <tr  *ngFor="let data of periodListaVentas;">
+              <td>{{data.dateTime}}</td>
+            <td>{{data.id}}</td>
+            <td>{{this.getInvoiceType(data.type)}}</td>
+            <td>{{data.customerName}}</td>
+            <td>{{data.customerCuit}}</td>          
+            <td>{{data.total}}</td>          
+            <td>{{data.iva10}}</td>          
+            <td>{{data.iva21}}</td>          
+            <td>{{data.iva27}}</td>          
+            <td>{{data.total}}</td> 
+          </tr>
+          </tbody>
+        </nz-table>
+
+      </nz-content>
+    </nz-collapse-panel>
+  </nz-collapse>
+
+</nz-layout> 
