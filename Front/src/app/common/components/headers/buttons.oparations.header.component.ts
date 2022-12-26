@@ -62,6 +62,7 @@ export class HeaderOperationsButtonsComponent implements OnInit {
             let productId = p['id'] ? p['id'] : null;
             this.router.navigate(['/home/products/list', { productId }]);
             break;
+
           default:
             if (p['id']) {
               this.router.navigate(['../../'], { relativeTo: this.route });
