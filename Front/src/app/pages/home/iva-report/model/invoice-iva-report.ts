@@ -1,22 +1,24 @@
 import { InvoiceDetails } from "../../invoices/model/invoice.model";
 
 export interface InvoiceIvaReportModel{
-    TotalIva21: number,
-    TotalIva10:number,
-    TotalIva27:number,
-    PeriodTotal:number,
-    invoiceDetail: InvoiceDetails[]
+    totalIva21: number,
+    totalIva10:number,
+    totalIva27:number,
+    periodTotal:number,
+    invoiceDetails: InvoiceIvaReportDetailsModel[]
 }
 
 export interface InvoiceIvaReportDetailsModel{
     id:number,
-    InvoiceNumber: number,
-    CustomerName: string,
-    CustomerCuit: string,
-    DateTime: Date,
-    Total: number
-    Iva: number,
-    IvaType: string,
-    Type: number
+    invoiceNumber: number,
+    customerName: string,
+    customerCuit: string,
+    dateTime: Date,
+    total: number
+    iva: number,
+    iva10:number,
+    iva21:number,
+    iva27:number,
+    type: number
 }
 

@@ -7,9 +7,12 @@ import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { PopupConfirmationComponent } from 'src/app/common/components/popup-confirmation/popup-confirmation.component';
 import { InvoiceIvaReportService } from '../iva-report.service';
-import { InvoiceIvaReportModel } from '../model/invoice-iva-report';
+import { InvoiceIvaReportDetailsModel, InvoiceIvaReportModel } from '../model/invoice-iva-report';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HeaderOperationsButtonsComponent } from 'src/app/common/components/headers/buttons.oparations.header.component';
+import { InvoiceDetails, InvoiceModel } from '../../invoices/model/invoice.model';
+import { InvoiceService } from '../../invoices/invoices.service';
+import { eInvoiceType } from '../../invoices/model/invoice-type.Enum';
 
 
 @Component({
@@ -22,10 +25,53 @@ export class InvoiceIvaReportComponent extends BaseComponent implements OnInit {
   @ViewChild('header') headerComponent!: HeaderOperationsButtonsComponent;
    loading!: boolean;
     totalItems: any;
-    periodIvaList: InvoiceIvaReportModel[] = []
+    periodListaVentas:InvoiceIvaReportDetailsModel[]=[]
+    periodIvaList!: InvoiceIvaReportModel ;   
     startDate = Date.now();
     formReport!: FormGroup;
     mesPeriod: any;
+
+    TotalIva!: number;
+    TotalNetoGravado!:number;
+   
+    PeriodTotal!:number;
+    /*variables totalizadoras de resumen reporte*/ 
+    iva10Type1NetoGravado!:number;
+    iva10Type1!:number;
+    iva10Type1Total!:number;
+
+    iva21Type1NetoGravado!:number;
+    iva21Type1!:number;
+    iva21Type1Total!:number;
+
+    iva27Type1NetoGravado!:number;
+    iva27Type1!:number;
+    iva27Type1Total!:number;
+
+    iva10Type2NetoGravado!:number;
+    iva10Type2!:number;
+    iva10Type2Total!:number;
+
+    iva21Type2NetoGravado!:number;
+    iva21Type2!:number;
+    iva21Type2Total!:number;
+
+    iva27Type2NetoGravado!:number;
+    iva27Type2!:number;
+    iva27Type2Total!:number;
+
+    iva10Type3NetoGravado!:number;
+    iva10Type3!:number;
+    iva10Type3Total!:number;
+
+    iva21Type3NetoGravado!:number;
+    iva21Type3!:number;
+    iva21Type3Total!:number;
+
+    iva27Type3NetoGravado!:number;
+    iva27Type3!:number;
+    iva27Type3Total!:number;
+    /**------------------------- */
     queryData = {
         filter: '',
         page: 0,
@@ -55,25 +101,157 @@ export class InvoiceIvaReportComponent extends BaseComponent implements OnInit {
       endPeriod= this.route.snapshot.queryParams['to']
 
       ngOnInit(): void {
-       this.getIvaVenta;
+        if ((this.initPeriod != null) && (this.endPeriod != null)){
+          this.getIvaVenta(this.initPeriod, this.endPeriod);        
+        } 
     }
-    getIvaVenta(initPeriod:Date,endPeriod:Date): void {
+    getIvaVenta(initPeriod:Date,endPeriod:Date): void {      
         this.service.getListIvaVenta(initPeriod,endPeriod).subscribe({
           next: (r) => {
-            this.periodIvaList = r.data;
-            this.totalItems = r.totalCount;
-            this.loading = false; 
-            console.log(r.totalCount);
+             this.periodIvaList = r;           
+            this.periodListaVentas= r.invoiceDetails;
+        
+            this.PeriodTotal= r.periodTotal;
+            this.loading = false;   
+            this.getIvasTotal();    
           },
           error: () => {
-            this.loading = false;
-            this.periodIvaList = [];
+            this.loading = false;           
+            
           },
         });
-      } 
-      
-    IvaVenta(initPeriod:any, endPeriod:any){
+      }
+      getInvoiceType(id: number) {
+        return eInvoiceType[id];
+      }
 
+      getIvasTotal(){
+        this.iva10Type1=0;
+        this.iva10Type1NetoGravado=0;
+        this.iva10Type1Total=0;
 
-    }  
-}
+        this.iva21Type1NetoGravado= 0;
+        this.iva21Type1=0;
+        this.iva21Type1Total=0;
+
+        this.iva27Type1NetoGravado= 0;
+        this.iva27Type1=0;
+        this.iva27Type1Total=0;
+
+        this.iva10Type2=0;
+        this.iva10Type2NetoGravado=0;
+        this.iva10Type2Total=0;
+
+        this.iva21Type2NetoGravado= 0;
+        this.iva21Type2=0;
+        this.iva21Type2Total=0;
+
+        this.iva27Type2NetoGravado= 0;
+        this.iva27Type2=0;
+        this.iva27Type2Total=0;
+
+        this.iva10Type3=0;
+        this.iva10Type3NetoGravado=0;
+        this.iva10Type3Total=0;
+
+        this.iva21Type3NetoGravado= 0;
+        this.iva21Type3=0;
+        this.iva21Type3Total=0;
+
+        this.iva27Type3NetoGravado= 0;
+        this.iva27Type3=0;
+        this.iva27Type3Total=0;
+
+        this.TotalIva= 0;
+        this.TotalNetoGravado=0;
+        
+        this.periodListaVentas.forEach(data => {          
+          switch (data.type) {
+            
+            case eInvoiceType.A:
+              switch (Number(data.iva)) {
+                case 10.5:
+                  this.iva10Type1NetoGravado += (Number(data.total) - data.iva10); 
+                  this.TotalNetoGravado += (Number(data.total) - data.iva10); 
+                  this.iva10Type1 += data.iva10;
+                  this.iva10Type1Total +=  data.total;
+                  this.TotalIva += data.iva10;
+                  break;
+                case 21:
+                  this.iva21Type1NetoGravado += (Number(data.total) - data.iva21);
+                  this.TotalNetoGravado += (Number(data.total) - data.iva21); 
+                  this.iva21Type1 += data.iva21;
+                  this.iva21Type1Total += data.total;
+                  this.TotalIva += data.iva21;
+                break;
+                default:                  
+                this.iva27Type1NetoGravado += (Number(data.total) - data.iva27)
+                this.TotalNetoGravado += (Number(data.total) - data.iva27); 
+              this.iva27Type1 += data.iva27;
+              this.iva27Type1Total = data.total ;
+              this.TotalIva += data.iva27;
+                  break;
+              } 
+              break;
+
+              case eInvoiceType.B:
+                switch (data.iva) {
+                  case 10.5:
+                    this.iva10Type2NetoGravado += (Number(data.total) - data.iva10); 
+                    this.TotalNetoGravado += (Number(data.total) - data.iva10); 
+                    this.iva10Type2 += data.iva10;
+                    this.iva10Type2Total +=  data.total;
+                    this.TotalIva += data.iva10;
+                    break;
+                  case 21:
+                    this.iva21Type2NetoGravado += (Number(data.total) - data.iva21);
+                  this.TotalNetoGravado += (Number(data.total) - data.iva21); 
+                    this.iva21Type2 += data.iva21;
+                    this.iva21Type2Total += data.total;
+                    this.TotalIva += data.iva21;
+                  break;
+                  default:                  
+                  this.iva27Type2NetoGravado += (Number(data.total) - data.iva27);
+                  this.TotalNetoGravado += (Number(data.total) - data.iva27); 
+                this.iva27Type2 += data.iva27;
+                this.iva27Type2Total = data.total ;
+                this.TotalIva += data.iva27;
+                    break;
+                }
+              // this.iva10Type2 += data.iva10;
+              // this.iva21Type2 += data.iva21;
+              // this.iva27Type2 += data.iva27;
+               break;      
+               
+            default:
+              switch (data.iva) {
+                case 10.5:
+                  this.iva10Type3NetoGravado += (Number(data.total) - data.iva10); 
+                  this.TotalNetoGravado += (Number(data.total) - data.iva10); 
+                  this.iva10Type3 += data.iva10;
+                  this.iva10Type3Total +=  data.total;
+                  this.TotalIva += data.iva10;
+                  break;
+                case 21:
+                  this.iva21Type3NetoGravado += (Number(data.total) - data.iva21);
+                  this.TotalNetoGravado += (Number(data.total) - data.iva21); 
+                  this.iva21Type3 += data.iva21;
+                  this.iva21Type3Total += data.total;
+                  this.TotalIva += data.iva21;
+                break;
+                default:                  
+                this.iva27Type3NetoGravado += (Number(data.total) - data.iva27);
+                this.TotalNetoGravado += (Number(data.total) - data.iva27); 
+              this.iva27Type3 += data.iva27;
+              this.iva27Type3Total = data.total ;
+              this.TotalIva += data.iva27;
+                  break;
+             
+          }
+          }
+          })
+          
+      }
+
+    }
+    

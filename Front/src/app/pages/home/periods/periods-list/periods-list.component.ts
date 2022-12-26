@@ -87,9 +87,9 @@ export class PeriodsListComponent extends BaseComponent implements OnInit {
     }
 
     formaterDate(date: string | number | Date): string {
-      return formatDate(date, 'YYYY-MM-dd', this.locale);
+      return formatDate(date, 'MM/dd/YYYY', this.locale);
     }
-  
+     
     onDoubleClicked(datos: any) {
       this.id = datos.id;
       if(datos.status === true){
@@ -183,8 +183,6 @@ export class PeriodsListComponent extends BaseComponent implements OnInit {
     
     status(datos:any){
       if(this.id != 0){
-       /*  const model =datos;
-        model.status=false; */
         let estado= datos.status =false
         const model:PeriodsModel ={
           id : datos.id,

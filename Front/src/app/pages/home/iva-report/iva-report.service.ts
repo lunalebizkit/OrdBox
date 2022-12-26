@@ -10,10 +10,11 @@ export class InvoiceIvaReportService {
     constructor(private api: ApiService) { }
      /**
      * Obtiene una Periodo por Id
-     * @param id
+     * @param initPeriod 
      * @returns
      */
-    public getListIvaVenta(initPeriod:Date,endPeriod:Date): Observable<any> {
-      return this.api.get(`listIvaVenta?from=${initPeriod}&to=${endPeriod}`, false)
+    public getListIvaVenta(initPeriod: any,endPeriod:any): Observable<any> {
+      return this.api.get(`Iva/listIvaVenta?from=${initPeriod}&to=${endPeriod}`, false)
     }
-}
+
+   }
