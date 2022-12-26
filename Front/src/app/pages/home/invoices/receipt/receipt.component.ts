@@ -1,9 +1,11 @@
 import { formatCurrency, formatDate } from '@angular/common';
 import { Component, Inject, LOCALE_ID, OnInit } from '@angular/core';
+import { NzDrawerService } from 'ng-zorro-antd/drawer';
 import { Permission } from 'src/app/common/auth/models/permissions.enum';
 import { InvoiceService } from '../invoices.service';
 import { eInvoiceType } from '../model/invoice-type.Enum';
 import { receiptModel } from '../model/receipt.model';
+import { ReceiptViewDrawerComponent } from '../receipt-view-drawer/receipt-view-drawer.component';
 
 @Component({
   selector: 'app-receipt',
@@ -12,6 +14,8 @@ import { receiptModel } from '../model/receipt.model';
 })
 export class ReceiptComponent implements OnInit {
   permissions = Permission;
+
+  id!: number;
 
   /*
    ** Indicador de carga de la grilla
@@ -34,7 +38,8 @@ export class ReceiptComponent implements OnInit {
 
   constructor(
     @Inject(LOCALE_ID) public locale: string,
-    private service: InvoiceService
+    private service: InvoiceService,
+    private drawerService: NzDrawerService
   ) {}
 
   ngOnInit(): void {
@@ -88,5 +93,25 @@ export class ReceiptComponent implements OnInit {
 
   getInvoiceType(id: number) {
     return eInvoiceType[id];
+  }
+
+  onDoubleClicked(datos: receiptModel) {
+    this.id = datos.id;
+    this.openComponentReceiptView();
+  }
+
+  openComponentReceiptView(): void {
+    const drawerRefCustomer = this.drawerService.create<
+      ReceiptViewDrawerComponent,
+      { filter: number },
+      number
+    >({
+      nzContent: ReceiptViewDrawerComponent,
+      nzSize: 'large',
+      nzContentParams: {
+        filter: this.id > 0 ? this.id : 0,
+      },
+      nzClosable: false,
+    });
   }
 }

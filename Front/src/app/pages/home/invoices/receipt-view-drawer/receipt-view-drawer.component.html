@@ -5,7 +5,7 @@
   [hideUpdate]="true"
   [hideSave]="true"
   [hideBack]="true"
-  [title]="'Comprobantes de Venta'"
+  [title]="'Comprobantes de Compra'"
   [iconBack]="'rollback'"
   [iconTitle]="'container'"
 >
@@ -22,13 +22,13 @@
         <a>{{ dateTime ? (dateTime | date : "YYYY-MM-dd") : "N/A" }} </a>
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="Cliente" [nzSpan]="2">
-        {{ customerName }}</nz-descriptions-item
+        {{ supplierName }}</nz-descriptions-item
       >
       <nz-descriptions-item nzTitle="Cuit" [nzSpan]="2">
-        {{ customerCuit }}</nz-descriptions-item
+        {{ supplierCuit }}</nz-descriptions-item
       >
       <nz-descriptions-item nzTitle="Dirección" [nzSpan]="3">
-        {{ customerAddress }}
+        {{ supplierAddress }}
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="Observación" [nzSpan]="2">
         {{ observation }}
@@ -56,7 +56,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let data of invoiceDetail">
+          <tr *ngFor="let data of receiptDetails">
             <td>{{ data.productCode }}</td>
             <td>{{ data.productId }}</td>
             <td>{{ data.productName }}</td>
@@ -71,19 +71,35 @@
         <tfoot style="background-color: #fafafa">
           <tr>
             <td></td>
-            <td colspan="2" *ngIf="type == 1; else elseBlock">
+            <td colspan="1" *ngIf="type == 1; else elseBlock">
               <b>Iva </b>
               <span style="color: blue"
                 >{{ this.currencyFormat(ivaTotal) }}
               </span>
             </td>
-            <td colspan="2" *ngIf="type == 1; else elseBlock">
-              <b>SubTotal </b>
-              <span style="color: blue"
-                >{{ this.currencyFormat(subTotal) }}
+            <td colspan="1">
+              <b>Conc. No Gravado </b
+              ><span style="color: blue"
+                >{{ this.currencyFormat(concNoGravado) }}
               </span>
             </td>
-            <td colspan="2">
+            <td colspan="1">
+              <b>Perc. Iva </b
+              ><span style="color: blue"
+                >{{ this.currencyFormat(percIva) }}
+              </span>
+            </td>
+            <td colspan="1">
+              <b>Perc. Ing. Brutos </b
+              ><span style="color: blue"
+                >{{ this.currencyFormat(percIngBrutos) }}
+              </span>
+            </td>
+            <td colspan="1" *ngIf="type == 1; else elseBlock">
+              <b>SubTotal </b>
+              <span style="color: blue">{{ this.currencyFormat(total) }} </span>
+            </td>
+            <td colspan="1">
               <b>Total </b
               ><span style="color: blue"
                 >{{ this.currencyFormat(total) }}
