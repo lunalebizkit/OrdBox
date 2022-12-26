@@ -93,11 +93,11 @@
             <td>{{ this.formaterDate(data.dateTime) }}</td>
             <td>{{ data.supplierCuit }}</td>
             <td>{{ data.supplierName }}</td>
-            <td [nzAlign]="'right'"></td>
             <td [nzAlign]="'right'">
               <b>{{ this.currencyFormat(data.total) }}</b>
             </td>
-            <td [nzAlign]="'center'"></td>
+
+            <td [nzAlign]="'center'">{{ this.getInvoiceType(data.type) }}</td>
             <td style="text-align: center">
               <a>
                 <i

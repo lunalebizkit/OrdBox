@@ -18,8 +18,6 @@ export interface receiptModel {
 }
 
 export interface receiptDetails {
-  subTotal: number;
-  //MODEL
   id: number;
   receiptId: number;
   productId: number;
@@ -28,4 +26,38 @@ export interface receiptDetails {
   quantity: number;
   price: number;
   iva: number;
+}
+export interface receiptDetailsGrid {
+  productId: number;
+  code: number;
+  description: string;
+  quantity: number;
+  subTotal: number;
+  price: number;
+  iva: number;
+}
+
+export function receiptGridParser(value: any, iva: number) {
+  return {
+    code: value.code,
+    productId: value.id,
+    description: value.description,
+    price: value.purchasePrice,
+    quantity: 1,
+    subTotal: value.purchasePrice,
+    iva: iva,
+  };
+}
+
+export function receiptDetailParser(value: any, iva: number) {
+  return {
+    id: 0,
+    receiptId: 0,
+    productId: value.id,
+    productName: value.description,
+    productCode: value.code,
+    price: value.purchasePrice,
+    quantity: 1,
+    iva: iva,
+  };
 }
