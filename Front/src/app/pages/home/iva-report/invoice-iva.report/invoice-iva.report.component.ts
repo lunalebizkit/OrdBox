@@ -29,7 +29,7 @@ export class InvoiceIvaReportComponent extends BaseComponent implements OnInit {
     periodIvaList!: InvoiceIvaReportModel ;   
     startDate = Date.now();
     formReport!: FormGroup;
-    mesPeriod: any;
+   
 
     TotalIva!: number;
     TotalNetoGravado!:number;
@@ -78,6 +78,7 @@ export class InvoiceIvaReportComponent extends BaseComponent implements OnInit {
         pageSize: 10,
       }
 
+
     constructor(
         private service: InvoiceIvaReportService,
         notificacionService: NzNotificationService,
@@ -87,8 +88,6 @@ export class InvoiceIvaReportComponent extends BaseComponent implements OnInit {
         private route: ActivatedRoute,  
         private fb: FormBuilder,
         @Inject(LOCALE_ID) public locale: string,
-       
-
        
       ) {super(notificacionService, el, message);
         this.formReport = this.fb.group({
@@ -218,9 +217,6 @@ export class InvoiceIvaReportComponent extends BaseComponent implements OnInit {
                 this.TotalIva += data.iva27;
                     break;
                 }
-              // this.iva10Type2 += data.iva10;
-              // this.iva21Type2 += data.iva21;
-              // this.iva27Type2 += data.iva27;
                break;      
                
             default:
@@ -251,7 +247,7 @@ export class InvoiceIvaReportComponent extends BaseComponent implements OnInit {
           }
           })
           
-      }
+      } 
 
     }
     
