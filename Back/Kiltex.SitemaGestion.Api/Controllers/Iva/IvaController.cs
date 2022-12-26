@@ -14,7 +14,7 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Iva
 
         [HttpGet]
         [Route("listIvaCompra")]
-        public async Task<IActionResult> ListCompra(DateTime from, DateTime to)
+        public async Task<IActionResult> ListCompra([FromQuery]DateTime from, DateTime to)
         {
             return Return(await _service.ListIvaCompra(from, to).ConfigureAwait(false));
         }
