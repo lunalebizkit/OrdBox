@@ -12,6 +12,9 @@ export interface InvoiceModel {
     total: number;
     ivaTotal: number;
     type: number;
+    concNoGravado: number;
+    percIva: number;
+    percIngBrutos: number;
     invoiceDetails: InvoiceDetails[]
 }
 export interface InvoiceDetails {
@@ -26,6 +29,7 @@ export interface InvoiceDetails {
 }
 export interface InvoiceDetailList {
     stock: number,
+    productId:number;
     ownCode : number;
     code : number;
     productName: string;
@@ -37,13 +41,14 @@ export interface InvoiceDetailList {
 export function invoiceGridParser(value: any, iva: number, price: number) {
     return {
       stock: value.quantity,
+      productId: value.id,
       code: value.code,
       ownCode: value.id,
       productName: value.description,
       price: price,
       quantity: 1,
-     subTotal: price,
-     iva: iva
+      subTotal: price,
+      iva: iva
     }}
     export function invoiceDetailParser(value: any, iva: number, price: number) {
         return {
