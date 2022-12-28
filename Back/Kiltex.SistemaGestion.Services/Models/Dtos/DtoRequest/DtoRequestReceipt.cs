@@ -31,6 +31,15 @@ namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest
 
         public decimal IvaTotal { get; set; }
 
+
+        public decimal ConcNoGravado { get; set; }
+
+        public decimal PercIva { get; set; }
+
+
+        public decimal PercIngBrutos { get; set; }
+
+
         public int Type { get; set; }
 
         public List<DtoResponseReceiptDetail> ReceiptDetails { get; set; }

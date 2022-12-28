@@ -247,19 +247,16 @@
             <td>
               <div
                 class="editable-cell"
-                [hidden]="editIdIva === data.ownCode"
-                (click)="startEditIva(data.ownCode)"
-              >
-                {{ data.iva }}
-              </div>
-              <nz-input-number
-                [hidden]="editIdIva !== data.ownCode"
-                [nzMin]="1"
-                [nzMax]="100"
-                [(ngModel)]="data.iva"
-                (nzBlur)="stopEditIva()"
-                (ngModelChange)="changeIvaValue($event)"
-              ></nz-input-number>
+                [hidden]="editId === data.productId"
+                (click)="startEditIva(data.productId)"
+              ></div>
+                  <nz-select
+                  [nzOptions]="ivaType"
+                  id="ivaType"
+                  (ngModelChange)="changeIvaValue($event, data.productId)"
+                  [(ngModel)]="value"
+                >
+                </nz-select>
             </td>
             <td style="text-align: center">
               <nz-space [nzSplit]="spaceSplit">
@@ -298,7 +295,43 @@
                 this.currencyFormat(this.subtotal)
               }}</b>
             </td>
-            <td colspan="2">
+            <td colspan="1">
+              <b>Conc. No Gravado</b
+              ><b style="color: red">
+                <nz-input-number
+                  [nzFormatter]="formatter"
+                  (ngModelChange)="concNoGravadoChange($event)"
+                  [(ngModel)]="value1"
+                  [nzMin]="1"
+                  [nzStep]="1"
+                ></nz-input-number>
+              </b>
+            </td>
+            <td colspan="1">
+              <b style="margin-right: 5px">Perc. Iva</b
+              ><b style="color: red">
+                <nz-input-number
+                  [nzFormatter]="formatter"
+                  (ngModelChange)="percIvaChange($event)"
+                  [(ngModel)]="value2"
+                  [nzMin]="1"
+                  [nzStep]="1"
+                ></nz-input-number
+              ></b>
+            </td>
+            <td colspan="1">
+              <b>Perc. Ing. Brutos</b
+              ><b style="color: red">
+                <nz-input-number
+                  [nzFormatter]="formatter"
+                  (ngModelChange)="percIngBrutosChange($event)"
+                  [(ngModel)]="value3"
+                  [nzMin]="1"
+                  [nzStep]="1"
+                ></nz-input-number
+              ></b>
+            </td>
+            <td colspan="1">
               <b>Total </b
               ><b style="color: red">{{ this.currencyFormat(this.total) }}</b>
             </td>
@@ -314,7 +347,7 @@
               </button>
             </td>
             <ng-template #elseBlock>
-              <td colspan="2"></td>
+              <td colspan="1"></td>
             </ng-template>
           </tr>
         </tfoot>

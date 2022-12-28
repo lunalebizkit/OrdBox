@@ -1,0 +1,73 @@
+<form nz-form [formGroup]="formSearch">
+  <nz-collapse class="list-header">
+    <form nz-form (ngSubmit)="onSearch()">
+      <div nz-col nzSpan="24" style="margin-bottom: -20px">
+        <div nz-col nzSpan="24" style="margin-bottom: -20px">
+          <nz-form-item>
+            <nz-form-label>Búsqueda</nz-form-label>
+            <nz-form-control>
+              <nz-input-group [nzSuffix]="clearQuery">
+                <input
+                  [ngModelOptions]="{ standalone: true }"
+                  type="text"
+                  placeholder="Ingrese Cliente"
+                  nz-input
+                  (keydown.enter)="onSearch()"
+                  [(ngModel)]="queryParams.filter"
+                />
+              </nz-input-group>
+
+              <ng-template #clearQuery>
+                <i
+                  nz-icon
+                  class="ant-input-clear-icon"
+                  nzTheme="fill"
+                  nzType="close-circle"
+                  *ngIf="queryParams.filter"
+                  (click)="queryParams.filter = ''; getAllSupplier()"
+                ></i>
+              </ng-template>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+    </form>
+  </nz-collapse>
+
+  <div>
+    <nz-table
+      class="tablaCustomer"
+      nzShowSizeChanger
+      [nzData]="allSupplier"
+      nzBordered="true"
+      [nzSize]="'small'"
+      [nzLoading]="loading"
+      [nzTotal]="totalItems"
+      [nzPageSize]="queryParams.pageSize"
+      [nzPageIndex]="1"
+      [nzFrontPagination]="false"
+      [nzPaginationType]="'small'"
+      (nzQueryParams)="onQueryParamsChange($event)"
+    >
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Cuit</th>
+          <th>Direccion</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          *ngFor="let data of allSupplier"
+          class="small-text"
+          (click)="selecccion($event)"
+          id="{{ data.id }}"
+        >
+          <td>{{ data.name }}</td>
+          <td>{{ data.cuit }}</td>
+          <td>{{ data.address }}</td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </div>
+</form>

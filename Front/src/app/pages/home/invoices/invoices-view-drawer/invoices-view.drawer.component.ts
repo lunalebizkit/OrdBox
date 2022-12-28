@@ -42,6 +42,9 @@ export class InvoicesViewDrawerComponent extends BaseComponent implements OnInit
   dateTime!: Date;
   subTotal!: number;
   form!: FormGroup;
+  percIngBrutos!: number;
+  percIva!: number;
+  concNoGravado!: number;
   constructor(
     notificacionService: NzNotificationService,
     private service: InvoiceService,
@@ -74,8 +77,11 @@ export class InvoicesViewDrawerComponent extends BaseComponent implements OnInit
           this.userId = r.userId,
           this.dateTime = r.dateTime,
           this.invoiceDetail= r.invoiceDetails
-          this.totalCalculate(r.invoiceDetails);          
-          this.isLoading = false
+          this.totalCalculate(r.invoiceDetails, r.concNoGravado , r.percIva, r.percIngBrutos);          
+          this.isLoading = false;
+          this.concNoGravado = r.concNoGravado,
+          this.percIva = r.percIva,
+          this.percIngBrutos = r.percIngBrutos
         },
         error: () => { this.isLoading = false; }
     })
@@ -85,14 +91,17 @@ export class InvoicesViewDrawerComponent extends BaseComponent implements OnInit
     return eInvoiceType[id]
   }
 
-  totalCalculate(dato: InvoiceDetails[]): void {    
+  totalCalculate(dato: InvoiceDetails[], concNoGravado:number, percIngBrutos:number, percIva:number): void {    
     this.subTotal = 0;
+    this.total = 0;
     try {
-      dato.forEach(detail => {
-        this.subTotal +=  ( detail.price * detail.quantity - this.ivaCalculate(detail.price * detail.quantity, detail.iva) ) ;         
-      });       
-    
-    } catch (error) {
+      dato.forEach(detail =>{
+        this.subTotal += detail.price * detail.quantity - 
+        this.ivaCalculate(detail.price * detail.quantity, detail.iva
+        );  
+        this.total += + concNoGravado + detail.price + percIngBrutos + percIva * detail.quantity ;  
+      });
+    } catch (error){
       console.log(error)
     }   
   };
@@ -100,13 +109,15 @@ export class InvoicesViewDrawerComponent extends BaseComponent implements OnInit
   ivaCalculate(data: number, iva:number): number {         
     return (data * iva / 100); 
   };
+
   currencyFormat(data: any):string  { 
     if(!this.locale) return '';
     return formatCurrency(data, this.locale!, '$', 'ARS', '1.1-2')
   }
   close(): void {
     this.drawerRef.close();
-};
+  };
+
 }
 
 

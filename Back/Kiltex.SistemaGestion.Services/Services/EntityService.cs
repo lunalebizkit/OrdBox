@@ -57,6 +57,32 @@ namespace Kiltex.SistemaGestion.Services.Services
             }
             
         }
+
+        public async Task<OperationResponse<DtoSupplier>> GetSupplierByCuit(string cuit)
+        {
+            try
+            {
+                var entidad = await _contextSql
+                                    .Suppliers
+                                    .AsNoTracking()
+                                    .FirstOrDefaultAsync(p => p.Cuit == cuit)
+                                    .ConfigureAwait(false);
+                if (entidad == null)
+                {
+                    _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
+                    return Error<DtoSupplier>(new OperationExceptions("000", $"Proveedor no encontrado CUIT: {cuit}"));
+                }
+
+                var result = _mapper.Map<DtoSupplier>(entidad);
+
+                return new OperationResponse<DtoSupplier>(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
+                throw;
+            }
+        }
         public async Task<OperationResponse<DtoPagination<DtoEntityList>>> ListSupplier(RequestPaginatedData<string> request)
         {
             try

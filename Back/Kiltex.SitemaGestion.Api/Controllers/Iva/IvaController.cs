@@ -14,13 +14,13 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Iva
 
         [HttpGet]
         [Route("listIvaCompra")]
-        public async Task<IActionResult> ListCompra(DateTime from, DateTime to)
+        public async Task<IActionResult> ListCompra([FromQuery]DateTime from, DateTime to)
         {
             return Return(await _service.ListIvaCompra(from, to).ConfigureAwait(false));
         }
         [HttpGet]
         [Route("listIvaVenta")]
-        public async Task<IActionResult> ListVenta(DateTime from, DateTime to)
+        public async Task<IActionResult> ListVenta([FromQuery] DateTime from, DateTime to)
         {
             return Return(await _service.ListIvaVenta(from, to).ConfigureAwait(false));
         }

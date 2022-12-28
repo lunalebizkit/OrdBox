@@ -1,0 +1,63 @@
+export interface receiptModel {
+  id: number;
+  supplierId: number;
+  userId: number;
+  receiptNumber: number;
+  supplierName: string;
+  supplierCuit: string;
+  supplierAddress: string;
+  observation: string;
+  dateTime: Date;
+  total: number;
+  ivaTotal: number;
+  type: number;
+  concNoGravado: number;
+  percIva: number;
+  percIngBrutos: number;
+  receiptDetails: receiptDetails[];
+}
+
+export interface receiptDetails {
+  id: number;
+  receiptId: number;
+  productId: number;
+  productName: string;
+  productCode: number;
+  quantity: number;
+  price: number;
+  iva: number;
+}
+export interface receiptDetailsGrid {
+  productId: number;
+  code: number;
+  description: string;
+  quantity: number;
+  subTotal: number;
+  price: number;
+  iva: number;
+}
+
+export function receiptGridParser(value: any, iva: number) {
+  return {
+    code: value.code,
+    productId: value.id,
+    description: value.description,
+    price: value.purchasePrice,
+    quantity: 1,
+    subTotal: value.purchasePrice,
+    iva: iva,
+  };
+}
+
+export function receiptDetailParser(value: any, iva: number) {
+  return {
+    id: 0,
+    receiptId: 0,
+    productId: value.id,
+    productName: value.description,
+    productCode: value.code,
+    price: value.purchasePrice,
+    quantity: 1,
+    iva: iva,
+  };
+}

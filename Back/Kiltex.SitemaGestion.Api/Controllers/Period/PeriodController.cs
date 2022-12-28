@@ -41,5 +41,12 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Product
         {
             return Return(await _service.Update(model).ConfigureAwait(false));
         }
+        [HttpDelete]
+        [Route("{id}")]
+        //[AllowAccess(Permission = new EPermission[] { EPermission.DeleteUser })]
+        public async Task<IActionResult> Delete(long id)
+        {
+            return Return(await _service.Delete(id).ConfigureAwait(false));
+        }
     }  
 }
