@@ -52,9 +52,7 @@
           <th [nzAlign]="'center'">Cantidad</th>
           <th [nzAlign]="'center'">Precio Unidad</th>
           <th [nzAlign]="'center'">SubTotal</th>
-          <th [nzAlign]="'center'"> Perc. Iva</th>
-          <th [nzAlign]="'center'"> Perc. Ing Brutos</th>
-          <th [nzAlign]="'center'"> Conc. No Gravados</th>
+    
           <th>Iva</th>
         </tr>
       </thead>
@@ -67,35 +65,41 @@
           <td [nzAlign]="'right'">{{ this.currencyFormat(data.price)}}</td>
           <td [nzAlign]="'right'">
             {{ this.currencyFormat(data.quantity * data.price) }}
-          </td>
-          <td> {{ percIva }}</td>
-          <td> {{ percIngBrutos }}</td>
-          <td> {{ concNoGravado }}</td>
-          <td>{{ data.iva }}%</td>
+          </td>       
+          <td>{{ this.currencyFormat( data.iva )}}%</td>
         </tr>
       </tbody>
       <tfoot style="background-color: #fafafa">
         <tr>
-          <td colspan="2" *ngIf="type == 1; else elseBlock">
+          <td colspan="1" *ngIf="type == 1; else elseBlock">
             <b>Iva </b>
             <span style="color: blue"
               >{{ this.currencyFormat(ivaTotal) }}
             </span>
           </td>
           
-          <td colspan="2" *ngIf="type == 1; else elseBlock">
+          <td colspan="1" *ngIf="type == 1; else elseBlock">
             <b>SubTotal </b>
             <span style="color: blue"
               >{{ this.currencyFormat(subTotal) }}
             </span>
           </td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
+          <td> 
+            <b> Conc. No Gravados</b>
+            <span style="color: blue"> {{ concNoGravado }}</span>
+          </td>
+          <td [nzAlign]="'center'">
+            <b> Perc. Iva</b>
+          <span style="color: blue"> {{ percIva }} </span>
+          </td>
+          <td>
+            <b> Perc. Ing Brutos</b>
+          <span style="color: blue">  {{ percIngBrutos }}</span>
+            </td>
+          
           <td colspan="2">
-            <b>Total </b
-            ><span style="color: blue">{{ this.currencyFormat(total) }} </span>
+            <b>Total </b>
+            <span style="color: blue">{{ total }} </span>
           </td>
           <ng-template #elseBlock>
             <td colspan="2"></td>

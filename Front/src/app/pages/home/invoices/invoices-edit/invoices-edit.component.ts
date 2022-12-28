@@ -40,7 +40,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
   }>;
 
   /*
- ** Catidad total de productos
+ ** Cantidad total de productos
  */
   type = InvoiceType;
   ivaType = IvaType;
@@ -135,7 +135,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
       address: ['', Validators.required],
       customerCuit: ['', Validators.required],
       customerName: ['', Validators.required],
-      iva:[Number],
+      // iva:[Number],
       observation: ['']
     });   
     this.formCustomerSearch = this.fb.group({})
@@ -481,24 +481,18 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
       
   };
 
-  changeIvaValue(iva: number, productId: number):void{    
-    this.ivaSelectedId = iva;
-    if (this.ivaSelectedId == 0 || this.ivaSelectedId == null) {
-      this.ivaSelectedId = 1;
-    }
-    if (this.ivaSelectedId == 1) this.ivaSelected = 10.5;
-    if (this.ivaSelectedId == 2) this.ivaSelected = 21;
-    if (this.ivaSelectedId == 3) this.ivaSelected = 27;
+  changeIvaValue(iva: number, id: number):void{  
+    let newIva= Number(iva);
     try {
       this.invoiceDetails.filter(
-        (detail) => detail.productId == productId
-      )[0].iva = this.ivaSelected;
+        (detail) => detail.productId == id
+      )[0].iva = newIva;
 
       this.invoiceDetailsList.filter(
-        (detail) => detail.productId == productId
-      )[0].iva = this.ivaSelected;
-      this.totalCalculate();
-      this.stopEditIva();
+        (detail) => detail.productId == id
+      )[0].iva = newIva;
+       this.totalCalculate();
+     this.stopEditIva();
     } catch (error) {
       console.error(error);
     }

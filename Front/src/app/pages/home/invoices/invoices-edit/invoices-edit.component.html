@@ -245,18 +245,21 @@
               {{ this.currencyFormat(data.subTotal) }}
             </td>
             <td>
-              <div
+               <div
                 class="editable-cell"
                 [hidden]="editId === data.productId"
                 (click)="startEditIva(data.productId)"
-              ></div>
-                  <nz-select
-                  [nzOptions]="ivaType"
-                  id="ivaType"
+              >
+             {{data.iva}}
+            </div> 
+                 <nz-select
+                 [hidden]="editIdIva !== data.productId"
+                  [nzOptions]="ivaType"                 
                   (ngModelChange)="changeIvaValue($event, data.productId)"
-                  [(ngModel)]="value"
+                  [(ngModel)]="data.iva"  
+                  (nzBlur)="stopEditIva()"              
                 >
-                </nz-select>
+                </nz-select> 
             </td>
             <td style="text-align: center">
               <nz-space [nzSplit]="spaceSplit">

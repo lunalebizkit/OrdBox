@@ -77,7 +77,7 @@ export class InvoicesViewDrawerComponent extends BaseComponent implements OnInit
           this.userId = r.userId,
           this.dateTime = r.dateTime,
           this.invoiceDetail= r.invoiceDetails
-          this.totalCalculate(r.invoiceDetails, r.concNoGravado , r.percIva, r.percIngBrutos);          
+          this.subTotal= r.total -  Number(this.totalCalculate(r.concNoGravado , r.percIva, r.percIngBrutos));          
           this.isLoading = false;
           this.concNoGravado = r.concNoGravado,
           this.percIva = r.percIva,
@@ -91,24 +91,10 @@ export class InvoicesViewDrawerComponent extends BaseComponent implements OnInit
     return eInvoiceType[id]
   }
 
-  totalCalculate(dato: InvoiceDetails[], concNoGravado:number, percIngBrutos:number, percIva:number): void {    
-    this.subTotal = 0;
-    this.total = 0;
-    try {
-      dato.forEach(detail =>{
-        this.subTotal += detail.price * detail.quantity - 
-        this.ivaCalculate(detail.price * detail.quantity, detail.iva
-        );  
-        this.total += + concNoGravado + detail.price + percIngBrutos + percIva * detail.quantity ;  
-      });
-    } catch (error){
-      console.log(error)
-    }   
-  };
+  totalCalculate( concNoGravado:number, percIngBrutos:number, percIva:number): number {  
+  return concNoGravado + percIngBrutos + percIva
+   };
 
-  ivaCalculate(data: number, iva:number): number {         
-    return (data * iva / 100); 
-  };
 
   currencyFormat(data: any):string  { 
     if(!this.locale) return '';
