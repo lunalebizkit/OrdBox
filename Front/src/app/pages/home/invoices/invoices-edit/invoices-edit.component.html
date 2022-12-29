@@ -3,7 +3,6 @@
   [btnCancelText]="'Volver'"
   [hideSave]="true"
   [hideTag]="false"
-  [color]="'blue'"
   [tagText]="'Comprobante'"
   [title]="'Refrigeraciones Dante'"
   [iconBack]="'rollback'"
@@ -28,7 +27,7 @@
               <nz-form-label>Fecha</nz-form-label>
               <nz-form-control>
                 <b>
-                  {{ startDate ? (startDate | date : "YYYY-MM-dd") : "N/A" }}
+                  {{ startDate ? (startDate | date: "YYYY-MM-dd") : "N/A" }}
                 </b>
               </nz-form-control>
             </nz-form-item>
@@ -180,26 +179,6 @@
               </button>
             </div>
           </nz-form-item>
-          <br />
-          <nz-divider
-            nzText="Observaciones"
-            nzOrientation="left"
-            style="margin-top: 0"
-          ></nz-divider>
-
-          <nz-form-item>
-            <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="observation"
-              >Observación
-            </nz-form-label>
-            <nz-form-control [nzSm]="14" [nzXs]="24">
-              <input
-                nz-input
-                id="observation"
-                maxlength="250"
-                formControlName="observation"
-              />
-            </nz-form-control>
-          </nz-form-item>
         </form>
       </nz-content>
     </nz-collapse-panel>
@@ -267,21 +246,21 @@
               {{ this.currencyFormat(data.subTotal) }}
             </td>
             <td>
-              <div
+               <div
                 class="editable-cell"
-                [hidden]="editIdIva === data.ownCode"
-                (click)="startEditIva(data.ownCode)"
+                [hidden]="editId === data.productId"
+                (click)="startEditIva(data.productId)"
               >
-                {{ data.iva }}
-              </div>
-              <nz-input-number
-                [hidden]="editIdIva !== data.ownCode"
-                [nzMin]="1"
-                [nzMax]="100"
-                [(ngModel)]="data.iva"
-                (nzBlur)="stopEditIva()"
-                (ngModelChange)="changeIvaValue($event)"
-              ></nz-input-number>
+             {{data.iva}}
+            </div> 
+                 <nz-select
+                 [hidden]="editIdIva !== data.productId"
+                  [nzOptions]="ivaType"                 
+                  (ngModelChange)="changeIvaValue($event, data.productId)"
+                  [(ngModel)]="data.iva"  
+                  (nzBlur)="stopEditIva()"              
+                >
+                </nz-select> 
             </td>
             <td style="text-align: center">
               <nz-space [nzSplit]="spaceSplit">
@@ -320,7 +299,43 @@
                 this.currencyFormat(this.subtotal)
               }}</b>
             </td>
-            <td colspan="2">
+            <td colspan="1">
+              <b>Conc. No Gravado</b
+              ><b style="color: red">
+                <nz-input-number
+                  [nzFormatter]="formatter"
+                  (ngModelChange)="concNoGravadoChange($event)"
+                  [(ngModel)]="value1"
+                  [nzMin]="1"
+                  [nzStep]="1"
+                ></nz-input-number>
+              </b>
+            </td>
+            <td colspan="1">
+              <b style="margin-right: 5px">Perc. Iva</b
+              ><b style="color: red">
+                <nz-input-number
+                  [nzFormatter]="formatter"
+                  (ngModelChange)="percIvaChange($event)"
+                  [(ngModel)]="value2"
+                  [nzMin]="1"
+                  [nzStep]="1"
+                ></nz-input-number
+              ></b>
+            </td>
+            <td colspan="1">
+              <b>Perc. Ing. Brutos</b
+              ><b style="color: red">
+                <nz-input-number
+                  [nzFormatter]="formatter"
+                  (ngModelChange)="percIngBrutosChange($event)"
+                  [(ngModel)]="value3"
+                  [nzMin]="1"
+                  [nzStep]="1"
+                ></nz-input-number
+              ></b>
+            </td>
+            <td colspan="1">
               <b>Total </b
               ><b style="color: red">{{ this.currencyFormat(this.total) }}</b>
             </td>
@@ -336,23 +351,39 @@
               </button>
             </td>
             <ng-template #elseBlock>
-              <td colspan="2"></td>
+              <td colspan="1"></td>
             </ng-template>
           </tr>
         </tfoot>
       </nz-table>
+
+      <form nz-form [formGroup]="formInvoice">
+        <nz-form-item>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="observation"
+            >Observación
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <input
+              formControlName="observation"
+              nz-input
+              id="observation"
+              maxlength="250"
+            />
+          </nz-form-control>
+        </nz-form-item>
+      </form>
     </nz-content>
   </nz-collapse-panel>
 </nz-collapse>
 
-<app-popup-confirmation
+ <app-popup-confirmation
   #popup
   [title]="'Confirmar eliminación'"
   [header]="'¿Está seguro que desea eliminar el producto seleccionado?'"
   [message]="'Esta acción no se puede revertir'"
   (handleOk)="handleOk()"
 >
-</app-popup-confirmation>
+</app-popup-confirmation> 
 <app-popup-confirmation
   #pop
   [title]="'Confirmar Guardado de comprobante'"

@@ -8,8 +8,8 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
     public partial class Init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
-        {
-            /*migrationBuilder.CreateTable(
+        { /*
+            migrationBuilder.CreateTable(
                 name: "brand",
                 columns: table => new
                 {
@@ -51,7 +51,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                     table.PrimaryKey("PK_entity", x => x.id);
                 });*/
 
-            migrationBuilder.CreateTable(
+          /*  migrationBuilder.CreateTable(
                 name: "period",
                 columns: table => new
                 {
@@ -64,7 +64,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_period", x => x.id);
-                });
+                });*/
 
             /*migrationBuilder.CreateTable(
                 name: "permission",
@@ -322,9 +322,9 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                         principalTable: "user",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
-                });
+                }); */
 
-            migrationBuilder.CreateTable(
+          /*  migrationBuilder.CreateTable(
                 name: "receipt",
                 columns: table => new
                 {
@@ -357,8 +357,8 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                         principalTable: "user",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
-                });
-
+                });*/
+            /*
             migrationBuilder.CreateTable(
                 name: "supplier_order_detail",
                 columns: table => new
@@ -417,8 +417,8 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
-
-            migrationBuilder.CreateTable(
+            */
+         /*   migrationBuilder.CreateTable(
                 name: "receipt_details",
                 columns: table => new
                 {
@@ -446,8 +446,8 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                         column: x => x.receipt_id,
                         principalTable: "receipt",
                         principalColumn: "id");
-                });
-
+                });*/
+            /*
             migrationBuilder.CreateIndex(
                 name: "IX_email_entity_entity_id",
                 table: "email_entity",
@@ -502,8 +502,8 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                 name: "IX_product_supplier_id",
                 table: "product",
                 column: "supplier_id");
-
-            migrationBuilder.CreateIndex(
+            */
+         /*   migrationBuilder.CreateIndex(
                 name: "IX_receipt_supplier_id",
                 table: "receipt",
                 column: "supplier_id");
@@ -521,8 +521,8 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_receipt_details_receipt_id",
                 table: "receipt_details",
-                column: "receipt_id");
-
+                column: "receipt_id");*/
+            /*
             migrationBuilder.CreateIndex(
                 name: "IX_supplier_order_supplier_id",
                 table: "supplier_order",

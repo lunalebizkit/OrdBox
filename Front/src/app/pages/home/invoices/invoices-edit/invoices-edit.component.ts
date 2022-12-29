@@ -25,6 +25,9 @@ import { Observable } from "rxjs";
 import { ThisReceiver } from "@angular/compiler";
 import { PeriodsRoutingModule } from "../../periods/periods-routing.module";
 import { PeriodsService } from "../../periods/periods.service";
+import { IvaType } from "../model/iva-type.Enum";
+
+
 
 @Component({
   selector: 'app-invoices-edit',
@@ -41,8 +44,16 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
   }>;
 
   /*
- ** Catidad total de productos
+ ** Cantidad total de productos
  */
+  type = InvoiceType;
+  ivaType = IvaType;
+  typeSelectedId: number = 1;
+  ivaSelectedId: number = 1;
+  ivaSelected!: number;
+  iva10: number = parseFloat('10.5');
+  iva21: number = 21;
+  iva27: number = 27;
   totalItems: number=0;
   subtotal: number=0;
   iva: number=21;
@@ -51,6 +62,10 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
   isLoading: boolean= false;
   loading!: boolean;
   isSaving!: boolean;
+  percIngBrutos: number = 0;
+  percIva: number = 0;
+  concNoGravado: number = 0;
+
 
   formInvoice!: FormGroup;
   formProductSearch!: FormGroup;
@@ -62,7 +77,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
   name: string = environment.name;
   date = Date.now();
   startDate = this.formaterDate(Date.now());
-  type = InvoiceType;
+  
   payment: { value: string; label: string }[] = Object.entries(ePayment).map(([value, label]) => ({ value, label }))
   
   /*
@@ -70,8 +85,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
  */  
   customer: CustomerModel[] = [];
   invoiceDetailsList: InvoiceDetailList[] = [];
-  invoiceDetails: InvoiceDetails[] = [];
- 
+  invoiceDetails: InvoiceDetails[] = []
 
   /*
   **Variables de la tabla detalle
@@ -86,9 +100,13 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
   cuit!: string;
   product!: string;
   customerId!: number;
-  typeSelectedId: number=1;
   ivaTotal: number=0;
   invoiceA: boolean= true;
+  value!: string;
+  value1!: string;
+  value2!: string;
+  value3!: string;
+
 
     /*
   ** Parametros de busqueda
@@ -121,7 +139,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
       payment: ['', Validators.required],
       address: ['', Validators.required],
       customerCuit: ['', Validators.required],
-      customerName: ['', Validators.required],
+      customerName: ['', Validators.required],    
       observation: ['']
     });   
     this.formCustomerSearch = this.fb.group({})
@@ -156,7 +174,6 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
       this.invoiceA= false;
     }    
   }
-
   paymentSelectedChange(id: any): void {
     this.paymentSelected = id;
   }
@@ -314,21 +331,42 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
     }
   };
 
+  formatter = (data: number = 0) =>
+  formatCurrency(data, this.locale, '$', 'ARS', '1.1-2');
+
+  concNoGravadoChange(id: any): any {
+    this.concNoGravado = id;
+    this.totalCalculate();
+  }
+
+  percIvaChange(id: any): any {
+    this.percIva = id;
+    this.totalCalculate();
+  }
+
+  percIngBrutosChange(id: any): any {
+    this.percIngBrutos = id;
+    this.totalCalculate();
+  }
+
   totalCalculate(): void {    
     this.subtotal = 0;
     this.total = 0;
     this.ivaTotal = 0;
     try {
       this.invoiceDetailsList.forEach(detail => {
-        this.subtotal +=  ( detail.price * detail.quantity - this.ivaCalculate(detail.price * detail.quantity, detail.iva) ) ;         
+        this.subtotal +=detail.price * detail.quantity -
+        this.ivaCalculate(detail.price * detail.quantity, detail.iva);         
       });
-      this.invoiceDetailsList.forEach( dato => {
-        this.ivaTotal +=  this.ivaCalculate(dato.price  * dato.quantity, dato.iva);
-       this.total +=   dato.price  * dato.quantity ;     
-      })
-    } catch (error) {
-      console.log(error)
-    }   
+      this.invoiceDetailsList.forEach( (dato) => {
+        this.ivaTotal += this.ivaCalculate(
+          dato.price  * dato.quantity,
+           dato.iva
+        );
+       this.total +=  dato.price  * dato.quantity ;     
+      });
+      this.total += this.concNoGravado + this.percIngBrutos + this.percIva;
+    } catch (error) {}   
   };
 
   bindPrice(data: ProductsModel): number {
@@ -405,6 +443,9 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
           total: this.totalItems,
           ivaTotal: this.ivaTotal,
           type: this.formInvoice.controls['type'].value,
+          concNoGravado: this.concNoGravado,
+          percIva: this.percIva,
+          percIngBrutos: this.percIngBrutos,
           invoiceDetails: this.invoiceDetails,
         };
         this.isSaving = true;
@@ -416,8 +457,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
                 `Comprobante creado correctamente`
               );
               this.isSaving = false;
-              this.router.navigate(['/home/invoices']);
-
+              this.router.navigate(['/home/invoices/invoices-sale']);
             },
             error: () => {
               this.isSaving = false;
@@ -434,39 +474,48 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
   startEditIva(id: number): void {
     this.editIdIva = id;
   }
-
   stopEdit(): void {
     this.editId = null;
   };
   stopEditIva(): void {
     this.editIdIva = null;
   }
+
   changeQuantity(quantity: number):void{
     if (quantity == 0 || quantity == null){
       quantity= 1;
     }
-    let product= this.invoiceDetailsList.filter(detail => detail.ownCode == this.editId)[0];
+    let product= this.invoiceDetailsList.filter(
+      detail => detail.ownCode == this.editId)[0];
 
-    this.invoiceDetailsList.filter(detail => detail.ownCode == this.editId)[0].subTotal= quantity * product.price;
+    this.invoiceDetailsList.filter(
+      detail => detail.ownCode == this.editId
+      )[0].subTotal= quantity * product.price;
 
     this.totalCalculate();
-    this.invoiceDetails.filter(detail => detail.productId == this.editId)[0].quantity= quantity;
+    this.invoiceDetails.filter(
+      detail => detail.productId == this.editId
+      )[0].quantity= quantity;
       
   };
-  changeIvaValue(iva: number):void{    
-    if (iva == 0 || iva == null){
-      iva = 1;
-    }
+
+  changeIvaValue(iva: number, id: number):void{  
+    let newIva= Number(iva);
     try {
-      this.invoiceDetailsList.filter(detail => detail.ownCode == this.editIdIva)[0].iva= iva;     
-    
-      this.invoiceDetails.filter(detail => detail.productId == this.editIdIva)[0].iva= iva;
-      this.totalCalculate();
+      this.invoiceDetails.filter(
+        (detail) => detail.productId == id
+      )[0].iva = newIva;
+
+      this.invoiceDetailsList.filter(
+        (detail) => detail.productId == id
+      )[0].iva = newIva;
+       this.totalCalculate();
+     this.stopEditIva();
     } catch (error) {
       console.error(error);
-      
-    };    
+    }
   };
+
   back(){    
     this.router.navigate(['../'], { relativeTo: this.route });
   };
