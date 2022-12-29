@@ -18,44 +18,50 @@ namespace Kiltex.SistemaGestion.Services.Services
             base(logger, context, maper)
         { }
 
-        public async Task<OperationResponse<DtoRequestIvaVenta>> ListIvaVenta(DateTime from, DateTime to, CancellationToken ct = default)
+        public async Task<OperationResponse<DtoRequestIvaPeriod>> ListIvaVenta(DateTime from, DateTime to, CancellationToken ct = default)
         {
             var query = _contextSql
-                                    .InvoiceDetails
-                                    .Include(p => p.Invoice)
-                                    .Where(x => x.Invoice.DateTime >= from && x.Invoice.DateTime <= to)
+                                    .Invoices
+                                    .Include(p => p.InvoiceDetails)
+                                    .Where(x => x.DateTime >= from && x.DateTime <= to)
                                     .AsNoTracking();
             var count = await query.CountAsync().ConfigureAwait(false);
 
-            var list = await query.OrderBy(p => p.Invoice.DateTime)
+            var list = await query.OrderBy(p => p.DateTime)
                                   .ToListAsync()
                                   .ConfigureAwait(false);
 
             decimal totalAmount = 0;
             foreach (var item in list)
             {
-                totalAmount += item.Invoice.Total;
+                totalAmount += item.Total;
             }
 
-            return new OperationResponse<DtoRequestIvaVenta>(new DtoRequestIvaVenta
+            return new OperationResponse<DtoRequestIvaPeriod>(new DtoRequestIvaPeriod
             {
-                InvoiceDetails = list.Select(x => new DtoRequestIvaVentaDetails
+                PeriodTotal = totalAmount,
+                Invoices = list.Select(x => new DtoRequestIvaVenta
                 {
-                    CustomerCuit = x.Invoice.CustomerCuit,
-                    CustomerName = x.Invoice.CustomerName,
-                    InvoiceNumber = x.Invoice.InvoiceNumber,
-                    Type = x.Invoice.Type,
-                    DateTime = x.Invoice.DateTime,
-                    Id = x.Invoice.Id,
-                    Iva = x.Iva,
-                    Iva10 = (x.Iva == (decimal)10.5) ? (((x.Price*x.Iva)/100) * x.Quantity) : 0 ,
-                    Iva21 = (x.Iva == 21) ? (((x.Price * x.Iva) / 100) * x.Quantity): 0,
-                    Iva27 = (x.Iva == 27) ? (((x.Price * x.Iva) / 100) * x.Quantity): 0,
-                    Total = x.Invoice.Total,
+                    CustomerCuit = x.CustomerCuit,
+                    CustomerName = x.CustomerName,
+                    InvoiceNumber = x.InvoiceNumber,
+                    Type = x.Type,
+                    DateTime = x.DateTime,
+                    Id = x.Id,
+                    Total = x.Total,
+                    InvoiceDetails = x.InvoiceDetails.Select(x => new DtoRequestIvaVentaDetails
+                    {
+                        ProductPrice = x.Price,
+                        Iva = x.Iva,
+                        Iva10 = (x.Iva == (decimal)10.5) ? (((x.Price * x.Iva) / 100) * x.Quantity) : 0,
+                        Iva21 = (x.Iva == 21) ? (((x.Price * x.Iva) / 100) * x.Quantity) : 0,
+                        Iva27 = (x.Iva == 27) ? (((x.Price * x.Iva) / 100) * x.Quantity) : 0,
+                    }).ToList(),
+
                 }).ToList(),
 
-                PeriodTotal = totalAmount
-            }); ;
+
+            }) ; 
 
             ;
         }
