@@ -18,11 +18,11 @@ import { NzTypographyModule } from 'ng-zorro-antd/typography';
 import { NzImageModule } from 'ng-zorro-antd/image';
 
 import { PopupConfirmationComponent } from './components/popup-confirmation/popup-confirmation.component';
- import { HeaderOperationsButtonsComponent } from './components/headers/buttons.oparations.header.component';
- import { BaseComponent } from './components/base/base.component';
- import { AuthModule } from './auth/auth.module';
- import { PermissionDirective } from './directives/permission.directive';
-
+import { HeaderOperationsButtonsComponent } from './components/headers/buttons.oparations.header.component';
+import { BaseComponent } from './components/base/base.component';
+import { AuthModule } from './auth/auth.module';
+import { PermissionDirective } from './directives/permission.directive';
+import { AuthModalComponent } from './auth/auth-modal/auth-modal.component';
 
 @NgModule({
   imports: [
@@ -42,8 +42,8 @@ import { PopupConfirmationComponent } from './components/popup-confirmation/popu
     NzTypographyModule,
     NzTagModule,
     NzImageModule,
-    ], 
-    exports: [
+  ],
+  exports: [
     CommonModule,
     ReactiveFormsModule,
     FormsModule,
@@ -57,28 +57,25 @@ import { PopupConfirmationComponent } from './components/popup-confirmation/popu
     NzButtonModule,
     NzPageHeaderModule,
     NzNotificationModule,
-     HeaderOperationsButtonsComponent,
+    HeaderOperationsButtonsComponent,
     NzTypographyModule,
     NzTagModule,
-     PopupConfirmationComponent,
-     AuthModule,
-     PermissionDirective
- 
+    PopupConfirmationComponent,
+    AuthModule,
+    PermissionDirective,
   ],
   declarations: [
-     HeaderOperationsButtonsComponent, 
-     BaseComponent, 
-     PopupConfirmationComponent,
-     PermissionDirective
-     
-
+    HeaderOperationsButtonsComponent,
+    BaseComponent,
+    PopupConfirmationComponent,
+    PermissionDirective,
+    AuthModalComponent,
   ],
   entryComponents: [
-     HeaderOperationsButtonsComponent, 
-     BaseComponent,
-      PopupConfirmationComponent],
-  providers: [
-    
-  ]
+    HeaderOperationsButtonsComponent,
+    BaseComponent,
+    PopupConfirmationComponent,
+  ],
+  providers: [],
 })
-export class AppCommonModule { }
+export class AppCommonModule {}
