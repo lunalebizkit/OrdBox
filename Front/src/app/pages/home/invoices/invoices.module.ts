@@ -27,7 +27,7 @@ import { InvoiceCustomerSearchComponent } from './invoice-customer-search/invoic
 import { InvoiceProductSearchComponent } from './invoice-product-search/invoice-product-search.component';
 import { InvoicesListComponent } from './invoices-list/invoices-list.component';
 import { InvoicesViewDrawerComponent } from './invoices-view-drawer/invoices-view.drawer.component';
-import { ReceiptComponent } from './receipt/receipt.component';
+import { ReceiptListComponent } from './receipt-list/receipt-list.component';
 import { ReceiptEditComponent } from './receipt-edit/receipt-edit.component';
 import { ReceiptSupplierSearchComponent } from './receipt-supplier-search/receipt-supplier-search.component';
 import { ReceiptViewDrawerComponent } from './receipt-view-drawer/receipt-view-drawer.component';
@@ -64,7 +64,7 @@ import { ReceiptViewDrawerComponent } from './receipt-view-drawer/receipt-view-d
     InvoiceProductSearchComponent,
     InvoicesListComponent,
     InvoicesViewDrawerComponent,
-    ReceiptComponent,
+    ReceiptListComponent,
     ReceiptEditComponent,
     ReceiptSupplierSearchComponent,
     ReceiptViewDrawerComponent,

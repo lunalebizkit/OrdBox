@@ -17,15 +17,12 @@ import { SecurityAuthModule } from './pages/auth/security-auth.module';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { HttpAuthAddTokenInterceptor } from './common/auth/interceptors/auth.http.addtoken.interceptor';
-
+import { HttpAuth401ErrorInterceptor } from './common/auth/interceptors/auth.http.error401.interceptor';
 
 registerLocaleData(en);
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    
-  ],
+  declarations: [AppComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -38,8 +35,20 @@ registerLocaleData(en);
     SecurityAuthModule,
     HomeModule,
   ],
-  providers: [{ provide: NZ_I18N, useValue: en_US }, NzMessageService,
-     {provide: HTTP_INTERCEPTORS, useClass: HttpAuthAddTokenInterceptor, multi:true}],
-  bootstrap: [AppComponent]
+  providers: [
+    { provide: NZ_I18N, useValue: en_US },
+    NzMessageService,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: HttpAuthAddTokenInterceptor,
+      multi: true,
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: HttpAuth401ErrorInterceptor,
+      multi: true,
+    },
+  ],
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

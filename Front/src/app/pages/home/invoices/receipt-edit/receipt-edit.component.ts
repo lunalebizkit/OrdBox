@@ -167,21 +167,15 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
     this.editIdIva = null;
   }
   changeIvaValue(iva: number, productId: number): void {
-    this.ivaSelectedId = iva;
-    if (this.ivaSelectedId == 0 || this.ivaSelectedId == null) {
-      this.ivaSelectedId = 1;
-    }
-    if (this.ivaSelectedId == 1) this.ivaSelected = 10.5;
-    if (this.ivaSelectedId == 2) this.ivaSelected = 21;
-    if (this.ivaSelectedId == 3) this.ivaSelected = 27;
+    let newIva= Number(iva);  
     try {
       this.receiptDetails.filter(
         (detail) => detail.productId == productId
-      )[0].iva = this.ivaSelected;
+      )[0].iva = newIva;
 
       this.receiptDetailsGrid.filter(
         (detail) => detail.productId == productId
-      )[0].iva = this.ivaSelected;
+      )[0].iva = newIva;
       this.totalCalculate();
       this.stopEditIva();
     } catch (error) {
