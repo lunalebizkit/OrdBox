@@ -63,4 +63,6 @@ export class InvoiceService {
   public saveReceipt(model: receiptModel): Observable<any> {
     return this.api.post(`receipt`, model, false);
   }
+
+ 
 }

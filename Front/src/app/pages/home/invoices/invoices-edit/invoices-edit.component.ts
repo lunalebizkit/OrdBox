@@ -1,5 +1,5 @@
 import { Component, ElementRef, Input, OnInit, TemplateRef, ViewChild } from "@angular/core";
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
 import { NzMessageService } from "ng-zorro-antd/message";
 import { NzNotificationService } from "ng-zorro-antd/notification";
 import { BaseComponent } from "src/app/common/components/base/base.component";
@@ -17,10 +17,14 @@ import { InvoiceService } from "../invoices.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { ePayment } from "../model/invoice-payment.Enum";
 import { InvoiceType } from "../model/invoice-type.Enum";
-import { formatCurrency } from '@angular/common';
+import { formatCurrency, formatDate } from '@angular/common';
 import { Inject, LOCALE_ID } from '@angular/core';
 import { ProductService } from "../../products/product.service";
 import { AuthService } from "src/app/common/auth/interceptors/auth.service";
+import { Observable } from "rxjs";
+import { ThisReceiver } from "@angular/compiler";
+import { PeriodsRoutingModule } from "../../periods/periods-routing.module";
+import { PeriodsService } from "../../periods/periods.service";
 
 @Component({
   selector: 'app-invoices-edit',
@@ -57,7 +61,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
 
   name: string = environment.name;
   date = Date.now();
-  startDate = Date.now();
+  startDate = this.formaterDate(Date.now());
   type = InvoiceType;
   payment: { value: string; label: string }[] = Object.entries(ePayment).map(([value, label]) => ({ value, label }))
   
@@ -102,6 +106,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
     private serviceProduct: ProductService,
     private serviceInvoice: InvoiceService,
     public serviceUser: AuthService,
+    public servicePeriod: PeriodsService,
     el: ElementRef,
     private router: Router,
     private route: ActivatedRoute,
@@ -126,7 +131,21 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
   }
   userId:number= this.serviceUser.currentUser.id
 
-  ngOnInit(): void {    
+  ngOnInit(): void {   
+  this.servicePeriod.periodActive(this.startDate).subscribe({
+    next: () => {
+      this.showNotificationSuccess(
+        'verificación correcta',
+        `Su fecha se encuentra en un período activo`
+      );
+      this.isSaving = false;
+    },
+    error: () => {
+      this.isSaving = false;
+      this.showMessageError('No se encontro período activo');
+    }
+
+  })
   }
 
   typeSelectedChange(id: any): void {
@@ -455,5 +474,10 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
   currencyFormat(data: any):string  {    
     return formatCurrency(data, this.locale, '$', 'ARS', '1.1-2')
   }
+
+  formaterDate(date: string | number | Date): string {
+    return formatDate(date, 'MM/dd/YYYY', this.locale);
+  }
+
 }
 

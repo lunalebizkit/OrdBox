@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Kiltex.SistemaGestion.Services.Services
 {
-    public class PeriodService: BaseService
+    public class PeriodService : BaseService
     {
         public PeriodService(ErrorManager logger, DBContext context, IMapper maper) :
            base(logger, context, maper)
@@ -59,11 +59,11 @@ namespace Kiltex.SistemaGestion.Services.Services
                                     .AsNoTracking()
                                     .CountAsync(p => p.InitPeriod.Date == model.InitPeriod.Date && p.Id != model.Id, ct);
 
-                var activePeriods =  _contextSql
+                var activePeriods = _contextSql
                                     .Periods
                                     .AsNoTracking()
-                                    .Where(p => (p.Status == true)  || ( p.EndPeriod.Date >= model.InitPeriod.Date));
-               
+                                    .Where(p => (p.Status == true) || (p.EndPeriod.Date >= model.InitPeriod.Date));
+
                 if (countPeriods > 0)
                 {
                     _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_009_ERROR_DUPLICATE));
@@ -82,9 +82,9 @@ namespace Kiltex.SistemaGestion.Services.Services
                     {
                         await _contextSql.Periods.AddAsync(NewModel, ct).ConfigureAwait(false);
                     }
-                
+
                 }
-                   
+
                 else
                 {
                     var oldPeriod = await _contextSql
@@ -135,8 +135,8 @@ namespace Kiltex.SistemaGestion.Services.Services
                                     .Periods
                                     .AsNoTracking()
                                     .Where(p => p.InitPeriod.ToString().Contains(request.Filter ?? "") ||
-                                     p.EndPeriod.ToString().Contains(request.Filter ?? "")); 
-                                   
+                                     p.EndPeriod.ToString().Contains(request.Filter ?? ""));
+
 
                 var count = await query.CountAsync().ConfigureAwait(false);
 
@@ -182,7 +182,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                     return Error<IdResponse<long>>(new OperationExceptions("009", "No existe period"));
                 }
 
-                 return Ok(new IdResponse<long>(id));
+                return Ok(new IdResponse<long>(id));
 
             }
             catch (Exception ex)
@@ -191,6 +191,34 @@ namespace Kiltex.SistemaGestion.Services.Services
                 throw;
             }
         }
+
+        public async Task<OperationResponse<bool>> ActivePeriod(DateTime date)
+        {
+            try
+            {
+                var periodActive = _contextSql
+                                 .Periods
+                                 .AsNoTracking()
+                                 .FirstOrDefault(p => (p.Status == true) && (p.InitPeriod <= date) && (p.EndPeriod >= date))
+                                 ;
+
+
+                if (periodActive == null)
+                {
+                    _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
+                    return Error<bool>("000", "no se ha recibo parametro");
+                }
+                else
+                {
+                    return Ok<bool>(true);
+                }
+           }
+            catch (Exception ex)
+            {
+                _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
+                throw;
+            }
+        }
+
     }
-    
 }
