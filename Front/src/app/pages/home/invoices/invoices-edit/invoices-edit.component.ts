@@ -134,8 +134,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
       payment: ['', Validators.required],
       address: ['', Validators.required],
       customerCuit: ['', Validators.required],
-      customerName: ['', Validators.required],
-      // iva:[Number],
+      customerName: ['', Validators.required],    
       observation: ['']
     });   
     this.formCustomerSearch = this.fb.group({})

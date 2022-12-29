@@ -6,11 +6,11 @@ import { eInvoiceType } from '../model/invoice-type.Enum';
 import { receiptModel } from '../model/receipt.model';
 
 @Component({
-  selector: 'app-receipt',
-  templateUrl: './receipt.component.html',
-  styleUrls: ['./receipt.component.css'],
+  selector: 'app-receipt-list',
+  templateUrl: './receipt-list.component.html',
+  styleUrls: ['./receipt-list.component.css'],
 })
-export class ReceiptComponent implements OnInit {
+export class ReceiptListComponent implements OnInit {
   permissions = Permission;
 
   /*
