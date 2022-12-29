@@ -23,6 +23,12 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Product
         {
             return Return(await _service.GetById(id).ConfigureAwait(false));
         }
+        [HttpPost]
+        [Route("[action]")]
+        public async Task<IActionResult> ActivePeriod([FromQuery] DateTime date)
+        {
+            return Return(await _service.ActivePeriod(date).ConfigureAwait(false));
+        }
 
         [HttpPost]
         public async Task<IActionResult> New([FromBody] DtoRequestPeriod model)
@@ -48,5 +54,6 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Product
         {
             return Return(await _service.Delete(id).ConfigureAwait(false));
         }
+       
     }  
 }

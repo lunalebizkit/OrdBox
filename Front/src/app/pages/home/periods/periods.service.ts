@@ -48,5 +48,8 @@ export class PeriodsService {
       public delete(id:number): Observable<any> {
         return this.api.delete(`Period/${id}`, false)
        } 
-      
+       
+       public periodActive(startDate:any): Observable<any>{
+        return this.api.post(`Period/ActivePeriod?date=${startDate}`, false)
+      }
 }
