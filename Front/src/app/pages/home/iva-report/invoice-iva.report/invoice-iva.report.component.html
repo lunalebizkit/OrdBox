@@ -29,7 +29,7 @@
               <nz-form-label [nzSm]="10" [nzXs]="24" nzRequired nzFor="initPeriod">Desde </nz-form-label>
               <nz-form-control [nzSm]="14" [nzXs]="24">
                   <input formControlName="initPeriod"  nz-input style="width:110%;"
-                  type="date"  (ngModel)="initPeriod" (ngModelChange)='initPeriod=$event' value="initPeriod"/>
+                  type="date"  [(ngModel)]="startDate" (ngModelChange)='changeDate($event)' value="startDate"/>
               </nz-form-control>
             </nz-form-item>
           </div>
@@ -38,7 +38,7 @@
               <nz-form-label [nzSm]="10" [nzXs]="24" nzRequired nzFor="endPeriod">Hasta </nz-form-label>
               <nz-form-control [nzSm]="14" [nzXs]="24">
                   <input formControlName="endPeriod"  nz-input style="width:110%;" 
-                   type="date" (ngModel)="endPeriod" (ngModelChange)='endPeriod=$event' value="endPeriod" />
+                   type="date" [(ngModel)]="endDate" (ngModelChange)='changeEndDate($event)' value="endDate" />
               </nz-form-control>
             </nz-form-item>
           </div>
@@ -48,7 +48,7 @@
             nzSize="small"
             nzType="primary"
             style="margin-left: 40px; margin-top:5px "
-            (click)="getIvaVenta(initPeriod, endPeriod)"
+            (click)="getNewIvaVenta(startDate, endDate)"
             >
             <i nz-icon nzType="search" nzTheme="outline"></i>Buscar
           </button>

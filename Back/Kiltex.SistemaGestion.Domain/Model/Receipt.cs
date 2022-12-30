@@ -28,8 +28,8 @@ namespace Kiltex.SistemaGestion.Domain.Model
         [Column("supplier_cuit")]
         public string? SupplierCuit { get; set; }
 
-        [Column("supplier_adress")]
-        public string? SupplierAdress { get; set; }
+        [Column("supplier_address")]
+        public string? SupplierAddress { get; set; }
 
         [Column("observation")]
         public string? Observation { get; set; }

@@ -99,7 +99,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                     SupplierName = x.Receipt.SupplierName,
                     ReceiptNumber = x.Receipt.ReceiptNumber,
                     SupplierCuit = x.Receipt.SupplierCuit,
-                    SupplierAddress = x.Receipt.SupplierAdress,
+                    SupplierAddress = x.Receipt.SupplierAddress,
                     Type = x.Receipt.Type,
                     DateTime = x.Receipt.DateTime,
                     Id = x.Receipt.Id,

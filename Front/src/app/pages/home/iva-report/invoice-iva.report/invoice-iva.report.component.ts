@@ -13,6 +13,7 @@ import { HeaderOperationsButtonsComponent } from 'src/app/common/components/head
 import { InvoiceDetails, InvoiceModel } from '../../invoices/model/invoice.model';
 import { InvoiceService } from '../../invoices/invoices.service';
 import { eInvoiceType } from '../../invoices/model/invoice-type.Enum';
+import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 
 
 @Component({
@@ -27,7 +28,10 @@ export class InvoiceIvaReportComponent extends BaseComponent implements OnInit {
    totalItems: any;
     periodListaVentas:InvoiceIvaReportDetailsModel[]=[]
     periodIvaList!: InvoiceIvaReportModel ;   
-    startDate = Date.now();
+    startDate: any;
+    endDate: any;
+    newInitDate: any;
+    newEndDate: any;
     formReport!: FormGroup;
    
 
@@ -84,7 +88,6 @@ export class InvoiceIvaReportComponent extends BaseComponent implements OnInit {
         notificacionService: NzNotificationService,
         el: ElementRef,
         message: NzMessageService,
-        private router:Router,
         private route: ActivatedRoute,  
         private fb: FormBuilder,
         @Inject(LOCALE_ID) public locale: string,
@@ -100,8 +103,10 @@ export class InvoiceIvaReportComponent extends BaseComponent implements OnInit {
       initPeriod= this.route.snapshot.queryParams['from']
       endPeriod= this.route.snapshot.queryParams['to']
       
-      ngOnInit(): void {
+      ngOnInit(): void {        
         if ((this.initPeriod != null) && (this.endPeriod != null)){
+          this.startDate = this.formaterDateOriginal(Date.parse(this.initPeriod));
+          this.endDate = this.formaterDateOriginal(Date.parse(this.endPeriod));
           this.getIvaVenta(this.initPeriod, this.endPeriod);
               
         } 
@@ -255,9 +260,22 @@ export class InvoiceIvaReportComponent extends BaseComponent implements OnInit {
         return formatDate(date, 'MM/dd/YYYY', this.locale);
       }
       
+      formaterDateOriginal(date: string | number | Date): string {
+        return formatDate(date, 'YYYY-MM-dd', this.locale);
+      }
       currencyFormat(data: any):string  {    
         return formatCurrency(data, this.locale, '$', 'ARS', '1.1-2')
       }
-     
+      changeDate( fecha: any):void {
+        this.newInitDate = this.formaterDate(fecha)
+        
+      }
+      changeEndDate( fecha: any):void {
+         this.newEndDate = this.formaterDate(fecha);        
+      }
+
+     getNewIvaVenta(inicio: any, fin :any){
+      this.getIvaVenta(inicio, fin);
+     }
     }
 
