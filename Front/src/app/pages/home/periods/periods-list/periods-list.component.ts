@@ -1,8 +1,15 @@
-import { Component, ElementRef, Inject, LOCALE_ID, OnInit, ViewChild} from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  Inject,
+  LOCALE_ID,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { Permission } from 'src/app/common/auth/models/permissions.enum';
 import { PeriodsService } from '../periods.service';
-import { PeriodsModel } from '../model/periods.model'; 
+import { PeriodsModel } from '../model/periods.model';
 import { periodsDrawerComponent } from '../new-periods-drawer/new-periods.drawer.component';
 import { NzDrawerService } from 'ng-zorro-antd/drawer';
 import { formatDate } from '@angular/common';
@@ -11,28 +18,26 @@ import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { PopupConfirmationComponent } from 'src/app/common/components/popup-confirmation/popup-confirmation.component';
 
-
 @Component({
-    selector: 'app-periods-list',
-    templateUrl: './periods-list.component.html',
-    styleUrls: ['./periods-list.component.css'],
-  })
-
+  selector: 'app-periods-list',
+  templateUrl: './periods-list.component.html',
+  styleUrls: ['./periods-list.component.css'],
+})
 export class PeriodsListComponent extends BaseComponent implements OnInit {
- 
   @ViewChild('drawer') drawerComponent!: periodsDrawerComponent;
   @ViewChild('popup') popupComponent!: PopupConfirmationComponent;
   periodList: PeriodsModel[] = [];
 
-  
-   queryData = {
+  permissions = Permission;
+
+  queryData = {
     filter: '',
     page: 0,
     pageSize: 10,
   };
   selectedIndex!: number;
   selectedPeriod: any;
-  totalItems= 0;
+  totalItems = 0;
   loading!: boolean;
   isConfirmLoading!: boolean;
   isVisible!: boolean;
@@ -42,11 +47,7 @@ export class PeriodsListComponent extends BaseComponent implements OnInit {
   isSaving!: boolean;
   index!: number;
   isDeleteConfirmationVisible!: boolean;
-  datos!: PeriodsModel
-  
- 
-  
-
+  datos!: PeriodsModel;
 
   constructor(
     private service: PeriodsService,
@@ -54,52 +55,51 @@ export class PeriodsListComponent extends BaseComponent implements OnInit {
     notificacionService: NzNotificationService,
     el: ElementRef,
     message: NzMessageService,
-    private router:Router,
-    @Inject(LOCALE_ID) public locale: string,
-   
-  ) {super(notificacionService, el, message);}
+    private router: Router,
+    @Inject(LOCALE_ID) public locale: string
+  ) {
+    super(notificacionService, el, message);
+  }
 
+  ngOnInit() {
+    this.getPeriod(this.queryData);
+  }
 
+  getPeriod(params: any): void {
+    this.service.getByFilter(params).subscribe({
+      next: (r) => {
+        this.periodList = r.data;
+        this.totalItems = r.totalCount;
+        this.loading = false;
+        this.selectedIndex = 0;
+        this.selectedPeriod = this.periodList[this.selectedIndex];
+        document.getElementById(this.selectedIndex.toString())?.focus();
+      },
+      error: () => {
+        this.loading = false;
+        this.periodList = [];
+      },
+    });
+  }
+  search(): void {
+    this.queryData.page = 0;
+    this.getPeriod(this.queryData);
+  }
 
-    ngOnInit() {
-      this.getPeriod(this.queryData)
-    }
-   
-    getPeriod(params: any): void {
-      this.service.getByFilter(params).subscribe({
-        next: (r) => {
-          this.periodList = r.data;
-          this.totalItems = r.totalCount;
-          this.loading = false;
-          this.selectedIndex = 0;
-          this.selectedPeriod = this.periodList[this.selectedIndex];
-          document.getElementById(this.selectedIndex.toString())?.focus();
-        },
-        error: () => {
-          this.loading = false;
-          this.periodList = [];
-        },
-      });
-    }
-    search(): void {
-      this.queryData.page = 0;
-      this.getPeriod(this.queryData);
-    }
+  formaterDate(date: string | number | Date): string {
+    return formatDate(date, 'MM/dd/YYYY', this.locale);
+  }
 
-    formaterDate(date: string | number | Date): string {
-      return formatDate(date, 'MM/dd/YYYY', this.locale);
+  onDoubleClicked(datos: any) {
+    this.id = datos.id;
+    if (datos.status === true) {
+      this.openComponentPeriod();
+    } else {
+      this.id = 0;
+      this.isSaving = false;
+      this.showMessageError('No se puede editar período cerrado');
     }
-     
-    onDoubleClicked(datos: any) {
-      this.id = datos.id;
-      if(datos.status === true){
-        this.openComponentPeriod();
-      }else{
-        this.id = 0
-        this.isSaving = false;
-        this.showMessageError('No se puede editar período cerrado')         
-      }
-    }
+  }
 
   onClick(datos: any, index: number): void {
     this.index = index;
@@ -107,17 +107,16 @@ export class PeriodsListComponent extends BaseComponent implements OnInit {
     this.selectedPeriod = datos;
   }
 
-  onEnter(e: any, datos:any) {
+  onEnter(e: any, datos: any) {
     this.selectedPeriod = this.periodList[this.index];
     this.id = this.periodList[this.index].id;
-    if(datos.status === true){
+    if (datos.status === true) {
       this.openComponentPeriod();
-    }else{
-     this.id = 0  
+    } else {
+      this.id = 0;
       this.isSaving = false;
-        this.showMessageError('No se puede editar período cerrado')
+      this.showMessageError('No se puede editar período cerrado');
     }
-    
   }
   myNavegation(event: any) {
     switch (event.key) {
@@ -142,136 +141,137 @@ export class PeriodsListComponent extends BaseComponent implements OnInit {
         break;
     }
   }
-    openComponentPeriod(): void {
-      const drawerRefCustomer = this.drawerService.create<
-      periodsDrawerComponent ,
-        { filter: number },
-        number
-      >({
-        nzContent: periodsDrawerComponent,
-        nzSize: 'large',
-        nzContentParams: {
-          filter: this.id > 0 ? this.id : 0,
-        },
-        nzClosable: false,
-      });
-      drawerRefCustomer.afterClose.subscribe({
-        next: (data) => {
-          this.id = 0;
-          if (data != undefined && data != 0) {
-            let newPeriod = this.periodList[this.periodList.findIndex((r) => r.id == data)];            
-             if ( newPeriod === undefined){
-              this.getPeriod(this.queryData);
-             }else{
-             
+  openComponentPeriod(): void {
+    const drawerRefCustomer = this.drawerService.create<
+      periodsDrawerComponent,
+      { filter: number },
+      number
+    >({
+      nzContent: periodsDrawerComponent,
+      nzSize: 'large',
+      nzContentParams: {
+        filter: this.id > 0 ? this.id : 0,
+      },
+      nzClosable: false,
+    });
+    drawerRefCustomer.afterClose.subscribe({
+      next: (data) => {
+        this.id = 0;
+        if (data != undefined && data != 0) {
+          let newPeriod =
+            this.periodList[this.periodList.findIndex((r) => r.id == data)];
+          if (newPeriod === undefined) {
+            this.getPeriod(this.queryData);
+          } else {
             this.service.getById(data).subscribe({
-              next: (r: PeriodsModel) => {              
-               this.periodList[ this.periodList.findIndex((r) => r.id == data)] = r;             
-                           
+              next: (r: PeriodsModel) => {
+                this.periodList[
+                  this.periodList.findIndex((r) => r.id == data)
+                ] = r;
               },
               error: () => {
                 this.id = 0;
               },
-            });}
+            });
           }
-        },
-        error: () => {
-          this.id = 0;
-        },
-      });
-    }
-    
-    status(datos:any){
-      if(this.id != 0){
-        let estado= datos.status =false
-        const model:PeriodsModel ={
-          id : datos.id,
-          initPeriod: datos.initPeriod,
-          endPeriod:datos.endPeriod,
-          status: estado 
         }
-        this.isSaving = true;
-        this.service.savePeriod(model).subscribe({
+      },
+      error: () => {
+        this.id = 0;
+      },
+    });
+  }
+
+  status(datos: any) {
+    if (this.id != 0) {
+      let estado = (datos.status = false);
+      const model: PeriodsModel = {
+        id: datos.id,
+        initPeriod: datos.initPeriod,
+        endPeriod: datos.endPeriod,
+        status: estado,
+      };
+      this.isSaving = true;
+      this.service.savePeriod(model).subscribe({
         next: (r) => {
           this.showNotificationSuccess(
             'Guardado correcto',
             `Se ha cerrado correctamente el Período `
           );
-            this.id=0;
+          this.id = 0;
           this.isSaving = false;
           this.getPeriod(this.queryData);
         },
         error: () => {
-          this.id=0;
+          this.id = 0;
           this.isSaving = false;
-          this.showMessageError('No se pudo actualizar el estado del Período')
+          this.showMessageError('No se pudo actualizar el estado del Período');
         },
       });
-      }
-     
     }
-  
-    onScroll(event: any): void {
-      let scrollHeight = event.target.scrollHeight;
-      let scrolltop = event.target.scrollTop;
-      let client = event.target.clientHeight;
-      let ScrollPosition = Math.abs(
-        Math.round(scrollHeight - (scrolltop + client))
-      );
-      if (
-        ScrollPosition <= 5 &&
-        this.totalItems / this.queryData.page > this.queryData.page
-      ) {
-        let page = this.queryData.page;
-        this.queryData.page = this.queryData.page + 1;
-        if (
-          this.totalItems === undefined ||
-          this.queryData.page * this.queryData.pageSize <= this.totalItems
-        ) {
-          this.service.getByFilter(this.queryData).subscribe({
-            next: (r) => {
-              r.data.map((period: PeriodsModel) =>
-                this.periodList.push(period)
-              );
-              this.loading = false;
-            },
-            error: () => {
-              this.loading = false;
-              this.periodList = [];
-            },
-          });
-        } else {
-          this.queryData.page = page;
-        }
-      }
-    }
+  }
 
-   handleOk(){
-    this.id = this.popupComponent.elementSelectedToDelete;
-      try {
-        this.isSaving = true;
-        this.service.delete(this.popupComponent.elementSelectedToDelete).subscribe({
+  onScroll(event: any): void {
+    let scrollHeight = event.target.scrollHeight;
+    let scrolltop = event.target.scrollTop;
+    let client = event.target.clientHeight;
+    let ScrollPosition = Math.abs(
+      Math.round(scrollHeight - (scrolltop + client))
+    );
+    if (
+      ScrollPosition <= 5 &&
+      this.totalItems / this.queryData.page > this.queryData.page
+    ) {
+      let page = this.queryData.page;
+      this.queryData.page = this.queryData.page + 1;
+      if (
+        this.totalItems === undefined ||
+        this.queryData.page * this.queryData.pageSize <= this.totalItems
+      ) {
+        this.service.getByFilter(this.queryData).subscribe({
           next: (r) => {
-            this.popupComponent.isDeleteConfirmationVisible=false;
+            r.data.map((period: PeriodsModel) => this.periodList.push(period));
+            this.loading = false;
+          },
+          error: () => {
+            this.loading = false;
+            this.periodList = [];
+          },
+        });
+      } else {
+        this.queryData.page = page;
+      }
+    }
+  }
+
+  handleOk() {
+    this.id = this.popupComponent.elementSelectedToDelete;
+    try {
+      this.isSaving = true;
+      this.service
+        .delete(this.popupComponent.elementSelectedToDelete)
+        .subscribe({
+          next: (r) => {
+            this.popupComponent.isDeleteConfirmationVisible = false;
             this.showNotificationSuccess(
               'Guardado correcto',
               `Se ha cerrado correctamente el Período `
             );
-              this.id=0;
+            this.id = 0;
             this.isSaving = false;
-              this.getPeriod(this.queryData);
+            this.getPeriod(this.queryData);
           },
           error: () => {
-            this.popupComponent.isDeleteConfirmationVisible=false
-            this.id=0;
+            this.popupComponent.isDeleteConfirmationVisible = false;
+            this.id = 0;
             this.isSaving = false;
-            this.showMessageError('No se pudo actualizar el estado del Período')
+            this.showMessageError(
+              'No se pudo actualizar el estado del Período'
+            );
           },
-        })
-       } catch (error) {
-         console.log(error);
-       }   
+        });
+    } catch (error) {
+      console.log(error);
     }
-    
-}  
-  
+  }
+}
