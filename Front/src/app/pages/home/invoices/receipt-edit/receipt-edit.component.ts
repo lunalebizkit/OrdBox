@@ -17,7 +17,7 @@ import { HeaderOperationsButtonsComponent } from 'src/app/common/components/head
 import { PopupConfirmationComponent } from 'src/app/common/components/popup-confirmation/popup-confirmation.component';
 import { differenceInCalendarDays, setHours } from 'date-fns';
 import { InvoiceType } from '../model/invoice-type.Enum';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 import { AuthService } from 'src/app/common/auth/interceptors/auth.service';
 import { ProductService } from '../../products/product.service';
 import { InvoiceService } from '../invoices.service';
@@ -118,7 +118,6 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
     public serviceUser: AuthService,
     el: ElementRef,
     private router: Router,
-    private route: ActivatedRoute,
     message: NzMessageService,
     private drawerService: NzDrawerService,
     @Inject(LOCALE_ID) public locale: string
@@ -257,15 +256,16 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
     let product = this.receiptDetailsGrid.filter(
       (detail) => detail.productId == this.editId
     )[0];
+    this.receiptDetails.filter(
+      (detail) => detail.productId == this.editId
+    )[0].quantity = quantity;
 
     this.receiptDetailsGrid.filter(
       (detail) => detail.productId == this.editId
     )[0].subTotal = quantity * product.price;
 
     this.totalCalculate();
-    this.receiptDetailsGrid.filter(
-      (detail) => detail.productId == this.editId
-    )[0].quantity = quantity;
+   
   }
 
   currencyFormat(data: any): string {
@@ -341,21 +341,25 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
 
   handleOk() {
     try {
-      this.receiptDetailsGrid = this.receiptDetailsGrid.filter(
+      let newReceiptDetailsGrid = this.receiptDetailsGrid.filter(
         (element) =>
           element.productId != this.popupComponent.elementSelectedToDelete
       );
       this.receiptDetails = this.receiptDetails.filter(
         (element) =>
           element.productId != this.popupComponent.elementSelectedToDelete
-      );
-      this.popupComponent.isDeleteConfirmationVisible = false;
+      );      
+        
       if (this.receiptDetailsGrid.length == 0) {
         this.receiptDetailsGrid = [];
+        this.receiptDetailsGridTest= [];
       } else {
-        this.receiptDetailsGrid = this.receiptDetailsGrid;
+        this.receiptDetailsGrid = newReceiptDetailsGrid;
+        this.receiptDetailsGridTest = newReceiptDetailsGrid;
       }
       this.totalCalculate();
+
+      this.popupComponent.isDeleteConfirmationVisible = false;
     } catch (error) {
       console.log(error);
     }
@@ -400,12 +404,16 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
               this.receiptDetailsGrid.filter(
                 (item) => item.productId == model.id
               )[0].subTotal += model.purchasePrice * model.quantity;
+
               this.totalCalculate();
+
               this.loading = false;
+
               this.formProductSearch.controls['productSearchFilter'].setValue(
                 ''
               );
             } else {
+
               const product: ProductsModel = r.data[0];
               /* Parseo el Producto a la grilla de Tabla */
               const model: receiptDetailsGrid = receiptGridParser(
@@ -414,12 +422,14 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
               );
               this.receiptDetailsGridTest.push(model);
               this.receiptDetailsGrid = this.receiptDetailsGridTest;
+
               /* Parseo dato a Dto Factura Detalle */
               const modelDetail: receiptDetails = receiptDetailParser(
                 product,
                 this.iva
               );
               this.receiptDetails.push(modelDetail);
+
               this.totalCalculate();
               this.loading = false;
               this.formProductSearch.controls['productSearchFilter'].setValue(
@@ -444,7 +454,7 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
   }
 
   openComponentProduct(): void {
-    if (true) {
+ 
       const drawerRefProduct = this.drawerService.create<
         InvoiceProductSearchComponent,
         { filter: string },
@@ -459,9 +469,12 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
         nzClosable: false,
       });
       drawerRefProduct.afterClose.subscribe({
+
         next: (data: ProductsModel) => {
           if (data != undefined) {
+
             if (this.receiptDetails.find((item) => item.productId == data.id)) {
+
               /*Actualizo la lista que envio al back */
               this.receiptDetails.filter(
                 (item) => item.productId == data.id
@@ -477,6 +490,7 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
                 data.purchasePrice * newListElement.quantity;
 
               this.totalCalculate();
+
               this.loading = false;
               this.formProductSearch.controls['productSearchFilter'].setValue(
                 ''
@@ -489,13 +503,16 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
               );
               this.receiptDetailsGridTest.push(model);
               this.receiptDetailsGrid = this.receiptDetailsGridTest;
+
               /* Parseo dato a Dto Factura Detalle */
               const modelDetail: receiptDetails = receiptDetailParser(
                 data,
                 this.iva
               );
               this.receiptDetails.push(modelDetail);
+
               this.totalCalculate();
+              
               this.loading = false;
               this.formProductSearch.controls['productSearchFilter'].setValue(
                 ''
@@ -509,8 +526,6 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
           this.formProductSearch.controls['productSearchFilter'].setValue('');
         },
       });
-    } else {
-      return;
-    }
+  
   }
 }
