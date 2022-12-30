@@ -2,6 +2,7 @@ import {
   Directive,
   EmbeddedViewRef,
   Input,
+  OnInit,
   TemplateRef,
   ViewContainerRef,
 } from '@angular/core';
@@ -11,7 +12,7 @@ import { Permission } from '../auth/models/permissions.enum';
 @Directive({
   selector: '[authPermission]',
 })
-export class PermissionDirective {
+export class PermissionDirective implements OnInit {
   private _permissionKey!: Permission[];
   private _viewRef: EmbeddedViewRef<any> | null = null;
   private _templateRef: TemplateRef<any> | null = null;
@@ -19,23 +20,27 @@ export class PermissionDirective {
   @Input()
   set authPermission(permission: Permission[]) {
     this._permissionKey = permission;
-    this._viewRef = null;
-    this.init();
   }
+
   constructor(
     private templateRef: TemplateRef<any>,
     private viewContainerRef: ViewContainerRef,
     private permission: PermissionService
-  ) {
-    this._templateRef = templateRef;
+  ) {}
+
+  ngOnInit(): void {
+    setTimeout(() => {
+      this.init();
+    }, 0);
   }
 
   init() {
     const isPermitted = this.permission.validatePermissionKey(
       this._permissionKey
     );
+
     if (!isPermitted) return;
 
-    this._viewRef = this.viewContainerRef.createEmbeddedView(this.templateRef);
+    this.viewContainerRef.createEmbeddedView(this.templateRef);
   }
 }
