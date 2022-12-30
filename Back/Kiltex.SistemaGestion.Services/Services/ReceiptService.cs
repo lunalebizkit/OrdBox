@@ -126,13 +126,15 @@ namespace Kiltex.SistemaGestion.Services.Services
                         var oldProduct = await _contextSql.Products.AsNoTracking().FirstAsync(p => p.Id == detail.ProductId).ConfigureAwait(false);
 
                         productDetail = oldProduct;
-                        productDetail.UpdateStock(-detail.Quantity);
+                        productDetail.UpdateStock(detail.Quantity);
+                        _contextSql.Products.Update(productDetail);
                     }
 
-                    _contextSql.Products.Update(productDetail);
+                    
                     await _contextSql.Receipts.AddAsync(receiptModel, ct).ConfigureAwait(false);
-                    await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
+                    
                 }
+                await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
 
                 transaction.Commit();
             }

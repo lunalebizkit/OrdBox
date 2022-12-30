@@ -16,7 +16,6 @@ import { BaseComponent } from 'src/app/common/components/base/base.component';
 import { HeaderOperationsButtonsComponent } from 'src/app/common/components/headers/buttons.oparations.header.component';
 import { InvoiceService } from '../invoices.service';
 import { eInvoiceType } from '../model/invoice-type.Enum';
-import { InvoiceDetails, InvoiceModel } from '../model/invoice.model';
 import { receiptDetails, receiptModel } from '../model/receipt.model';
 
 @Component({
@@ -78,21 +77,22 @@ export class ReceiptViewDrawerComponent
     if (id != 0)
       this.service.getReceiptById(id).subscribe({
         next: (r) => {
-          this.type = r.type,
-          this.subTotal = r.total -  Number(this.subTotalCalculate(r.concNoGravado , r.percIva, r.percIngBrutos)),
+          this.subTotal= r.total - Number(this.subTotalCalculate(r.concNoGravado, r.percIngBrutos, r.percIva, r.ivaTotal))
+           this.type = r.type,
             this.supplierAddress = r.supplierAddress,
-            this.supplierCuit = r.supplierCuit,
-            this.supplierName = r.supplierName,
-            this.observation = r.observation,
-            this.receiptNumber = r.receiptNumber,
-            this.ivaTotal = r.ivaTotal,
-            this.total = r.total,
+          this.supplierCuit = r.supplierCuit,
+          this.supplierName = r.supplierName,
+          this.observation = r.observation,
+          this.receiptNumber = r.receiptNumber,
+          this.ivaTotal = r.ivaTotal,
+          this.total = r.total,
             this.userId = r.userId,
             this.dateTime = r.dateTime,
             this.concNoGravado = r.concNoGravado,
             this.percIngBrutos = r.percIngBrutos,
             this.percIva = r.percIva,
-            this.receiptDetails = r.receiptDetails, 
+            this.receiptDetails = r.receiptDetails;
+      
           this.isLoading = false;
         },
         error: () => {
@@ -105,10 +105,9 @@ export class ReceiptViewDrawerComponent
     return eInvoiceType[id];
   }
 
-  subTotalCalculate( concNoGravado:number, percIngBrutos:number, percIva:number) {
-    return concNoGravado + percIngBrutos + percIva
-      };
-   
+  subTotalCalculate(concNoGravado: number, percIngBrutos: number, percIva:number, ivaTotal: number): number {
+ return concNoGravado + percIngBrutos + percIva  + ivaTotal  
+  }
 
   ivaCalculate(data: number, iva: number): number {
     return (data * iva) / 100;
