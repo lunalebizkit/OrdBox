@@ -18,7 +18,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             base(logger, context, maper)
         { }
 
-        public async Task<OperationResponse<DtoRequestIvaPeriod>> ListIvaVenta(DateTime from, DateTime to, CancellationToken ct = default)
+        public async Task<OperationResponse<DtoRequestIvaPeriodVenta>> ListIvaVenta(DateTime from, DateTime to, CancellationToken ct = default)
         {
             var query = _contextSql
                                     .Invoices
@@ -37,7 +37,8 @@ namespace Kiltex.SistemaGestion.Services.Services
                 totalAmount += item.Total;
             }
 
-            return new OperationResponse<DtoRequestIvaPeriod>(new DtoRequestIvaPeriod
+
+            return new OperationResponse<DtoRequestIvaPeriodVenta>(new DtoRequestIvaPeriodVenta
             {
                 PeriodTotal = totalAmount,
                 Invoices = list.Select(x => new DtoRequestIvaVenta
@@ -52,6 +53,65 @@ namespace Kiltex.SistemaGestion.Services.Services
                     InvoiceDetails = x.InvoiceDetails.Select(x => new DtoRequestIvaVentaDetails
                     {
                         ProductPrice = x.Price,
+                        Quantity = x.Quantity,
+                        Iva = x.Iva,
+                        Iva10 = (x.Iva == (decimal)10.5) ? (((x.Price * x.Iva) / 100) * x.Quantity) : 0,
+                        Iva21 = (x.Iva == 21) ? (((x.Price * x.Iva) / 100) * x.Quantity) : 0,
+                        Iva27 = (x.Iva == 27) ? (((x.Price * x.Iva) / 100) * x.Quantity) : 0,
+                        
+                    }).ToList(),
+                    
+                }).ToList(),
+
+
+            }) ;; ; 
+
+            ;
+        }
+        public async Task<OperationResponse<DtoRequestIvaPeriodCompra>> ListIvaCompra(DateTime from, DateTime to, CancellationToken ct = default)
+        {
+            var query = _contextSql
+                                    .Receipts
+                                    .Include(p => p.ReceiptDetails)
+                                    .Where(x => x.DateTime >= from && x.DateTime <= to)
+                                    .AsNoTracking();
+            var count = await query.CountAsync().ConfigureAwait(false);
+
+            var list = await query.OrderBy(p => p.DateTime)
+                                  .ToListAsync()
+                                  .ConfigureAwait(false);
+            decimal? totalAmount = 0;
+            decimal? totalIva = 0;
+            foreach (var item in list)
+            {
+                totalAmount += item.Total;
+
+                foreach (var item2 in item.ReceiptDetails)
+                {
+                    totalIva += (((item2.Price * item2.Iva) / 100) * item2.Quantity);
+                }
+            }
+
+            return new OperationResponse<DtoRequestIvaPeriodCompra>(new DtoRequestIvaPeriodCompra
+            {
+                PeriodTotal = totalAmount,
+                Receipts = list.Select(x => new DtoRequestIvaCompra
+                {
+                    ReceiptNumber = x.ReceiptNumber,
+                    SupplierName = x.SupplierName,
+                    SupplierAddress = x.SupplierAdress,
+                    SupplierCuit = x.SupplierCuit,
+                    ConcNoGravado = x.ConcNoGravado,
+                    PercIngBrutos = x.PercIngBrutos,
+                    PercIva = x.PercIva,
+                    Type = x.Type,
+                    DateTime = x.DateTime,
+                    Id = x.Id,
+                    Total = x.Total,
+                    ReceiptDetails = x.ReceiptDetails.Select(x => new DtoRequestIvaCompraDetails
+                    {
+                        ProductPrice = x.Price,
+                        Quantity = x.Quantity,
                         Iva = x.Iva,
                         Iva10 = (x.Iva == (decimal)10.5) ? (((x.Price * x.Iva) / 100) * x.Quantity) : 0,
                         Iva21 = (x.Iva == 21) ? (((x.Price * x.Iva) / 100) * x.Quantity) : 0,
@@ -61,62 +121,6 @@ namespace Kiltex.SistemaGestion.Services.Services
                 }).ToList(),
 
 
-            }) ; 
-
-            ;
-        }
-        public async Task<OperationResponse<DtoRequestIvaCompra>> ListIvaCompra(DateTime from, DateTime to, CancellationToken ct = default)
-        {
-            var query = _contextSql
-                                    .ReceiptDetails
-                                    .Include(p => p.Receipt)
-                                    .Where(x => x.Receipt.DateTime >= from && x.Receipt.DateTime <= to)
-                                    .AsNoTracking();
-            var count = await query.CountAsync().ConfigureAwait(false);
-
-            var list = await query.OrderBy(p => p.Receipt.DateTime)
-                                  .ToListAsync()
-                                  .ConfigureAwait(false);
-            decimal total21 = 0;
-            decimal total10 = 0;
-            decimal total27 = 0;
-            decimal? totalAmount = 0;
-            foreach (var item in list)
-            {
-                switch (item.Iva)
-                {
-                    case 21:
-                        total21 += ((item.Iva * item.Price) / 100);
-                        break;
-                    case 27:
-                        total27 += ((item.Iva * item.Price) / 100);
-                        break;
-                    case (decimal)10.5:
-                        total10 += ((item.Iva * item.Price) / 100);
-                        break;
-                }
-                totalAmount += item.Receipt.Total;
-            }
-
-            return new OperationResponse<DtoRequestIvaCompra>(new DtoRequestIvaCompra
-            {
-                ReceiptDetails = list.Select(x => new DtoRequestIvaCompraDetails
-                {
-                    SupplierName = x.Receipt.SupplierName,
-                    ReceiptNumber = x.Receipt.ReceiptNumber,
-                    SupplierCuit = x.Receipt.SupplierCuit,
-                    SupplierAddress = x.Receipt.SupplierAdress,
-                    Type = x.Receipt.Type,
-                    DateTime = x.Receipt.DateTime,
-                    Id = x.Receipt.Id,
-                    Iva = x.Iva,
-                    IvaPrice = ((x.Iva * x.Price) / 100),
-                    Total = x.Receipt.Total,
-                }).ToList(),
-                TotalIva10 = total10,
-                TotalIva21 = total21,
-                TotalIva27 = total27,
-                PeriodTotal = totalAmount
             });
 
             ;

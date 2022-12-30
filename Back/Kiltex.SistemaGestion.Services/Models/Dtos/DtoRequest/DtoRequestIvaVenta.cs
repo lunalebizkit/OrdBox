@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest
 {
-    public class DtoRequestIvaPeriod
+    public class DtoRequestIvaPeriodVenta
     {
         public decimal PeriodTotal { get; set; }
         public List<DtoRequestIvaVenta> Invoices { get; set; }
@@ -26,6 +26,7 @@ namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest
     public class DtoRequestIvaVentaDetails
     { 
         public decimal ProductPrice { get; set; }
+        public int Quantity { get; set; }
         public decimal Iva { get; set; }
         public decimal Iva21 { get; set; }
         public decimal Iva27 { get; set; }

@@ -6,16 +6,12 @@ using System.Threading.Tasks;
 
 namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest
 {
-    public class DtoRequestIvaCompra
+    public class DtoRequestIvaPeriodCompra
     {
-        public decimal TotalIva21 { get; set; }
-        public decimal TotalIva10 { get; set; }
-        public decimal TotalIva27 { get; set; }
         public decimal? PeriodTotal { get; set; }
-
-        public List<DtoRequestIvaCompraDetails> ReceiptDetails { get; set; }
+        public List<DtoRequestIvaCompra> Receipts { get; set; }
     }
-    public class DtoRequestIvaCompraDetails
+    public class DtoRequestIvaCompra
     {
         public long Id { get; set; }
         public long ReceiptNumber { get; set; }
@@ -24,8 +20,19 @@ namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest
         public string SupplierAddress { get; set; }
         public DateTime DateTime { get; set; }
         public decimal? Total { get; set; }
-        public decimal Iva { get; set; }
-        public decimal IvaPrice { get; set; }
         public int Type { get; set; }
+        public decimal ConcNoGravado { get; set; }
+        public decimal PercIva { get; set; }
+        public decimal PercIngBrutos { get; set; }
+        public List<DtoRequestIvaCompraDetails> ReceiptDetails { get; set; }
+    }
+    public class DtoRequestIvaCompraDetails
+    {
+        public decimal Iva { get; set; }
+        public decimal Iva21 { get; set; }
+        public decimal Iva27 { get; set; }
+        public decimal Iva10 { get; set; }
+        public decimal ProductPrice { get; set; }
+        public int Quantity { get; set; }
     }
 }
