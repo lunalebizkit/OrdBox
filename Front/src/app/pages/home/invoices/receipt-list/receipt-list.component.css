@@ -17,7 +17,7 @@
 }
 
 .table {
-    height: 85vh;
+    height: 55vh;
     overflow-y: scroll;
     scroll-behavior: smooth;
     border-collapse: collapse;

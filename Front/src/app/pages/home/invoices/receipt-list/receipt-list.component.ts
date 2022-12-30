@@ -28,13 +28,14 @@ export class ReceiptListComponent implements OnInit {
   queryParams = {
     filter: '',
     page: 0,
-    pageSize: 20,
+    pageSize: 10,
   };
 
   receiptList: receiptModel[] = [];
 
   selectedIndex!: number;
   selectedReceipt: any;
+  index!: number;
 
   constructor(
     @Inject(LOCALE_ID) public locale: string,
@@ -43,14 +44,14 @@ export class ReceiptListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.getData(this.queryParams);
+    this.getData(this.queryParams); 
   }
 
   /*
    ** Catidad total de entidades
    */
 
-  totalItems!: number;
+  totalItems=0;
 
   /*
    ** Evento al presionar buscar o presionar enter
@@ -99,6 +100,11 @@ export class ReceiptListComponent implements OnInit {
     this.id = datos.id;
     this.openComponentReceiptView();
   }
+  onClick(datos: receiptModel, index: number): void {
+    this.index = index;
+    this.selectedIndex = index;
+    this.selectedReceipt = datos;
+  }
 
   openComponentReceiptView(): void {
     const drawerRefCustomer = this.drawerService.create<
@@ -113,5 +119,67 @@ export class ReceiptListComponent implements OnInit {
       },
       nzClosable: false,
     });
+  }
+  myNavegation(event: any) {
+    switch (event.key) {
+      case 'ArrowDown':
+        let nextCell =
+          this.receiptList.length > this.selectedIndex
+            ? ++this.selectedIndex
+            : this.receiptList.length;
+        if (this.receiptList[nextCell] !== undefined) {
+          this. selectedReceipt = this.receiptList[nextCell];
+          this.index = nextCell;
+          document.getElementById(nextCell.toString())?.focus();
+        }
+        break;
+      case 'ArrowUp':
+        let previousCell = this.selectedIndex > 0 ? --this.selectedIndex : 0;
+        if (this.receiptList[previousCell] !== undefined) {
+          this. selectedReceipt= this.receiptList[previousCell];
+          this.index = previousCell;
+          document.getElementById(previousCell.toString())?.focus();
+        }
+        break;
+    }
+  }
+
+  /*
+   ** Evento de scroll infinito
+   */
+
+  onScroll(event: any): void {
+    let scrollHeight = event.target.scrollHeight;
+    let scrolltop = event.target.scrollTop;
+    let client = event.target.clientHeight;
+    let ScrollPosition = Math.abs(
+      Math.round(scrollHeight - (scrolltop + client))
+    );
+    if (
+      ScrollPosition <= 5 &&
+      this.totalItems / this.queryParams.page > this.queryParams.page
+    ) {
+      let page = this.queryParams.page;
+      this.queryParams.page = this.queryParams.page + 1;
+      if (
+        this.totalItems === undefined ||
+        this.queryParams.page * this.queryParams.pageSize <= this.totalItems
+      ) {
+        this.service.getReceipt(this.queryParams).subscribe({
+          next: (r) => {
+            r.data.map((data: receiptModel) =>
+              this.receiptList.push(data)
+            );
+            this.loading = false;
+          },
+          error: () => {
+            this.loading = false;
+            this.receiptList= [];
+          },
+        });
+      } else {
+        this.queryParams.page = page;
+      }
+    }
   }
 }

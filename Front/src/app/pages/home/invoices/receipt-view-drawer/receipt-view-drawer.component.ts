@@ -27,6 +27,7 @@ export class ReceiptViewDrawerComponent
   extends BaseComponent
   implements OnInit
 {
+  
   @Input() set filter(value: number) {
     this.id = value;
   }
@@ -48,6 +49,7 @@ export class ReceiptViewDrawerComponent
   supplierAddress!: string;
   observation!: string;
   dateTime!: Date;
+  subTotal!: number;
   total!: number;
   ivaTotal!: number;
   type!: number;
@@ -69,28 +71,28 @@ export class ReceiptViewDrawerComponent
 
   ngOnInit(): void {
     if (this.id != null || this.id != undefined || this.id != 0) {
-      this.getInvoice(this.id);
+      this.getInvoice(this.id); 
     }
   }
   getInvoice(id: number): void {
     if (id != 0)
       this.service.getReceiptById(id).subscribe({
-        next: (r: receiptModel) => {
-          (this.type = r.type),
-            (this.supplierAddress = r.supplierAddress),
-            (this.supplierCuit = r.supplierCuit),
-            (this.supplierName = r.supplierName),
-            (this.observation = r.observation),
-            (this.receiptNumber = r.receiptNumber),
-            (this.ivaTotal = r.ivaTotal),
-            (this.total = r.total),
-            (this.userId = r.userId),
-            (this.dateTime = r.dateTime),
-            (this.concNoGravado = r.concNoGravado),
-            (this.percIngBrutos = r.percIngBrutos),
-            (this.percIva = r.percIva),
-            (this.receiptDetails = r.receiptDetails);
-          this.totalCalculate(r.receiptDetails);
+        next: (r) => {
+          this.type = r.type,
+          this.subTotal = r.total -  Number(this.subTotalCalculate(r.concNoGravado , r.percIva, r.percIngBrutos)),
+            this.supplierAddress = r.supplierAddress,
+            this.supplierCuit = r.supplierCuit,
+            this.supplierName = r.supplierName,
+            this.observation = r.observation,
+            this.receiptNumber = r.receiptNumber,
+            this.ivaTotal = r.ivaTotal,
+            this.total = r.total,
+            this.userId = r.userId,
+            this.dateTime = r.dateTime,
+            this.concNoGravado = r.concNoGravado,
+            this.percIngBrutos = r.percIngBrutos,
+            this.percIva = r.percIva,
+            this.receiptDetails = r.receiptDetails, 
           this.isLoading = false;
         },
         error: () => {
@@ -103,18 +105,10 @@ export class ReceiptViewDrawerComponent
     return eInvoiceType[id];
   }
 
-  totalCalculate(dato: receiptDetails[]): void {
-    this.total = 0;
-    try {
-      dato.forEach((detail) => {
-        this.total +=
-          detail.price * detail.quantity -
-          this.ivaCalculate(detail.price * detail.quantity, detail.iva);
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  }
+  subTotalCalculate( concNoGravado:number, percIngBrutos:number, percIva:number) {
+    return concNoGravado + percIngBrutos + percIva
+      };
+   
 
   ivaCalculate(data: number, iva: number): number {
     return (data * iva) / 100;
