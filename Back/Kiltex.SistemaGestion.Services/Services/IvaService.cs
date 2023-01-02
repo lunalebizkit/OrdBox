@@ -112,8 +112,6 @@ namespace Kiltex.SistemaGestion.Services.Services
 
 
             });
-
-            ;
         }
     }
 }
