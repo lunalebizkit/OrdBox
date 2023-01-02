@@ -4,17 +4,17 @@
       >Listado de Comprobantes de Venta</nz-page-header-title
     >
     <nz-page-header-extra>
-      <a routerLink="/home/invoices/invoices-sale/new">
-        <button
-          *authPermission="[permissions.CreateInvoice]"
-          nz-tooltip
-          nzTooltipTitle="Nuevo"
-          nz-button
-          nzType="primary"
-          nzShape="circle"
-        >
-          <i nz-icon nzType="plus" nzTheme="outline"></i></button
-      ></a>
+      <button
+        *authPermission="[permissions.CreateInvoice]"
+        nz-tooltip
+        nzTooltipTitle="Nuevo"
+        nz-button
+        nzType="primary"
+        nzShape="circle"
+        routerLink="/home/invoices/invoices-sale/new"
+      >
+        <i nz-icon nzType="plus" nzTheme="outline"></i>
+      </button>
     </nz-page-header-extra>
   </nz-page-header>
 
@@ -100,7 +100,7 @@
             <td>{{ data.customerCuit }}</td>
             <td>{{ data.customerName }}</td>
             <td [nzAlign]="'right'">
-              <b>{{ this.currencyFormat( data.total) }}</b>
+              <b>{{ this.currencyFormat(data.total) }}</b>
             </td>
             <td [nzAlign]="'center'">{{ this.getInvoiceType(data.type) }}</td>
             <td style="text-align: center">

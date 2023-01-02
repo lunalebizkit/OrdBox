@@ -101,6 +101,17 @@ export class PermissionService {
       permissions: [Permission.ListUpdatePrice, Permission.EditUpdatePrice],
     },
     //#endregion
+    //#region UpdatePrice
+    {
+      url: new RegExp('/home/periods'),
+      permissions: [
+        Permission.CreatePeriod,
+        Permission.GetPeriod,
+        Permission.DeletePeriod,
+        Permission.EditPeriod,
+      ],
+    },
+    //#endregion
   ];
 
   public hasPermission(url: string) {

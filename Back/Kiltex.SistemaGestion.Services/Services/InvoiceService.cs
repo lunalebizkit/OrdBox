@@ -50,7 +50,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                 if (String.IsNullOrEmpty(model.CustomerName) )
                 {
                     _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
-                    return Error<IdResponse<long>>(new OperationExceptions("000", "Datos incompletos")); ;
+                    return Error<IdResponse<long>>(new OperationExceptions("000", "Datos incompletos"));
                 }
                 return await AddOrUpdate(model, ct).ConfigureAwait(false);
             }
@@ -118,23 +118,23 @@ namespace Kiltex.SistemaGestion.Services.Services
 
                         productDetail= oldProduct;
                         productDetail.UpdateStock(- detail.Quantity);
+                        _contextSql.Products.Update(productDetail);
                     }
-
-                    _contextSql.Products.Update(productDetail);
+                    
                     await _contextSql.Invoices.AddAsync(invoiceModel, ct).ConfigureAwait(false);
-                    await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
+                   
                 }
-                
+                await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
                 transaction.Commit();
+                return Ok(new IdResponse<long>(invoiceModel.Id));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
-                throw;
+                return Error<IdResponse<long>>(new OperationExceptions(ErrorsCodes.C_999_ERROR_GENERICO, ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO)));
             }         
          
 
-            return Ok(new IdResponse<long>(invoiceModel.Id));
         }
 
     }

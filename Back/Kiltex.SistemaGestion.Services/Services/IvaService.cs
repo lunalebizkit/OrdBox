@@ -1,12 +1,15 @@
 ﻿using AutoMapper;
 using Kiltex.SistemaGestion.Domain;
+using Kiltex.SistemaGestion.Domain.Model;
 using Kiltex.SistemaGestion.SDK.Error;
 using Kiltex.SistemaGestion.Services.Common;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
+using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -18,120 +21,97 @@ namespace Kiltex.SistemaGestion.Services.Services
             base(logger, context, maper)
         { }
 
-        public async Task<OperationResponse<DtoRequestIvaVenta>> ListIvaVenta(DateTime from, DateTime to, CancellationToken ct = default)
+        public async Task<OperationResponse<DtoResponseIvaInvoice>> ListIvaVenta(DateTime from, DateTime to, CancellationToken ct = default)
         {
-            try
-            {
-                var query = _contextSql
-                                        .InvoiceDetails
-                                        .Include(p => p.Invoice)
-                                        .Where(x => x.Invoice.DateTime >= from && x.Invoice.DateTime <= to)
-                                        .AsNoTracking();
+            var query = _contextSql
+                                    .Invoices
+                                    .Include(p => p.InvoiceDetails)
+                                    .Where(x => x.DateTime >= from && x.DateTime <= to)
+                                    .AsNoTracking();
+              
+            var newDtoDetalleResumem = new List<DtoResponseIvaInvoices>();
 
-                if (query == null)
+            var resumen = new DtoResponseIvaInvoice();
+
+            foreach (var item in query)
+            {                
+                var newItem = _mapper.Map<DtoResponseIvaInvoices>(item);
+
+                resumen.PeriodTotal += newItem.Total;
+                newItem.ImporteNeto += newItem.Total - newItem.IvaTotal;
+                foreach (var item2 in item.InvoiceDetails)
                 {
-                    _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
-                    return Error<DtoRequestIvaVenta>(new OperationExceptions("000", "IVA VENTA INVALIDO"));
+                    newItem.Iva10 += ((decimal)item2.Iva == (decimal)10.5) ? (item2.Quantity * item2.Price * 10.5m) / 100.0m : 0;
+                    newItem.Iva21 += ((decimal)item2.Iva == (decimal)21) ? (item2.Quantity * item2.Price * 21.0m) / 100.0m : 0;
+                    newItem.Iva27 += ((decimal)item2.Iva == (decimal)27) ? (item2.Quantity * item2.Price * 27.0m) / 100.0m : 0;
+                 
+                    newItem.ImporteNetoIva10 += ((decimal)item2.Iva == (decimal)10.5) ? ((item2.Price * item2.Quantity) - (item2.Quantity * item2.Price * 10.5m) / 100.0m ) : 0;
+                    newItem.ImporteNetoIva21 += ((decimal)item2.Iva == (decimal)21) ? ((item2.Price * item2.Quantity) - (item2.Quantity * item2.Price * 21.0m) / 100.0m ) : 0;
+                    newItem.ImporteNetoIva27 += ((decimal)item2.Iva == (decimal)27) ? ((item2.Price * item2.Quantity) - (item2.Quantity * item2.Price * 27.0m) / 100.0m ) : 0;
                 }
 
-                var count = await query.CountAsync().ConfigureAwait(false);
 
-                var list = await query.OrderBy(p => p.Invoice.DateTime)
-                                      .ToListAsync()
-                                      .ConfigureAwait(false);
-
-                decimal totalAmount = 0;
-                foreach (var item in list)
-                {
-                    totalAmount += item.Invoice.Total;
-                }
-
-                return new OperationResponse<DtoRequestIvaVenta>(new DtoRequestIvaVenta
-                {
-                    InvoiceDetails = list.Select(x => new DtoRequestIvaVentaDetails
-                    {
-                        CustomerCuit = x.Invoice.CustomerCuit,
-                        CustomerName = x.Invoice.CustomerName,
-                        InvoiceNumber = x.Invoice.InvoiceNumber,
-                        Type = x.Invoice.Type,
-                        DateTime = x.Invoice.DateTime,
-                        Id = x.Invoice.Id,
-                        Iva = x.Iva,
-                        Iva10 = (x.Iva == (decimal)10.5) ? (((x.Price*x.Iva)/100) * x.Quantity) : 0 ,
-                        Iva21 = (x.Iva == 21) ? (((x.Price * x.Iva) / 100) * x.Quantity): 0,
-                        Iva27 = (x.Iva == 27) ? (((x.Price * x.Iva) / 100) * x.Quantity): 0,
-                        Total = x.Invoice.Total,
-                    }).ToList(),
-
-                    PeriodTotal = totalAmount
-                });
+                newDtoDetalleResumem.Add(newItem);
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
-                throw;
-            }
+            resumen.DtoResponseIvaInvoices = newDtoDetalleResumem;
+          
+            return new OperationResponse<DtoResponseIvaInvoice>(resumen);   
+
         }
-        public async Task<OperationResponse<DtoRequestIvaCompra>> ListIvaCompra(DateTime from, DateTime to, CancellationToken ct = default)
+        public async Task<OperationResponse<DtoRequestIvaPeriodCompra>> ListIvaCompra(DateTime from, DateTime to, CancellationToken ct = default)
         {
-            try
+            var query = _contextSql
+                                    .Receipts
+                                    .Include(p => p.ReceiptDetails)
+                                    .Where(x => x.DateTime >= from && x.DateTime <= to)
+                                    .AsNoTracking();
+            var count = await query.CountAsync().ConfigureAwait(false);
+
+            var list = await query.OrderBy(p => p.DateTime)
+                                  .ToListAsync()
+                                  .ConfigureAwait(false);
+            decimal? totalAmount = 0;
+            decimal? totalIva = 0;
+            foreach (var item in list)
             {
-                var query = _contextSql
-                                        .ReceiptDetails
-                                        .Include(p => p.Receipt)
-                                        .Where(x => x.Receipt.DateTime >= from && x.Receipt.DateTime <= to)
-                                        .AsNoTracking();
-                if (query == null)
-                {
-                    _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
-                    return Error<DtoRequestIvaCompra>(new OperationExceptions("000", "IVA COMPRA INVALIDO"));
-                }
-                var count = await query.CountAsync().ConfigureAwait(false);
+                totalAmount += item.Total;
 
-                var list = await query.OrderBy(p => p.Receipt.DateTime)
-                                      .ToListAsync()
-                                      .ConfigureAwait(false);
-                decimal total21 = 0;
-                decimal total10 = 0;
-                decimal total27 = 0;
-                decimal? totalAmount = 0;
-                foreach (var item in list)
+                foreach (var item2 in item.ReceiptDetails)
                 {
-                    switch (item.Iva)
-                    {
-                        case 21:
-                            total21 += ((item.Iva * item.Price) / 100);
-                            break;
-                        case 27:
-                            total27 += ((item.Iva * item.Price) / 100);
-                            break;
-                        case (decimal)10.5:
-                            total10 += ((item.Iva * item.Price) / 100);
-                            break;
-                    }
-                    totalAmount += item.Receipt.Total;
+                    totalIva += (((item2.Price * item2.Iva) / 100) * item2.Quantity);
                 }
+            }
 
-                return new OperationResponse<DtoRequestIvaCompra>(new DtoRequestIvaCompra
+            return new OperationResponse<DtoRequestIvaPeriodCompra>(new DtoRequestIvaPeriodCompra
+            {
+                PeriodTotal = totalAmount,
+                Receipts = list.Select(x => new DtoRequestIvaCompra
                 {
-                    ReceiptDetails = list.Select(x => new DtoRequestIvaCompraDetails
+                    ReceiptNumber = x.ReceiptNumber,
+                    SupplierName = x.SupplierName,
+                    SupplierAddress = x.SupplierAddress,
+                    SupplierCuit = x.SupplierCuit,
+                    ConcNoGravado = x.ConcNoGravado,
+                    PercIngBrutos = x.PercIngBrutos,
+                    PercIva = x.PercIva,
+                    Type = x.Type,
+                    DateTime = x.DateTime,
+                    Id = x.Id,
+                    Total = x.Total,
+                    ReceiptDetails = x.ReceiptDetails.Select(x => new DtoRequestIvaCompraDetails
                     {
-                        SupplierName = x.Receipt.SupplierName,
-                        ReceiptNumber = x.Receipt.ReceiptNumber,
-                        SupplierCuit = x.Receipt.SupplierCuit,
-                        SupplierAddress = x.Receipt.SupplierAdress,
-                        Type = x.Receipt.Type,
-                        DateTime = x.Receipt.DateTime,
-                        Id = x.Receipt.Id,
+                        ProductPrice = x.Price,
+                        Quantity = x.Quantity,
                         Iva = x.Iva,
-                        IvaPrice = ((x.Iva * x.Price) / 100),
-                        Total = x.Receipt.Total,
+                        Iva10 = (x.Iva == (decimal)10.5) ? (((x.Price * x.Iva) / 100) * x.Quantity) : 0,
+                        Iva21 = (x.Iva == 21) ? (((x.Price * x.Iva) / 100) * x.Quantity) : 0,
+                        Iva27 = (x.Iva == 27) ? (((x.Price * x.Iva) / 100) * x.Quantity) : 0,
                     }).ToList(),
-                    TotalIva10 = total10,
-                    TotalIva21 = total21,
-                    TotalIva27 = total27,
-                    PeriodTotal = totalAmount
-                });
+
+                }).ToList(),
+
+
+            });
 
                 ;
 
