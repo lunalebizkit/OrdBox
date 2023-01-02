@@ -1,0 +1,18 @@
+diff a/Back/Kiltex.SistemaGestion.Services/Services/ReceiptService.cs b/Back/Kiltex.SistemaGestion.Services/Services/ReceiptService.cs	(rejected hunks)
+@@ -137,15 +137,13 @@
+                 await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
+ 
+                 transaction.Commit();
++                return Ok(new IdResponse<long>(receiptModel.Id));
+             }
+             catch (Exception ex)
+             {
+                 _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
+                 throw;
+             }
+-
+-
+-            return Ok(new IdResponse<long>(receiptModel.Id));
+         }
+ 
+ 
