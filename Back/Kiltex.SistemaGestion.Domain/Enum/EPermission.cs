@@ -47,5 +47,12 @@ namespace Kiltex.SistemaGestion.Domain.Enum
         //Receipt
         GetReceipt = 30,
         CreateReceipt = 31,
+        //Iva
+        ListIva = 32,
+        //Period
+        GetPeriod = 33,
+        CreatePeriod = 34,
+        EditPeriod = 35,
+        DeletePeriod = 36
     }
 }

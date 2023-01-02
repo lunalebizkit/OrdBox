@@ -161,17 +161,17 @@
           </thead>
           <tbody class="small-text" >
             <tr  *ngFor="let data of periodListaVentas;">
-              <td>{{ this.formaterDate(data.dateTime)}}</td>
+            <td>{{ this.formaterDate(data.dateTime)}}</td>
             <td>{{data.id}}</td>
             <td>{{this.getInvoiceType(data.type)}}</td>
             <td>{{data.customerName}}</td>
             <td>{{data.customerCuit}}</td>          
-            <td>{{this.currencyFormat(data.total)}}</td>          
+             <td>{{this.currencyFormat( data.importeNeto )}}</td>          
             <td>{{this.currencyFormat(data.iva10)}}</td>          
             <td>{{this.currencyFormat(data.iva21)}}</td>          
-            <td>{{this.currencyFormat(data.iva27)}}</td>          
+            <td>{{this.currencyFormat(data.iva27)}}</td>     
             <td>{{this.currencyFormat(data.total)}}</td> 
-          </tr>
+          </tr> 
           </tbody>
         </nz-table>
 

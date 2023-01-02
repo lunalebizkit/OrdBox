@@ -39,4 +39,14 @@ export enum Permission {
   //UpdatePrice
   ListUpdatePrice = 28,
   EditUpdatePrice = 29,
+  //Receipt
+  GetReceipt = 30,
+  CreateReceipt = 31,
+  //IVA
+  ListIva = 32,
+  //Crear periodo
+  GetPeriod = 33,
+  CreatePeriod = 34,
+  EditPeriod = 35,
+  DeletePeriod = 36,
 }

@@ -34,6 +34,7 @@ import { ReceiptViewDrawerComponent } from './receipt-view-drawer/receipt-view-d
 
 @NgModule({
   imports: [
+    AppCommonModule,
     CommonModule,
     InvoicesRoutingMoudule,
     NzButtonModule,

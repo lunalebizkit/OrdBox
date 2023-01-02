@@ -18,6 +18,7 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { HttpAuthAddTokenInterceptor } from './common/auth/interceptors/auth.http.addtoken.interceptor';
 import { HttpAuth401ErrorInterceptor } from './common/auth/interceptors/auth.http.error401.interceptor';
+import { AppCommonModule } from './common/app.common.module';
 
 registerLocaleData(en);
 
@@ -26,6 +27,7 @@ registerLocaleData(en);
   imports: [
     BrowserModule,
     AppRoutingModule,
+    AppCommonModule,
     FormsModule,
     HttpClientModule,
     BrowserAnimationsModule,
