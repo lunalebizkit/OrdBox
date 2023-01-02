@@ -57,7 +57,7 @@
     <!-- Tabla -->
 
     <!--   <div > -->
-    <div class="table">
+    <div class="table"  (scroll)="onScroll($event)">
       <nz-table
         class="tabla"
         nzShowSizeChanger
@@ -67,6 +67,8 @@
         [nzLoading]="loading"
         [nzPaginationType]="'small'"
         nzShowPagination="false"
+        nzTableLayout="fixed"
+       
       >
         <thead>
           <tr>
@@ -85,9 +87,11 @@
             *ngFor="let data of receiptList; let i = index"
             class="small-text"
             tabindex="-1"
+            (keydown)="myNavegation($event)"
             [style.background-color]="
               data === selectedReceipt ? 'lightblue' : ''
             "
+            (click)="onClick(data, i)"
           >
             <td>{{ data.id }}</td>
             <td>{{ this.formaterDate(data.dateTime) }}</td>

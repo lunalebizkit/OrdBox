@@ -26,6 +26,7 @@ export class ReceiptViewDrawerComponent
   extends BaseComponent
   implements OnInit
 {
+  
   @Input() set filter(value: number) {
     this.id = value;
   }
@@ -47,8 +48,8 @@ export class ReceiptViewDrawerComponent
   supplierAddress!: string;
   observation!: string;
   dateTime!: Date;
+  subTotal!: number;
   total!: number;
-  subTotal!:number
   ivaTotal!: number;
   type!: number;
   concNoGravado!: number;
@@ -69,7 +70,7 @@ export class ReceiptViewDrawerComponent
 
   ngOnInit(): void {
     if (this.id != null || this.id != undefined || this.id != 0) {
-      this.getInvoice(this.id);
+      this.getInvoice(this.id); 
     }
   }
   getInvoice(id: number): void {
