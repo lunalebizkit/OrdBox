@@ -1,11 +1,7 @@
-import { InvoiceDetails } from "../../invoices/model/invoice.model";
 
-export interface InvoiceIvaReportModel{
-    totalIva21: number,
-    totalIva10:number,
-    totalIva27:number,
+export interface InvoiceIvaReportModel{  
     periodTotal:number,
-    invoiceDetails: InvoiceIvaReportDetailsModel[]
+    dtoResponseIvaInvoices: InvoiceIvaReportDetailsModel[]
 }
 
 export interface InvoiceIvaReportDetailsModel{
@@ -14,11 +10,15 @@ export interface InvoiceIvaReportDetailsModel{
     customerName: string,
     customerCuit: string,
     dateTime: Date,
-    total: number
-    iva: number,
+    total: number,   
+    type: number,  
     iva10:number,
     iva21:number,
     iva27:number,
-    type: number
+    ivaTotal:number,
+    importeNeto: number,
+    importeNetoIva21: number,
+    importeNetoIva10: number,
+    importeNetoIva27: number,
 }
 
