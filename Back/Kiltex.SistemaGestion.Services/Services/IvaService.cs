@@ -112,14 +112,6 @@ namespace Kiltex.SistemaGestion.Services.Services
 
 
             });
-
-                ;
-
-            } catch(Exception ex)
-            {
-                _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
-                throw;
-            }
         }
     }
 }

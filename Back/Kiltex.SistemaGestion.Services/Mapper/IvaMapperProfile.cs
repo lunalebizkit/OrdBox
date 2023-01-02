@@ -10,7 +10,6 @@ namespace Kiltex.SistemaGestion.Services.Mapper
         {
             CreateMap<Invoice, DtoResponseIvaInvoice>()
                 .ForMember( o => o.PeriodTotal, x => x.MapFrom(y => y.Total))
-                //.ForMember( o => o.DtoResponseIvaInvoices, x => x.MapFrom(y => y.InvoiceDetails.ToList()))
                 .AfterMap((o, d, c) =>
                 {
                     d.DtoResponseIvaInvoices = c.Mapper.Map<List<DtoResponseIvaInvoices>>(o.InvoiceDetails)
