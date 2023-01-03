@@ -17,6 +17,7 @@ import { CommonModule } from '@angular/common';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import{ InvoiceIvaReportComponent } from './invoice-iva.report/invoice-iva.report.component';
 import { IvaReportRoutingModule } from './iva-report.routing.module';
+import { ReceiptIvaReportComponent } from './receipt-iva.report/receipt-iva.report.component';
 
 @NgModule({
   imports: [ CommonModule,
@@ -38,7 +39,8 @@ import { IvaReportRoutingModule } from './iva-report.routing.module';
     NzToolTipModule
   ],
   declarations: [
-    InvoiceIvaReportComponent 
+    InvoiceIvaReportComponent,
+    ReceiptIvaReportComponent 
 
   ]
 })
