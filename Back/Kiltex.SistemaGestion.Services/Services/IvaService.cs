@@ -95,6 +95,5 @@ namespace Kiltex.SistemaGestion.Services.Services
             return new OperationResponse<DtoResponseIvaReceipt>(resumen);
 
         }
-
     }
 }
