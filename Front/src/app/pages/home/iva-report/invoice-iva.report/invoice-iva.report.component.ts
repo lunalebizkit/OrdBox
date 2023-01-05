@@ -9,6 +9,10 @@ import { InvoiceIvaReportDetailsModel, InvoiceIvaReportModel } from '../model/in
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HeaderOperationsButtonsComponent } from 'src/app/common/components/headers/buttons.oparations.header.component';
 import { eInvoiceType } from '../../invoices/model/invoice-type.Enum';
+import { differenceInCalendarDays } from 'date-fns';
+import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
+import { DisabledTimeFn, DisabledTimePartial } from 'ng-zorro-antd/date-picker';
+
 
 
 @Component({
@@ -29,7 +33,7 @@ export class InvoiceIvaReportComponent extends BaseComponent implements OnInit {
     newEndDate: any;
     formReport!: FormGroup;
    
-
+    today = new Date();
     TotalIva!: number;
     TotalNetoGravado!:number;
    
@@ -229,6 +233,9 @@ export class InvoiceIvaReportComponent extends BaseComponent implements OnInit {
             })              
           
       } 
+      disabledDate = (current: Date): boolean =>
+      // Can not select days before today and today
+      differenceInCalendarDays(current, this.today) > 0;
 
       formaterDate(date: string | number | Date): string {
         return formatDate(date, 'MM/dd/YYYY', this.locale);

@@ -18,6 +18,7 @@ import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import{ InvoiceIvaReportComponent } from './invoice-iva.report/invoice-iva.report.component';
 import { IvaReportRoutingModule } from './iva-report.routing.module';
 import { ReceiptIvaReportComponent } from './receipt-iva.report/receipt-iva.report.component';
+import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 
 @NgModule({
   imports: [ CommonModule,
@@ -36,7 +37,8 @@ import { ReceiptIvaReportComponent } from './receipt-iva.report/receipt-iva.repo
     NzSpaceModule,
     NzDividerModule,
     InfiniteScrollModule,
-    NzToolTipModule
+    NzToolTipModule,
+    NzDatePickerModule
   ],
   declarations: [
     InvoiceIvaReportComponent,

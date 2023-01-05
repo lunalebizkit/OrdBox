@@ -5,10 +5,10 @@ import { BaseComponent } from 'src/app/common/components/base/base.component';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { InvoiceIvaReportService } from '../iva-report.service';
-import { InvoiceIvaReportDetailsModel, InvoiceIvaReportModel } from '../model/invoice-iva-report';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HeaderOperationsButtonsComponent } from 'src/app/common/components/headers/buttons.oparations.header.component';
 import { eInvoiceType } from '../../invoices/model/invoice-type.Enum';
+import { ReceiptIvaReportDetailsModel, ReceiptIvaReportModel } from '../model/receipt-iva.report';
 
 
 @Component({
@@ -19,11 +19,39 @@ import { eInvoiceType } from '../../invoices/model/invoice-type.Enum';
 
  
   export class ReceiptIvaReportComponent extends BaseComponent implements OnInit {
+    periodListCompra: ReceiptIvaReportDetailsModel[]=[] ;  
+    periodIvaList!: ReceiptIvaReportModel ;   
     startDate: any;
     endDate: any;
     newInitDate: any;
     newEndDate: any;
     formReport: FormGroup;
+    loading!: boolean;
+    PeriodTotal!:number;
+    periodIvaListTypeA: any;
+    periodIvaListTypeB: any;
+    periodIvaListTypeC: any;
+    
+    totalIvaType1!: number;
+    totalIvaType2!: number;
+    totalIvaType3!: number;
+    totalNetoGravadoType1!: number;
+    totalNetoGravadoType2!: number;
+    totalNetoGravadoType3!: number;
+    totalType1!:number;
+    totalType2!:number;
+    totalType3!:number;
+
+
+    queryData = {
+      filter: '',
+      page: 0,
+      pageSize: 10,
+    }
+  TotalIva!: number;
+  TotalNetoGravado!: number;
+
+
     constructor(
       private service: InvoiceIvaReportService,
       notificacionService: NzNotificationService,
@@ -48,9 +76,59 @@ import { eInvoiceType } from '../../invoices/model/invoice-type.Enum';
         if ((this.initPeriod != null) && (this.endPeriod != null)){
           this.startDate = this.formaterDateOriginal(Date.parse(this.initPeriod));
           this.endDate = this.formaterDateOriginal(Date.parse(this.endPeriod));
-        /*   this.getIvaVenta(this.initPeriod, this.endPeriod); */
-              
+         this.getIvaCompra(this.initPeriod, this.endPeriod);  
         } 
+    }
+    getIvaCompra(initPeriod:Date,endPeriod:Date): void {      
+    this.service.getListIvaCompra(initPeriod,endPeriod).subscribe({
+      next: (r) => {    
+        this.periodIvaList = r;   
+        this.periodListCompra=r.dtoResponseIvaReceipts;     
+        this.PeriodTotal= r.periodTotal;
+        this.loading = false;  
+        this.getReceipt() 
+      },
+      error: () => {
+        this.loading = false;           
+        
+      },
+    });
+  }
+  getReceiptType(id: number) {
+    return eInvoiceType[id];
+  }
+    getReceipt(){
+     this.totalIvaType1 = 0
+     this.totalNetoGravadoType1 =0
+     this.totalType1 =0
+     this.totalIvaType2 =0
+    this.totalNetoGravadoType2=0 
+    this.totalType2 =0
+    this.totalIvaType3 =0
+    this.totalNetoGravadoType3=0 
+    this.totalType3 =0
+
+      this.periodListCompra.forEach(data =>{
+        switch (data.type){
+          case eInvoiceType.A:   
+            this.totalIvaType1 += (Number(data.ivaTotal))
+            this.totalNetoGravadoType1 += (Number(data.importeNeto))
+            this.totalType1 += data.total
+            break;
+            case eInvoiceType.B:
+              this.periodIvaListTypeB = data; 
+              this.totalIvaType2 += (Number(data.ivaTotal))
+              this.totalNetoGravadoType2 += (Number(data.importeNeto))
+              this.totalType2 += (Number(data.total)) 
+              break;   
+              default:
+                this.periodIvaListTypeC = data
+                this.totalIvaType3 += (Number(data.ivaTotal))
+                this.totalNetoGravadoType3 += (Number(data.importeNeto))
+                this.totalType3 += (Number(data.total)) 
+        }
+    
+      })
     }
 
     formaterDate(date: string | number | Date): string {
@@ -71,7 +149,7 @@ import { eInvoiceType } from '../../invoices/model/invoice-type.Enum';
        this.newEndDate = this.formaterDate(fecha);        
     }
 
-   getNewIvaVenta(inicio: any, fin :any){
-  
+   getNewIvaCompra(inicio: any, fin :any){
+    this.getIvaCompra(inicio, fin);
    }
   }

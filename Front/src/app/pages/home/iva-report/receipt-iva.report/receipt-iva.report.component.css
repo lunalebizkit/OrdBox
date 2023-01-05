@@ -14,8 +14,8 @@
   font-size: 11px; 
   }
   .table{
-    height:85vh;
-    overflow-y: scroll;
+    /* height:85vh; */
+   /*  overflow-y: scroll; */
     scroll-behavior: smooth;
     border-collapse: collapse;
   } 

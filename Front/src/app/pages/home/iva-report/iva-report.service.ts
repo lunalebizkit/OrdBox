@@ -17,4 +17,8 @@ export class InvoiceIvaReportService {
       return this.api.get(`Iva/listIvaVenta?from=${initPeriod}&to=${endPeriod}`, false)
     }
 
+    public getListIvaCompra(initPeriod: any,endPeriod:any): Observable<any> {
+      return this.api.get(`Iva/listIvaCompra?from=${initPeriod}&to=${endPeriod}`, false)
+    }
+
    }

@@ -48,6 +48,7 @@
               nzSize="small"
               nzType="primary"
               style="margin-left: 40px; margin-top:5px "
+              (click)="getNewIvaCompra(startDate, endDate)"
               
               >
               <i nz-icon nzType="search" nzTheme="outline"></i>Buscar
@@ -58,123 +59,270 @@
         </nz-collapse-panel>
       </nz-collapse>
     </form>
-   <!--  <nz-collapse>
-      <nz-collapse-panel nzHeader="Resumen" [nzActive]="true" [nzShowArrow]="true">
-        <div>
-          <nz-table [nzBordered]="true" [nzData]="periodListaVentas"  [nzSize]="'small'" nzShowPagination="false" style="overflow: auto">
-            <thead>
-              <tr>
-                <th>Resumen</th>
-                <th style="background-color: lightblue;">Neto Grabado</th>
-                <th style="background-color: lightblue;">Iva</th>
-                <th style="background-color: lightblue;">Total</th>
-              </tr>
-  
-            </thead>
-            <tbody class="small-text">
-              <tr style="background-color:aquamarine;">
-                <td>Responsable Inscripto Iva 10,5%</td>
-                <td>{{ this.currencyFormat(iva10Type1NetoGravado || null)}}</td>
-                <td>{{this.currencyFormat(iva10Type1 || null)}}</td>
-                <td>{{ this.currencyFormat(iva10Type1Total || null) }}</td>
-              </tr>
-              <tr style="background-color:aquamarine;">
-                <td>Responsable Inscripto Iva 21%</td>
-                <td>{{ this.currencyFormat(iva21Type1NetoGravado || null) }}</td>
-                <td>{{this.currencyFormat(iva21Type1 || null)}}</td>
-                <td> {{ this.currencyFormat(iva21Type1Total || null)}}</td>
-              </tr>
-              <tr style="background-color:aquamarine;">
-                <td>Responsable Inscripto Iva 27%</td>
-                <td>{{ this.currencyFormat(iva27Type1NetoGravado || null)}}</td>
-                <td>{{this.currencyFormat(iva27Type1 || null)}}</td>
-                <td>{{ this.currencyFormat(iva27Type1Total || null)}}</td>
-              </tr>
-  
-              <tr style="background-color:lightskyblue;">
-                <td>Monotributistas Iva 10,5%</td>
-                <td>{{ this.currencyFormat(iva10Type2NetoGravado || null)}}</td>
-                <td>{{this.currencyFormat(iva10Type2 || null)}}</td>
-                <td>{{ this.currencyFormat(iva10Type2Total || null )}}</td>
-              </tr>
-              <tr style="background-color:lightskyblue;">
-                <td> Monotributistas Iva 21%</td>
-                <td>{{ this.currencyFormat(iva21Type2NetoGravado || null) }}</td>
-                <td>{{this.currencyFormat(iva21Type2 || null)}}</td>
-                <td> {{ this.currencyFormat(iva21Type2Total || null) }}</td>
-              </tr>
-              <tr style="background-color:lightskyblue;">
-                <td>Monotributistas Iva 27%</td>
-                <td>{{this.currencyFormat(iva27Type2NetoGravado || null)}}</td>
-                <td>{{this.currencyFormat(iva27Type2 || null)}}</td>
-                <td>{{ this.currencyFormat(iva27Type2Total || null)}}</td>
-              </tr>
-              <tr style="background-color: lightpink;">
-                <td>Consumidor Final Iva 10,5%</td>
-                <td>{{ this.currencyFormat(iva10Type3NetoGravado || null)}}</td>
-                <td>{{this.currencyFormat(iva10Type3 || null)}}</td>
-                <td>{{ this.currencyFormat(iva10Type3Total || null) }}</td>
-              </tr>
-              <tr style="background-color: lightpink;">
-                <td> Consumidor Final Iva 21%</td>
-                <td>{{ this.currencyFormat(iva21Type3NetoGravado || null )}}</td>
-                <td>{{this.currencyFormat(iva21Type3 || null)}}</td>
-                <td> {{this.currencyFormat(iva21Type3Total || null )}}</td>
-              </tr>
-              <tr style="background-color: lightpink;">
-                <td>Consumidor Final Iva 27%</td>
-                <td>{{ this.currencyFormat(iva27Type3NetoGravado || null) }}</td>
-                <td>{{this.currencyFormat(iva27Type3 || null)}}</td>
-                <td>{{ this.currencyFormat(iva27Type3Total || null)}}</td>
-              </tr>
-              <tr style="background-color: lightcoral; font-weight:bold;">
-                <td>Total</td>
-                <td>{{this.currencyFormat(TotalNetoGravado || null)}}</td>
-                <td>{{this.currencyFormat(TotalIva || null)}}</td>
-                <td>{{this.currencyFormat(PeriodTotal || null)}}</td>
-               
-              </tr>
-            </tbody>
-          </nz-table>
-  
-        </div>
-      </nz-collapse-panel>
-    </nz-collapse> -->
     <nz-collapse>
-      <nz-collapse-panel nzHeader="Datos de IVA Compra" [nzActive]="true" [nzShowArrow]="true">
-        <nz-content>
-          <nz-table [nzBordered]="true" [nzSize]="'small'" nzShowPagination="false" style="overflow: auto"
-           >
+      <nz-collapse-panel nzHeader="Facturas tipo A" [nzActive]="true" [nzShowArrow]="true">
+        <nz-content class="table">
+          <nz-table class="tabla" [nzBordered]="true" [nzSize]="'small'" nzShowPagination="false" style="overflow: auto"
+          [nzData] = "periodListCompra" >
             <thead>
-              <tr>
+              <tr >
                 <th style="background-color:lightgrey;">Fecha</th>
                 <th style="background-color: lightgrey;">N° Factura</th>
                 <th style="background-color: lightgrey;">Tipo</th>
-                <th style="background-color: lightgrey;">Cliente</th>
+                <th style="background-color: lightgrey;">Proveedor</th>
                 <th style="background-color: lightgrey;">CUIT/CUIL</th>
                 <th style="background-color: lightblue;">Imp.Neto</th>
-                <th style="background-color: lightblue;">IVA 10,5 %</th>
-                <th style="background-color: lightblue;">IVA 21 %</th>
-                <th style="background-color: lightblue;">IVA 27 %</th>
+                <th style="background-color: lightblue;">IVA 10,5%</th>
+                <th style="background-color: lightblue;">IVA 21%</th>
+                <th style="background-color: lightblue;">IVA 27%</th>
+                <th style="background-color: lightblue;">Percepción Iva</th>
+                <th style="background-color: lightblue;">Percepción IB</th>
+                <th style="background-color: lightblue;">Conceptos No Gravados</th>
                 <th style="background-color: lightblue;">Total</th>
               </tr>
             </thead>
             <tbody class="small-text">
-              <tr >
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>          
-               <td></td>          
-              <td></td>          
-              <td></td>          
-              <td></td>     
-              <td></td> 
-            </tr> 
+              <ng-container *ngFor="let data of periodListCompra;">
+                <tr *ngIf="data.type == 1">
+                  <td>{{this.formaterDate(data.dateTime)}}</td>
+                  <td>{{data.invoiceNumber}}</td>
+                  <td>{{this.getReceiptType(data.type)}}</td>
+                  <td>{{data.supplierName}}</td>
+                  <td>{{data.supplierCuit}}</td>          
+                   <td>{{this.currencyFormat(data.importeNeto)}}</td>          
+                  <td>{{this.currencyFormat(data.iva10)}}</td>          
+                  <td>{{this.currencyFormat(data.iva21)}}</td>          
+                  <td>{{this.currencyFormat(data.iva27)}}</td>  
+                  <td></td>
+                  <td></td>
+                  <td></td>   
+                  <td>{{this.currencyFormat(data.total)}}</td> 
+                </tr> 
+              </ng-container>             
             </tbody>
-          </nz-table>
+              <!-- <tfoot style="background-color: #fafafa;" > -->
+                <tr>
+                  <td colspan="4" [nzAlign]="'right'">
+                    <b>Totales</b
+                    >
+                  </td>
   
+                  <td colspan="2" [nzAlign]="'right'">
+                    <b style="color: red" >{{
+                      this.currencyFormat( this.totalNetoGravadoType1)
+                    }}</b>
+                  </td>
+  
+                  <td colspan="1" [nzAlign]="'right'">
+                    <b style="color: red">{{ this.currencyFormat(this.totalIvaType1) }}</b>
+                  </td>
+  
+                  <td colspan="1" [nzAlign]="'right'">
+                   <b style="color: red">{{ this.currencyFormat(this.totalIvaType1) }}</b>
+                  </td>
+  
+                  <td colspan="1" [nzAlign]="'right'">
+                   <b style="color: red">{{ this.currencyFormat(this.totalIvaType1) }}</b>
+                  </td>
+  
+                  <td colspan="1" [nzAlign]="'right'">
+                   <b style="color: red">{{ this.currencyFormat(100) }}</b>
+                  </td>
+                  
+                  <td colspan="0" [nzAlign]="'right'" >
+                    <b style="color: red">{{ this.currencyFormat(100) }}</b>
+                  </td>
+  
+                  <td colspan="1" [nzAlign]="'right'">
+                    <b style="color: red">
+                    {{ this.currencyFormat(100) }}</b>
+                  </td>
+  
+                  <td colspan="1" [nzAlign]="'right'">
+                  <b style="color: red"> {{ this.currencyFormat(this.totalType2) }}</b>
+                  </td>
+  
+                </tr>
+            <!--   </tfoot> -->
+          </nz-table> 
+        </nz-content>
+      </nz-collapse-panel>
+    </nz-collapse>
+    <nz-collapse>
+      <nz-collapse-panel nzHeader="Facturas tipo B" [nzActive]="true" [nzShowArrow]="true">
+        <nz-content class="table">
+          <nz-table class="tabla" [nzBordered]="true" [nzSize]="'small'" nzShowPagination="false" style="overflow: auto"
+          [nzData] = "periodListCompra" nzTableLayout="fixed">
+            <thead>
+              <tr >
+                <th nzEllipsis nzWidth="75px"  style="background-color:lightgrey;">Fecha</th>
+                <th nzEllipsis nzWidth="80px" style="background-color: lightgrey;">N° Factura</th>
+                <th nzEllipsis nzWidth="45px" style="background-color: lightgrey;">Tipo</th>
+                <th nzEllipsis nzWidth="90px"style="background-color: lightgrey;">Razón Social</th>
+                <th nzEllipsis nzWidth="95px" style="background-color: lightgrey;">CUIT/CUIL</th>
+                <th nzEllipsis nzWidth="100px" style="background-color: lightblue;text-align: right;">Imp.Neto</th>
+                <th nzEllipsis nzWidth="100px" style="background-color: lightblue;text-align: right;">IVA 10,5%</th>
+                <th nzEllipsis nzWidth="100px" style="background-color: lightblue;text-align: right;">IVA 21%</th>
+                <th nzEllipsis nzWidth="100px" style="background-color: lightblue;text-align: right;">IVA 27%</th>
+                <th nzEllipsis nzWidth="50px" style="background-color: lightblue;text-align: right;">Perc Iva</th>
+                <th nzEllipsis nzWidth="50px" style="background-color: lightblue;text-align: right;">Perc IB</th>
+                <th nzEllipsis nzWidth="50px" style="background-color: lightblue;text-align: right;">Conc No Gravados</th>
+                <th nzEllipsis nzWidth="100px" style="background-color: lightblue;text-align: right;">Total</th>
+              </tr>
+            </thead>
+            <tbody class="small-text">
+              <ng-container *ngFor="let data of periodListCompra;">
+              <tr *ngIf="data.type == 2">
+              <td>{{this.formaterDate(data.dateTime)}}</td>
+              <td>{{data.invoiceNumber}}</td>
+              <td >{{this.getReceiptType(data.type)}}</td>
+              <td nzEllipsis>{{data.supplierName}}</td>
+              <td>{{data.supplierCuit}}</td>          
+              <td style="text-align: right;">{{this.currencyFormat(data.importeNeto)}}</td>          
+              <td style="text-align: right;">{{this.currencyFormat(data.iva10)}}</td>          
+              <td style="text-align: right;">{{this.currencyFormat(data.iva21)}}</td>          
+              <td style="text-align: right;">{{this.currencyFormat(data.iva27)}}</td> 
+              <td></td>
+              <td></td>
+              <td></td>  
+              <td style="text-align: right;">{{this.currencyFormat(data.total)}}</td> 
+            </tr> 
+            </ng-container>
+            </tbody>
+            <!-- <tfoot style="background-color: #fafafa;" > -->
+              <tr>
+                <td colspan="4" [nzAlign]="'right'">
+                  <b>Totales</b
+                  >
+                </td>
+
+                <td colspan="2" [nzAlign]="'right'">
+                  <b style="color: red" >{{
+                    this.currencyFormat( this.totalNetoGravadoType2)
+                  }}</b>
+                </td>
+
+                <td colspan="1" [nzAlign]="'right'">
+                  <b style="color: red">{{ this.currencyFormat(this.totalIvaType2) }}</b>
+                </td>
+
+                <td colspan="1" [nzAlign]="'right'">
+                 <b style="color: red">{{ this.currencyFormat(this.totalIvaType2) }}</b>
+                </td>
+
+                <td colspan="1" [nzAlign]="'right'">
+                 <b style="color: red">{{ this.currencyFormat(this.totalIvaType2) }}</b>
+                </td>
+
+                <td colspan="1" [nzAlign]="'right'">
+                 <b style="color: red">{{ this.currencyFormat(100) }}</b>
+                </td>
+                
+                <td colspan="0" [nzAlign]="'right'" >
+                  <b style="color: red">{{ this.currencyFormat(100) }}</b>
+                </td>
+
+                <td colspan="1" [nzAlign]="'right'">
+                  <b style="color: red">
+                  {{ this.currencyFormat(100) }}</b>
+                </td>
+
+                <td colspan="1" [nzAlign]="'right'">
+                <b style="color: red"> {{ this.currencyFormat(this.totalType2) }}</b>
+                </td>
+
+              </tr>
+          <!--   </tfoot> -->
+          </nz-table> 
+        </nz-content>
+      </nz-collapse-panel>
+    </nz-collapse>
+    <nz-collapse>
+      <nz-collapse-panel nzHeader="Facturas tipo C" [nzActive]="true" [nzShowArrow]="true">
+        <nz-content class="table">
+          <nz-table class="tabla" [nzBordered]="true" [nzSize]="'small'" nzShowPagination="false" style="overflow: auto"
+          [nzData] = "periodListCompra" >
+            <thead>
+              <tr >
+                <th style="background-color:lightgrey;">Fecha</th>
+                <th style="background-color: lightgrey;">N° Factura</th>
+                <th style="background-color: lightgrey;">Tipo</th>
+                <th style="background-color: lightgrey;">Proveedor</th>
+                <th style="background-color: lightgrey;">CUIT/CUIL</th>
+                <th style="background-color: lightblue;">Imp.Neto</th>
+                <th nzWidth="100px" style="background-color: lightblue;">IVA 10,5%</th>
+                <th nzWidth="100px" style="background-color: lightblue;">IVA 21%</th>
+                <th nzWidth="100px" style="background-color: lightblue;">IVA 27%</th>
+                <th nzWidth="150px" style="background-color: lightblue;">Percepción Iva</th>
+                <th nzWidth="150px" style="background-color: lightblue;">Percepción IB</th>
+                <th nzWidth="150px" style="background-color: lightblue;">Conceptos No Gravados</th>
+                <th nzWidth="150px" style="background-color: lightblue;">Total</th>
+              </tr>
+            </thead>
+            <tbody class="small-text">
+              <ng-container *ngFor="let data of periodListCompra;">
+              <tr *ngIf="data.type == 3">
+              <td>{{this.formaterDate(data.dateTime)}}</td>
+              <td>{{data.invoiceNumber}}</td>
+              <td >{{this.getReceiptType(data.type)}}</td>
+              <td>{{data.supplierName}}</td>
+              <td>{{data.supplierCuit}}</td>          
+               <td>{{this.currencyFormat(data.importeNeto)}}</td>          
+              <td>{{this.currencyFormat(data.iva10)}}</td>          
+              <td>{{this.currencyFormat(data.iva21)}}</td>          
+              <td>{{this.currencyFormat(data.iva27)}}</td>  
+              <td></td>
+              <td></td>
+              <td></td>   
+              <td>{{this.currencyFormat(data.total)}}</td> 
+            </tr> 
+            </ng-container>
+            </tbody>
+              <!-- <tfoot style="background-color: #fafafa;" > -->
+                <tr>
+                  <td colspan="4" [nzAlign]="'right'">
+                    <b>Totales</b
+                    >
+                  </td>
+  
+                  <td colspan="2" [nzAlign]="'right'">
+                    <b style="color: red" >{{
+                      this.currencyFormat( this.totalNetoGravadoType2)
+                    }}</b>
+                  </td>
+  
+                  <td colspan="1" [nzAlign]="'right'">
+                    <b style="color: red">{{ this.currencyFormat(this.totalIvaType2) }}</b>
+                  </td>
+  
+                  <td colspan="1" [nzAlign]="'right'">
+                   <b style="color: red">{{ this.currencyFormat(this.totalIvaType2) }}</b>
+                  </td>
+  
+                  <td colspan="1" [nzAlign]="'right'">
+                   <b style="color: red">{{ this.currencyFormat(this.totalIvaType2) }}</b>
+                  </td>
+  
+                  <td colspan="1" [nzAlign]="'right'">
+                   <b style="color: red">{{ this.currencyFormat(100) }}</b>
+                  </td>
+                  
+                  <td colspan="0" [nzAlign]="'right'" >
+                    <b style="color: red">{{ this.currencyFormat(100) }}</b>
+                  </td>
+  
+                  <td colspan="1" [nzAlign]="'right'">
+                    <b style="color: red">
+                    {{ this.currencyFormat(100) }}</b>
+                  </td>
+  
+                  <td colspan="1" [nzAlign]="'right'">
+                  <b style="color: red"> {{ this.currencyFormat(this.totalType2) }}</b>
+                  </td>
+  
+                </tr>
+            <!--   </tfoot> -->
+          </nz-table> 
         </nz-content>
       </nz-collapse-panel>
     </nz-collapse>
