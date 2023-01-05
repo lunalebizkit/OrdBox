@@ -31,7 +31,9 @@ namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse
         public decimal ImporteNetoIva27 { get; set; }
         public decimal ImporteNetoIva10 { get; set; }
         public decimal ImporteNeto { get; set; }
-
+        public decimal ConcNoGravado { get; set; }
+        public decimal PercIva { get; set; }
+        public decimal PercIngBrutos { get; set; }
         public decimal IvaTotal { get; set; }
     }
 }
