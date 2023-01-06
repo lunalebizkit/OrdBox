@@ -64,7 +64,7 @@
           <th nzEllipsis nzWidth="200px">Fin período</th>
           <th nzEllipsis nzWidth="150px">Estado</th>
           <th nzEllipsis nzWidth="100px">Acción</th>
-          <th nzEllipsis nzWidth="150px" colspan="2">Reportes</th>
+          <th nzEllipsis nzWidth="250px" [nzAlign]="'center'">Reportes</th>
         </tr>
       </thead>
       <tbody>
@@ -122,13 +122,13 @@
           </td>
           <ng-container>
             <td style="text-align: center">
-              <a>
+              <!-- <a> -->
                 <button
                   nz-button
                   nzType="primary"
                   nzSize="small"
-                  style="background-color: rgb(2, 118, 2); font-size: small"
-                  routerLink="/home/IvaVenta/ivaCompra"
+                  style="background-color: rgb(2, 145, 2); font-size:small; border-color: rgb(2, 145, 2);margin-right: 25px"
+                  routerLink="/home/iva/ivaCompra"
                   [queryParams]="{
                     from: this.formaterDate(period.initPeriod),
                     to: this.formaterDate(period.endPeriod)
@@ -136,15 +136,15 @@
                 >
                   Iva Compra
                 </button>
-              </a>
-            </td>
-            <td style="text-align: center">
+           <!--    </a> -->
+           <!--  </td>
+            <td style="text-align: center"> -->
               <button
                 nz-button
                 nzSize="small"
                 nzType="primary"
-                style="font-size: small"
-                routerLink="/home/IvaVenta"
+                style="font-size:small"
+                routerLink="/home/iva/ivaVenta"
                 [queryParams]="{
                   from: this.formaterDate(period.initPeriod),
                   to: this.formaterDate(period.endPeriod)
