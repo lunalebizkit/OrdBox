@@ -10,9 +10,11 @@
   [iconTitle]="'container'"
 >
 </app-header-op-buttons>
-<nz-collapse>
-  <nz-collapse-panel nzHeader="Datos Comprobante" [nzActive]="true">
-    <nz-descriptions nzSize="small" [nzColumn]="2">
+<nz-collapse class="{{this.tipo}}">
+
+  <nz-collapse-panel nzHeader="Datos Comprobante" [nzActive]="true" >
+
+    <nz-descriptions nzSize="small" [nzColumn]="2" >
       <nz-descriptions-item nzTitle="Tipo" [nzSpan]="1">
         <nz-page-header-tags>
           <nz-tag [nzColor]="'blue'">{{ this.invoiceType(type) }}</nz-tag>
@@ -41,9 +43,10 @@
     nzHeader="Detalle Comprobante"
     [nzActive]="true"
     [nzShowArrow]="true"
+    class="{{this.tipo}}"
   >
-    <nz-content>
-      <nz-table [nzBordered]="true" nzTemplateMode [nzSize]="'small'">
+    <nz-content >
+      <nz-table [nzBordered]="true" nzTemplateMode [nzSize]="'small'" >
         <thead>
           <tr>
             <th>Código</th>
@@ -68,15 +71,16 @@
             <td>{{ data.iva }}</td>
           </tr>
         </tbody>
-        <tfoot style="background-color: #fafafa">
+        <tfoot class="{{this.tipo}}">
           <tr>
-            <td *ngIf="type == 1; else elseBlock">
+            <td></td>
+            <td [colSpan]="2" *ngIf="type == 1; else elseBlock">
               <b>Iva </b>
               <span style="color: blue"
                 >{{ this.currencyFormat(ivaTotal) }}
               </span>
             </td>
-            <td *ngIf="type == 1; else elseBlock">
+            <td *ngIf="type == 1; else elseBlock" [colSpan]="2">
               <b>SubTotal </b>
               <span style="color: blue"
                 >{{ this.currencyFormat(subTotal) }}
@@ -89,7 +93,7 @@
               </span>
             </td>
             <ng-template #elseBlock>
-              <td ></td>
+              <td [colSpan]="2"></td>
             </ng-template>
           </tr>
         </tfoot>

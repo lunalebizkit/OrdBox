@@ -16,8 +16,18 @@
   .table{
     scroll-behavior: smooth;
     border-collapse: collapse;
+    background-color: black;
   } 
   .tabla {
     width: 100%;
     table-layout: fixed;
+  }
+  .factA{
+    background-color: var(--backg-A);
+  }
+  .factB{
+    background-color: var(--backg-B);
+  }
+  .factC{
+    background-color: var(--backg-C);
   }

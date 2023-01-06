@@ -10,7 +10,7 @@
   [iconTitle]="'container'"
 >
 </app-header-op-buttons>
-<nz-collapse>
+<nz-collapse class="{{this.tipo}}">
   <nz-collapse-panel nzHeader="Datos Comprobante" [nzActive]="true">
     <nz-descriptions nzSize="small" [nzColumn]="2">
       <nz-descriptions-item nzTitle="Tipo" [nzSpan]="1">
@@ -36,7 +36,7 @@
     </nz-descriptions>
   </nz-collapse-panel>
 </nz-collapse>
-<nz-collapse>
+<nz-collapse class="{{this.tipo}}">
   <nz-collapse-panel
     nzHeader="Detalle Comprobante"
     [nzActive]="true"
@@ -68,7 +68,7 @@
             <td>{{ data.iva }}</td>
           </tr>
         </tbody>
-        <tfoot style="background-color: #fafafa">
+        <tfoot class="{{this.tipo}}">
           <tr>
             <td></td>
             <td colspan="1" *ngIf="type == 1; else elseBlock">
