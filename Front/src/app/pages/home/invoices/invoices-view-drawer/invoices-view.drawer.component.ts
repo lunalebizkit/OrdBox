@@ -14,6 +14,7 @@ import { InvoiceDetails, InvoiceModel } from "../model/invoice.model";
 @Component({
   selector: 'app-invoices-view-drawer',
   templateUrl: './invoices-view.drawer.component.html',
+  styleUrls: ['./invoices-view.drawer.component.css'],
 })
 export class InvoicesViewDrawerComponent extends BaseComponent implements OnInit {
   @Input() set filter(value: number) {
@@ -27,6 +28,7 @@ export class InvoicesViewDrawerComponent extends BaseComponent implements OnInit
   loading!: boolean;
   isSaving!: boolean;
   id!: number;
+  tipo!: string;
 
   //Variables del comprobante
   type: any;
@@ -57,6 +59,7 @@ export class InvoicesViewDrawerComponent extends BaseComponent implements OnInit
   }
 
   ngOnInit(): void {
+    console.log (eInvoiceType[eInvoiceType.A])
     if (this.id != null || this.id != undefined || this.id != 0) {
       this.getInvoice(this.id)
   }
@@ -79,9 +82,22 @@ export class InvoicesViewDrawerComponent extends BaseComponent implements OnInit
           this.invoiceDetail= r.invoiceDetails
           this.subTotal= r.total - r.ivaTotal;          
           this.isLoading = false;
+          this.getTipo(r.type);
+          
         },
         error: () => { this.isLoading = false; }
     })
+  }
+
+  getTipo(tipo : number):any {
+    switch (tipo){
+      case  eInvoiceType.A :
+        return this.tipo = 'factA'
+      case  eInvoiceType.B :
+       return this.tipo = 'factB'
+      case  eInvoiceType.C :
+       return this.tipo = 'factC'
+    }
   }
 
   invoiceType(id: any):string{
