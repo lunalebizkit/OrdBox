@@ -16,11 +16,12 @@ import { BaseComponent } from 'src/app/common/components/base/base.component';
 import { HeaderOperationsButtonsComponent } from 'src/app/common/components/headers/buttons.oparations.header.component';
 import { InvoiceService } from '../invoices.service';
 import { eInvoiceType } from '../model/invoice-type.Enum';
-import { receiptDetails, receiptModel } from '../model/receipt.model';
+import { receiptDetails,  } from '../model/receipt.model';
 
 @Component({
   selector: 'app-receipt-view-drawer',
   templateUrl: './receipt-view-drawer.component.html',
+  styleUrls: ['./receipt-view-drawer.component.css'],
 })
 export class ReceiptViewDrawerComponent
   extends BaseComponent
@@ -38,7 +39,7 @@ export class ReceiptViewDrawerComponent
   loading!: boolean;
   isSaving!: boolean;
   id!: number;
-
+  tipo!: string;
   //Variables del comprobante
   supplierId!: number;
   userId!: number;
@@ -92,7 +93,7 @@ export class ReceiptViewDrawerComponent
             this.percIngBrutos = r.percIngBrutos,
             this.percIva = r.percIva,
             this.receiptDetails = r.receiptDetails;
-      
+            this.getTipo(r.type);
           this.isLoading = false;
         },
         error: () => {
@@ -104,7 +105,16 @@ export class ReceiptViewDrawerComponent
   invoiceType(id: any): string {
     return eInvoiceType[id];
   }
-
+  getTipo(tipo : number):any {
+    switch (tipo){
+      case  eInvoiceType.A :
+        return this.tipo = 'factA'
+      case  eInvoiceType.B :
+       return this.tipo = 'factB'
+      case  eInvoiceType.C :
+       return this.tipo = 'factC'
+    }
+  }
   subTotalCalculate(concNoGravado: number, percIngBrutos: number, percIva:number, ivaTotal: number): number {
  return concNoGravado + percIngBrutos + percIva  + ivaTotal  
   }

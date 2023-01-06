@@ -69,11 +69,11 @@
         </nz-collapse-panel>
       </nz-collapse>
     </form>
-    <nz-collapse>
-      <nz-collapse-panel nzHeader="Facturas tipo A" [nzActive]="true" [nzShowArrow]="true">
+    <nz-collapse class="factA">
+      <nz-collapse-panel nzHeader="Facturas tipo A" [nzActive]="true" [nzShowArrow]="true" >
         <nz-content class="table">
           <nz-table class="tabla" [nzBordered]="true" [nzSize]="'small'" nzShowPagination="false" style="overflow: auto"
-          [nzData] = "periodListCompra" >
+          [nzData] = "periodListCompra">
             <thead>
               <tr >
                 <th nzEllipsis nzWidth="75px"  style="background-color:lightgrey;">Fecha</th>
@@ -156,7 +156,7 @@
         </nz-content>
       </nz-collapse-panel>
     </nz-collapse>
-    <nz-collapse>
+    <nz-collapse class="factB">
       <nz-collapse-panel nzHeader="Facturas tipo B" [nzActive]="true" [nzShowArrow]="true">
         <nz-content class="table">
           <nz-table class="tabla" [nzBordered]="true" [nzSize]="'small'" nzShowPagination="false" style="overflow: auto"
@@ -243,7 +243,7 @@
         </nz-content>
       </nz-collapse-panel>
     </nz-collapse>
-    <nz-collapse>
+    <nz-collapse class="factC">
       <nz-collapse-panel nzHeader="Facturas tipo C" [nzActive]="true" [nzShowArrow]="true">
         <nz-content class="table">
           <nz-table class="tabla" [nzBordered]="true" [nzSize]="'small'" nzShowPagination="false" style="overflow: auto"
