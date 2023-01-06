@@ -70,8 +70,7 @@
         </tbody>
         <tfoot class="{{this.tipo}}">
           <tr>
-            <td></td>
-            <td colspan="1" *ngIf="type == 1; else elseBlock">
+            <td colspan="2" *ngIf="type == 1; else elseBlock">
               <b>Iva </b>
               <span style="color: blue"
                 >{{ this.currencyFormat(ivaTotal) }}
@@ -95,7 +94,7 @@
                 >{{ this.currencyFormat(percIngBrutos) }}
               </span>
             </td>
-            <td colspan="1" *ngIf="type == 1; else elseBlock">
+            <td colspan="1" *ngIf="type == 1; else elseBlock2">
               <b>SubTotal </b>
               <span style="color: blue">{{ this.currencyFormat(subTotal) }} </span>
             </td>
@@ -107,6 +106,9 @@
             </td>
             <ng-template #elseBlock>
               <td colspan="2"></td>
+            </ng-template>
+            <ng-template #elseBlock2>
+              <td></td>
             </ng-template>
           </tr>
         </tfoot>
