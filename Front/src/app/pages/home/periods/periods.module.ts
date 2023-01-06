@@ -18,6 +18,7 @@ import { CommonModule } from '@angular/common';
 import { PeriodsRoutingModule } from './periods-routing.module';
 import { periodsDrawerComponent } from './new-periods-drawer/new-periods.drawer.component';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
+import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 
 @NgModule({
   imports: [ CommonModule,
@@ -36,7 +37,8 @@ import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
     NzSpaceModule,
     NzDividerModule,
     InfiniteScrollModule,
-    NzToolTipModule
+    NzToolTipModule,
+    NzDatePickerModule
   ],
   declarations: [
     PeriodsListComponent, periodsDrawerComponent

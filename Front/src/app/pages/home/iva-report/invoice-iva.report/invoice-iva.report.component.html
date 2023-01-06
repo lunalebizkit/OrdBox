@@ -1,6 +1,6 @@
  <nz-layout>
   <nz-page-header class="list-header">
-    <nz-page-header-title>Libro Iva Venta </nz-page-header-title>
+    <nz-page-header-title>Reporte Iva Venta </nz-page-header-title>
     <nz-page-header-extra>
       <button nz-button routerLink="/home/periods" type="submit" nzSize="default" 
       ><i nz-icon nzType="arrow-left" nzTheme="outline"></i>volver</button>
@@ -24,23 +24,34 @@
           </div>
         </div>
         <div nz-row>
-          <div nz-col class="gutter-row" [nzSpan]="8">
+          <div nz-col class="gutter-row" [nzSpan]="8">          
             <nz-form-item>
-              <nz-form-label [nzSm]="10" [nzXs]="24" nzRequired nzFor="initPeriod">Desde </nz-form-label>
+              <nz-form-label nzRequired [nzSm]="10" [nzXs]="24" nzRequired nzFor="initPeriod">Desde</nz-form-label>
               <nz-form-control [nzSm]="14" [nzXs]="24">
-                  <input formControlName="initPeriod"  nz-input style="width:110%;"
-                  type="date"  [(ngModel)]="startDate" (ngModelChange)='changeDate($event)' value="startDate"/>
+                <nz-date-picker
+                formControlName="initPeriod"
+                nzFormat="dd/MM/yyyy"        
+                  [nzRanges]="initPeriod"
+                  [nzPlaceHolder]="'Inicio Período'"       
+                  (ngModelChange)='changeDate($event)'
+                ></nz-date-picker>
               </nz-form-control>
             </nz-form-item>
           </div>
           <div nz-col class="gutter-row" [nzSpan]="8">
-            <nz-form-item>
-              <nz-form-label [nzSm]="10" [nzXs]="24" nzRequired nzFor="endPeriod">Hasta </nz-form-label>
-              <nz-form-control [nzSm]="14" [nzXs]="24">
-                  <input formControlName="endPeriod"  nz-input style="width:110%;" 
-                   type="date" [(ngModel)]="endDate" (ngModelChange)='changeEndDate($event)' value="endDate" />
-              </nz-form-control>
-            </nz-form-item>
+              <nz-form-item>
+                <nz-form-label nzRequired [nzSm]="10" [nzXs]="24" nzRequired nzFor="endPeriod">Hasta</nz-form-label>
+                <nz-form-control [nzSm]="14" [nzXs]="24">
+                  <nz-date-picker
+                  formControlName="endPeriod"
+                  nzFormat="dd/MM/yyyy"
+              
+                    [nzRanges]="endPeriod"
+                    [nzPlaceHolder]="'Fin Período'"       
+                    (ngModelChange)='changeEndDate($event)'
+                  ></nz-date-picker>
+                </nz-form-control>
+              </nz-form-item>
           </div>
           <div nz-col class="gutter-row" [nzSpan]="8">
             <button
@@ -48,7 +59,7 @@
             nzSize="small"
             nzType="primary"
             style="margin-left: 40px; margin-top:5px "
-            (click)="getNewIvaVenta(startDate, endDate)"
+            (click)="getNewIvaVenta()"
             >
             <i nz-icon nzType="search" nzTheme="outline"></i>Buscar
           </button>

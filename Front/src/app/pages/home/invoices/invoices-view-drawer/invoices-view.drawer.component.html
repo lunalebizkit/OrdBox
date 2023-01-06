@@ -70,24 +70,6 @@
         </tbody>
         <tfoot style="background-color: #fafafa">
           <tr>
-            <td>
-              <b style="font-size: smaller;">Conc. No Gravado</b><br>
-              <span style="color: blue"
-              >            
-              {{ this.currencyFormat( this.concNoGravado )}}</span>
-            </td>
-            <td>
-              <b style="font-size: smaller;">Perc. Iva</b><br>
-              <span style="color: blue"
-              >            
-              {{ this.currencyFormat( this.percIva )}}</span>
-            </td>
-            <td>
-              <b style="font-size: smaller;">Perc. Ing. Bruto</b><br>
-              <span style="color: blue"
-              >            
-              {{ this.currencyFormat( this.percIngBrutos )  }}</span>
-            </td>
             <td *ngIf="type == 1; else elseBlock">
               <b>Iva </b>
               <span style="color: blue"

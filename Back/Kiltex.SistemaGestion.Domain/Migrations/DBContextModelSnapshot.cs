@@ -124,10 +124,6 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
 
-                    b.Property<decimal>("ConcNoGravado")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("conc_no_gravado");
-
                     b.Property<string>("CustomerAddress")
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("customer_address");
@@ -160,14 +156,6 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                     b.Property<string>("Observation")
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("observation");
-
-                    b.Property<decimal>("PercIngBrutos")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("perc_ing_brutos");
-
-                    b.Property<decimal>("PercIva")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("perc_iva");
 
                     b.Property<decimal>("Total")
                         .HasColumnType("decimal(18,2)")
