@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Inject, Input, LOCALE_ID, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, Inject, Input, LOCALE_ID, OnInit, ViewChild } from '@angular/core';
 import { PeriodsModel } from 'src/app/pages/home/periods/model/periods.model';
 import { BaseComponent } from 'src/app/common/components/base/base.component';
 import { HeaderOperationsButtonsComponent } from 'src/app/common/components/headers/buttons.oparations.header.component';
@@ -10,7 +10,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { ActivatedRoute } from '@angular/router';
 import { NzDrawerRef } from 'ng-zorro-antd/drawer';
 import { formatDate } from '@angular/common';
-import { query } from '@angular/animations';
+
 
 @Component({
   selector: 'app-new-periods-drawer',

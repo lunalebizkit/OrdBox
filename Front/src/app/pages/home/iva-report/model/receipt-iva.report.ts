@@ -18,4 +18,7 @@ export interface ReceiptIvaReportDetailsModel{
     importeNetoIva21: number,
     importeNetoIva10: number,
     importeNetoIva27: number,
+    concNoGravado:number,
+    percIva: number,
+    percIngBrutos:number
 }
