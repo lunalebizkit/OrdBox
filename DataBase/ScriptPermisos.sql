@@ -17,5 +17,6 @@ INSERT INTO [dbo].[permission]
 		   ('ViewOrderSupplier','ViewOrderSupplier',25),('CreateOrderSupplier','CreateOrderSupplier',26),('EditOrderSupplier','EditOrderSupplier',27),
 		   ('ListUpdatePrice','ListUpdatePrice',28),('EditUpdatePrice','EditUpdatePrice',29), ('EditUpdatePrice','EditUpdatePrice',30), ('EditUpdatePrice','EditUpdatePrice',31),
 		   ('ListIva','ListIva',32),
-		   ('GetPeriod','GetPeriod',33),('CreatePeriod','CreatePeriod',34),('EditPeriod','EditPeriod',35),('DeletePeriod','DeletePeriod',36)
+		   ('GetPeriod','GetPeriod',33),('CreatePeriod','CreatePeriod',34),('EditPeriod','EditPeriod',35),('DeletePeriod','DeletePeriod',36),
+		   ('GetMemo','GetMemo', 37),('CreatetMemo','CreatetMemo',38)
 GO
