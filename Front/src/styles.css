@@ -1,3 +1,8 @@
 /* You can add global styles to this file, and also import other style files */
-@import 'ag-grid-community/styles/ag-grid.css';
-@import 'ag-grid-community/styles/ag-theme-alpine.css';
+/* @import 'ag-grid-community/styles/ag-grid.css'; */
+/* @import 'ag-grid-community/styles/ag-theme-alpine.css'; */
+:root {
+    --backg-A: rgba(118, 233, 194, 0.829);
+    --backg-B: rgba(135, 206, 250, 0.788);
+    --backg-C: rgba(255, 182, 193, 0.781);
+}

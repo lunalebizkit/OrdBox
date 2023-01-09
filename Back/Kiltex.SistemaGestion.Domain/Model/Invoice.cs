@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Kiltex.SistemaGestion.Domain.Enum;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -50,5 +51,7 @@ namespace Kiltex.SistemaGestion.Domain.Model
         public int Type { get; set; }
 
         public ICollection<InvoiceDetail> InvoiceDetails { get; set; } = new HashSet<InvoiceDetail>();
+
+   
     }
 }

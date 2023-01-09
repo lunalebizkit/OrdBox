@@ -11,6 +11,8 @@ import { HeaderOperationsButtonsComponent } from 'src/app/common/components/head
 import { eInvoiceType } from '../../invoices/model/invoice-type.Enum';
 
 
+
+
 @Component({
     selector: 'app-invoice-iva.report',
     templateUrl: './invoice-iva.report.component.html',
@@ -29,7 +31,7 @@ export class InvoiceIvaReportComponent extends BaseComponent implements OnInit {
     newEndDate: any;
     formReport!: FormGroup;
    
-
+    today = new Date();
     TotalIva!: number;
     TotalNetoGravado!:number;
    
@@ -77,7 +79,8 @@ export class InvoiceIvaReportComponent extends BaseComponent implements OnInit {
         pageSize: 10,
       }
 
-
+      initPeriod= this.route.snapshot.queryParams['from']
+      endPeriod= this.route.snapshot.queryParams['to']
     constructor(
         private service: InvoiceIvaReportService,
         notificacionService: NzNotificationService,
@@ -90,20 +93,16 @@ export class InvoiceIvaReportComponent extends BaseComponent implements OnInit {
        
       ) {super(notificacionService, el, message);
         this.formReport = this.fb.group({
-          initPeriod: ['', Validators.required],
-          endPeriod:['', Validators.required],
+          initPeriod: [new Date(this.initPeriod), Validators.required],
+          endPeriod:[new Date(this.endPeriod), Validators.required],
         })
       }
 
-      initPeriod= this.route.snapshot.queryParams['from']
-      endPeriod= this.route.snapshot.queryParams['to']
+   
       
       ngOnInit(): void {        
-        if ((this.initPeriod != null) && (this.endPeriod != null)){
-          this.startDate = this.formaterDateOriginal(Date.parse(this.initPeriod));
-          this.endDate = this.formaterDateOriginal(Date.parse(this.endPeriod));
-          this.getIvaVenta(this.initPeriod, this.endPeriod);
-              
+        if ((this.initPeriod != null) && (this.endPeriod != null)) {
+          this.getIvaVenta(this.initPeriod, this.endPeriod);     
         } 
     }
     getIvaVenta(initPeriod:Date,endPeriod:Date): void {      
@@ -229,18 +228,15 @@ export class InvoiceIvaReportComponent extends BaseComponent implements OnInit {
             })              
           
       } 
-
+     
       formaterDate(date: string | number | Date): string {
         return formatDate(date, 'MM/dd/YYYY', this.locale);
-      }
-      
-      formaterDateOriginal(date: string | number | Date): string {
-        return formatDate(date, 'YYYY-MM-dd', this.locale);
-      }
+      }   
+     
       currencyFormat(data: any):string  {    
         return formatCurrency(data, this.locale, '$', 'ARS', '1.1-2')
       }
-      changeDate( fecha: any):void {
+      changeDate( fecha: any):void {             
         this.newInitDate = this.formaterDate(fecha)
         
       }
@@ -248,8 +244,8 @@ export class InvoiceIvaReportComponent extends BaseComponent implements OnInit {
          this.newEndDate = this.formaterDate(fecha);        
       }
 
-     getNewIvaVenta(inicio: any, fin :any){
-      this.getIvaVenta(inicio, fin);
+     getNewIvaVenta(){
+      this.getIvaVenta(this.newInitDate, this.newEndDate);
      }
     }
 

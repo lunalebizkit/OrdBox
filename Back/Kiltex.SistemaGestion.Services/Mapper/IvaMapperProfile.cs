@@ -18,7 +18,17 @@ namespace Kiltex.SistemaGestion.Services.Mapper
                 ;
             CreateMap<Invoice, DtoResponseIvaInvoices>()
                 ;
-                
+            CreateMap<Receipt, DtoResponseIvaReceipt>()
+               .ForMember(o => o.PeriodTotal, x => x.MapFrom(y => y.Total))
+               .AfterMap((o, d, c) =>
+               {
+                   d.DtoResponseIvaReceipts = c.Mapper.Map<List<DtoResponseIvaReceipts>>(o.ReceiptDetails)
+                   ;
+               })
+               ;
+            CreateMap<Receipt, DtoResponseIvaReceipts>()
+                ;
+
         }
     }
 }

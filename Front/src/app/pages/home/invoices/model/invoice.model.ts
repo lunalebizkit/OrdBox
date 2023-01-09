@@ -12,9 +12,6 @@ export interface InvoiceModel {
     total: number;
     ivaTotal: number;
     type: number;
-    concNoGravado: number;
-    percIva: number;
-    percIngBrutos: number;
     invoiceDetails: InvoiceDetails[]
 }
 export interface InvoiceDetails {
