@@ -23,7 +23,7 @@ namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse
         public string SupplierAddress { get; set; }
         public decimal Total { get; set; }
         public DateTime DateTime { get; set; }
-        public int Type { get; set; }
+        public int Type { get; set; }       
         public decimal Iva21 { get; set; }
         public decimal Iva27 { get; set; }
         public decimal Iva10 { get; set; }

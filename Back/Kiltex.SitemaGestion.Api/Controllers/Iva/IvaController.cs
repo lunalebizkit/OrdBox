@@ -29,5 +29,13 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Iva
         {
             return Return(await _service.ListIvaVenta(from, to).ConfigureAwait(false));
         }
+        [HttpGet]
+        [Route("ReceiptIvaReport")]
+        public async Task<IActionResult> ReceiptIvaReport(DateTime from, DateTime to)
+        {
+            var content = await _service.ReceiptIvaReport(from, to ).ConfigureAwait(false);
+            return File(content.Data, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"ListaReporteIvaCompra_{DateTime.Now:dd-MM-yyyy}.xlsx");
+        }
+
     }
 }
