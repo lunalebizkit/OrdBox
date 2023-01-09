@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using ClosedXML.Excel;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Google.Apis;
 using Kiltex.SistemaGestion.Domain;
 using Kiltex.SistemaGestion.Domain.Enum;
@@ -136,41 +137,66 @@ namespace Kiltex.SistemaGestion.Services.Services
 
             var worksheet = workbook.Worksheets.Add("Reporte Iva");
             var currentRow = 2;
+            var ColorHeader = XLColor.FromName("PowderBlue");
 
             #region Header Columnas       
-              
-            worksheet.Cell(currentRow, 1).Value = "Fecha";
-            worksheet.Cell(currentRow, 2).Value = " N° Factura";
-            worksheet.Cell(currentRow, 3).Value = "Tipo";
-            worksheet.Cell(currentRow, 4).Value = "Cliente";
-            worksheet.Cell(currentRow, 5).Value = "CUIT / CUIL";
-            worksheet.Cell(currentRow, 6).Value = "Imp.Neto";
-            worksheet.Cell(currentRow, 7).Value = "IVA 10,5 %";
-            worksheet.Cell(currentRow, 8).Value = "IVA 21 % ";
-            worksheet.Cell(currentRow, 9).Value = "IVA 27 %";
-            worksheet.Cell(currentRow, 10).Value = "Total";
+            
+            worksheet.Cell(currentRow, 1).SetValue("Fecha").Style.Font.Bold= true;
+            worksheet.Cell(currentRow, 1).Style.Fill.BackgroundColor = ColorHeader;
+
+            worksheet.Cell(currentRow, 2).SetValue(" N° Factura").Style.Font.Bold = true;
+            worksheet.Cell(currentRow, 2).Style.Fill.BackgroundColor = ColorHeader;
+
+            worksheet.Cell(currentRow, 3).SetValue("Tipo").Style.Font.Bold = true;
+            worksheet.Cell(currentRow, 3).Style.Fill.BackgroundColor = ColorHeader;
+
+            worksheet.Cell(currentRow, 4).SetValue("Cliente").Style.Font.Bold = true;
+            worksheet.Cell(currentRow, 4).Style.Fill.BackgroundColor = ColorHeader;
+
+            worksheet.Cell(currentRow, 5).SetValue("CUIT / CUIL").Style.Font.Bold = true;
+            worksheet.Cell(currentRow, 5).Style.Fill.BackgroundColor = ColorHeader;
+
+            worksheet.Cell(currentRow, 6).SetValue("Imp.Neto").Style.Font.Bold = true;
+            worksheet.Cell(currentRow, 6).Style.Fill.BackgroundColor = ColorHeader;
+
+            worksheet.Cell(currentRow, 7).SetValue("IVA 10,5 %").Style.Font.Bold = true;
+            worksheet.Cell(currentRow, 7).Style.Fill.BackgroundColor = ColorHeader;
+
+            worksheet.Cell(currentRow, 8).SetValue("IVA 21 % ").Style.Font.Bold = true;
+            worksheet.Cell(currentRow, 8).Style.Fill.BackgroundColor = ColorHeader;
+
+            worksheet.Cell(currentRow, 9).SetValue("IVA 27 %").Style.Font.Bold = true;
+            worksheet.Cell(currentRow, 9).Style.Fill.BackgroundColor = ColorHeader;
+
+            worksheet.Cell(currentRow, 10).SetValue("Total").Style.Font.Bold = true;
+            worksheet.Cell(currentRow, 10).Style.Fill.BackgroundColor = ColorHeader;
             #endregion
 
             #region Body
             foreach (var item in resumen.DtoResponseIvaReceipts)
             {
                 currentRow++;
-                worksheet.Cell(currentRow, 1).Value = item.DateTime.ToString("MM/dd/yyyy");
-                worksheet.Cell(currentRow, 2).Value = item.InvoiceNumber;
-                worksheet.Cell(currentRow, 3).Value = (ETypeReceipt)item.Type ;
-                worksheet.Cell(currentRow, 4).Value = item.SupplierName;
-                worksheet.Cell(currentRow, 5).Value = item.SupplierCuit;
-                worksheet.Cell(currentRow, 6).Value ={item.ImporteNeto};
-                worksheet.Cell(currentRow, 7).Value =item.Iva10 == 0 ? null : string.Format("{0,7:##.00}", item.Iva10);
-                worksheet.Cell(currentRow, 8).Value = item.Iva21 == 0 ? null : string.Format("{0,7:##.00}", item.Iva21);
-                worksheet.Cell(currentRow, 9).Value = item.Iva27 == 0 ? null : string.Format("{0,7:##.00}", item.Iva27);
-                worksheet.Cell(currentRow, 10).Value = "$ " + $"{ item.Total }";
+                worksheet.Cell(currentRow, 1).SetValue(item.DateTime.ToString("MM/dd/yyyy")).Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Left);
+                worksheet.Cell(currentRow, 2).SetValue(item.InvoiceNumber).Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Left);
+                worksheet.Cell(currentRow, 3).SetValue((ETypeReceipt)item.Type).Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Center);
+                worksheet.Cell(currentRow, 4).SetValue(item.SupplierName).Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Left);
+                worksheet.Cell(currentRow, 5).SetValue(item.SupplierCuit).Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Left);
+                worksheet.Cell(currentRow, 6).SetValue(item.ImporteNeto).Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Right);
+                worksheet.Cell(currentRow, 7).SetValue(item.Iva10 == 0 ? null : string.Format("{0,7:##.00}", item.Iva10)).Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Right);
+                worksheet.Cell(currentRow, 8).SetValue(item.Iva21 == 0 ? null : string.Format("{0,7:##.00}", item.Iva21)).Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Right);
+                worksheet.Cell(currentRow, 9).SetValue(item.Iva27 == 0 ? null : string.Format("{0,7:##.00}", item.Iva27)).Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Right); 
+                worksheet.Cell(currentRow, 10).SetValue(item.Total).Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Right);;
             }
             #endregion
             currentRow+= 2;
-            worksheet.Cell(currentRow, 9).Value= "Total Periodo";
-            worksheet.Cell(currentRow, 10).Value= "$ " + $"{resumen.PeriodTotal}";
+            worksheet.Cell(currentRow, 9).SetValue("Total Periodo").Style.Font.Bold= true;
+            worksheet.Cell(currentRow, 9).Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Left);
+            worksheet.Cell(currentRow, 9).Style.Fill.BackgroundColor = ColorHeader;
 
+            worksheet.Cell(currentRow, 10).SetValue("$ " + $"{resumen.PeriodTotal}").Style.Font.Bold= true;
+            worksheet.Cell(currentRow, 10).Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Right);
+
+            worksheet.Columns().AdjustToContents();
             var stream = new MemoryStream();
             workbook.SaveAs(stream);
             return new OperationResponse<byte[]>(stream.ToArray());
