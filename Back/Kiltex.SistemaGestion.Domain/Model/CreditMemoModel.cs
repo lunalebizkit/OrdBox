@@ -1,15 +1,12 @@
-﻿using Kiltex.SistemaGestion.Domain.Enum;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 
 namespace Kiltex.SistemaGestion.Domain.Model
 {
-    [Table("invoice")]
-    public partial class Invoice : BaseModel
-    {       
+    [Table("creditMemo")]
+    public class CreditMemo : BaseModel
+    {
         [Column("customer_id")]
         public long? CustomerId { get; set; }
 
@@ -22,8 +19,8 @@ namespace Kiltex.SistemaGestion.Domain.Model
         [ForeignKey(nameof(UserId))]
         public User User { get; set; }
 
-        [Column("invoice_number")]
-        public long InvoiceNumber { get; set; }
+        [Column("creditMemo_number")]
+        public long CreditMemoNumber { get; set; }
 
         [Column("customer_name")]
         public string? CustomerName { get; set; }
@@ -49,9 +46,6 @@ namespace Kiltex.SistemaGestion.Domain.Model
 
         [Column("type")]
         public int Type { get; set; }
-
-        public ICollection<InvoiceDetail> InvoiceDetails { get; set; } = new HashSet<InvoiceDetail>();
-
-   
+        public ICollection<CreditMemoDetail> CreditMemoDetail { get; set; } = new HashSet<CreditMemoDetail>();
     }
 }

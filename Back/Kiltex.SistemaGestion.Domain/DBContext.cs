@@ -1,7 +1,6 @@
 ﻿using Kiltex.SistemaGestion.Domain.Model;
 using Microsoft.EntityFrameworkCore;
 
-
 namespace Kiltex.SistemaGestion.Domain
 {
     public class DBContext : DbContext
@@ -27,6 +26,12 @@ namespace Kiltex.SistemaGestion.Domain
                 .HasMany(i => i.ReceiptDetails)
                 .WithOne(i => i.Receipt)
                 .OnDelete(DeleteBehavior.NoAction);
+
+            base.OnModelCreating(builder);
+            builder.Entity<CreditMemo>()
+                .HasMany(i => i.CreditMemoDetail)
+                .WithOne(i => i.CreditMemo)
+                .OnDelete(DeleteBehavior.NoAction);
         }
         public virtual DbSet<Rol> Rols { get; set; }
         public virtual DbSet<User> Users { get; set; }
@@ -46,6 +51,8 @@ namespace Kiltex.SistemaGestion.Domain
         public virtual DbSet<InvoiceDetail> InvoiceDetails { get; set; }
         public virtual DbSet<Receipt> Receipts { get; set; }
         public virtual DbSet<ReceiptDetails> ReceiptDetails { get; set; }
+        public virtual DbSet<CreditMemo> CreditMemoModel { get; set; }
+        public virtual DbSet<CreditMemoDetail> CreditMemoDetail { get; set; }
 
 
         public virtual DbSet<Period> Periods { get; set; }
