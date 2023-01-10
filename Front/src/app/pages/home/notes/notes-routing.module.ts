@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { creditMemoComponent } from './credit-memo/credit-memo.component';
+import { CreditMemoComponent } from './credit-memo/credit-memo.component';
 import { creditMemoListComponent } from './creditMemo-list/creditMemo-list.component';
 import { debitMemoComponent } from './debit-memo/debit-memo.component';
 import { debitMemoListComponent } from './debitMemo-list/debitMemo-list.component';
@@ -9,7 +9,7 @@ import { debitMemoListComponent } from './debitMemo-list/debitMemo-list.componen
 const routes: Routes =[
     { path: 'debit', component: debitMemoComponent },
     {path: 'debitList', component: debitMemoListComponent },
-    {path: 'credit', component: creditMemoComponent },
+    {path: 'credit', component: CreditMemoComponent },
     {path: 'creditList', component: creditMemoListComponent },
 
    

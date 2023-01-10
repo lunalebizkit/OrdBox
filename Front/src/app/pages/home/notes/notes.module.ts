@@ -19,7 +19,7 @@ import { AgGridModule } from 'ag-grid-angular';
 import { NzIconModule } from "ng-zorro-antd/icon";
 import { debitMemoComponent } from "./debit-memo/debit-memo.component";
 import { NotesRoutingModule } from "./notes-routing.module";
-import { creditMemoComponent } from "./credit-memo/credit-memo.component";
+import { CreditMemoComponent } from "./credit-memo/credit-memo.component";
 import { creditMemoListComponent } from "./creditMemo-list/creditMemo-list.component";
 import { debitMemoListComponent } from "./debitMemo-list/debitMemo-list.component";
 
@@ -47,6 +47,6 @@ import { debitMemoListComponent } from "./debitMemo-list/debitMemo-list.componen
     NzImageModule,
     AgGridModule  
     ],
-    declarations:[ debitMemoComponent, creditMemoComponent, creditMemoListComponent, debitMemoListComponent]
+    declarations:[ debitMemoComponent, CreditMemoComponent, creditMemoListComponent, debitMemoListComponent]
 })
 export class NotesModule {}

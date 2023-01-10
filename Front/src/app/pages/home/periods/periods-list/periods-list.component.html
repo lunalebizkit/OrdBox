@@ -63,7 +63,7 @@
           <th nzEllipsis nzWidth="200px">Inicio período</th>
           <th nzEllipsis nzWidth="200px">Fin período</th>
           <th nzEllipsis nzWidth="150px">Estado</th>
-          <th nzEllipsis nzWidth="100px">Acción</th>
+          <th nzEllipsis nzWidth="100px" [nzAlign]="'center'">Acción</th>
           <th nzEllipsis nzWidth="250px" [nzAlign]="'center'">Reportes</th>
         </tr>
       </thead>
@@ -83,9 +83,9 @@
         >
           <td nzEllipsis>{{ this.formaterDate(period.initPeriod) }}</td>
           <td nzEllipsis>{{ this.formaterDate(period.endPeriod) }}</td>
-          <td nzEllipsis *ngIf="period.status === true">Activado</td>
-          <td nzEllipsis *ngIf="period.status === false">Cerrado</td>
-          <td nzEllipsis *ngIf="period.status === true">
+          <td nzEllipsis [nzAlign]="'center'" *ngIf="period.status === true">Activado</td>
+          <td nzEllipsis [nzAlign]="'center'" *ngIf="period.status === false">Cerrado</td>
+          <td nzEllipsis [nzAlign]="'center'" *ngIf="period.status === true">
             <a
               #active
               nz-tooltip
@@ -109,20 +109,22 @@
               nz-tooltip
               nzTooltipTitle="Cerrado"
               nzTooltipPlacement="rightTop"
-              style="color: darkgrey"
+              style="color: darkgrey" 
+          
             >
               <i
                 nz-icon
                 nzType="close-circle"
                 nzTheme="outline"
                 style="font-size: 18px"
+               
               >
               </i>
             </a>
           </td>
           <ng-container>
             <td style="text-align: center">
-              <!-- <a> -->
+         
                 <button
                   nz-button
                   nzType="primary"
@@ -136,9 +138,7 @@
                 >
                   Iva Compra
                 </button>
-           <!--    </a> -->
-           <!--  </td>
-            <td style="text-align: center"> -->
+          
               <button
                 nz-button
                 nzSize="small"

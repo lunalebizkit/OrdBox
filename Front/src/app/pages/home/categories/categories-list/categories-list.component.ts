@@ -50,6 +50,8 @@ export class CategoriesListComponent implements OnInit {
         this.totalItems = r.totalCount;
         // Saca spinner de carga
         this.loading = false;
+        this.selectedCategory = this.categoryList[this.selectedIndex];
+        document.getElementById(this.selectedIndex.toString())?.focus();
       },
       error: () => {
         this.loading = false;
