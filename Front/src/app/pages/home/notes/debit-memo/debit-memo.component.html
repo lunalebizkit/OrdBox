@@ -37,18 +37,6 @@
                     </nz-form-control>
                   </nz-form-item>
                 </div>
-      
-                <div nz-col class="gutter-row" [nzSpan]="8">
-                  <nz-form-item>
-                    <nz-form-label>Forma de Pago</nz-form-label>
-                    <nz-form-control>
-                      <nz-select
-                   
-                      >
-                      </nz-select>
-                    </nz-form-control>
-                  </nz-form-item>
-                </div>
               </div>
       
               <!-- Datos del Cliente -->
@@ -62,20 +50,33 @@
                 <nz-form-label [nzSm]="6" [nzXs]="14" nzRequired nzFor=""
                   >Cuit - Cuil
                 </nz-form-label>
-                <nz-form-control [nzSm]="14" [nzXs]="14">
+                <nz-form-control [nzSm]="10" [nzXs]="14">
                   <input
                     nz-input
                     maxlength="250"
                     nzSize="small"
                   />
-                </nz-form-control>             
+                </nz-form-control>  
+                 <!-- Boton que abre el buscador de CLiente en drawer -->
+                  <form nz-form >
+                    <div style="margin: 3px">
+                      <button
+                        nz-button
+                        nzSize="small"
+                        nzType="primary"
+                        
+                      >
+                        <i nz-icon nzType="search" nzTheme="outline"></i>Buscar
+                      </button>
+                    </div>
+                  </form>           
               </nz-form-item>
       
               <nz-form-item>
                 <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired 
                   >Razón Social - Nombre
                 </nz-form-label>
-                <nz-form-control [nzSm]="14" [nzXs]="24">
+                <nz-form-control [nzSm]="10" [nzXs]="24">
                   <input
                     nz-input
                     maxlength="250"
@@ -88,7 +89,7 @@
                 <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired 
                   >Domicilio
                 </nz-form-label>
-                <nz-form-control [nzSm]="14" [nzXs]="24">
+                <nz-form-control [nzSm]="10" [nzXs]="24">
                   <input
                     nz-input
                     nzSize="small"
@@ -109,7 +110,7 @@
                     
                     >Búsqueda de Producto
                   </nz-form-label>
-                  <nz-form-control [nzSm]="14" [nzXs]="14">
+                  <nz-form-control [nzSm]="12" [nzXs]="14">
                     <nz-input-group [nzSuffix]="clearQuery">
                       <input
                         nz-input
@@ -205,9 +206,6 @@
                       <i nz-icon nzType="save" nzTheme="outline"></i>Grabar
                     </button>
                   </td>
-                  <ng-template #elseBlock>
-                    <td colspan="1"></td>
-                  </ng-template>
                 </tr>
               </tfoot>
             </nz-table>

@@ -120,6 +120,7 @@ constructor(@Inject(LOCALE_ID) public locale: string,
   ngOnInit(): void {
     if (this.id != null || this.id != undefined || this.id != 0) {
        this.getInvoice(this.id)
+       this.edit=true
        }
     }
 
@@ -233,7 +234,7 @@ constructor(@Inject(LOCALE_ID) public locale: string,
       } 
      
       
-      typeSelectedChange(id: any): void {
+     /*  typeSelectedChange(id: any): void {
         this.typeSelectedId = this.id;    
         if (id == 1) {      
           this.invoiceA = true;
@@ -242,7 +243,7 @@ constructor(@Inject(LOCALE_ID) public locale: string,
         }  
         console.log(this.type1);
           
-      }
+      } */
       startEdit(id: number): void {
         this.editId = id;
       };
