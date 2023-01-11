@@ -31,42 +31,13 @@
             <nz-form-item>
               <nz-form-label nzRequired > Tipo de Factura</nz-form-label>
               <nz-form-control>
-              <!--   <nz-select
-                  id="type"
-                  formControlName="type"
-                  [nzOptions]="type"
-                  (ngModelChange)="typeSelectedChange($event)"
-                 
-                > -->
-                <nz-page-header-tags>
+              <nz-page-header-tags>
                   <nz-tag [nzColor]="'blue'" >{{ this.invoiceType(this.type1) }}</nz-tag>
                 </nz-page-header-tags>
-             <!--    </nz-select> -->
-              <!-- <nz-descriptions-item
-              formControlName="type">
-              <nz-page-header-tags>
-                <nz-tag [nzColor]="'blue'">{{ this.invoiceType(this.type1) }}</nz-tag>
-              </nz-page-header-tags>
-              </nz-descriptions-item> -->
-              </nz-form-control>
+                </nz-form-control>
             </nz-form-item>
           </div>
-        <!--   <div nz-col class="gutter-row" [nzSpan]="8">
-            <nz-form-item>
-              <nz-form-label>Forma de Pago</nz-form-label>
-              <nz-form-control>
-                <nz-select
-                  id="payment"
-                  formControlName="payment"
-                  [nzOptions]="payment"
-                  
-                >
-               
-              </nz-select>
-              </nz-form-control>
-            </nz-form-item>
-          </div> -->
-        </div>
+         </div>
 
         <!-- Datos del Cliente -->
         <nz-divider
@@ -84,9 +55,22 @@
             nz-input
               nzSize="small"
               formControlName="customerCuit"
-              value= {{customerCuit}}
             />
            </nz-form-control>
+
+            <!-- Boton que abre el buscador de CLiente en drawer -->
+          <form nz-form [formGroup]="formCustomerSearch">
+            <div style="margin: 3px">
+              <button
+                nz-button
+                nzSize="small"
+                nzType="primary"
+                (click)="openComponentCustomer()"
+              >
+                <i nz-icon nzType="search" nzTheme="outline"></i>Buscar
+              </button>
+            </div>
+          </form>
         </nz-form-item>
         <nz-form-item>
           <nz-form-label [nzSm]="8" [nzXs]="14" nzRequired 
@@ -98,7 +82,6 @@
               maxlength="250"
               nzSize="small"
               formControlName="customerName"
-              value={{customerName}}
             />
           </nz-form-control>
         </nz-form-item>
@@ -113,12 +96,7 @@
               formControlName="address"
               nzSize="small"
               maxlength="250"
-              value={{customerAddress}}
             />
-           <!--  <nz-descriptions-item
-            formControlName="customerAddress">
-            {{customerAddress}} 
-            </nz-descriptions-item> -->
           </nz-form-control>
         </nz-form-item>
 
@@ -141,6 +119,8 @@
                   formControlName="productSearchFilter"
                   placeholder="Ingrese Marca, Código, Categoría o Producto"
                   nzSize="small"
+                  (keydown.enter)="searchProduct()"
+
                 />
               </nz-input-group>
 
@@ -167,6 +147,7 @@
                 nz-button
                 nzSize="small"
                 nzType="primary"
+                (click)="openComponentProduct()"
               >
                 <i nz-icon nzType="search" nzTheme="outline"></i> Buscar
               </button>
@@ -184,7 +165,7 @@
     <nz-content>
       <nz-table
         [nzBordered]="true"
-        [nzData]="invoiceDetails"
+        [nzData]="creditMemoList"
         nzShowPagination="false"
         style="overflow: auto"
         [nzLoading]="isLoading"
@@ -198,14 +179,14 @@
             <th>Cantidad</th>
             <th>Precio Unidad</th>
             <th>SubTotal</th>
-            <th [nzAlign]="'center'" nzWidth="90px">Iva</th>
+            <th [nzAlign]="'center'" nzWidth="100px">Iva</th>
             <th>Acción</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let data of invoiceDetails" class="small-text">
-            <td>{{ data.productCode }}</td>
-            <td>{{ data.id }}</td>
+          <tr *ngFor="let data of creditMemoList" class="small-text">
+            <td>{{ data.code }}</td>
+            <td>{{ data.ownCode}}</td>
             <td nzBreakWord>{{ data.productName }}</td>
             <td>
               <div
@@ -221,22 +202,23 @@
                 [nzMax]="10000"
                 [(ngModel)]="data.quantity"
                 (nzBlur)="stopEdit()"
+                (ngModelChange)="changeQuantity($event)"
               ></nz-input-number>
             </td>
             <td [nzAlign]="'right'">{{ this.currencyFormat(data.price) }}</td>
             <td [nzAlign]="'right'">
-              {{ this.currencyFormat(data.price * data.quantity) }}
+              {{ this.currencyFormat(data.subTotal) }}
             </td>
             <td>
                <div
                 class="editable-cell"
-                [hidden]="editIdIva === data.productId"
+                [hidden]="editIdIva !== data.productId"
                 (click)="startEditIva(data.productId)"
               >
              {{data.iva}}
             </div> 
                  <nz-select              
-                  [hidden]="editIdIva !== data.productId"
+                  [hidden]="editIdIva === data.productId"
                   [nzOptions]="ivaType"                 
                   (ngModelChange)="changeIvaValue($event, data.productId)"
                   [(ngModel)]="data.iva"  
@@ -290,6 +272,7 @@
                 nz-button
                 nzSize="large"
                 style="background-color: #24ce41"
+                (click)="save()"
               >
                 <i nz-icon nzType="save" nzTheme="outline"></i>Grabar
               </button>

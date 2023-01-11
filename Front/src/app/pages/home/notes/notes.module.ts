@@ -22,6 +22,12 @@ import { NotesRoutingModule } from "./notes-routing.module";
 import { CreditMemoComponent } from "./credit-memo/credit-memo.component";
 import { creditMemoListComponent } from "./creditMemo-list/creditMemo-list.component";
 import { debitMemoListComponent } from "./debitMemo-list/debitMemo-list.component";
+import { CreditMemoViewDrawerComponent } from "./creditMemo-view-drawer/creditMemo-view-drawer.component";
+import { NzButtonModule } from "ng-zorro-antd/button";
+import { NzToolTipModule } from "ng-zorro-antd/tooltip";
+import { NzListModule } from "ng-zorro-antd/list";
+import { NzDatePickerModule } from "ng-zorro-antd/date-picker";
+import { NzDescriptionsModule } from "ng-zorro-antd/descriptions";
 
 @NgModule({
     imports: [CommonModule,
@@ -45,8 +51,29 @@ import { debitMemoListComponent } from "./debitMemo-list/debitMemo-list.componen
     NzUploadModule,
     NzSpaceModule,
     NzImageModule,
-    AgGridModule  
+    AgGridModule,
+    NzButtonModule,
+    NzToolTipModule,
+    NzListModule,
+    NzLayoutModule,
+    NzPageHeaderModule,
+    NzGridModule,
+    NzInputNumberModule,
+    NzInputModule,
+    NzSelectModule,
+    AppCommonModule,
+    NzIconModule,
+    NzTableModule,
+    NzGridModule,
+    NzSwitchModule,
+    NzPaginationModule,
+    NzDividerModule,
+    NzInputNumberModule,
+    NzCollapseModule,
+    NzSpaceModule,
+    NzDatePickerModule,
+    NzDescriptionsModule,  
     ],
-    declarations:[ debitMemoComponent, CreditMemoComponent, creditMemoListComponent, debitMemoListComponent]
+    declarations:[ debitMemoComponent, CreditMemoComponent, creditMemoListComponent, debitMemoListComponent, CreditMemoViewDrawerComponent]
 })
 export class NotesModule {}
