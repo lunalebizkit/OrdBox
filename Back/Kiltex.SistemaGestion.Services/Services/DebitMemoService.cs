@@ -115,5 +115,39 @@ namespace Kiltex.SistemaGestion.Services.Services
                 throw;
             }
         }
+        public async Task<OperationResponse<DtoPagination<DtoRequestDebitMemo>>> List(RequestPaginatedData<string> request)
+        {
+            try
+            {
+                var query = _contextSql
+                                    .DebitMemos
+                                    .AsNoTracking()
+                                    .Include(p => p.DebitMemoDetails)
+                                    .Where(p => p.SupplierCuit.ToLower().Contains(request.Filter ?? ""));
+
+                var count = await query.CountAsync().ConfigureAwait(false);
+
+                var list = await query.OrderByDescending(p => p.DateTime)
+                                      .Skip(request.Page * request.PageSize)
+                                      .Take(request.PageSize)
+                                      .ToListAsync()
+                                      .ConfigureAwait(false);
+
+                var result = _mapper.Map<List<DtoRequestDebitMemo>>(list);
+
+
+                return new OperationResponse<DtoPagination<DtoRequestDebitMemo>>(new DtoPagination<DtoRequestDebitMemo>
+                {
+                    Data = result,
+                    PageSize = request.PageSize,
+                    TotalCount = count
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
+                throw;
+            }
+        }
     }
 }
