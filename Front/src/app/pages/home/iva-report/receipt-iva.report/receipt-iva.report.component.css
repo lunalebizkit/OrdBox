@@ -31,3 +31,7 @@
   .factC{
     background-color: var(--backg-C);
   }
+  .btn-export{
+    background-color: #27AE60;
+    border: none;
+  }

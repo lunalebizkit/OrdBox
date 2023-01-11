@@ -105,24 +105,51 @@ import { ReceiptIvaReportDetailsModel, ReceiptIvaReportModel } from '../model/re
       },
     });
   }
+  exportExcel(){
+    const fileName = `Reporte_${this.initPeriod}-${this.endPeriod}`
+    this.service.getReceiptIvaReport(this.initPeriod, this.endPeriod).subscribe({
+      next: (r) => {    
+        this.downloadFile(r, fileName);
+      },
+      error: (e) => {
+      this.loading = false;           
+      
+      },
+    });
+  }
+
+  downloadFile(response: any, fileName: string){
+
+    const dataType= response.type;
+    const binaryData = [];
+
+    binaryData.push(response);
+
+    const filtePath = window.URL.createObjectURL(new Blob(binaryData, {type: dataType}))
+    const downloadLink = document.createElement('a');
+    downloadLink.href = filtePath;
+    downloadLink.setAttribute('download', fileName);
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+  }
   getReceiptType(id: number) {
     return eInvoiceType[id];
   }
     getReceipt(){
-     this.totalIva10Type1 = 0
-     this.totalIva21Type1 = 0
-     this.totalIva27Type1 = 0
-     this.totalPerIvaType1 = 0
-     this.totalPerIBType1 = 0
-     this.totalPerNGravType1 = 0
-     this.totalNetoGravadoType1 =0
-     this.totalType1 =0
-     this.totalIva10Type2 =0
-     this.totalIva21Type2 =0
-     this.totalIva27Type2 =0
-     this.totalPerIvaType2 = 0
-     this.totalPerIBType2 = 0
-     this.totalPerNGravType2 = 0
+    this.totalIva10Type1 = 0
+    this.totalIva21Type1 = 0
+    this.totalIva27Type1 = 0
+    this.totalPerIvaType1 = 0
+    this.totalPerIBType1 = 0
+    this.totalPerNGravType1 = 0
+    this.totalNetoGravadoType1 =0
+    this.totalType1 =0
+    this.totalIva10Type2 =0
+    this.totalIva21Type2 =0
+    this.totalIva27Type2 =0
+    this.totalPerIvaType2 = 0
+    this.totalPerIBType2 = 0
+    this.totalPerNGravType2 = 0
     this.totalNetoGravadoType2=0 
     this.totalType2 =0
     this.totalIva10Type3 =0
@@ -181,10 +208,10 @@ import { ReceiptIvaReportDetailsModel, ReceiptIvaReportModel } from '../model/re
       
     }
     changeEndDate( fecha: any):void {
-       this.newEndDate = this.formaterDate(fecha);        
+      this.newEndDate = this.formaterDate(fecha);        
     }
 
-   getNewIvaCompra(){
+  getNewIvaCompra(){
     this.getIvaCompra(this.newInitDate,this.newEndDate);
-   }
+  }
   }
