@@ -234,6 +234,7 @@
                 </ng-template>
                 <a
                   *nzSpaceItem
+                  (click)="popup.showDeleteConfirmation(data.ownCode)"
                 >
                   <i
                     nz-tooltip
@@ -273,7 +274,7 @@
                 nz-button
                 nzSize="large"
                 style="background-color: #24ce41"
-                (click)="save()"
+                (click)="pop.showConfirmation()"
               >
                 <i nz-icon nzType="save" nzTheme="outline"></i>Grabar
               </button>
@@ -309,6 +310,7 @@
   [title]="'Confirmar eliminación'"
   [header]="'¿Está seguro que desea eliminar el producto seleccionado?'"
   [message]="'Esta acción no se puede revertir'"
+  (handleOk)="handleOk()"
 >
 </app-popup-confirmation> 
 <app-popup-confirmation
@@ -316,5 +318,6 @@
   [title]="'Confirmar Guardado de comprobante'"
   [header]="'¿Está seguro que desea guardar el comprobante?'"
   [message]="'Esta acción no se puede revertir'"
+  (handleOk)="msjConfirmOk()"
 >
 </app-popup-confirmation>

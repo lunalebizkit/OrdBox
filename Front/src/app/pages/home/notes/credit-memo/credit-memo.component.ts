@@ -1,5 +1,5 @@
 import { formatCurrency, formatDate } from '@angular/common';
-import { Component, ElementRef, Inject, LOCALE_ID, OnInit } from '@angular/core';
+import { Component, ElementRef, Inject, LOCALE_ID, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NzDrawerService } from 'ng-zorro-antd/drawer';
@@ -8,6 +8,7 @@ import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { AuthService } from 'src/app/common/auth/interceptors/auth.service';
 import { Permission } from 'src/app/common/auth/models/permissions.enum';
 import { BaseComponent } from 'src/app/common/components/base/base.component';
+import { PopupConfirmationComponent } from 'src/app/common/components/popup-confirmation/popup-confirmation.component';
 import { EntityService } from '../../customers/customer.service';
 import { CustomerModel } from '../../customers/model/customer.model';
 import { InvoiceCustomerSearchComponent } from '../../invoices/invoice-customer-search/invoice-customer-search.component';
@@ -15,7 +16,7 @@ import { InvoiceProductSearchComponent } from '../../invoices/invoice-product-se
 import { InvoiceService } from '../../invoices/invoices.service';
 import { ePayment } from '../../invoices/model/invoice-payment.Enum';
 import { eInvoiceType, InvoiceType } from '../../invoices/model/invoice-type.Enum';
-import { InvoiceDetailList, invoiceDetailParser, InvoiceDetails, invoiceGridParser, InvoiceModel } from '../../invoices/model/invoice.model';
+import {InvoiceDetails, InvoiceModel } from '../../invoices/model/invoice.model';
 import { IvaType } from '../../invoices/model/iva-type.Enum';
 import { ProductsModel } from '../../products/model/product.model';
 import { ProductService } from '../../products/product.service';
@@ -29,6 +30,8 @@ import { NoteService } from '../notes.service';
   styleUrls: ['./credit-memo.component.css'],
 })
 export class CreditMemoComponent extends BaseComponent implements OnInit {
+  @ViewChild('popup') popupComponent!: PopupConfirmationComponent;
+
   cuit!: string;
   isLoading: boolean= false;
   loading!: boolean;
@@ -122,7 +125,6 @@ constructor(@Inject(LOCALE_ID) public locale: string,
 
     getInvoice(id: number): void {
       if (id != 0)
-      this.edit=== false
       this.serviceInvoice.getInvoiceById(id).subscribe({
           next: (r: InvoiceModel) => {
             this.type1 = r.type, 
@@ -445,5 +447,40 @@ constructor(@Inject(LOCALE_ID) public locale: string,
       )[0].quantity= quantity;
       
   };
+
+  handleOk() {
+    try {
+      this.creditMemoListTest = this.creditMemoList.
+      filter(element => element.ownCode != this.popupComponent.elementSelectedToDelete);
+      this.creditMemoDetails= this.creditMemoDetails.
+      filter(element => element.productId != this.popupComponent.elementSelectedToDelete);
+    this.popupComponent.isDeleteConfirmationVisible = false;
+    if (this.creditMemoListTest.length == 0){
+      this.creditMemoList= []
+    } else{
+      this.creditMemoList = this.creditMemoListTest;
+    }
+   
+    this.totalCalculate();
+    } catch (error) {
+      console.log(error);
+      
+    }
+  };
+  msjConfirmOk(){
+    try {
+      this.creditMemoList = this.creditMemoList.
+       filter(element => element.ownCode != this.popupComponent.elementSelected);
+     this.popupComponent.isConfirmationvisible = false; 
+     if (this.creditMemoList.length != 0 ){
+       this.save();
+     } else{
+       this.showMessageError('No ha seleccionado producto')
+     }
+     } catch (error) {
+       console.log(error);
+       
+     }
+  }
   
 }
