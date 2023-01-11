@@ -13,6 +13,7 @@ import { NoteService } from '../notes.service';
   styleUrls: ['./creditMemo-list.component.css'],
 })
 export class creditMemoListComponent implements OnInit {
+
   id!: number;
   isLoading: boolean= false;
   loading!: boolean;
@@ -24,8 +25,9 @@ export class creditMemoListComponent implements OnInit {
   queryParams = {
     filter: '',
     page: 0,
-    pageSize: 60
+    pageSize: 20
   };
+  index!: number;
   constructor(
     private service: NoteService,
     @Inject(LOCALE_ID) public locale: string,
@@ -47,8 +49,7 @@ export class creditMemoListComponent implements OnInit {
           this.selectedIndex = 0;
           this.selectedCreditMemo = this.creditMemoList[this.selectedIndex];
           document.getElementById(this.selectedIndex.toString())?.focus();
-          console.log(r);
-          
+        
         },
         error: () => {
           this.loading = false;
@@ -73,6 +74,11 @@ export class creditMemoListComponent implements OnInit {
         nzClosable: false,
       });
     }
+    onClick(datos: CreditMemoModel, index: number): void {
+      this.index = index;
+      this.selectedIndex = index;
+      this.selectedCreditMemo = datos;
+    }
 
     onDoubleClicked(datos: CreditMemoModel) {
       this.id = datos.id;
@@ -81,4 +87,69 @@ export class creditMemoListComponent implements OnInit {
     currencyFormat(data: any):string  {    
       return formatCurrency(data, this.locale, '$', 'ARS', '1.1-2')
     } 
+
+     /*
+   ** Evento de navegacion por teclado
+   */
+  myNavegation(event: any) {
+    switch (event.key) {
+      case 'ArrowDown':
+        let nextCell =
+          this.creditMemoList.length > this.selectedIndex
+            ? ++this.selectedIndex
+            : this.creditMemoList.length;
+        if (this.creditMemoList[nextCell] !== undefined) {
+          this.selectedCreditMemo = this.creditMemoList[nextCell];
+          this.index = nextCell;
+          document.getElementById(nextCell.toString())?.focus();
+        }
+        break;
+      case 'ArrowUp':
+        let previousCell = this.selectedIndex > 0 ? --this.selectedIndex : 0;
+        if (this.creditMemoList[previousCell] !== undefined) {
+          this.selectedCreditMemo = this.creditMemoList[previousCell];
+          this.index = previousCell;
+          document.getElementById(previousCell.toString())?.focus();
+        }
+        break;
+    }
+  }
+
+  /*
+   ** Evento scroll infinito con llamada a la api
+   */
+  onScroll(event: any): void {
+    let scrollHeight = event.target.scrollHeight;
+    let scrolltop = event.target.scrollTop;
+    let client = event.target.clientHeight;
+    let ScrollPosition = Math.abs(
+      Math.round(scrollHeight - (scrolltop + client))
+    );
+    if (
+      ScrollPosition <= 5 &&
+      this.totalItems / this.queryParams.page > this.queryParams.page
+    ) {
+      let page = this.queryParams.page;
+      this.queryParams.page = this.queryParams.page + 1;
+      if (
+        this.totalItems === undefined ||
+        this.queryParams.page * this.queryParams.pageSize <= this.totalItems
+      ) {
+        this.service.getCreditMemo(this.queryParams).subscribe({
+          next: (r) => {
+            r.data.map((invoice: CreditMemoModel) =>
+              this.creditMemoList.push(invoice)
+            );
+            this.loading = false;
+          },
+          error: () => {
+            this.loading = false;
+            this.creditMemoList = [];
+          },
+        });
+      } else {
+        this.queryParams.page = page;
+      }
+    }
+  }
 }
