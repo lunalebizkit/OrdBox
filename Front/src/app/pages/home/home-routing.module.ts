@@ -68,9 +68,14 @@ const routes: Routes = [
           import('./periods/periods.module').then((m) => m.PeriodsModule),
       },
        {
-        path: 'IvaVenta',
+        path: 'iva',
         loadChildren: () =>
           import('./iva-report/iva-report.module').then((m) => m.IvaReportModule ),
+      }, 
+      {
+        path: 'notes',
+        loadChildren: () =>
+          import('./notes/notes.module').then((m) => m.NotesModule ),
       }, 
     ],
   },

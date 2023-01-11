@@ -60,6 +60,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                     b.ToTable("category");
                 });
 
+            modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.CreditMemo", b =>
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.DebitMemo", b =>
                 {
                     b.Property<long>("Id")
@@ -127,7 +128,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("debit_memo");
-                });
+                }));
 
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.DebitMemoDetails", b =>
                 {
@@ -864,6 +865,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("CreditMemo");
                     b.Navigation("DebitMemo");
 
                     b.Navigation("Product");

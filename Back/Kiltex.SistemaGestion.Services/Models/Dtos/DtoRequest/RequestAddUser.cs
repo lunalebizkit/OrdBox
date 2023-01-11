@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 
 
-namespace Kiltex.SistemaGestion.Services.Dtos
+namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest
 {
     public class RequestAddUser
     {
@@ -25,7 +25,7 @@ namespace Kiltex.SistemaGestion.Services.Dtos
         [MaxLength(100)]
         public string? Password { get; set; }
 
-       
+
         [MaxLength(200)]
         public string? Email { get; set; }
 

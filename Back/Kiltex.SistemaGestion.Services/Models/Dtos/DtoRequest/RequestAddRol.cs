@@ -1,9 +1,8 @@
-﻿
-using Kiltex.SistemaGestion.Services.Models.Dtos;
+﻿using Kiltex.SistemaGestion.Services.Models.Dtos;
 using System.ComponentModel.DataAnnotations;
 
 
-namespace Kiltex.SistemaGestion.Services.Dtos
+namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest
 {
     public class RequestAddRol
     {
@@ -12,12 +11,12 @@ namespace Kiltex.SistemaGestion.Services.Dtos
 
         [Required]
         [MaxLength(100)]
-        public string Name { get; set; }       
+        public string Name { get; set; }
 
         [Required]
         [MaxLength(100)]
         public string Key { get; set; }
-        
+
 
     }
 }

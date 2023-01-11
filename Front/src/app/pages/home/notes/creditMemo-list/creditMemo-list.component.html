@@ -1,0 +1,69 @@
+<nz-layout>
+    <nz-page-header class="list-header">
+      <nz-page-header-title>Listado Nota de Crédito</nz-page-header-title>
+      <nz-page-header-extra>
+        <button
+        nz-tooltip
+        nzTooltipTitle="Nuevo"
+        nz-button
+        nzType="primary"
+        nzShape="circle"
+        routerLink="/notes/credit"
+      >
+        <i nz-icon nzType="plus" nzTheme="outline"></i>
+      </button>
+      </nz-page-header-extra>
+    </nz-page-header>
+    <div class="table" (scroll)="onScroll($event)">
+        <nz-table
+          class="tabla"
+          nzShowSizeChanger
+          nzBordered="false"
+          [nzData]="creditMemoList"
+          [nzSize]="'small'"
+          [nzLoading]="loading"
+          [nzPaginationType]="'small'"
+          nzShowPagination="false"
+        >
+          <thead>
+            <tr>
+              <th>Número</th>
+              <th>Fecha</th>
+              <th>Cuit</th>
+              <th>Nombre</th>
+              <th [nzAlign]="'center'">Total</th>
+              <th [nzAlign]="'center'">Acción</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              class="small-text"
+              tabindex="-1"
+              *ngFor="let data of creditMemoList; let i = index"
+              (click)="onClick(data, i)"
+            (keydown)="myNavegation($event)"
+            [style.background-color]="
+             data === selectedCreditMemo ? 'lightblue' : ''
+            "
+            >
+              <td>{{data.id}}</td>
+              <td>{{this.formaterDate(data.dateTime)}}</td>
+              <td>{{data.customerCuit}}</td>
+              <td>{{data.customerName}}</td>
+             <td>{{ this.currencyFormat( data.total)}}</td>
+             <td style="text-align: center">
+              <a>
+                <i
+                  nz-icon
+                  nzType="eye"
+                  nzTheme="outline"
+                  style="font-size: 16px"
+                  (click)="onDoubleClicked(data)"
+                ></i>
+              </a>
+            </td>
+            </tr>
+          </tbody>
+        </nz-table>
+      </div>
+</nz-layout>

@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Kiltex.SistemaGestion.Domain.Model;
-using Kiltex.SistemaGestion.Services.Dtos;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
 
