@@ -1,5 +1,4 @@
-﻿using Kiltex.SistemaGestion.Services.Dtos;
-using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
+﻿using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
 using Kiltex.SistemaGestion.Services.Services;
 using Microsoft.AspNetCore.Mvc;
 

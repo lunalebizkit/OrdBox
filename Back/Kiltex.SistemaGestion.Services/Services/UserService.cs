@@ -5,8 +5,8 @@ using Kiltex.SistemaGestion.SDK.Error;
 using Kiltex.SistemaGestion.SDK.Security;
 using Microsoft.EntityFrameworkCore;
 using Kiltex.SistemaGestion.Services.Common;
-using Kiltex.SistemaGestion.Services.Dtos;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
+using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
 
 namespace Kiltex.SistemaGestion.Services.Services
 {
