@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Kiltex.SistemaGestion.Domain;
-using Kiltex.SistemaGestion.Domain.Migrations;
 using Kiltex.SistemaGestion.Domain.Model;
 using Kiltex.SistemaGestion.SDK.Error;
 using Kiltex.SistemaGestion.Services.Common;
@@ -53,7 +52,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             try
             {
                 model.Id = 0;
-                if (model.ReceiptId == 0)
+                if (model.InvoiceId == 0)
                 {
                     _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
                     return Error<IdResponse<long>>(new OperationExceptions("000", "Datos incompletos")); ;
@@ -123,7 +122,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                                     .DebitMemos
                                     .AsNoTracking()
                                     .Include(p => p.DebitMemoDetails)
-                                    .Where(p => p.SupplierCuit.ToLower().Contains(request.Filter ?? ""));
+                                    .Where(p => p.CustomerCuit.ToLower().Contains(request.Filter ?? ""));
 
                 var count = await query.CountAsync().ConfigureAwait(false);
 

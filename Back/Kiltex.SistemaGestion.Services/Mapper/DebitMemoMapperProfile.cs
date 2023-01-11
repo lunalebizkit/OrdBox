@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Kiltex.SistemaGestion.Domain.Model;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
+using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +22,7 @@ namespace Kiltex.SistemaGestion.Services.Mapper
                      d.DateTime = o.DateTime = DateTime.Now;
                  });
             CreateMap<DebitMemo, DtoRequestDebitMemo>();
-            CreateMap<DebitMemoDetails, DtoRequestDebitMemoDetails>().ReverseMap();
+            CreateMap<DebitMemoDetails, DtoResponseDebitMemoDetails>().ReverseMap();
         }
     }
 }

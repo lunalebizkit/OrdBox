@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -10,50 +11,33 @@ namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest
     public class DtoRequestDebitMemo
     {
         public long Id { get; set; }
+
         [Required]
-        public long ReceiptId { get; set; }
+        public long InvoiceId { get; set; }
 
-        public DateTime DateTime { get; set; }
-
-        public long SupplierId { get; set; }
+        public long CustomerId { get; set; }
 
         public long UserId { get; set; }
 
-        public int ReceiptNumber { get; set; }
+        public long DebitMemoNumber { get; set; }
 
-        public string? SupplierName { get; set; }
+        public string CustomerName { get; set; }
 
-        public string? SupplierCuit { get; set; }
+        public string? CustomerCuit { get; set; }
 
-        public string? SupplierAddress { get; set; }
+        public string CustomerAddress { get; set; }
 
         public string? Observation { get; set; }
+
+        public DateTime DateTime { get; set; }
 
         public decimal Total { get; set; }
 
         public decimal IvaTotal { get; set; }
 
-        public decimal ConcNoGravado { get; set; }
-
-        public decimal PercIva { get; set; }
-
-        public decimal PercIngBrutos { get; set; }
-
         public int Type { get; set; }
-        public List<DtoRequestDebitMemoDetails> DebitMemoDetails { get; set; }
+
+        public List<DtoResponseDebitMemoDetails> DebitMemoDetails { get; set; }
     }
-    public class DtoRequestDebitMemoDetails
-    {
-        public long ProductId { get; set; }
-
-        public string? ProductName { get; set; }
-
-        public int ProductCode { get; set; }
-
-        public int Quantity { get; set; }
-
-        public decimal Price { get; set; }
-
-        public decimal Iva { get; set; }
-    }
+    
 }

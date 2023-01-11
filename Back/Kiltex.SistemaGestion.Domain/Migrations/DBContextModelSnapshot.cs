@@ -69,13 +69,34 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
 
-                    b.Property<decimal>("ConcNoGravado")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("conc_no_gravado");
+                    b.Property<string>("CustomerAddress")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("customer_address");
+
+                    b.Property<string>("CustomerCuit")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("customer_cuit");
+
+                    b.Property<long?>("CustomerId")
+                        .IsRequired()
+                        .HasColumnType("bigint")
+                        .HasColumnName("customer_id");
+
+                    b.Property<string>("CustomerName")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("customer_name");
 
                     b.Property<DateTime>("DateTime")
                         .HasColumnType("datetime2")
                         .HasColumnName("dateTime");
+
+                    b.Property<long>("InvoiceId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("invoice_id");
+
+                    b.Property<long>("InvoiceNumber")
+                        .HasColumnType("bigint")
+                        .HasColumnName("invoice_number");
 
                     b.Property<decimal>("IvaTotal")
                         .HasColumnType("decimal(18,2)")
@@ -85,39 +106,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("observation");
 
-                    b.Property<decimal>("PercIngBrutos")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("perc_ing_brutos");
-
-                    b.Property<decimal>("PercIva")
-                        .HasColumnType("decimal(18,2)")
-                        .HasColumnName("perc_iva");
-
-                    b.Property<long>("ReceiptId")
-                        .HasColumnType("bigint")
-                        .HasColumnName("receipt_id");
-
-                    b.Property<int>("ReceiptNumber")
-                        .HasColumnType("int")
-                        .HasColumnName("receipt_number");
-
-                    b.Property<string>("SupplierAddress")
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("supplier_address");
-
-                    b.Property<string>("SupplierCuit")
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("supplier_cuit");
-
-                    b.Property<long>("SupplierId")
-                        .HasColumnType("bigint")
-                        .HasColumnName("supplier_id");
-
-                    b.Property<string>("SupplierName")
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("supplier_name");
-
-                    b.Property<decimal?>("Total")
+                    b.Property<decimal>("Total")
                         .HasColumnType("decimal(18,2)")
                         .HasColumnName("total");
 
@@ -131,9 +120,9 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ReceiptId");
+                    b.HasIndex("CustomerId");
 
-                    b.HasIndex("SupplierId");
+                    b.HasIndex("InvoiceId");
 
                     b.HasIndex("UserId");
 
@@ -848,16 +837,16 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
 
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.DebitMemo", b =>
                 {
-                    b.HasOne("Kiltex.SistemaGestion.Domain.Model.Receipt", "Receipt")
+                    b.HasOne("Kiltex.SistemaGestion.Domain.Model.Customer", "Customer")
                         .WithMany()
-                        .HasForeignKey("ReceiptId")
+                        .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Kiltex.SistemaGestion.Domain.Model.Supplier", "Supplier")
+                    b.HasOne("Kiltex.SistemaGestion.Domain.Model.Invoice", "Invoice")
                         .WithMany()
-                        .HasForeignKey("SupplierId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasForeignKey("InvoiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Kiltex.SistemaGestion.Domain.Model.User", "User")
@@ -866,9 +855,9 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Receipt");
+                    b.Navigation("Customer");
 
-                    b.Navigation("Supplier");
+                    b.Navigation("Invoice");
 
                     b.Navigation("User");
                 });
@@ -878,7 +867,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                     b.HasOne("Kiltex.SistemaGestion.Domain.Model.DebitMemo", "DebitMemo")
                         .WithMany("DebitMemoDetails")
                         .HasForeignKey("DebitMemoId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Kiltex.SistemaGestion.Domain.Model.Product", "Product")
