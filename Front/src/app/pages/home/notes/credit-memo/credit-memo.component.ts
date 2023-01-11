@@ -35,10 +35,8 @@ export class CreditMemoComponent extends BaseComponent implements OnInit {
   isSaving!: boolean;
   startDate = this.formaterDate(Date.now());
   ivaTotal: number =0;
-  ivaTotal1!: number;
   total: number =0;
-  total1!:number
-  editId: number | null = null;
+   editId: number | null = null;
   editIdIva: number | null = null;
   stock!: number;
   productId!:number;
@@ -48,7 +46,7 @@ export class CreditMemoComponent extends BaseComponent implements OnInit {
   quantity!: number;
   price!: number;
   subTotal: number =0;
-  subTotal1!: number;
+
 
   iva: number =21 ;
   creditId!:number;
@@ -124,16 +122,18 @@ constructor(@Inject(LOCALE_ID) public locale: string,
 
     getInvoice(id: number): void {
       if (id != 0)
+      this.edit=== false
       this.serviceInvoice.getInvoiceById(id).subscribe({
           next: (r: InvoiceModel) => {
             this.type1 = r.type, 
+            this.customerId= r.customerId
             this.formCreditMemo.controls['address'].setValue(r.customerAddress),
             this.formCreditMemo.controls['customerCuit'].setValue(r.customerCuit),
             this.formCreditMemo.controls['customerName'].setValue(r.customerName),
-            this.ivaTotal1= r.ivaTotal,
-            this.total1= r.total,
+            this.ivaTotal= r.ivaTotal,
+            this.total= r.total,
             this.userId = r.userId,
-            this.subTotal1= r.total - r.ivaTotal;          
+            this.subTotal= r.total - r.ivaTotal;          
             this.isLoading = false;
             /**parse a Grilla */
              r.invoiceDetails.forEach(modelDetail=>{
@@ -146,7 +146,6 @@ constructor(@Inject(LOCALE_ID) public locale: string,
               const modelDetail = creditMemoDetailFromInvoiceParser(model);
             this.creditMemoDetails.push(modelDetail);  
             })
-            console.log(this.creditMemoDetails);
             
           this.totalCalculate()
         },
@@ -160,7 +159,6 @@ constructor(@Inject(LOCALE_ID) public locale: string,
     }
     save(): void {
       if (this.isValidForm(this.formCreditMemo)) {
-        this.edit==true
         if (this.creditMemoDetails.length == 0) {
           this.showMessageError('No hay Productos Seleccionados');
   

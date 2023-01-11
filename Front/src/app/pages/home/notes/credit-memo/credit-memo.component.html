@@ -27,7 +27,7 @@
               </nz-form-control>
             </nz-form-item>
           </div>
-          <div nz-col class="gutter-row" style="margin-right: 14px" >
+          <div nz-col class="gutter-row" style="margin-right: 14px" *ngIf="edit === true">
             <nz-form-item>
               <nz-form-label nzRequired > Tipo de Factura</nz-form-label>
               <nz-form-control>
@@ -55,6 +55,7 @@
             nz-input
               nzSize="small"
               formControlName="customerCuit"
+              (keydown.enter)="searchCustomer(); $event.preventDefault()"
             />
            </nz-form-control>
 
