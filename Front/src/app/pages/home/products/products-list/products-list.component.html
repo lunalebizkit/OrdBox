@@ -92,14 +92,15 @@
           <td nzEllipsis>{{ product.description }}</td>
           <td nzEllipsis>{{ product.categoryName }}</td>
           <td nzEllipsis>{{ product.brandName }}</td>
-          <td nzEllipsis style="text-align: right">{{ product.quantity }}</td>
+          <td nzEllipsis style="text-align: right"
+          [style.color]="product.quantity >= 0 ? '' : 'red' ">{{ product.quantity }}</td>
           <td style="color: blue; text-align: right; font-weight: bold">
             ${{ product.purchasePrice }}
           </td>
           <td style="color: green; text-align: right; font-weight: bold">
             ${{ product.cashSalePrice }}
           </td>
-          <td style="color: red; text-align: right; font-weight: bold">
+          <td style="color: rgb(194, 44, 44); text-align: right; font-weight: bold">
             ${{ product.salePrice }}
           </td>
           <td style="text-align: right; font-weight: bold">

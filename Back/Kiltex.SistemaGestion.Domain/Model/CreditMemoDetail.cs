@@ -4,14 +4,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Kiltex.SistemaGestion.Domain.Model
 {
-    [Table("invoice_detail")]
-    public partial class InvoiceDetail : BaseModel
+    [Table("creditMemo_detail")]
+    public class CreditMemoDetail : BaseModel
     {
-        [Column("invoice_id")]
-        public long InvocieId { get; set; }
+        [Column("credit_id")]
+        public long CreditId { get; set; }
 
-        [ForeignKey(nameof(InvocieId))]
-        public Invoice? Invoice { get; set; }
+        [ForeignKey(nameof(CreditId))]
+        public CreditMemo? CreditMemo { get; set; }
 
         [Column("product_id")]
         public long ProductId { get; set; }

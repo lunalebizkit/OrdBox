@@ -44,10 +44,10 @@
             <td >{{data.brandName}}</td> 
              <td nzBreakWord>{{data.description}}</td> 
              <td>$ {{data.purchasePrice}}</td> 
-             <td>{{data.quantity}}             
+             <td [style.color]="data.quantity >= 0 ? '' : ' brown' ">{{data.quantity}}             
             </td>           
              <td>
-              <i nz-icon nzType="exclamation-circle" nzTheme="outline" *ngIf="data.quantity === 0"
+              <i nz-icon nzType="exclamation-circle" nzTheme="outline" *ngIf="data.quantity <= 0"
               [title]="'Este producto no cuenta con stock'"
               style="color: brown;"></i>
              </td> 

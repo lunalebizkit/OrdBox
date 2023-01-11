@@ -78,6 +78,7 @@
             <th>Nombre</th>
             <th [nzAlign]="'center'">Total</th>
             <th [nzAlign]="'center'">Tipo</th>
+            <th nzWidth="200px" [nzAlign]="'center'">Notas</th>
             <th [nzAlign]="'center'">Acción</th>
           </tr>
         </thead>
@@ -103,6 +104,33 @@
               <b>{{ this.currencyFormat(data.total) }}</b>
             </td>
             <td [nzAlign]="'center'">{{ this.getInvoiceType(data.type) }}</td>
+            <ng-container>
+              <td style="text-align: center;">
+                <a>
+                  <button
+                    nz-button
+                    nzType="primary"
+                    nzSize="small"
+                    style="background-color: rgb(3, 155, 3); font-size:12px; margin-right: 20px; border-color:rgb(3, 155, 3) ;"
+                    routerLink="/home/notes/credit"
+                    [queryParams]="{
+                      id: data.id
+                    }"
+                    >
+                    Crédito
+                  </button>
+                </a>
+                <button
+                  nz-button
+                  nzSize="small"
+                  nzType="primary"
+                  style="font-size: small; font-size:12px"
+                  routerLink="/home/notes/debit"
+                  >
+                  Débito
+                </button>
+              </td>
+            </ng-container>
             <td style="text-align: center">
               <a>
                 <i

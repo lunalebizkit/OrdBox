@@ -4,7 +4,7 @@ import { InvoiceIvaReportComponent } from './invoice-iva.report/invoice-iva.repo
 import { ReceiptIvaReportComponent } from './receipt-iva.report/receipt-iva.report.component';
 
 const routes: Routes= [
-    {path: '', component: InvoiceIvaReportComponent },
+    {path: 'ivaVenta', component: InvoiceIvaReportComponent },
     {path: 'ivaCompra', component: ReceiptIvaReportComponent}
 ]
 
