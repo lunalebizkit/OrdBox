@@ -190,8 +190,7 @@ constructor(@Inject(LOCALE_ID) public locale: string,
                   
                 );
                 this.isSaving = false;
-                console.log(this.total);
-                
+                              
                 this.router.navigate(['/notes/creditList']);
               },
               error: () => {

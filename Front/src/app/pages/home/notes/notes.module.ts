@@ -28,6 +28,7 @@ import { NzToolTipModule } from "ng-zorro-antd/tooltip";
 import { NzListModule } from "ng-zorro-antd/list";
 import { NzDatePickerModule } from "ng-zorro-antd/date-picker";
 import { NzDescriptionsModule } from "ng-zorro-antd/descriptions";
+import { DebitMemoViewDrawerComponent } from "./debitMemo-view-drawer/debitMemo-view-drawer.component";
 
 @NgModule({
     imports: [CommonModule,
@@ -74,6 +75,11 @@ import { NzDescriptionsModule } from "ng-zorro-antd/descriptions";
     NzDatePickerModule,
     NzDescriptionsModule,  
     ],
-    declarations:[ debitMemoComponent, CreditMemoComponent, creditMemoListComponent, debitMemoListComponent, CreditMemoViewDrawerComponent]
+    declarations:[ debitMemoComponent, 
+                   CreditMemoComponent, 
+                   creditMemoListComponent, 
+                   debitMemoListComponent, 
+                   CreditMemoViewDrawerComponent,
+                   DebitMemoViewDrawerComponent]
 })
 export class NotesModule {}

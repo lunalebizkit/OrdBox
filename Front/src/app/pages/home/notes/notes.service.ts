@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ApiService } from '../../../common/services/api.base.service';
 import { Observable } from 'rxjs';
 import { CreditMemoModel } from './model/creditMemo.model';
+import { DebitMemoModel } from './model/debitMemo.model';
 
 
 
@@ -30,6 +31,20 @@ export class NoteService {
 
   public saveCreditMemo(model: CreditMemoModel): Observable<any> {
       return this.api.post(`CreditMemo`, model, false);
+  }
+
+/*   notas de debito */
+
+  public getDebitMemoById(id: number): Observable<any> {
+    return this.api.get(`DebitMemo?id=${id}`, false);
+  }
+
+  public getDebitMemo(queryParams: any): Observable<any> {
+    return this.api.post(`DebitMemo/List`, queryParams, false);
+  }
+
+  public saveDebitMemo(model: DebitMemoModel): Observable<any> {
+      return this.api.post(`DebitMemo`, model, false);
   }
 
 }

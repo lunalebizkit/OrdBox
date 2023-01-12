@@ -14,15 +14,15 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { BaseComponent } from 'src/app/common/components/base/base.component';
 import { HeaderOperationsButtonsComponent } from 'src/app/common/components/headers/buttons.oparations.header.component';
-import { CreditMemoDetails } from '../model/creditMemo.model';
+import { DebitMemoDetails } from '../model/debitMemo.model';
 import { NoteService } from '../notes.service';
 
 @Component({
-  selector: 'app-creditMemo-view-drawer',
-  templateUrl: './creditMemo-view-drawer.component.html',
-  styleUrls: ['./creditMemo-view-drawer.component.css'],
+  selector: 'app-debitMemo-view-drawer',
+  templateUrl: './debitMemo-view-drawer.component.html',
+  styleUrls: ['./debitMemo-view-drawer.component.css'],
 })
-export class CreditMemoViewDrawerComponent
+export class DebitMemoViewDrawerComponent
   extends BaseComponent
   implements OnInit
 {
@@ -41,7 +41,6 @@ export class CreditMemoViewDrawerComponent
   tipo!: string;
 
   //Variables del comprobante
-  
   userId!: number;
   customerName!: string;
   customerCuit!: string;
@@ -52,7 +51,7 @@ export class CreditMemoViewDrawerComponent
   total!: number;
   ivaTotal!: number;
   
- creditMemoDetail: CreditMemoDetails[]=[]
+ debitMemoDetail: DebitMemoDetails[]=[]
 
   form!: FormGroup;
   constructor(
@@ -68,12 +67,12 @@ export class CreditMemoViewDrawerComponent
 
   ngOnInit(): void {
     if (this.id != null || this.id != undefined || this.id != 0) {
-      this.getCreditMemo(this.id); 
+      this.getDebitMemo(this.id); 
     }
   }
-  getCreditMemo(id: number): void {
+  getDebitMemo(id: number): void {
     if (id != 0)
-      this.service.getCreditMemoById(id).subscribe({
+      this.service.getDebitMemoById(id).subscribe({
         next: (r) => {
             this.customerAddress = r.customerAddress,
             this.customerCuit = r.customerCuit,
@@ -82,9 +81,9 @@ export class CreditMemoViewDrawerComponent
             this.total = r.total,
             this.userId = r.userId,
             this.dateTime = r.dateTime,
-            this.creditMemoDetail= r.creditMemoDetail
-          this.isLoading = false;
-          console.log(this.creditMemoDetail);
+            this.debitMemoDetail= r.debitMemoDetail
+            this.isLoading = false;
+          console.log(r.debitMemoDetail);
           
         },
         error: () => {
