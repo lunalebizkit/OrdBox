@@ -23,13 +23,13 @@ namespace Kiltex.SistemaGestion.Api.Controllers.DebitMemo
             return Return(await _service.GetById(id).ConfigureAwait(false));
         }
         [HttpPost]
-        [AllowAccess(Permission = new EPermission[] { EPermission.CreatetMemo })]
+        [AllowAccess(Permission = new EPermission[] { EPermission.CreateMemo })]
         public async Task<IActionResult> New([FromBody] DtoRequestDebitMemo model)
         {
             return Return(await _service.Add(model).ConfigureAwait(false));
         }
         [HttpPut]
-        [AllowAccess(Permission = new EPermission[] { EPermission.CreatetMemo })]
+        [AllowAccess(Permission = new EPermission[] { EPermission.CreateMemo })]
         public async Task<IActionResult> Edit([FromBody] DtoRequestDebitMemo model)
         {
             return Return(await _service.Update(model).ConfigureAwait(false));

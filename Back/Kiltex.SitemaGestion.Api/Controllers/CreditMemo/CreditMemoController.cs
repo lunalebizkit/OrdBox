@@ -32,7 +32,7 @@ namespace Kiltex.SistemaGestion.Api.Controllers.CreditMemoController
         }
 
         [HttpPost]
-        [AllowAccess(Permission = new EPermission[] { EPermission.CreatetMemo })]
+        [AllowAccess(Permission = new EPermission[] { EPermission.CreateMemo })]
         public async Task<IActionResult> Post([FromBody] DtoRequestCreditMemo model)
         {
             return Return(await _service.NewMemo(model).ConfigureAwait(false));
