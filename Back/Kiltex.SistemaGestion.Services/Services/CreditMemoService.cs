@@ -20,7 +20,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             try
             {
                 var creditMemo = await _contextSql
-                                    .CreditMemoModel
+                                    .CreditMemo
                                     .Include(x => x.CreditMemoDetail)
                                     .AsNoTracking()
                                     .FirstOrDefaultAsync(c => c.Id == id)
@@ -68,7 +68,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             try
             {
                 var query = _contextSql
-                                    .CreditMemoModel
+                                    .CreditMemo
                                     .AsNoTracking()
                                     .Include(p => p.CreditMemoDetail)
                                     .Where(p => p.CustomerCuit.ToLower().Contains(request.Filter ?? ""));
@@ -114,7 +114,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                         detail.Price = oldProduct.SalePrice;
                     }
 
-                    await _contextSql.CreditMemoModel.AddAsync(creditModel, ct).ConfigureAwait(false);
+                    await _contextSql.CreditMemo.AddAsync(creditModel, ct).ConfigureAwait(false);
                 }
                 await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
                 transaction.Commit();
