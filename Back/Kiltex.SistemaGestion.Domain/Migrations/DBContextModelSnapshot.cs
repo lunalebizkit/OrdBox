@@ -61,13 +61,18 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                 });
 
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.CreditMemo", b =>
+=========
+            modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.DebitMemo", b =>
+>>>>>>>>> Temporary merge branch 2
+            modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.DebitMemo", b =>
+>>>>>>>>> Temporary merge branch 2
+            modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.DebitMemo", b =>
+>>>>>>>>> Temporary merge branch 2
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint")
                         .HasColumnName("id");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
 
                     b.Property<long>("CreditMemoNumber")
                         .HasColumnType("bigint")
@@ -178,6 +183,8 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
 
+=========
+>>>>>>>>> Temporary merge branch 2
                     b.Property<string>("CustomerAddress")
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("customer_address");
@@ -230,13 +237,13 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CustomerId");
-
+                });
                     b.HasIndex("InvoiceId");
 
                     b.HasIndex("UserId");
 
                     b.ToTable("debit_memo");
-                });
+                }));
 
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.DebitMemoDetails", b =>
                 {
@@ -994,6 +1001,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
 
                     b.Navigation("Customer");
 
+<<<<<<<<< Temporary merge branch 1
                     b.Navigation("User");
                 });
 
@@ -1003,6 +1011,19 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                         .WithMany("CreditMemoDetail")
                         .HasForeignKey("CreditId")
                         .OnDelete(DeleteBehavior.NoAction)
+=========
+                    b.Navigation("Invoice");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.DebitMemoDetails", b =>
+                {
+                    b.HasOne("Kiltex.SistemaGestion.Domain.Model.DebitMemo", "DebitMemo")
+                        .WithMany("DebitMemoDetails")
+                        .HasForeignKey("DebitMemoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+>>>>>>>>> Temporary merge branch 2
                         .IsRequired();
 
                     b.HasOne("Kiltex.SistemaGestion.Domain.Model.Product", "Product")
@@ -1012,6 +1033,9 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                         .IsRequired();
 
                     b.Navigation("CreditMemo");
+=========
+                    b.Navigation("DebitMemo");
+>>>>>>>>> Temporary merge branch 2
 
                     b.Navigation("Product");
                 });
@@ -1219,11 +1243,11 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                         .IsRequired();
                 });
 
+<<<<<<<<< Temporary merge branch 1
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.CreditMemo", b =>
                 {
                     b.Navigation("CreditMemoDetail");
-                });
-
+=========
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.DebitMemo", b =>
                 {
                     b.Navigation("DebitMemoDetails");
