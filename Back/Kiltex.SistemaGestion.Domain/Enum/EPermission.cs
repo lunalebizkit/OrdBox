@@ -56,6 +56,6 @@ namespace Kiltex.SistemaGestion.Domain.Enum
         DeletePeriod = 36,
         //Memo
         GetMemo = 37,
-        CreatetMemo = 38
+        CreateMemo = 38
     }
 }

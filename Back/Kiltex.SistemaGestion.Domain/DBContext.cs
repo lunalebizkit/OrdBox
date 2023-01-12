@@ -51,13 +51,14 @@ namespace Kiltex.SistemaGestion.Domain
         public virtual DbSet<InvoiceDetail> InvoiceDetails { get; set; }
         public virtual DbSet<Receipt> Receipts { get; set; }
         public virtual DbSet<ReceiptDetails> ReceiptDetails { get; set; }
-        public virtual DbSet<CreditMemo> CreditMemoModel { get; set; }
+        public virtual DbSet<CreditMemo> CreditMemo { get; set; }
         public virtual DbSet<CreditMemoDetail> CreditMemoDetail { get; set; }
 
 
         public virtual DbSet<Period> Periods { get; set; }
+        public virtual DbSet<DebitMemo> DebitMemos { get; set; }
 
-     
+
         //private static void InitialRoles(ModelBuilder modelBuilder)
         //{
         //    modelBuilder.Entity<Rol>().HasData(
@@ -68,6 +69,6 @@ namespace Kiltex.SistemaGestion.Domain
         //        }
         //    );
         //}; 
-       
+
     }
 }
