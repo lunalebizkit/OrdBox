@@ -65,7 +65,7 @@ builder.Services.AddScoped<SupplierOrderService>();
 builder.Services.AddScoped<ReceiptService>();
 builder.Services.AddScoped<PeriodService>();
 builder.Services.AddScoped<IvaService>();
-builder.Services.AddScoped<CreditMemoService>();
+builder.Services.AddScoped<DebitMemoService>();
 builder.Services.AddDbContext<DBContext>(x => x.UseSqlServer(connectionString));
 builder.Services.AddCors(options =>
    {
