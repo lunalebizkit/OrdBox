@@ -1,6 +1,4 @@
-﻿
-
-namespace Kiltex.SistemaGestion.Services.Models.Dtos
+﻿namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse
 {
     public class DtoEntity
     {
@@ -14,8 +12,8 @@ namespace Kiltex.SistemaGestion.Services.Models.Dtos
 
         public string? Address { get; set; }
 
-        public List<string> PhoneEntity { get; set; } 
+        public List<string> PhoneEntity { get; set; }
 
-        public List<string> EmailEntity { get; set; } 
+        public List<string> EmailEntity { get; set; }
     }
 }

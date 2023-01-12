@@ -1,5 +1,5 @@
-import { Component, ElementRef, Input, OnInit, TemplateRef, ViewChild } from "@angular/core";
-import { FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
+import { Component, ElementRef, OnInit, TemplateRef, ViewChild } from "@angular/core";
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { NzMessageService } from "ng-zorro-antd/message";
 import { NzNotificationService } from "ng-zorro-antd/notification";
 import { BaseComponent } from "src/app/common/components/base/base.component";
@@ -21,9 +21,6 @@ import { formatCurrency, formatDate } from '@angular/common';
 import { Inject, LOCALE_ID } from '@angular/core';
 import { ProductService } from "../../products/product.service";
 import { AuthService } from "src/app/common/auth/interceptors/auth.service";
-import { Observable } from "rxjs";
-import { ThisReceiver } from "@angular/compiler";
-import { PeriodsRoutingModule } from "../../periods/periods-routing.module";
 import { PeriodsService } from "../../periods/periods.service";
 import { IvaType } from "../model/iva-type.Enum";
 
@@ -62,10 +59,6 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
   isLoading: boolean= false;
   loading!: boolean;
   isSaving!: boolean;
-  percIngBrutos: number = 0;
-  percIva: number = 0;
-  concNoGravado: number = 0;
-
 
   formInvoice!: FormGroup;
   formProductSearch!: FormGroup;
@@ -334,21 +327,6 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
   formatter = (data: number = 0) =>
   formatCurrency(data, this.locale, '$', 'ARS', '1.1-2');
 
-  concNoGravadoChange(id: any): any {
-    this.concNoGravado = id;
-    this.totalCalculate();
-  }
-
-  percIvaChange(id: any): any {
-    this.percIva = id;
-    this.totalCalculate();
-  }
-
-  percIngBrutosChange(id: any): any {
-    this.percIngBrutos = id;
-    this.totalCalculate();
-  }
-
   totalCalculate(): void {    
     this.subtotal = 0;
     this.total = 0;
@@ -365,7 +343,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
         );
        this.total +=  dato.price  * dato.quantity ;     
       });
-      this.total += this.concNoGravado + this.percIngBrutos + this.percIva;
+      /* this.total += this.concNoGravado + this.percIngBrutos + this.percIva; */
     } catch (error) {}   
   };
 
@@ -443,9 +421,6 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
           total: this.totalItems,
           ivaTotal: this.ivaTotal,
           type: this.formInvoice.controls['type'].value,
-          concNoGravado: this.concNoGravado,
-          percIva: this.percIva,
-          percIngBrutos: this.percIngBrutos,
           invoiceDetails: this.invoiceDetails,
         };
         this.isSaving = true;

@@ -11,7 +11,7 @@ namespace Kiltex.SistemaGestion.Domain.Model
         public long InvocieId { get; set; }
 
         [ForeignKey(nameof(InvocieId))]
-        public Invoice Invoice { get; set; }
+        public Invoice? Invoice { get; set; }
 
         [Column("product_id")]
         public long ProductId { get; set; }

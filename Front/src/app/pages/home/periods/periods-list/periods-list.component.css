@@ -16,10 +16,10 @@
   grid-template-columns: 50% 50%;
 } 
 .tabla th{
-  font-size: 13px;
+  font-size: 12px;
 }
 .tabla td{
-  font-size: 12px; 
+  font-size: 11px; 
 }
 .table{
   height: 50vh;

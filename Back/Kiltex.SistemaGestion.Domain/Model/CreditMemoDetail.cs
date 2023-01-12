@@ -1,0 +1,37 @@
+﻿
+using System.ComponentModel.DataAnnotations.Schema;
+
+
+namespace Kiltex.SistemaGestion.Domain.Model
+{
+    [Table("creditMemo_detail")]
+    public class CreditMemoDetail : BaseModel
+    {
+        [Column("credit_id")]
+        public long CreditId { get; set; }
+
+        [ForeignKey(nameof(CreditId))]
+        public CreditMemo? CreditMemo { get; set; }
+
+        [Column("product_id")]
+        public long ProductId { get; set; }
+
+        [ForeignKey(nameof(ProductId))]
+        public Product Product { get; set; }
+
+        [Column("product_name")]
+        public string? ProductName { get; set; }
+
+        [Column("product_code")]
+        public int ProductCode { get; set; }
+
+        [Column("quantity")]
+        public int Quantity { get; set; }
+
+        [Column("price")]
+        public decimal Price { get; set; }
+
+        [Column("iva")]
+        public decimal Iva { get; set; }
+    }
+}

@@ -111,7 +111,6 @@ namespace Kiltex.SistemaGestion.Services.Services
                         invoiceModel.CustomerId = user.Id;
                     }
                     
-
                     foreach (var detail in invoiceModel.InvoiceDetails)
                     {
                         var oldProduct = await _contextSql.Products.AsNoTracking().FirstAsync(p => p.Id == detail.ProductId).ConfigureAwait(false);
@@ -121,8 +120,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                         _contextSql.Products.Update(productDetail);
                     }
                     
-                    await _contextSql.Invoices.AddAsync(invoiceModel, ct).ConfigureAwait(false);
-                   
+                    await _contextSql.Invoices.AddAsync(invoiceModel, ct).ConfigureAwait(false);  
                 }
                 await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
                 transaction.Commit();
@@ -133,9 +131,6 @@ namespace Kiltex.SistemaGestion.Services.Services
                 _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
                 return Error<IdResponse<long>>(new OperationExceptions(ErrorsCodes.C_999_ERROR_GENERICO, ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO)));
             }         
-         
-
         }
-
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Kiltex.SistemaGestion.Domain.Enum;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -46,18 +47,11 @@ namespace Kiltex.SistemaGestion.Domain.Model
         [Column("iva_total")]
         public decimal IvaTotal { get; set; }
 
-        [Column("conc_no_gravado")]
-        public decimal ConcNoGravado { get; set; }
-
-        [Column("perc_iva")]
-        public decimal PercIva { get; set; }
-
-        [Column("perc_ing_brutos")]
-        public decimal PercIngBrutos { get; set; }
-
         [Column("type")]
         public int Type { get; set; }
 
         public ICollection<InvoiceDetail> InvoiceDetails { get; set; } = new HashSet<InvoiceDetail>();
+
+   
     }
 }

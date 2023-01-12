@@ -6,24 +6,26 @@
    <nz-collapse>
         <nz-collapse-panel nzHeader="Crear" [nzActive]="true">
             <form nz-form [formGroup]="form" style="margin-top: 26px">
-
                 <nz-form-item *ngIf="editPeriod == false disabled">
-                    <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="initPeriod">Inicio Período </nz-form-label>
-                    <nz-form-control [nzSm]="14" [nzXs]="24">
-                      <nz-input-group nzCompact>
-                        <input formControlName="initPeriod" type="date" nz-input style="width:50%;" />
-                      </nz-input-group>
-                    </nz-form-control>
+                    <nz-form-label nzRequired [nzSm]="10" [nzXs]="24" nzRequired nzFor="initPeriod">Inicio Período</nz-form-label>
+                      <nz-form-control [nzSm]="14" [nzXs]="24">
+                        <nz-date-picker
+                          formControlName="initPeriod"
+                          nzFormat="dd/MM/yyyy"
+                          [nzPlaceHolder]="'Inicio Período'"       
+                        ></nz-date-picker>
+                      </nz-form-control>
                 </nz-form-item>
-                <nz-form-item>
-                  <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="endPeriod">Fin Período </nz-form-label>
-                  <nz-form-control [nzSm]="14" [nzXs]="24">
-                    <nz-input-group nzCompact>
-                      <input formControlName="endPeriod" type="date" nz-input style="width:50%;" />
-                    </nz-input-group>
-                  </nz-form-control>
-              </nz-form-item>
-              
+                  <nz-form-item>
+                    <nz-form-label nzRequired [nzSm]="10" [nzXs]="24" nzRequired nzFor="endPeriod">Fin Período</nz-form-label>
+                    <nz-form-control [nzSm]="14" [nzXs]="24">
+                      <nz-date-picker
+                      formControlName="endPeriod"
+                      nzFormat="dd/MM/yyyy"                  
+                      [nzPlaceHolder]="'Fin Período'"       
+                      ></nz-date-picker>
+                    </nz-form-control>
+                  </nz-form-item>          
             </form>
         </nz-collapse-panel>
     </nz-collapse>
