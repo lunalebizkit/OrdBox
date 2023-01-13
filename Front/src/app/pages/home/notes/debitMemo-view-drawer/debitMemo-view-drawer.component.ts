@@ -81,7 +81,7 @@ export class DebitMemoViewDrawerComponent
             this.total = r.total,
             this.userId = r.userId,
             this.dateTime = r.dateTime,
-            this.debitMemoDetail= r.debitMemoDetail
+            this.debitMemoDetail= r.debitMemoDetails
             this.isLoading = false;
           console.log(r.debitMemoDetail);
           

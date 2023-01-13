@@ -2,6 +2,7 @@ export interface  DebitMemoModel{
     id: number,
     customerId :number,
     invoiceId: number,
+    invoiceNumber: number,
     userId: number,
     debitMemoNumb:number,
     customerName: string,
@@ -41,9 +42,9 @@ export function debitMemoGridParser(value: any, iva: number) {
       code: value.code,
       ownCode: value.id,
       productName: value.description,
-      price: value.salePrice,
+      price: value.price,
       quantity: 1,
-      subTotal: value.salePrice,
+      subTotal: value.price,
       iva: iva
     }}
 
@@ -54,7 +55,7 @@ export function debitMemoGridParser(value: any, iva: number) {
           productId: value.id,
           productName: value.description,
           productCode: value.code,
-          price: value.salePrice,
+          price: value.price,
           quantity: 1,
          iva: iva
         }}   

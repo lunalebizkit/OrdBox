@@ -83,9 +83,7 @@ export class CreditMemoViewDrawerComponent
             this.userId = r.userId,
             this.dateTime = r.dateTime,
             this.creditMemoDetail= r.creditMemoDetail
-          this.isLoading = false;
-          console.log(this.creditMemoDetail);
-          
+          this.isLoading = false;  
         },
         error: () => {
           this.isLoading = false;

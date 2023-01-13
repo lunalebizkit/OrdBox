@@ -33,7 +33,7 @@ export class NoteService {
       return this.api.post(`CreditMemo`, model, false);
   }
 
-/*   notas de debito */
+/*   servicio notas de debito */
 
   public getDebitMemoById(id: number): Observable<any> {
     return this.api.get(`DebitMemo?id=${id}`, false);
