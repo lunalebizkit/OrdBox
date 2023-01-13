@@ -53,8 +53,6 @@ namespace Kiltex.SistemaGestion.Domain
         public virtual DbSet<ReceiptDetails> ReceiptDetails { get; set; }
         public virtual DbSet<CreditMemo> CreditMemo { get; set; }
         public virtual DbSet<CreditMemoDetail> CreditMemoDetail { get; set; }
-
-
         public virtual DbSet<Period> Periods { get; set; }
         public virtual DbSet<DebitMemo> DebitMemos { get; set; }
         public virtual DbSet<DebitMemoDetails> DebitMemoDetails { get; set; }

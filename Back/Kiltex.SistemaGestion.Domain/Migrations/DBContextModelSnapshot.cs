@@ -61,12 +61,13 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                 });
 
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.CreditMemo", b =>
-
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint")
                         .HasColumnName("id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
 
                     b.Property<long>("CreditMemoNumber")
                         .HasColumnType("bigint")
@@ -119,7 +120,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("creditMemo");
+                    b.ToTable("credit_memo");
                 });
 
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.CreditMemoDetail", b =>
@@ -165,7 +166,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("creditMemo_detail");
+                    b.ToTable("credit_memo_details");
                 });
 
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.DebitMemo", b =>
@@ -930,6 +931,44 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                     b.ToTable("supplier");
                 });
 
+            modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.CreditMemo", b =>
+                {
+                    b.HasOne("Kiltex.SistemaGestion.Domain.Model.Customer", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Kiltex.SistemaGestion.Domain.Model.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.CreditMemoDetail", b =>
+                {
+                    b.HasOne("Kiltex.SistemaGestion.Domain.Model.CreditMemo", "CreditMemo")
+                        .WithMany("CreditMemoDetail")
+                        .HasForeignKey("CreditId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Kiltex.SistemaGestion.Domain.Model.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CreditMemo");
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.DebitMemo", b =>
                 {
                     b.HasOne("Kiltex.SistemaGestion.Domain.Model.Customer", "Customer")
@@ -1012,7 +1051,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                     b.HasOne("Kiltex.SistemaGestion.Domain.Model.DebitMemo", "DebitMemo")
                         .WithMany("DebitMemoDetails")
                         .HasForeignKey("DebitMemoId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("Kiltex.SistemaGestion.Domain.Model.Product", "Product")
@@ -1020,8 +1059,6 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("CreditMemo");
 
                     b.Navigation("DebitMemo");
 
@@ -1234,11 +1271,12 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.CreditMemo", b =>
                 {
                     b.Navigation("CreditMemoDetail");
+                });
 
-                    modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.DebitMemo", b =>
-                        {
-                            b.Navigation("DebitMemoDetails");
-                        });
+            modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.DebitMemo", b =>
+                {
+                    b.Navigation("DebitMemoDetails");
+                });
 
                     modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.Entity", b =>
                         {
