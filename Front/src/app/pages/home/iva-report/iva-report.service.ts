@@ -26,5 +26,9 @@ export class InvoiceIvaReportService {
       const headers = new HttpHeaders().set('Content-Type', 'application/json');
       return this.api.get(`Iva/ReceiptIvaReport?from=${initPeriod}&to=${endPeriod}`, false, {headers, responseType:'blob' as 'json'})
     }
+    public getInvoiceIvaReport(initPeriod: any,endPeriod:any): Observable<any> {
+      const headers = new HttpHeaders().set('Content-Type', 'application/json');
+      return this.api.get(`Iva/InvoiceIvaReport?from=${initPeriod}&to=${endPeriod}`, false, {headers, responseType:'blob' as 'json'})
+    }
 
 }

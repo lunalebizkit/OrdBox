@@ -33,7 +33,14 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Iva
         [Route("ReceiptIvaReport")]
         public async Task<IActionResult> ReceiptIvaReport([FromQuery] DateTime from, DateTime to)
         {
-            var content = await _service.ReceiptIvaReport(from, to ).ConfigureAwait(false);
+            var content = await _service.ReceiptIvaReport(from, to).ConfigureAwait(false);
+            return File(content.Data, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"ListaReporteIvaCompra_{DateTime.Now:dd-MM-yyyy}.xlsx");
+        }
+        [HttpGet]
+        [Route("InvoiceIvaReport")]
+        public async Task<IActionResult> InvoiceIvaReport([FromQuery] DateTime from, DateTime to)
+        {
+            var content = await _service.InvoiceIvaReport(from, to).ConfigureAwait(false);
             return File(content.Data, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"ListaReporteIvaCompra_{DateTime.Now:dd-MM-yyyy}.xlsx");
         }
 

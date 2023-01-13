@@ -106,7 +106,7 @@ import { ReceiptIvaReportDetailsModel, ReceiptIvaReportModel } from '../model/re
     });
   }
   exportExcel(){
-    const fileName = `Reporte_${this.initPeriod}-${this.endPeriod}`
+    const fileName = `Reporte_Compra_${this.initPeriod}-${this.endPeriod}`
     this.service.getReceiptIvaReport(this.initPeriod, this.endPeriod).subscribe({
       next: (r) => {    
         this.downloadFile(r, fileName);
