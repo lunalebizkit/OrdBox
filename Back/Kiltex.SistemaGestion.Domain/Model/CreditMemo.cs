@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Kiltex.SistemaGestion.Domain.Model
 {
-    [Table("creditMemo")]
+    [Table("credit_memo")]
     public class CreditMemo : BaseModel
     {
         [Column("customer_id")]

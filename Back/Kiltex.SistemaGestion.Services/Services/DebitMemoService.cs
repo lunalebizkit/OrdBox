@@ -49,41 +49,30 @@ namespace Kiltex.SistemaGestion.Services.Services
         }
         public async Task<OperationResponse<IdResponse<long>>> Add(DtoRequestDebitMemo model, CancellationToken ct = default)
         {
-            try
-            {
-                model.Id = 0;
-                if (model.InvoiceId == 0)
-                {
-                    _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
-                    return Error<IdResponse<long>>(new OperationExceptions("000", "Datos incompletos")); ;
-                }
-                return await AddOrUpdate(model, ct).ConfigureAwait(false);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
-                throw;
-            }
+            model.Id = 0;
+            return await AddOrUpdate(model, ct).ConfigureAwait(false);
         }
         public async Task<OperationResponse<IdResponse<long>>> AddOrUpdate(DtoRequestDebitMemo model, CancellationToken ct = default)
         {
             var transaction = _contextSql.Database.BeginTransaction();
-            var debitMemoModel = _mapper.Map<DebitMemo>(model);
+            DebitMemo debitMemoModel = null;
 
             try
-            {               
-                if (debitMemoModel.Id == 0)
+            {
+                if (model.Id == 0)
                 {
-                    foreach (var detail in debitMemoModel.DebitMemoDetails)
+                    foreach (var detail in model.DebitMemoDetails)
                     {
                         var oldProduct = await _contextSql.Products.AsNoTracking().FirstAsync(p => p.Id == detail.ProductId).ConfigureAwait(false);
                         detail.Price = oldProduct.SalePrice;
                     }
+                    debitMemoModel = _mapper.Map<DebitMemo>(model);
+                    debitMemoModel.InvoiceId = debitMemoModel.InvoiceId == 0 ? null : debitMemoModel.InvoiceId;
                     await _contextSql.DebitMemos.AddAsync(debitMemoModel, ct).ConfigureAwait(false);
 
                 }
-                    await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
-                
+                await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
+
                 transaction.Commit();
 
             }

@@ -50,7 +50,7 @@
               <td>{{this.formaterDate(data.dateTime)}}</td>
               <td>{{data.customerCuit}}</td>
               <td>{{data.customerName}}</td>
-             <td>{{ this.currencyFormat( data.total)}}</td>
+             <td [nzAlign]="'center'">{{ this.currencyFormat( data.total)}}</td>
              <td style="text-align: center">
               <a>
                 <i

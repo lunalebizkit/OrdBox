@@ -12,10 +12,10 @@ namespace Kiltex.SistemaGestion.Domain.Model
     public class DebitMemo : BaseModel
     {
         [Column("invoice_id")]
-        public long InvoiceId { get; set; }
+        public Nullable <long> InvoiceId { get; set; }
 
         [ForeignKey(nameof(InvoiceId))]
-        public Invoice Invoice { get; set; }
+        public  Invoice? Invoice { get; set; }
 
         [Column("dateTime")]
         public DateTime DateTime { get; set; }

@@ -53,7 +53,7 @@ export interface CreditMemoDetailList {
            productId: value.id,
            productName: value.description,
            productCode: value.code,
-           price: value.salePrice,
+           price: value.price,
            quantity: 1,
           iva: iva
          }}   

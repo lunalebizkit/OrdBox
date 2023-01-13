@@ -111,7 +111,7 @@
                     nz-button
                     nzType="primary"
                     nzSize="small"
-                    style="background-color: rgb(3, 155, 3); font-size:12px; margin-right: 20px; border-color:rgb(3, 155, 3) ;"
+                    style="background-color: rgb(3, 155, 3); margin-right: 20px; border-color:rgb(3, 155, 3) ;"
                     routerLink="/home/notes/credit"
                     [queryParams]="{
                       id: data.id
@@ -124,8 +124,10 @@
                   nz-button
                   nzSize="small"
                   nzType="primary"
-                  style="font-size: small; font-size:12px"
                   routerLink="/home/notes/debit"
+                  [queryParams]="{
+                    id: data.id
+                  }"
                   >
                   Débito
                 </button>
