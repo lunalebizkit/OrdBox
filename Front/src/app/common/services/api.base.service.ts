@@ -49,10 +49,10 @@ import { environment } from "src/environments/environment";
     /**
    * Realiza un get a la api
    */
-    get(path: string, showSpinner: boolean = true): Observable<any> {
-      return this.httpClient.get(`${this.API_ENDPOINT}/${path}`);
+    get(path: string, showSpinner: boolean = true, headers?:any): Observable<any> {
+      return this.httpClient.get(`${this.API_ENDPOINT}/${path}`, headers);
     }
-  
+
     /**
    * Realiza un get a la api
    */
