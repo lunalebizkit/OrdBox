@@ -40,7 +40,7 @@ export interface CreditMemoDetailList {
        code: value.code,
        ownCode: value.id,
        productName: value.description,
-       price: value.price,
+       price: value.salePrice,
        quantity: 1,
        subTotal: value.salePrice,
        iva: iva

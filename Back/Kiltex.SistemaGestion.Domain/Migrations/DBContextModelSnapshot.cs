@@ -177,6 +177,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                         .HasColumnName("id");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
                     b.Property<string>("CustomerAddress")
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("customer_address");
@@ -198,7 +199,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("dateTime");
 
-                    b.Property<long>("InvoiceId")
+                    b.Property<long?>("InvoiceId")
                         .HasColumnType("bigint")
                         .HasColumnName("invoice_id");
 
@@ -974,19 +975,17 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                     b.HasOne("Kiltex.SistemaGestion.Domain.Model.Customer", "Customer")
                         .WithMany()
                         .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Kiltex.SistemaGestion.Domain.Model.Invoice", "Invoice")
                         .WithMany()
-                        .HasForeignKey("InvoiceId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .HasForeignKey("InvoiceId");
 
                     b.HasOne("Kiltex.SistemaGestion.Domain.Model.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Customer");
@@ -1001,57 +1000,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                     b.HasOne("Kiltex.SistemaGestion.Domain.Model.DebitMemo", "DebitMemo")
                         .WithMany("DebitMemoDetails")
                         .HasForeignKey("DebitMemoId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("Kiltex.SistemaGestion.Domain.Model.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("DebitMemo");
-
-                    b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.CreditMemo", b =>
-                {
-                    b.HasOne("Kiltex.SistemaGestion.Domain.Model.Customer", "Customer")
-                        .WithMany()
-                        .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Kiltex.SistemaGestion.Domain.Model.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Customer");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.CreditMemoDetail", b =>
-                {
-                    b.HasOne("Kiltex.SistemaGestion.Domain.Model.CreditMemo", "CreditMemo")
-                        .WithMany("CreditMemoDetail")
-                        .HasForeignKey("CreditId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
-                    b.Navigation("Invoice");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.DebitMemoDetails", b =>
-                {
-                    b.HasOne("Kiltex.SistemaGestion.Domain.Model.DebitMemo", "DebitMemo")
-                        .WithMany("DebitMemoDetails")
-                        .HasForeignKey("DebitMemoId")
-                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("Kiltex.SistemaGestion.Domain.Model.Product", "Product")
@@ -1278,38 +1227,38 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                     b.Navigation("DebitMemoDetails");
                 });
 
-                    modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.Entity", b =>
-                        {
-                            b.Navigation("EmailEntities");
+            modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.Entity", b =>
+                {
+                    b.Navigation("EmailEntities");
 
-                            b.Navigation("PhoneEntities");
-                        });
-
-                    modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.Invoice", b =>
-                        {
-                            b.Navigation("InvoiceDetails");
-                        });
-
-                    modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.Permission", b =>
-                        {
-                            b.Navigation("PermissionXRols");
-                        });
-
-                    modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.Receipt", b =>
-                        {
-                            b.Navigation("ReceiptDetails");
-                        });
-
-                    modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.Rol", b =>
-                        {
-                            b.Navigation("PermissionXRols");
-                        });
-
-                    modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.SupplierOrder", b =>
-                        {
-                            b.Navigation("SupplierOrderDetail");
-                        });
-#pragma warning restore 612, 618
+                    b.Navigation("PhoneEntities");
                 });
+
+            modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.Invoice", b =>
+                {
+                    b.Navigation("InvoiceDetails");
+                });
+
+            modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.Permission", b =>
+                {
+                    b.Navigation("PermissionXRols");
+                });
+
+            modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.Receipt", b =>
+                {
+                    b.Navigation("ReceiptDetails");
+                });
+
+            modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.Rol", b =>
+                {
+                    b.Navigation("PermissionXRols");
+                });
+
+            modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.SupplierOrder", b =>
+                {
+                    b.Navigation("SupplierOrderDetail");
+                });
+#pragma warning restore 612, 618
         }
-    } }
+    }
+}

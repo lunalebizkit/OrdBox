@@ -181,6 +181,8 @@ constructor(@Inject(LOCALE_ID) public locale: string,
             creditMemoDetail: this.creditMemoDetails
           };
           this.isSaving = true;
+
+          
           this.service.saveCreditMemo(model)
             .subscribe({
               next: (r) => {              
@@ -221,7 +223,7 @@ constructor(@Inject(LOCALE_ID) public locale: string,
               dato.price  * dato.quantity,
                dato.iva
             );
-           this.total += dato.price  * dato.quantity ;     
+           this.total += dato.price * dato.quantity ;     
           });
         } catch (error) {}   
       };
@@ -231,18 +233,7 @@ constructor(@Inject(LOCALE_ID) public locale: string,
       currencyFormat(data: any):string  {    
         return formatCurrency(data, this.locale, '$', 'ARS', '1.1-2')
       } 
-     
-      
-     /*  typeSelectedChange(id: any): void {
-        this.typeSelectedId = this.id;    
-        if (id == 1) {      
-          this.invoiceA = true;
-        }else{
-          this.invoiceA= false;
-        }  
-        console.log(this.type1);
           
-      } */
       startEdit(id: number): void {
         this.editId = id;
       };

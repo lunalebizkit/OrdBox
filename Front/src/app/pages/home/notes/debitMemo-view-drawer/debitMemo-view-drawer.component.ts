@@ -83,7 +83,6 @@ export class DebitMemoViewDrawerComponent
             this.dateTime = r.dateTime,
             this.debitMemoDetail= r.debitMemoDetails
             this.isLoading = false;
-          console.log(r.debitMemoDetail);
           
         },
         error: () => {
