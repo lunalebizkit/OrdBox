@@ -1,7 +1,5 @@
 ﻿using AutoMapper;
 using ClosedXML.Excel;
-using DocumentFormat.OpenXml.Spreadsheet;
-using Google.Apis;
 using Kiltex.SistemaGestion.Domain;
 using Kiltex.SistemaGestion.Domain.Enum;
 using Kiltex.SistemaGestion.Domain.Model;
@@ -28,7 +26,7 @@ namespace Kiltex.SistemaGestion.Services.Services
         public async Task<OperationResponse<DtoResponseIvaInvoice>> ListIvaVenta(DateTime from, DateTime to, CancellationToken ct = default)
         {
             var query = _contextSql
-                                    .Invoices
+                                    .Invoices.OrderBy(p => p.DateTime)
                                     .Include(p => p.InvoiceDetails)
                                     .Where(x => x.DateTime >= from && x.DateTime <= to)
                                     .AsNoTracking();
@@ -65,7 +63,7 @@ namespace Kiltex.SistemaGestion.Services.Services
         public async Task<OperationResponse<DtoResponseIvaReceipt>> ListIvaCompra(DateTime from, DateTime to, CancellationToken ct = default)
         {
             var query = _contextSql
-                                    .Receipts
+                                    .Receipts.OrderBy(p => p.DateTime).OrderBy(p => p.Type)
                                     .Include(p => p.ReceiptDetails)
                                     .Where(x => x.DateTime >= from && x.DateTime <= to)
                                     .AsNoTracking();
@@ -105,7 +103,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             try
             {
                 var query = await _contextSql
-                                .Receipts
+                                .Receipts.OrderBy(p => p.DateTime).OrderBy(p => p.Type)
                                 .Include(s => s.ReceiptDetails)
                                 .AsNoTracking()
                                 .Where(x => x.DateTime >= from && x.DateTime <= to).ToArrayAsync();
@@ -138,13 +136,14 @@ namespace Kiltex.SistemaGestion.Services.Services
 
                 var workbook = new XLWorkbook();
 
-                var worksheet = workbook.Worksheets.Add("Reporte Iva");
+                var worksheet = workbook.Worksheets.Add("Reporte Iva Compra");
                 var currentRow = 2;
                 var ColorHeader = XLColor.FromName("PowderBlue");
 
                 #region Header Columnas       
 
-                worksheet.Cell(currentRow, 1).SetValue("Fecha").Style.Font.Bold = true;
+                worksheet.Cell(currentRow, 1).SetValue("Fecha").Style.DateFormat.Format = "mm/dd/YYYY";
+                worksheet.Cell(currentRow, 1).Style.Font.Bold= true;
                 worksheet.Cell(currentRow, 1).Style.Fill.BackgroundColor = ColorHeader;
 
                 worksheet.Cell(currentRow, 2).SetValue(" N° Factura").Style.Font.Bold = true;
@@ -229,7 +228,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             try
             {
                 var query = await _contextSql
-                                .Invoices
+                                .Invoices.OrderBy(p => p.Type).OrderBy(p => p.DateTime)
                                 .Include(s => s.InvoiceDetails)
                                 .AsNoTracking()
                                 .Where(x => x.DateTime >= from && x.DateTime <= to).ToArrayAsync();
@@ -262,7 +261,7 @@ namespace Kiltex.SistemaGestion.Services.Services
 
                 var workbook = new XLWorkbook();
 
-                var worksheet = workbook.Worksheets.Add("Reporte Iva");
+                var worksheet = workbook.Worksheets.Add("Reporte Iva Venta");
                 var currentRow = 2;
                 var ColorHeader = XLColor.FromName("PowderBlue");
 

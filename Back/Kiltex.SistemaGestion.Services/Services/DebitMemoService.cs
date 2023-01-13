@@ -64,7 +64,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                     foreach (var detail in model.DebitMemoDetails)
                     {
                         var oldProduct = await _contextSql.Products.AsNoTracking().FirstAsync(p => p.Id == detail.ProductId).ConfigureAwait(false);
-                        detail.Price = oldProduct.SalePrice;
+                        detail.Price = oldProduct.CashSalePrice;
                     }
                     debitMemoModel = _mapper.Map<DebitMemo>(model);
                     debitMemoModel.InvoiceId = debitMemoModel.InvoiceId == 0 ? null : debitMemoModel.InvoiceId;

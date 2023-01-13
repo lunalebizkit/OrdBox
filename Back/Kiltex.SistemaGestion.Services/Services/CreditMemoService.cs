@@ -112,7 +112,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                     {
                         var oldProduct = await _contextSql.Products.AsNoTracking().FirstAsync(p => p.Id == detail.ProductId).ConfigureAwait(false);
 
-                        detail.Price = oldProduct.SalePrice;
+                        detail.Price = oldProduct.CashSalePrice;
                     }
                     creditModel = _mapper.Map<CreditMemo>(model);
                     await _contextSql.CreditMemo.AddAsync(creditModel, ct).ConfigureAwait(false);

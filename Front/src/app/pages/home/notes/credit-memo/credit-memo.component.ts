@@ -315,8 +315,8 @@ constructor(@Inject(LOCALE_ID) public locale: string,
                   let newListElement = this.creditMemoList.filter(item => item.ownCode == data.id)[0];
                
                   newListElement.quantity += 1;
-                  newListElement.subTotal += data.salePrice * newListElement.quantity;
-                
+                  newListElement.subTotal += data.cashSalePrice * newListElement.quantity;
+                  /**cashSalePrice es el precio de Costo */
                   this.totalCalculate();
                   this.isLoading= false;
                   this.formProductSearch.controls['productSearchFilter'].setValue('');
@@ -365,7 +365,8 @@ constructor(@Inject(LOCALE_ID) public locale: string,
                 .quantity += 1;
 
                  this.creditMemoList.filter(item => item.ownCode == model.id)[0]
-                .subTotal +=  model.salePrice * model.quantity ;
+                .subTotal +=  model.cashSalePrice * model.quantity ;
+                 /**cashSalePrice es el precio de Costo */
                 this.totalCalculate(); 
                 this.isLoading= false;
                 this.formProductSearch.controls['productSearchFilter'].setValue('');
