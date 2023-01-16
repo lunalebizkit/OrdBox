@@ -69,13 +69,14 @@ namespace Kiltex.SistemaGestion.Services.Services
             {
                 var query = _contextSql
                                     .CreditMemo
+                                    .OrderByDescending(p => p.DateTime)
                                     .AsNoTracking()
                                     .Include(p => p.CreditMemoDetail)
                                     .Where(p => p.CustomerCuit.ToLower().Contains(request.Filter ?? ""));
 
                 var count = await query.CountAsync().ConfigureAwait(false);
 
-                var list = await query.OrderByDescending(p => p.DateTime)
+                var list = await query.OrderByDescending(p => p.Id)
                                       .Skip(request.Page * request.PageSize)
                                       .Take(request.PageSize)
                                       .ToListAsync()
@@ -101,19 +102,19 @@ namespace Kiltex.SistemaGestion.Services.Services
         public async Task<OperationResponse<IdResponse<long>>> AddOrUpdate(DtoRequestCreditMemo model, CancellationToken ct = default)
         {
             var transaction = _contextSql.Database.BeginTransaction();
-            var creditModel = _mapper.Map<CreditMemo>(model);
+            CreditMemo creditModel = new();
 
             try
             {
-                if (creditModel.Id == 0)
+                if (model.Id == 0)
                 {
-                    foreach (var detail in creditModel.CreditMemoDetail)
+                    foreach (var detail in model.CreditMemoDetail)
                     {
                         var oldProduct = await _contextSql.Products.AsNoTracking().FirstAsync(p => p.Id == detail.ProductId).ConfigureAwait(false);
 
-                        detail.Price = oldProduct.SalePrice;
+                        detail.Price = oldProduct.CashSalePrice;
                     }
-
+                    creditModel = _mapper.Map<CreditMemo>(model);
                     await _contextSql.CreditMemo.AddAsync(creditModel, ct).ConfigureAwait(false);
                 }
                 await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);

@@ -199,7 +199,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("dateTime");
 
-                    b.Property<long>("InvoiceId")
+                    b.Property<long?>("InvoiceId")
                         .HasColumnType("bigint")
                         .HasColumnName("invoice_id");
 
@@ -980,9 +980,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
 
                     b.HasOne("Kiltex.SistemaGestion.Domain.Model.Invoice", "Invoice")
                         .WithMany()
-                        .HasForeignKey("InvoiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("InvoiceId");
 
                     b.HasOne("Kiltex.SistemaGestion.Domain.Model.User", "User")
                         .WithMany()
@@ -1002,7 +1000,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                     b.HasOne("Kiltex.SistemaGestion.Domain.Model.DebitMemo", "DebitMemo")
                         .WithMany("DebitMemoDetails")
                         .HasForeignKey("DebitMemoId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Kiltex.SistemaGestion.Domain.Model.Product", "Product")

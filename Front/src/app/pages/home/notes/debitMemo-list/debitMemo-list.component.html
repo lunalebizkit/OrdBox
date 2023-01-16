@@ -14,42 +14,56 @@
       </button>
       </nz-page-header-extra>
     </nz-page-header>
-    <div class="table" >
-        <nz-table
-          class="tabla"
-          nzShowSizeChanger
-          nzBordered="false"
-          [nzSize]="'small'"
-          [nzLoading]="loading"
-          [nzPaginationType]="'small'"
-          nzShowPagination="false"
-        >
-          <thead>
-            <tr>
-              <th>Número</th>
-              <th>Fecha</th>
-              <th>Cuit</th>
-              <th>Nombre</th>
-              <th [nzAlign]="'center'">Total</th>
-              <th [nzAlign]="'center'">Tipo</th>
-              <th [nzAlign]="'center'">Acción</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              class="small-text"
-              tabindex="-1"
-            >
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td [nzAlign]="'right'">
-                <b></b>
-              </td>
-              <td [nzAlign]="'center'"></td>
-            </tr>
-          </tbody>
-        </nz-table>
-      </div>
+    <div class="table" (scroll)="onScroll($event)">
+      <nz-table
+        class="tabla"
+        nzShowSizeChanger
+        nzBordered="false"
+        [nzData]="debitMemoList"
+        [nzSize]="'small'"
+        [nzLoading]="loading"
+        [nzPaginationType]="'small'"
+        nzShowPagination="false"
+      >
+        <thead>
+          <tr>
+            <th>Número</th>
+            <th>Fecha</th>
+            <th>Cuit</th>
+            <th>Nombre</th>
+            <th [nzAlign]="'center'">Total</th>
+            <th [nzAlign]="'center'">Acción</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            class="small-text"
+            tabindex="-1"
+            *ngFor="let data of debitMemoList; let i = index"
+            (click)="onClick(data, i)"
+          (keydown)="myNavegation($event)"
+          [style.background-color]="
+           data === selectedDebitMemo ? 'lightblue' : ''
+          "
+          >
+            <td>{{data.id}}</td>
+            <td>{{this.formaterDate(data.dateTime)}}</td>
+            <td>{{data.customerCuit}}</td>
+            <td>{{data.customerName}}</td>
+           <td [nzAlign]="'center'">{{ this.currencyFormat( data.total)}}</td>
+           <td style="text-align: center">
+            <a>
+              <i
+                nz-icon
+                nzType="eye"
+                nzTheme="outline"
+                style="font-size: 16px"
+                (click)="onDoubleClicked(data)"
+              ></i>
+            </a>
+          </td>
+          </tr>
+        </tbody>
+      </nz-table>
+    </div>
 </nz-layout>

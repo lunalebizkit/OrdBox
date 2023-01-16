@@ -58,7 +58,6 @@ namespace Kiltex.SistemaGestion.Domain
         public virtual DbSet<DebitMemoDetails> DebitMemoDetails { get; set; }
 
 
-
         //private static void InitialRoles(ModelBuilder modelBuilder)
         //{
         //    modelBuilder.Entity<Rol>().HasData(

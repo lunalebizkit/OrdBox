@@ -1,5 +1,5 @@
 <nz-page-header class="list-header">
-  <nz-page-header-title>Nota de Crédito</nz-page-header-title>
+  <nz-page-header-title> <i nz-icon nzType="container" nzTheme="outline"></i> Nota de Crédito</nz-page-header-title>
   <nz-page-header-extra>
     <button nz-button routerLink="/home/invoices/invoices-sale" type="submit" nzSize="default" 
     ><i nz-icon nzType="arrow-left" nzTheme="outline"></i>volver</button>
@@ -50,7 +50,7 @@
           <nz-form-label [nzSm]="6" [nzXs]="14" nzRequired 
             >Cuit - Cuil
           </nz-form-label>
-          <nz-form-control [nzSm]="8" [nzXs]="14">
+          <nz-form-control [nzSm]="10" [nzXs]="14">
             <input
             nz-input
               nzSize="small"
@@ -74,10 +74,10 @@
           </form>
         </nz-form-item>
         <nz-form-item>
-          <nz-form-label [nzSm]="8" [nzXs]="14" nzRequired 
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired 
             >Razón Social - Nombre
           </nz-form-label>
-          <nz-form-control [nzSm]="8" [nzXs]="14">
+          <nz-form-control [nzSm]="10" [nzXs]="24">
             <input
               nz-input
               maxlength="250"
@@ -91,7 +91,7 @@
           <nz-form-label [nzSm]="6" [nzXs]="14" nzRequired 
             >Domicilio
           </nz-form-label>
-          <nz-form-control [nzSm]="8" [nzXs]="14">
+          <nz-form-control [nzSm]="10" [nzXs]="14">
             <input
               nz-input
               formControlName="address"

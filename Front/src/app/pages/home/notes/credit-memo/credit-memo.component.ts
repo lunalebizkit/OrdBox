@@ -120,6 +120,7 @@ constructor(@Inject(LOCALE_ID) public locale: string,
   ngOnInit(): void {
     if (this.id != null || this.id != undefined || this.id != 0) {
        this.getInvoice(this.id)
+       this.edit=true
        }
     }
 
@@ -180,6 +181,8 @@ constructor(@Inject(LOCALE_ID) public locale: string,
             creditMemoDetail: this.creditMemoDetails
           };
           this.isSaving = true;
+
+          
           this.service.saveCreditMemo(model)
             .subscribe({
               next: (r) => {              
@@ -189,8 +192,7 @@ constructor(@Inject(LOCALE_ID) public locale: string,
                   
                 );
                 this.isSaving = false;
-                console.log(this.total);
-                
+                              
                 this.router.navigate(['/notes/creditList']);
               },
               error: () => {
@@ -221,7 +223,7 @@ constructor(@Inject(LOCALE_ID) public locale: string,
               dato.price  * dato.quantity,
                dato.iva
             );
-           this.total += dato.price  * dato.quantity ;     
+           this.total += dato.price * dato.quantity ;     
           });
         } catch (error) {}   
       };
@@ -231,18 +233,7 @@ constructor(@Inject(LOCALE_ID) public locale: string,
       currencyFormat(data: any):string  {    
         return formatCurrency(data, this.locale, '$', 'ARS', '1.1-2')
       } 
-     
-      
-      typeSelectedChange(id: any): void {
-        this.typeSelectedId = this.id;    
-        if (id == 1) {      
-          this.invoiceA = true;
-        }else{
-          this.invoiceA= false;
-        }  
-        console.log(this.type1);
           
-      }
       startEdit(id: number): void {
         this.editId = id;
       };
@@ -324,8 +315,8 @@ constructor(@Inject(LOCALE_ID) public locale: string,
                   let newListElement = this.creditMemoList.filter(item => item.ownCode == data.id)[0];
                
                   newListElement.quantity += 1;
-                  newListElement.subTotal += data.salePrice * newListElement.quantity;
-                
+                  newListElement.subTotal += data.cashSalePrice * newListElement.quantity;
+                  /**cashSalePrice es el precio de Costo */
                   this.totalCalculate();
                   this.isLoading= false;
                   this.formProductSearch.controls['productSearchFilter'].setValue('');
@@ -374,7 +365,8 @@ constructor(@Inject(LOCALE_ID) public locale: string,
                 .quantity += 1;
 
                  this.creditMemoList.filter(item => item.ownCode == model.id)[0]
-                .subTotal +=  model.salePrice * model.quantity ;
+                .subTotal +=  model.cashSalePrice * model.quantity ;
+                 /**cashSalePrice es el precio de Costo */
                 this.totalCalculate(); 
                 this.isLoading= false;
                 this.formProductSearch.controls['productSearchFilter'].setValue('');

@@ -63,7 +63,16 @@
             >
             <i nz-icon nzType="search" nzTheme="outline"></i>Buscar
           </button>
-
+          <button
+              nz-button
+              nzSize="small"
+              nzType="primary"
+              style="margin-left: 30px; margin-top:3px "
+              (click)="exportExcel()"
+              class="btn-export"
+              >
+              <span nz-icon nzType="download" nzTheme="outline"></span>Exportar Excel
+            </button>
           </div>
         </div>
       </nz-collapse-panel>

@@ -6,3 +6,10 @@
     --backg-B: rgba(135, 206, 250, 0.788);
     --backg-C: rgba(255, 182, 193, 0.781);
 }
+.btn-export{
+    background-color: #27AE60;
+    border: none;
+}
+.btn-export:hover{
+    background-color: #35c370;
+}

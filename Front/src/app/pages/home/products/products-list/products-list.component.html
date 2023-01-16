@@ -95,13 +95,13 @@
           <td nzEllipsis style="text-align: right"
           [style.color]="product.quantity >= 0 ? '' : 'red' ">{{ product.quantity }}</td>
           <td style="color: blue; text-align: right; font-weight: bold">
-            ${{ product.purchasePrice }}
+            ${{ product.purchasePrice }} 
           </td>
           <td style="color: green; text-align: right; font-weight: bold">
-            ${{ product.cashSalePrice }}
+            ${{ product.salePrice }}
           </td>
           <td style="color: rgb(194, 44, 44); text-align: right; font-weight: bold">
-            ${{ product.salePrice }}
+          ${{ product.cashSalePrice }}
           </td>
           <td style="text-align: right; font-weight: bold">
             ${{ product.cardSalePrice }}

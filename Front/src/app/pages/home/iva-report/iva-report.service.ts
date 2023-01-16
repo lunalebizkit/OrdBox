@@ -1,6 +1,7 @@
 import { ApiService } from "src/app/common/services/api.base.service";
 import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
+import { HttpHeaders } from "@angular/common/http";
 
 
 @Injectable({
@@ -8,7 +9,7 @@ import { Injectable } from '@angular/core';
 })
 export class InvoiceIvaReportService {
     constructor(private api: ApiService) { }
-     /**
+    /**
      * Obtiene una Periodo por Id
      * @param initPeriod 
      * @returns
@@ -20,5 +21,14 @@ export class InvoiceIvaReportService {
     public getListIvaCompra(initPeriod: any,endPeriod:any): Observable<any> {
       return this.api.get(`Iva/listIvaCompra?from=${initPeriod}&to=${endPeriod}`, false)
     }
+    
+    public getReceiptIvaReport(initPeriod: any,endPeriod:any): Observable<any> {
+      const headers = new HttpHeaders().set('Content-Type', 'application/json');
+      return this.api.get(`Iva/ReceiptIvaReport?from=${initPeriod}&to=${endPeriod}`, false, {headers, responseType:'blob' as 'json'})
+    }
+    public getInvoiceIvaReport(initPeriod: any,endPeriod:any): Observable<any> {
+      const headers = new HttpHeaders().set('Content-Type', 'application/json');
+      return this.api.get(`Iva/InvoiceIvaReport?from=${initPeriod}&to=${endPeriod}`, false, {headers, responseType:'blob' as 'json'})
+    }
 
-   }
+}

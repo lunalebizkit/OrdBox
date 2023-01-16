@@ -120,6 +120,33 @@ export class InvoiceIvaReportComponent extends BaseComponent implements OnInit {
           },
         });
       }
+      exportExcel(){
+        const fileName = `Reporte_Venta_${this.initPeriod}-${this.endPeriod}`
+        this.service.getInvoiceIvaReport(this.initPeriod, this.endPeriod).subscribe({
+          next: (r) => {    
+            this.downloadFile(r, fileName);
+          },
+          error: (e) => {
+          this.loading = false;           
+          
+          },
+        });
+      }
+    
+      downloadFile(response: any, fileName: string){
+    
+        const dataType= response.type;
+        const binaryData = [];
+    
+        binaryData.push(response);
+    
+        const filtePath = window.URL.createObjectURL(new Blob(binaryData, {type: dataType}))
+        const downloadLink = document.createElement('a');
+        downloadLink.href = filtePath;
+        downloadLink.setAttribute('download', fileName);
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+      }
       getInvoiceType(id: number) {
         return eInvoiceType[id];
       }
