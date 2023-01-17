@@ -1,6 +1,6 @@
 <nz-page-header class="list-header">
   <nz-page-header-title > <i nz-icon nzType="container" nzTheme="outline"></i> Nota de Débito</nz-page-header-title>
-  <nz-page-header-extra *ngIf="id != 0">
+  <nz-page-header-extra>
     <button nz-button routerLink="/home/invoices/invoices-sale" type="submit" nzSize="default" 
     ><i nz-icon nzType="arrow-left" nzTheme="outline"></i>volver</button>
   </nz-page-header-extra>
@@ -20,25 +20,32 @@
     >
       <nz-content>
         <div nz-row nzJustify="center">
-          <div nz-col class="gutter-row" [nzSpan]="5"
-          >
+          <div nz-col class="gutter-row" [nzSpan]="5">
             <nz-form-item>
-              <nz-form-label nzRequired >Fecha </nz-form-label>
+              <nz-form-label nzRequired>Fecha </nz-form-label>
               <nz-form-control>
                 <b>
-                 <li></li> {{ startDate ? (startDate | date: "YYYY-MM-dd") : "N/A" }}
+                  <li></li>
+                  {{ startDate ? (startDate | date : "YYYY-MM-dd") : "N/A" }}
                 </b>
               </nz-form-control>
             </nz-form-item>
           </div>
-          <div nz-col class="gutter-row" style="margin-right: 14px" *ngIf="edit === true">
+          <div
+            nz-col
+            class="gutter-row"
+            style="margin-right: 14px"
+            *ngIf="edit === true"
+          >
             <nz-form-item>
-              <nz-form-label nzRequired > Tipo de Factura</nz-form-label>
+              <nz-form-label nzRequired> Tipo de Factura</nz-form-label>
               <nz-form-control>
-              <nz-page-header-tags>
-                  <nz-tag [nzColor]="'blue'" >{{ this.invoiceType(this.type1) }}</nz-tag>
+                <nz-page-header-tags>
+                  <nz-tag [nzColor]="'blue'">{{
+                    this.invoiceType(this.type1)
+                  }}</nz-tag>
                 </nz-page-header-tags>
-                </nz-form-control>
+              </nz-form-control>
             </nz-form-item>
           </div>
           <div nz-col class="gutter-row" style="margin-right: 14px" *ngIf="edit === false">
@@ -55,7 +62,7 @@
               </nz-form-control>
             </nz-form-item>
           </div>
-         </div>
+        </div>
 
         <!-- Datos del Cliente -->
         <nz-divider
@@ -65,19 +72,19 @@
         ></nz-divider>
 
         <nz-form-item>
-          <nz-form-label [nzSm]="6" [nzXs]="14" nzRequired 
+          <nz-form-label [nzSm]="6" [nzXs]="14" nzRequired
             >Cuit - Cuil
           </nz-form-label>
           <nz-form-control [nzSm]="10" [nzXs]="14">
             <input
-            nz-input
+              nz-input
               nzSize="small"
               formControlName="customerCuit"
               (keydown.enter)="searchCustomer(); $event.preventDefault()"
             />
-           </nz-form-control>
+          </nz-form-control>
 
-            <!-- Boton que abre el buscador de CLiente en drawer -->
+          <!-- Boton que abre el buscador de CLiente en drawer -->
           <form nz-form [formGroup]="formCustomerSearch">
             <div style="margin: 3px">
               <button
@@ -92,7 +99,7 @@
           </form>
         </nz-form-item>
         <nz-form-item>
-          <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired 
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired
             >Razón Social - Nombre
           </nz-form-label>
           <nz-form-control [nzSm]="10" [nzXs]="24">
@@ -106,7 +113,7 @@
         </nz-form-item>
 
         <nz-form-item>
-          <nz-form-label [nzSm]="6" [nzXs]="14" nzRequired 
+          <nz-form-label [nzSm]="6" [nzXs]="14" nzRequired
             >Domicilio
           </nz-form-label>
           <nz-form-control [nzSm]="10" [nzXs]="14">
@@ -139,7 +146,6 @@
                   placeholder="Ingrese Marca, Código, Categoría o Producto"
                   nzSize="small"
                   (keydown.enter)="searchProduct()"
-
                 />
               </nz-input-group>
 
@@ -172,10 +178,24 @@
               </button>
             </div>
           </nz-form-item>
+
+          <nz-form-item>
+            <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="observation"
+              >Observación
+            </nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="24">
+              <input
+                formControlName="observation"
+                nz-input
+                id="observation"
+                maxlength="250"
+              />
+            </nz-form-control>
+          </nz-form-item>
         </form>
       </nz-content>
-   </nz-collapse-panel>
-  </nz-collapse> 
+    </nz-collapse-panel>
+  </nz-collapse>
 </form>
 
 <!-- Tabla Detalle -->
@@ -191,7 +211,7 @@
       >
         <thead>
           <tr>
-           <!--  <th></th> -->
+            <!--  <th></th> -->
             <th>Código</th>
             <th>Código Interno</th>
             <th>Producto</th>
@@ -203,10 +223,9 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let data of debitMemoList" class="small-text" 
-          >
+          <tr *ngFor="let data of debitMemoList" class="small-text">
             <td>{{ data.code }}</td>
-            <td>{{ data.ownCode}}</td>
+            <td>{{ data.ownCode }}</td>
             <td nzBreakWord>{{ data.productName }}</td>
             <td>
               <div
@@ -214,10 +233,10 @@
                 [hidden]="editId === data.productId"
                 (click)="startEdit(data.productId)"
               >
-              {{data.quantity}}
+                {{ data.quantity }}
               </div>
               <nz-input-number
-              [hidden]="editId !== data.productId"
+                [hidden]="editId !== data.productId"
                 [nzMin]="1"
                 [nzMax]="10000"
                 [(ngModel)]="data.quantity"
@@ -230,21 +249,21 @@
               {{ this.currencyFormat(data.subTotal) }}
             </td>
             <td>
-               <div
+              <div
                 class="editable-cell"
                 [hidden]="editIdIva !== data.productId"
                 (click)="startEditIva(data.productId)"
               >
-             {{data.iva}}
-            </div> 
-                 <nz-select              
-                  [hidden]="editIdIva === data.productId"
-                  [nzOptions]="ivaType"                 
-                  (ngModelChange)="changeIvaValue($event, data.productId)"
-                  [(ngModel)]="data.iva"  
-                  (nzBlur)="stopEditIva()"              
-                >
-                </nz-select> 
+                {{ data.iva }}
+              </div>
+              <nz-select
+                [hidden]="editIdIva === data.productId"
+                [nzOptions]="ivaType"
+                (ngModelChange)="changeIvaValue($event, data.productId)"
+                [(ngModel)]="data.iva"
+                (nzBlur)="stopEditIva()"
+              >
+              </nz-select>
             </td>
             <td style="text-align: center">
               <nz-space [nzSplit]="spaceSplit">
@@ -271,13 +290,13 @@
         <tfoot style="background-color: #fafafa">
           <tr>
             <td></td>
-            <td colspan="2" >
+            <td colspan="2">
               <b>Iva </b
               ><b style="color: red">{{
                 this.currencyFormat(this.ivaTotal)
               }}</b>
             </td>
-            <td colspan="2" >
+            <td colspan="2">
               <b>SubTotal </b
               ><b style="color: red">{{
                 this.currencyFormat(this.subTotal)
@@ -304,34 +323,18 @@
           </tr>
         </tfoot>
       </nz-table>
-
-      <form nz-form [formGroup]="formDebitMemo">
-        <nz-form-item>
-          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="observation"
-            >Observación
-          </nz-form-label>
-          <nz-form-control [nzSm]="14" [nzXs]="24">
-            <input
-              formControlName="observation"
-              nz-input
-              id="observation"
-              maxlength="250"
-            />
-          </nz-form-control>
-        </nz-form-item>
-      </form>
     </nz-content>
   </nz-collapse-panel>
 </nz-collapse>
 
- <app-popup-confirmation
+<app-popup-confirmation
   #popup
   [title]="'Confirmar eliminación'"
   [header]="'¿Está seguro que desea eliminar el producto seleccionado?'"
   [message]="'Esta acción no se puede revertir'"
   (handleOk)="handleOk()"
 >
-</app-popup-confirmation> 
+</app-popup-confirmation>
 <app-popup-confirmation
   #pop
   [title]="'Confirmar Guardado de comprobante'"

@@ -92,11 +92,11 @@
             </nz-form-label>
             <nz-form-control [nzSm]="6" [nzXs]="24">
               <b *ngIf="viewOrder; else elseBlockDate">
-                {{ startDate ? (startDate | date: "YYYY-MM-dd") : "N/A" }}
+                {{ startDate ? (startDate | date : "YYYY-MM-dd") : "N/A" }}
               </b>
               <ng-template #elseBlockDate>
                 <b>
-                  {{ dateTime ? (dateTime | date: "YYYY-MM-dd") : "N/A" }}
+                  {{ dateTime ? (dateTime | date : "YYYY-MM-dd") : "N/A" }}
                 </b>
               </ng-template>
             </nz-form-control>
@@ -228,7 +228,6 @@
     </nz-collapse-panel>
   </nz-collapse>
 
-  <!-- </form> -->
   <!-- Tabla Detalle -->
   <nz-collapse>
     <nz-collapse-panel
