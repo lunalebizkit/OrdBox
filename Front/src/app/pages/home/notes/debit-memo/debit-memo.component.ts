@@ -107,6 +107,7 @@ constructor(@Inject(LOCALE_ID) public locale: string,
     this.formDebitMemo = this.fb.group({
     dateTime: [new Date(this.startDate), Validators.required],
     address: ['', Validators.required],
+    type: [ 1 , Validators.required],
     customerCuit: ['', Validators.required],
     customerName: ['', Validators.required],    
     observation: ['']
@@ -123,11 +124,15 @@ constructor(@Inject(LOCALE_ID) public locale: string,
        this.getInvoice(this.id)
        this.edit=true
        }
+       if(this.id == null || this.id == undefined || this.id == 0){
+        this.id = 0
+        this.edit = false
+       }   
     }
 
     getInvoice(id: number): void {
-      if (id != 0)
-      this.serviceInvoice.getInvoiceById(id).subscribe({
+      if (id != 0 || id != undefined)
+        this.serviceInvoice.getInvoiceById(id).subscribe({
           next: (r: InvoiceModel) => {
             this.type1 = r.type, 
             this.invoiceNumber = r.invoiceNumber,
@@ -151,13 +156,11 @@ constructor(@Inject(LOCALE_ID) public locale: string,
               const modelDetail = debitMemoDetailFromInvoiceParser(model);
             this.debitMemoDetails.push(modelDetail);  
             })
-            console.log(r.invoiceDetails)
             
             
           this.totalCalculate()
         },
-
-
+     
           error: () => { this.isLoading = false;
           this.debitMemoDetails=[];
         this.debitMemoList= [];
@@ -181,6 +184,7 @@ constructor(@Inject(LOCALE_ID) public locale: string,
             customerAddress: this.formDebitMemo.controls['address'].value,
             observation: this.formDebitMemo.controls['observation'].value,
             dateTime: this.formDebitMemo.controls['dateTime'].value,
+            type: this.formDebitMemo.controls['type'].value,
             total: this.total,
             ivaTotal: this.ivaTotal,
             debitMemoNumb: 0,
@@ -239,16 +243,15 @@ constructor(@Inject(LOCALE_ID) public locale: string,
       } 
      
       
-     /*  typeSelectedChange(id: any): void {
+       typeSelectedChange(id: any): void {
         this.typeSelectedId = this.id;    
         if (id == 1) {      
           this.invoiceA = true;
         }else{
           this.invoiceA= false;
         }  
-        console.log(this.type1);
           
-      } */
+      } 
       startEdit(id: number): void {
         this.editId = id;
       };

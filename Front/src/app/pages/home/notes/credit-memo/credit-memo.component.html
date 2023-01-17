@@ -20,23 +20,49 @@
           >
             <nz-form-item>
               <nz-form-label nzRequired >Fecha </nz-form-label>
-              <nz-form-control>
+              <nz-form-control [nzSm]="24" [nzXs]="24"> 
                 <b>
                  <li></li> {{ startDate ? (startDate | date: "YYYY-MM-dd") : "N/A" }}
                 </b>
               </nz-form-control>
             </nz-form-item>
           </div>
-          <div nz-col class="gutter-row" style="margin-right: 14px" *ngIf="edit === true">
+          <div nz-col class="gutter-row"  [nzSpan]="5" *ngIf="edit === true">
             <nz-form-item>
               <nz-form-label nzRequired > Tipo de Factura</nz-form-label>
               <nz-form-control>
-              <nz-page-header-tags>
+              <nz-page-header-tags> 
                   <nz-tag [nzColor]="'blue'" >{{ this.invoiceType(this.type1) }}</nz-tag>
                 </nz-page-header-tags>
                 </nz-form-control>
             </nz-form-item>
           </div>
+          <div nz-col class="gutter-row" *ngIf="edit === false">
+            <nz-form-item>
+              <nz-form-label nzRequired >Tipo </nz-form-label>
+              <nz-form-control>
+                <nz-select
+                  id="type"
+                  formControlName="type"
+                  [nzOptions]="type"
+                  (ngModelChange)="typeSelectedChange($event)"
+                >
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+            <nz-form-item>
+              <nz-form-label [nzSm]="12" [nzXs]="18" nzRequired >
+                Número de Factura
+              </nz-form-label>
+              <nz-form-control [nzSm]="10" [nzXs]="20">
+                <input
+                nz-input
+                  nzSize="small"
+                  formControlName="invoiceNumber"
+                />
+               </nz-form-control>
+            </nz-form-item> 
          </div>
 
         <!-- Datos del Cliente -->

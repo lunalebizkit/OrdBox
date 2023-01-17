@@ -10,6 +10,7 @@ export interface  CreditMemoModel{
      dateTime: Date,
      total: number,
      ivaTotal: number,
+     type: number;
     creditMemoDetail: CreditMemoDetails[]
 }
 export interface CreditMemoDetails{

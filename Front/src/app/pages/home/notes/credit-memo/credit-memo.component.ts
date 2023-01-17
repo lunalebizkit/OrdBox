@@ -1,4 +1,5 @@
 import { formatCurrency, formatDate } from '@angular/common';
+import { ThisReceiver } from '@angular/compiler';
 import { Component, ElementRef, Inject, LOCALE_ID, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -82,7 +83,7 @@ export class CreditMemoComponent extends BaseComponent implements OnInit {
   totalItems: any;
 
 
-  edit:boolean=false
+  edit:boolean =false
   customerId!: number;
  
 
@@ -105,9 +106,11 @@ constructor(@Inject(LOCALE_ID) public locale: string,
   ){super(notificacionService, el, message);
     this.formCreditMemo = this.fb.group({
     dateTime: [new Date(this.startDate), Validators.required],
+    type: [ 1, Validators.required],
     address: ['', Validators.required],
     customerCuit: ['', Validators.required],
-    customerName: ['', Validators.required],    
+    customerName: ['', Validators.required], 
+    invoiceNumber: ['', Validators.required],   
     observation: ['']
   }); 
   this.formCustomerSearch = this.fb.group({})
@@ -118,9 +121,13 @@ constructor(@Inject(LOCALE_ID) public locale: string,
   userId:number= this.serviceUser.currentUser.id
 
   ngOnInit(): void {
-    if (this.id != null || this.id != undefined || this.id != 0) {
+    if (this.id != null || this.id != undefined || this.id != 0){
        this.getInvoice(this.id)
        this.edit=true
+       }
+       if(this.id == null || this.id == undefined || this.id == 0){
+        this.id = 0
+        this.edit = false
        }
     }
 
@@ -133,11 +140,14 @@ constructor(@Inject(LOCALE_ID) public locale: string,
             this.formCreditMemo.controls['address'].setValue(r.customerAddress),
             this.formCreditMemo.controls['customerCuit'].setValue(r.customerCuit),
             this.formCreditMemo.controls['customerName'].setValue(r.customerName),
+            this.formCreditMemo.controls['invoiceNumber'].setValue(r.id),
+            this.formCreditMemo.controls['type'].setValue(r.type),
             this.ivaTotal= r.ivaTotal,
             this.total= r.total,
             this.userId = r.userId,
             this.subTotal= r.total - r.ivaTotal;          
             this.isLoading = false;
+            
             /**parse a Grilla */
              r.invoiceDetails.forEach(modelDetail=>{
             const model = creditMemoGridFromInvoiceParser(modelDetail)
@@ -175,6 +185,7 @@ constructor(@Inject(LOCALE_ID) public locale: string,
             customerAddress: this.formCreditMemo.controls['address'].value,
             observation: this.formCreditMemo.controls['observation'].value,
             dateTime: this.formCreditMemo.controls['dateTime'].value,
+            type: this.formCreditMemo.controls['type'].value,
             total: this.total,
             ivaTotal: this.ivaTotal ,
             creditMemoNumb: 0,
@@ -263,6 +274,7 @@ constructor(@Inject(LOCALE_ID) public locale: string,
       console.error(error);
     }
   };
+
    invoiceType(id: any):string{
     return eInvoiceType[id]
   }
@@ -474,7 +486,14 @@ constructor(@Inject(LOCALE_ID) public locale: string,
        
      }
   }
-
+  typeSelectedChange(id: any): void {
+    this.typeSelectedId = id;    
+    if (id == 1) {      
+      this.invoiceA = true;
+    }else{
+      this.invoiceA= false;
+    }    
+  }
   
   
 }

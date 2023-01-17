@@ -1,18 +1,9 @@
 <nz-layout>
   <nz-page-header class="list-header">
-    <nz-page-header-title
-      >Listado de Comprobantes de Venta</nz-page-header-title
-    >
+    <nz-page-header-title>Listado de Comprobantes de Venta</nz-page-header-title>
     <nz-page-header-extra>
-      <button
-        *authPermission="[permissions.CreateInvoice]"
-        nz-tooltip
-        nzTooltipTitle="Nuevo"
-        nz-button
-        nzType="primary"
-        nzShape="circle"
-        routerLink="/home/invoices/invoices-sale/new"
-      >
+      <button *authPermission="[permissions.CreateInvoice]" nz-tooltip nzTooltipTitle="Nuevo" nz-button nzType="primary"
+        nzShape="circle" routerLink="/home/invoices/invoices-sale/new">
         <i nz-icon nzType="plus" nzTheme="outline"></i>
       </button>
     </nz-page-header-extra>
@@ -28,25 +19,13 @@
                 <nz-form-label>Búsqueda</nz-form-label>
                 <nz-form-control>
                   <nz-input-group [nzSuffix]="clearQuery">
-                    <input
-                      [ngModelOptions]="{ standalone: true }"
-                      type="text"
-                      placeholder="Ingrese CUIT-DNI"
-                      nz-input
-                      (keydown.enter)="search()"
-                      [(ngModel)]="queryParams.filter"
-                    />
+                    <input [ngModelOptions]="{ standalone: true }" type="text" placeholder="Ingrese CUIT/CUIL o DNI" nz-input
+                      (keydown.enter)="search()" [(ngModel)]="queryParams.filter" />
                   </nz-input-group>
 
                   <ng-template #clearQuery>
-                    <i
-                      nz-icon
-                      class="ant-input-clear-icon"
-                      nzTheme="fill"
-                      nzType="close-circle"
-                      *ngIf="queryParams.filter"
-                      (click)="queryParams.filter = ''; search()"
-                    ></i>
+                    <i nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle"
+                      *ngIf="queryParams.filter" (click)="queryParams.filter = ''; search()"></i>
                   </ng-template>
                 </nz-form-control>
               </nz-form-item>
@@ -60,21 +39,13 @@
 
     <!--   <div > -->
     <div class="table" (scroll)="onScroll($event)">
-      <nz-table
-        class="tabla"
-        nzShowSizeChanger
-        [nzData]="invoicesList"
-        nzBordered="false"
-        [nzSize]="'small'"
-        [nzLoading]="loading"
-        [nzPaginationType]="'small'"
-        nzShowPagination="false"
-      >
+      <nz-table class="tabla" nzShowSizeChanger [nzData]="invoicesList" nzBordered="false" [nzSize]="'small'"
+        [nzLoading]="loading" [nzPaginationType]="'small'" nzShowPagination="false">
         <thead>
           <tr>
             <th>Número</th>
             <th>Fecha</th>
-            <th>Cuit</th>
+            <th>Cuit/Cuil</th>
             <th>Nombre</th>
             <th [nzAlign]="'center'">Total</th>
             <th [nzAlign]="'center'">Tipo</th>
@@ -83,19 +54,10 @@
           </tr>
         </thead>
         <tbody>
-          <tr
-            id="{{ i }}"
-            *ngFor="let data of invoicesList; let i = index"
-            class="small-text"
-            tabindex="-1"
-            (click)="onClick(data, i)"
-            (keydown)="myNavegation($event)"
-            [style.background-color]="
+          <tr id="{{ i }}" *ngFor="let data of invoicesList; let i = index" class="small-text" tabindex="-1"
+            (click)="onClick(data, i)" (keydown)="myNavegation($event)" [style.background-color]="
               data === selectedInvoice ? 'lightblue' : ''
-            "
-            (keydown.enter)="onEnter($event)"
-            (dblclick)="onDoubleClicked(data)"
-          >
+            " (keydown.enter)="onEnter($event)" (dblclick)="onDoubleClicked(data)">
             <td>{{ data.id }}</td>
             <td>{{ this.formaterDate(data.dateTime) }}</td>
             <td>{{ data.customerCuit }}</td>
@@ -107,41 +69,24 @@
             <ng-container>
               <td style="text-align: center;">
                 <a>
-                  <button
-                    nz-button
-                    nzType="primary"
-                    nzSize="small"
+                  <button nz-button nzType="primary" nzSize="small"
                     style="background-color: rgb(3, 155, 3); margin-right: 20px; border-color:rgb(3, 155, 3) ;"
-                    routerLink="/home/notes/credit"
-                    [queryParams]="{
+                    routerLink="/home/notes/credit" [queryParams]="{
                       id: data.id
-                    }"
-                    >
+                    }">
                     Crédito
                   </button>
                 </a>
-                <button
-                  nz-button
-                  nzSize="small"
-                  nzType="primary"
-                  routerLink="/home/notes/debit"
-                  [queryParams]="{
+                <button nz-button nzSize="small" nzType="primary" routerLink="/home/notes/debit" [queryParams]="{
                     id: data.id
-                  }"
-                  >
+                  }">
                   Débito
                 </button>
               </td>
             </ng-container>
             <td style="text-align: center">
               <a>
-                <i
-                  nz-icon
-                  nzType="eye"
-                  nzTheme="outline"
-                  style="font-size: 16px"
-                  (click)="onDoubleClicked(data)"
-                ></i>
+                <i nz-icon nzType="eye" nzTheme="outline" style="font-size: 16px" (click)="onDoubleClicked(data)"></i>
               </a>
             </td>
           </tr>
