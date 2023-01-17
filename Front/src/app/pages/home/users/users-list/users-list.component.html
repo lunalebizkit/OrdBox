@@ -17,6 +17,22 @@
           (click)="openComponentUserEdit()"
         ></i>
       </button>
+      <button
+      canActive="[permissions.RolControl]"
+      *authPermission="[permissions.RolControl]"
+        nz-tooltip
+        nzTooltipTitle="Nuevo"
+        nz-button        
+        nzShape="circle"
+      >
+        <i
+        [nzTheme]="'twotone'" [nzTwotoneColor]="'#52c41a'"
+          nz-icon
+          nzType="setting"
+          nzTheme="outline"
+          (click)="openComponentRolControl()"
+        ></i>
+      </button>
     </nz-page-header-extra>
   </nz-page-header>
   <nz-content>

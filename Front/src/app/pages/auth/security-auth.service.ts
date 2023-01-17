@@ -22,4 +22,10 @@ export class SecurityAuthService {
   public getUser(): Observable<any> {
     return this.api.get(`access/userAccount`);
   }
+  public permissionList(): Observable<any> {
+    return this.api.post(`Rol/ListPermissions`,  false);
+  }
+  public permissionRolList(): Observable<any> {
+    return this.api.post(`Rol/ListRolPermissions`,  false);
+  }
 }

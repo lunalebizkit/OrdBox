@@ -1,8 +1,11 @@
-﻿using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
+﻿using Kiltex.SistemaGestion.Api.Filter;
+using Kiltex.SistemaGestion.Domain.Enum;
+using Kiltex.SistemaGestion.Domain.Model;
+using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
 using Kiltex.SistemaGestion.Services.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Kiltex.SistemaGestion.Api.Controllers
+namespace Kiltex.SistemaGestion.Api.Controllers.Rol
 {
     public class RolController : ApiBaseController
     {
@@ -12,7 +15,7 @@ namespace Kiltex.SistemaGestion.Api.Controllers
         {
             _service = service;
         }
-        
+
         //public async Task<IActionResult> New([FromBody] RequestAddPermission model)
         //{
         //    return Return(await _service.AddPermission(model).ConfigureAwait(false));
@@ -23,6 +26,8 @@ namespace Kiltex.SistemaGestion.Api.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
+        [AllowAccess(Permission = new EPermission[] { EPermission.RolControl })]
+
         public async Task<IActionResult> New([FromBody] RequestAddRol model)
         {
             return Return(await _service.Add(model).ConfigureAwait(false));
@@ -33,7 +38,9 @@ namespace Kiltex.SistemaGestion.Api.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet]
-        //[AllowAccess(Rols = new string[] { ERol.Admin })]
+        [Route("[action]")]
+        [AllowAccess(Permission = new EPermission[] { EPermission.RolControl })]
+
         public async Task<IActionResult> Get([FromQuery] long id)
         {
             return Return(await _service.GetById(id).ConfigureAwait(false));
@@ -56,7 +63,7 @@ namespace Kiltex.SistemaGestion.Api.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("[action]")]
-        //[AllowAccess(Rols = new string[] { ERol.Admin })]
+        [AllowAccess(Permission = new EPermission[] { EPermission.RolControl })]
         public async Task<IActionResult> ListPermissions()
         {
             return Return(await _service.ListPermissions().ConfigureAwait(false));
@@ -64,10 +71,23 @@ namespace Kiltex.SistemaGestion.Api.Controllers
 
 
         [HttpPost]
-        [Route("action")]
+        [Route("[action]")]
+        [AllowAccess(Permission = new EPermission[] { EPermission.RolControl })]
+
         public async Task<IActionResult> AddOrUpdatePermission([FromBody] DtoRequestAddPermissionXRol model)
         {
             return Return(await _service.AddOrUpdatePermission(model).ConfigureAwait(false));
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("[action]")]
+        [AllowAccess(Permission = new EPermission[] { EPermission.RolControl })]
+        public async Task<IActionResult> ListRolPermissions()
+        {
+            return Return(await _service.ListRolPermissions().ConfigureAwait(false));
         }
     }
 }
