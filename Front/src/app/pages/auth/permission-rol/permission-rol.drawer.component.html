@@ -1,6 +1,6 @@
 <app-header-op-buttons #header [btnSaveText]="'Guardar'" [title]="'Permisos'" [showSpinner]="isSaving"
     [iconBack]="'rollback'" [iconSave]="'save'" [iconTitle]="'tags'" (onCloseClick)="close()" [hideClose]="true"
-    [hideBack]="true">
+    [hideBack]="true" (onSaveClick)="pop.showConfirmation()">
 </app-header-op-buttons>
 
 <nz-spin [nzSpinning]="isLoading" style="margin-top: 20px;">
@@ -26,6 +26,6 @@
         </form>
     </div>
 </nz-spin>
-<app-popup-confirmation #pop [title]="'Confirmar Producto'" [header]="'¿Está seguro que desea guardar producto?'"
+<app-popup-confirmation #pop [title]="'Confirmar Permisos'" [header]="'¿Está seguro que desea guardar los cambios?'"
     [message]="'Esta acción no se puede revertir'" (handleOk)="msjConfirmOk()">
 </app-popup-confirmation>

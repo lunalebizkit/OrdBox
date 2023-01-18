@@ -5,11 +5,12 @@ import { NzDrawerRef } from "ng-zorro-antd/drawer";
 import { NzMessageService } from "ng-zorro-antd/message";
 import { NzNotificationService } from "ng-zorro-antd/notification";
 import { TransferItem } from "ng-zorro-antd/transfer";
+import { elementAt } from "rxjs";
 import { BaseComponent } from "src/app/common/components/base/base.component";
 import { HeaderOperationsButtonsComponent } from "src/app/common/components/headers/buttons.oparations.header.component";
 import { PopupConfirmationComponent } from "src/app/common/components/popup-confirmation/popup-confirmation.component";
 import { SecurityAuthService } from "../security-auth.service";
-import { PermissionRol } from "./model/permission-rol.model";
+import { AddOrUpdatePermission, PermissionRol } from "./model/permission-rol.model";
 
 @Component({
     selector: 'app-permission-rol-drawer',
@@ -24,93 +25,147 @@ export class PermissionRolDrawerComponent extends BaseComponent implements OnIni
     isSaving!: boolean;
     isLoading = false;
     disabled = false;
-    permissionRol= [];
-    permissionRolList: PermissionRol[]=[];
-    list: TransferItem[]=[];
-    listComplete: TransferItem[]=[];
+    permissionRol = [];
+    permissionRolList: PermissionRol[] = [];
+    list: TransferItem[] = [];
+    listComplete: TransferItem[] = [];
     /* Formulario  */
     form!: FormGroup;
     rolSelected: any;
-    permissionIdList:number[] =[];
+    permissionIdList: number[] = [];
 
-    constructor(       
-       private servicePermission: SecurityAuthService,
+    constructor(
+        private servicePermission: SecurityAuthService,
         notificacionService: NzNotificationService,
         el: ElementRef,
         message: NzMessageService,
         private fb: FormBuilder,
         private drawerRef: NzDrawerRef<string>
-    ){
+    ) {
         super(notificacionService, el, message);
-        this.form= this.fb.group({
+        this.form = this.fb.group({
             roleId: ['', Validators.required],
             permissions: [[], Validators.required]
         });
     }
-    
+
     ngOnInit(): void {
-      this.getPermission();
-      this.getPermissionRol();
+        this.getPermission();
+        this.getPermissionRol();
     }
-    getPermission():void {
+    getPermission(): void {
         this.servicePermission.permissionList().subscribe({
-            next:(r) =>{
+            next: (r) => {
                 r.forEach((element: any) => {
-                    this.list.push({ key: element.id, title: element.name, disabled: false
+                    this.list.push({
+                        key: element.id, title: element.name, disabled: false
                         , direction: 'left'
-                })});
-                this.listComplete= this.list;
-                
+                    })
+                });
+                this.listComplete = this.list;
+
             },
-            error: ()=> {}
+            error: () => { }
         })
     }
-    getPermissionRol():void {
+    getPermissionRol(): void {
         this.servicePermission.permissionRolList().subscribe({
-            next:(r) =>{
-               this.permissionRol = r.map((rol:{id: number, rol: string})=>
-               {return{ value: rol.id, label: rol.rol} });  
-               this.permissionRolList= r;
-               console.log(this.permissionRolList);
-                                            
+            next: (r) => {
+                this.permissionRol = r.map((rol: { id: number, rol: string }) => { return { value: rol.id, label: rol.rol } });
+                this.permissionRolList = r;
             },
-            error: ()=> {
-                this.permissionRol= [];
+            error: () => {
+                this.permissionRol = [];
             }
         })
     };
     rolSelectedChange(id: any): void {
         this.rolSelected = id;
-        console.log(this.form);        
-      }
+        this.renderOwnPermissions();
+    };
+
+    renderOwnPermissions(): void {  
+        this.permissionIdList= [];   
+        let newListOfPermissions: TransferItem[] = [];
+        let newListOfPermissionsRight: TransferItem[] = [];
+        let permission = this.permissionRolList.filter((item: any) => item.id == this.rolSelected)[0];
+
+        if (permission.permissions.length > 0){
+
+            permission.permissions.forEach(element => {
+                newListOfPermissionsRight.push({ key: element.id, title: element.name, direction: 'right', disabled: false })
+            });
+            
+            this.list.forEach((item, index) => {  
+                if (newListOfPermissionsRight.find( (element) => element.title == item.title && element.direction === 'right')){
+                    let newEditPermission: TransferItem = newListOfPermissionsRight.filter(p => p.title == item.title && p.direction != item.direction)[0];
+                    newEditPermission.direction= 'right';
+
+                    this.permissionIdList.push(newEditPermission['key']);
+
+                  newListOfPermissions.push(newEditPermission);
+                }
+                else{
+                    newListOfPermissions.push(item);
+                }               
+                })                   
+            ;
+            this.listComplete = newListOfPermissions
+        }  else{
+            this.listComplete= this.list;
+        };
+        this.form.controls['permissions'].setValue(this.permissionIdList);          
+    };
+
     close(id: number | void): void {
         this.drawerRef.close(id);
     };
 
-    msjConfirmOk(){
-        // try {
-        //  if (this.isValidForm(this.form)){
-        //    this.save();
-        //  } else{
-        //    this.showMessageError('Formulario vacio') 
-        //  }
-        //  } catch (error) {
-        //    console.log(error);
-           
-        //  }
-      }
-      change(ret: any): void {
-        console.log(ret);
+    msjConfirmOk() {
+        try {
+         if (this.isValidForm(this.form)){
+            this.save();        
+         }
+         } catch (error) {
+           console.log(error);
+
+         }
+    };
+    save() {        
+        const model : AddOrUpdatePermission =
+            {
+                id: this.form.controls['roleId'].value,
+                name: '',
+                key: '',
+                permissionIds : this.form.controls['permissions'].value,
+            };
+            this.servicePermission.addOrUpdatePermissions(model).subscribe({
+                next: (r)=> {
+                    this.showNotificationSuccess(
+                        'Guardado correcto',
+                        `Se guardo correctamente el Cambio`
+                    );
+                    this.isSaving= false;
+                    this.close();
+                },
+                error: ()=>{
+                    this.isSaving = false;
+                    this.showMessageError('No se pudo Guardar el Cambio');
+                    this.close();
+                }
+            })        
         
-        ret.list.forEach((element: {key:any, title: string, direction: string}) =>{
-            if (element.direction === 'right'){
-            this.permissionIdList.push(Number(element.key))};
-            if (element.direction === 'left'){
+    }
+    change(ret: any): void {
+        ret.list.forEach((element: { key: any, title: string, direction: string }) => {
+            if (element.direction === 'right') {
+                this.permissionIdList.push(Number(element.key))
+            };
+            if (element.direction === 'left') {
                 this.permissionIdList = this.permissionIdList.filter(number =>
                     number != Number(element.key))
             }
             this.form.controls['permissions'].setValue(this.permissionIdList);
         });
-        
-      }
+    }
 }
