@@ -21,13 +21,12 @@
     >
       <nz-content>
         <div nz-row nzJustify="center">
-          <div nz-col class="gutter-row" [nzSpan]="5"
-          >
+          <div nz-col class="gutter-row" [nzSpan]="5">
             <nz-form-item>
               <nz-form-label>Fecha</nz-form-label>
               <nz-form-control>
                 <b>
-                  {{ startDate ? (startDate | date: "YYYY-MM-dd") : "N/A" }}
+                  {{ startDate ? (startDate | date : "YYYY-MM-dd") : "N/A" }}
                 </b>
               </nz-form-control>
             </nz-form-item>
@@ -179,6 +178,19 @@
               </button>
             </div>
           </nz-form-item>
+          <nz-form-item>
+            <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="observation"
+              >Observación
+            </nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="24">
+              <input
+                formControlName="observation"
+                nz-input
+                id="observation"
+                maxlength="250"
+              />
+            </nz-form-control>
+          </nz-form-item>
         </form>
       </nz-content>
     </nz-collapse-panel>
@@ -246,21 +258,21 @@
               {{ this.currencyFormat(data.subTotal) }}
             </td>
             <td>
-               <div
+              <div
                 class="editable-cell"
                 [hidden]="editIdIva === data.productId"
                 (click)="startEditIva(data.productId)"
               >
-             {{data.iva}}
-            </div> 
-                 <nz-select
-                 [hidden]="editIdIva !== data.productId"
-                  [nzOptions]="ivaType"                 
-                  (ngModelChange)="changeIvaValue($event, data.productId)"
-                  [(ngModel)]="data.iva"  
-                  (nzBlur)="stopEditIva()"              
-                >
-                </nz-select> 
+                {{ data.iva }}
+              </div>
+              <nz-select
+                [hidden]="editIdIva !== data.productId"
+                [nzOptions]="ivaType"
+                (ngModelChange)="changeIvaValue($event, data.productId)"
+                [(ngModel)]="data.iva"
+                (nzBlur)="stopEditIva()"
+              >
+              </nz-select>
             </td>
             <td style="text-align: center">
               <nz-space [nzSplit]="spaceSplit">
@@ -320,34 +332,18 @@
           </tr>
         </tfoot>
       </nz-table>
-
-      <form nz-form [formGroup]="formInvoice">
-        <nz-form-item>
-          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="observation"
-            >Observación
-          </nz-form-label>
-          <nz-form-control [nzSm]="14" [nzXs]="24">
-            <input
-              formControlName="observation"
-              nz-input
-              id="observation"
-              maxlength="250"
-            />
-          </nz-form-control>
-        </nz-form-item>
-      </form>
     </nz-content>
   </nz-collapse-panel>
 </nz-collapse>
 
- <app-popup-confirmation
+<app-popup-confirmation
   #popup
   [title]="'Confirmar eliminación'"
   [header]="'¿Está seguro que desea eliminar el producto seleccionado?'"
   [message]="'Esta acción no se puede revertir'"
   (handleOk)="handleOk()"
 >
-</app-popup-confirmation> 
+</app-popup-confirmation>
 <app-popup-confirmation
   #pop
   [title]="'Confirmar Guardado de comprobante'"

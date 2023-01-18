@@ -60,9 +60,9 @@
     >
       <thead>
         <tr>
-          <th nzEllipsis nzWidth="200px">Inicio período</th>
-          <th nzEllipsis nzWidth="200px">Fin período</th>
-          <th nzEllipsis nzWidth="150px">Estado</th>
+          <th nzEllipsis nzWidth="200px" [nzAlign]="'center'">Inicio período</th>
+          <th nzEllipsis nzWidth="200px" [nzAlign]="'center'">Fin período</th>
+          <th nzEllipsis nzWidth="150px" [nzAlign]="'center'">Estado</th>
           <th nzEllipsis nzWidth="100px" [nzAlign]="'center'">Acción</th>
           <th nzEllipsis nzWidth="250px" [nzAlign]="'center'">Reportes</th>
         </tr>
@@ -81,9 +81,9 @@
           "
           (keydown.enter)="onEnter($event, period)"
         >
-          <td nzEllipsis>{{ this.formaterDate(period.initPeriod) }}</td>
-          <td nzEllipsis>{{ this.formaterDate(period.endPeriod) }}</td>
-          <td nzEllipsis [nzAlign]="'center'" *ngIf="period.status === true">Activado</td>
+          <td nzEllipsis [nzAlign]="'center'">{{ this.formaterDate(period.initPeriod) }}</td>
+          <td nzEllipsis [nzAlign]="'center'">{{ this.formaterDate(period.endPeriod) }}</td>
+          <td nzEllipsis [nzAlign]="'center'" *ngIf="period.status === true">Activo</td>
           <td nzEllipsis [nzAlign]="'center'" *ngIf="period.status === false">Cerrado</td>
           <td nzEllipsis [nzAlign]="'center'" *ngIf="period.status === true">
             <a
@@ -103,28 +103,25 @@
               </i>
             </a>
           </td>
-          <td nzEllipsis *ngIf="period.status === false">
+          <td nzEllipsis [nzAlign]="'center'" *ngIf="period.status === false">
             <a
               #close
               nz-tooltip
               nzTooltipTitle="Cerrado"
               nzTooltipPlacement="rightTop"
-              style="color: darkgrey" 
-          
+              style="color: darkgrey; " 
             >
               <i
                 nz-icon
                 nzType="close-circle"
                 nzTheme="outline"
                 style="font-size: 18px"
-               
               >
               </i>
             </a>
           </td>
           <ng-container>
             <td style="text-align: center">
-         
                 <button
                   nz-button
                   nzType="primary"
