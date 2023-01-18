@@ -494,6 +494,13 @@ constructor(@Inject(LOCALE_ID) public locale: string,
      }
   }
 
+  direction(){
+    if(this.id == 0){
+      this.router.navigate(['/notes/debitList']);
+    }else{
+      this.router.navigate(['/home/invoices/invoices-sale']);
+    }
+   }
   
   
 }

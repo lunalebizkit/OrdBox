@@ -1,13 +1,9 @@
 <nz-page-header class="list-header">
   <nz-page-header-title > <i nz-icon nzType="container" nzTheme="outline"></i> Nota de Débito</nz-page-header-title>
-  <nz-page-header-extra>
-    <button nz-button routerLink="/home/invoices/invoices-sale" type="submit" nzSize="default" 
+  <nz-page-header-extra >
+    <button nz-button (click)="direction()" type="submit" nzSize="default" 
     ><i nz-icon nzType="arrow-left" nzTheme="outline"></i>volver</button>
   </nz-page-header-extra>
-   <nz-page-header-extra *ngIf="id == 0">
-    <button nz-button routerLink="/home/notes/debitList" type="submit" nzSize="default" 
-    ><i nz-icon nzType="arrow-left" nzTheme="outline"></i>volver</button>
-  </nz-page-header-extra> 
 </nz-page-header>
 
 <!-- Encabezado de la Factura -->

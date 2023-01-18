@@ -471,6 +471,7 @@ constructor(@Inject(LOCALE_ID) public locale: string,
       
     }
   };
+  
   msjConfirmOk(){
     try {
       this.creditMemoList = this.creditMemoList.
@@ -494,6 +495,13 @@ constructor(@Inject(LOCALE_ID) public locale: string,
       this.invoiceA= false;
     }    
   }
-  
+
+   direction(){
+    if(this.id == 0){
+      this.router.navigate(['/notes/creditList']);
+    }else{
+      this.router.navigate(['/home/invoices/invoices-sale']);
+    }
+   }
   
 }
