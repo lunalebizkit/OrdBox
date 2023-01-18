@@ -15,11 +15,12 @@ namespace Kiltex.SistemaGestion.Services.Mapper
                 {
                     d.Total = o.CreditMemoDetail.Sum(p => (p.Quantity * p.Price));
                     d.IvaTotal = o.CreditMemoDetail.Sum(e => (e.Quantity * e.Price) * e.Iva / 100.00m);
+                    d.DateTime = o.DateTime = DateTime.Now;
                 });
 
             CreateMap<CreditMemo, DtoRequestCreditMemo>();
 
-            CreateMap<CreditMemoDetail, DtoResponseCreditMemoDetails>().ReverseMap();
+            CreateMap<CreditMemoDetail, DtoResponseCreditMemoDetails>().ReverseMap();   
         }
     }
 }

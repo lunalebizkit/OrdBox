@@ -38,5 +38,11 @@ namespace Kiltex.SistemaGestion.Api.Controllers.CreditMemoController
             return Return(await _service.NewMemo(model).ConfigureAwait(false));
         }
 
+        [HttpPut]
+        [AllowAccess(Permission = new EPermission[] { EPermission.CreateMemo })]
+        public async Task<IActionResult> Edit([FromBody] DtoRequestCreditMemo model)
+        {
+            return Return(await _service.Update(model).ConfigureAwait(false));
+        }
     }
 }
