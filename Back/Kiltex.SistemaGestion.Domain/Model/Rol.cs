@@ -15,7 +15,7 @@ namespace Kiltex.SistemaGestion.Domain.Model
         [Column("key")]
         public string Key { get; set; }
 
-        public List<PermissionXRol> PermissionXRols { get; set; }
+        public ICollection<PermissionXRol> PermissionXRols { get; set; } = new HashSet<PermissionXRol>();
 
     }
 }

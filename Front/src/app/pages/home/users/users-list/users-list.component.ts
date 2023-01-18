@@ -7,6 +7,7 @@ import { eRol } from '../model/rol.enum';
 import { NzDrawerService } from 'ng-zorro-antd/drawer';
 import { UsersEditDrawerComponent } from '../users-edit-drawer/users-edit.drawer.component';
 import { Permission } from 'src/app/common/auth/models/permissions.enum';
+import { PermissionRolDrawerComponent } from 'src/app/pages/auth/permission-rol/permission-rol.drawer.component';
 
 @Component({
   selector: 'app-users-list',
@@ -126,6 +127,43 @@ export class UsersListComponent implements OnInit {
         this.id = 0;
       },
     });
+  }
+  openComponentRolControl():void{
+    const drawerRefCustomer = this.drawerService.create<
+    PermissionRolDrawerComponent,
+    { filter: number },
+    number
+  >({
+    nzContent: PermissionRolDrawerComponent,
+    nzSize: 'large',
+    nzContentParams: {
+      filter: this.id > 0 ? this.id : 0,
+    },
+    nzClosable: false,
+  });
+  /*drawerRefCustomer.afterClose.subscribe({
+    next: (data) => {
+      this.id = 0;
+      if (data != undefined && data != 0) {
+        this.service.getById(data).subscribe({
+          next: (r: ListUserModel) => {
+            this.userList[this.userList.findIndex((r) => r.id == data)] !=
+            undefined
+              ? (this.userList[this.userList.findIndex((r) => r.id == data)] =
+                  r)
+              : this.userList.push(r);
+          },
+          error: () => {
+            this.id = 0;
+          },
+        });
+      } 
+    },
+    error: () => {
+      this.id = 0;
+    },
+  });
+  */
   }
   onDoubleClicked(datos: any) {
     this.id = datos.id;

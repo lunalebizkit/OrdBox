@@ -49,4 +49,5 @@ export enum Permission {
   CreatePeriod = 34,
   EditPeriod = 35,
   DeletePeriod = 36,
+  RolControl= 38
 }

@@ -165,6 +165,36 @@ namespace Kiltex.SistemaGestion.Services.Services
                 throw;
             }
         }
+
+        public async Task<OperationResponse<List<DtoResponsePermissionRol>>> ListRolPermissions(CancellationToken ct = default)
+        {
+            try
+            {
+                var query =await  _contextSql.Rols
+                    .Include(p => p.PermissionXRols)
+                    .ThenInclude(y => y.Permission)        
+                    .AsNoTracking().ToListAsync(cancellationToken: ct)
+                    ;
+                var newModel = _mapper.Map<List<DtoResponsePermissionRol>>(query);
+                return new OperationResponse<List<DtoResponsePermissionRol>>(newModel);
+                 //new OperationResponse<List<DtoResponsePermissionRol>>(
+                 //   await _contextSql
+                 //       .Permissions
+                 //       .AsNoTracking()
+                 //       .Select(p => new DtoResponsePermission()
+                 //       {
+                 //           Id = p.Id,
+                 //           Name = p.Name,
+                 //           Key = p.Key,
+                 //           EnumPermission = p.EnumPermission,
+                 //       }).ToListAsync(cancellationToken: ct));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
+                throw;
+            }
+        }
         public async Task<OperationResponse<IdResponse<long>>> AddOrUpdatePermission(DtoRequestAddPermissionXRol model, CancellationToken ct= default)
         {
             try
