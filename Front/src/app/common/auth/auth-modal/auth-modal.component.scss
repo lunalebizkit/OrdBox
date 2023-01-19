@@ -5,9 +5,11 @@
 }
 
 .logo{
-  height: 200px;
-  width: 210px;
+  height: 140px;
+  width: 150px;
+  max-width: fit-content;
   transform: scale(1.35);
+  align-items: center;
 }
 
 button{
