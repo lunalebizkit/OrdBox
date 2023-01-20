@@ -32,7 +32,7 @@
                   <input
                     [ngModelOptions]="{ standalone: true }"
                     type="text"
-                    placeholder="Ingrese Nombre o CUIT-DNI"
+                    placeholder="Ingrese Nombre, CUIT/CUIL o DNI"
                     nz-input
                     (keydown.enter)="search()"
                     [(ngModel)]="queryParams.filter"
@@ -71,7 +71,7 @@
           <tr>
             <th nzEllipsis nzWidth="60px">Nombre</th>
             <th nzEllipsis nzWidth="60px">Dni</th>
-            <th nzEllipsis nzWidth="60px">Cuit</th>
+            <th nzEllipsis nzWidth="60px">Cuit/Cuil</th>
             <th nzEllipsis nzWidth="100px">Dirección</th>
             <th nzEllipsis nzWidth="70px">Teléfono/s</th>
             <th nzEllipsis nzWidth="110px">Email/s</th>

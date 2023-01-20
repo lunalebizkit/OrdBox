@@ -180,28 +180,28 @@
               </button>
             </div>
           </nz-form-item>
-          <br />
-          <!--Observaciones-->
-          <nz-divider
-          nzText="Observaciones"
-          nzOrientation="left"
-          style="margin-top: 0"
-        ></nz-divider>
-
-          <nz-form-item>
-            <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="observation"
-              >Observación
-            </nz-form-label>
-            <nz-form-control [nzSm]="14" [nzXs]="24">
-              <input
-                formControlName="observation"
-                nz-input
-                id="observation"
-                maxlength="250"
-              />
-            </nz-form-control>
-          </nz-form-item>
+        
         </form>
+        <br />
+         <!-- Observaciones-->
+         <nz-divider
+         nzText="Observaciones"
+         nzOrientation="left"
+         style="margin-top: 0"
+       ></nz-divider>
+        <nz-form-item>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="observation"
+            >Observación
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <input
+              formControlName="observation"
+              nz-input
+              id="observation"
+              maxlength="250"
+            />
+          </nz-form-control>
+        </nz-form-item>
       </nz-content>
     </nz-collapse-panel>
   </nz-collapse>

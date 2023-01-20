@@ -21,6 +21,7 @@ export class debitMemoListComponent implements OnInit {
   debitMemoList: DebitMemoModel[] = [];
   selectedIndex!: number;
   selectedDebitMemo: any;
+
   queryParams = {
     filter: '',
     page: 0,
@@ -45,8 +46,7 @@ export class debitMemoListComponent implements OnInit {
           this.loading = false;
           this.selectedIndex = 0;
           this.selectedDebitMemo = this.debitMemoList[this.selectedIndex];
-          document.getElementById(this.selectedIndex.toString())?.focus();
-        
+          document.getElementById(this.selectedIndex.toString())?.focus()      
         },
         error: () => {
           this.loading = false;
@@ -56,6 +56,10 @@ export class debitMemoListComponent implements OnInit {
     }
     formaterDate(date: string | number | Date): string {
       return formatDate(date, 'YYYY-MM-dd', this.locale);
+    }
+    search(): void {
+      this.queryParams.page = 0;
+      this.getData(this.queryParams);
     }
     openComponentDebitMemoView(): void {
       const drawerRefCustomer = this.drawerService.create<
@@ -121,7 +125,7 @@ export class debitMemoListComponent implements OnInit {
     let client = event.target.clientHeight;
     let ScrollPosition = Math.abs(
       Math.round(scrollHeight - (scrolltop + client))
-    );
+    );     
     if (
       ScrollPosition <= 5 &&
       this.totalItems / this.queryParams.page > this.queryParams.page
@@ -132,10 +136,10 @@ export class debitMemoListComponent implements OnInit {
         this.totalItems === undefined ||
         this.queryParams.page * this.queryParams.pageSize <= this.totalItems
       ) {
-        this.service.getCreditMemo(this.queryParams).subscribe({
+        this.service.getDebitMemo(this.queryParams).subscribe({
           next: (r) => {
-            r.data.map((invoice: DebitMemoModel) =>
-              this.debitMemoList.push(invoice)
+            r.data.map((debit: DebitMemoModel) =>
+              this.debitMemoList.push(debit)
             );
             this.loading = false;
           },

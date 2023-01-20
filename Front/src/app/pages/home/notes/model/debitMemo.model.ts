@@ -12,6 +12,7 @@ export interface  DebitMemoModel{
     dateTime: Date,
     total: number,
     ivaTotal: number,
+    type: number;
    debitMemoDetails: DebitMemoDetails[]
 }
 export interface DebitMemoDetails{

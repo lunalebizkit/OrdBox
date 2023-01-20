@@ -199,7 +199,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                 var periodActive = _contextSql
                                  .Periods
                                  .AsNoTracking()
-                                 .FirstOrDefault(p => (p.Status == true) && (p.InitPeriod <= date) && (p.EndPeriod >= date))
+                                 .FirstOrDefault(p => (p.Status == true) && (p.InitPeriod.Date <= date.Date) && (p.EndPeriod.Date >= date.Date))
                                  ;
 
 

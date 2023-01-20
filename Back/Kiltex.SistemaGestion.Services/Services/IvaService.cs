@@ -28,7 +28,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             var query = _contextSql
                                     .Invoices.OrderBy(p => p.DateTime)
                                     .Include(p => p.InvoiceDetails)
-                                    .Where(x => x.DateTime >= from && x.DateTime <= to)
+                                    .Where(x => x.DateTime.Date >= from && x.DateTime.Date <= to)
                                     .AsNoTracking();
 
             var newDtoDetalleResumem = new List<DtoResponseIvaInvoices>();
@@ -65,7 +65,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             var query = _contextSql
                                     .Receipts.OrderBy(p => p.DateTime).OrderBy(p => p.Type)
                                     .Include(p => p.ReceiptDetails)
-                                    .Where(x => x.DateTime >= from && x.DateTime <= to)
+                                    .Where(x => x.DateTime.Date >= from && x.DateTime.Date <= to)
                                     .AsNoTracking();
 
             var newDtoDetalleResumem = new List<DtoResponseIvaReceipts>();
@@ -103,10 +103,10 @@ namespace Kiltex.SistemaGestion.Services.Services
             try
             {
                 var query = await _contextSql
-                                .Receipts.OrderBy(p => p.DateTime).OrderBy(p => p.Type)
+                                .Receipts.OrderBy(p => p.DateTime.Date).OrderBy(p => p.Type)
                                 .Include(s => s.ReceiptDetails)
                                 .AsNoTracking()
-                                .Where(x => x.DateTime >= from && x.DateTime <= to).ToArrayAsync();
+                                .Where(x => x.DateTime.Date >= from && x.DateTime.Date <= to).ToArrayAsync();
 
                 var newDtoDetalleResumem = new List<DtoResponseIvaReceipts>();
 
@@ -179,7 +179,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                 {
                     currentRow++;
                     worksheet.Cell(currentRow, 1).SetValue(item.DateTime.ToString("MM/dd/yyyy")).Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Left);
-                    worksheet.Cell(currentRow, 2).SetValue(item.InvoiceNumber).Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Left);
+                    worksheet.Cell(currentRow, 2).SetValue(item.ReceiptNumber).Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Left);
                     worksheet.Cell(currentRow, 3).SetValue((ETypeReceipt)item.Type).Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Center);
                     worksheet.Cell(currentRow, 4).SetValue(item.SupplierName).Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Left);
                     worksheet.Cell(currentRow, 5).SetValue(item.SupplierCuit).Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Left);
@@ -228,10 +228,10 @@ namespace Kiltex.SistemaGestion.Services.Services
             try
             {
                 var query = await _contextSql
-                                .Invoices.OrderBy(p => p.Type).OrderBy(p => p.DateTime)
+                                .Invoices.OrderBy(p => p.Type).OrderBy(p => p.DateTime.Date)
                                 .Include(s => s.InvoiceDetails)
                                 .AsNoTracking()
-                                .Where(x => x.DateTime >= from && x.DateTime <= to).ToArrayAsync();
+                                .Where(x => x.DateTime.Date >= from && x.DateTime.Date <= to).ToArrayAsync();
 
                 var newDtoDetalleResumem = new List<DtoResponseIvaInvoices>();
 

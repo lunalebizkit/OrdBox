@@ -7,6 +7,12 @@ namespace Kiltex.SistemaGestion.Domain.Model
     [Table("credit_memo")]
     public class CreditMemo : BaseModel
     {
+        [Column("invoice_id")]
+        public Nullable<long> InvoiceId { get; set; }
+
+        [ForeignKey(nameof(InvoiceId))]
+        public Invoice? Invoice { get; set; }
+
         [Column("customer_id")]
         public long? CustomerId { get; set; }
 
@@ -17,7 +23,11 @@ namespace Kiltex.SistemaGestion.Domain.Model
         public long UserId { get; set; }
 
         [ForeignKey(nameof(UserId))]
+
         public User User { get; set; }
+
+        [Column("invoice_number")]
+        public long InvoiceNumber { get; set; }
 
         [Column("creditMemo_number")]
         public long CreditMemoNumber { get; set; }
