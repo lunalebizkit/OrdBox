@@ -65,14 +65,23 @@
           <nz-form-label [nzSm]="6" [nzXs]="14" nzRequired>Cuit - Cuil
           </nz-form-label>
           <nz-form-control [nzSm]="10" [nzXs]="14">
-            <input nz-input nzSize="small" formControlName="customerCuit"
-              (keydown.enter)="searchCustomer(); $event.preventDefault()" />
+            <input
+              nz-input
+              nzSize="small"
+              formControlName="customerCuit"
+              (keydown.enter)="searchCustomer(); $event.preventDefault()"
+            />
           </nz-form-control>
 
           <!-- Boton que abre el buscador de CLiente en drawer -->
           <form nz-form [formGroup]="formCustomerSearch">
             <div style="margin: 3px">
-              <button nz-button nzSize="small" nzType="primary" (click)="openComponentCustomer()">
+              <button
+                nz-button
+                nzSize="small"
+                nzType="primary"
+                (click)="openComponentCustomer()"
+              >
                 <i nz-icon nzType="search" nzTheme="outline"></i>Buscar
               </button>
             </div>
@@ -82,15 +91,26 @@
           <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired>Razón Social - Nombre
           </nz-form-label>
           <nz-form-control [nzSm]="10" [nzXs]="24">
-            <input nz-input maxlength="250" nzSize="small" formControlName="customerName" />
+            <input
+              nz-input
+              maxlength="250"
+              nzSize="small"
+              formControlName="customerName"
+            />
           </nz-form-control>
         </nz-form-item>
 
         <nz-form-item>
-          <nz-form-label [nzSm]="6" [nzXs]="14" nzRequired>Domicilio
+          <nz-form-label [nzSm]="6" [nzXs]="14" nzRequired
+            >Domicilio
           </nz-form-label>
           <nz-form-control [nzSm]="10" [nzXs]="14">
-            <input nz-input formControlName="address" nzSize="small" maxlength="250" />
+            <input
+              nz-input
+              formControlName="address"
+              nzSize="small"
+              maxlength="250"
+            />
           </nz-form-control>
         </nz-form-item>
 
@@ -101,7 +121,7 @@
           <nz-form-item>
             <nz-form-label [nzSm]="6" [nzXs]="14" nzRequired nzFor="productSearchFilter">Búsqueda de Producto
             </nz-form-label>
-            <nz-form-control [nzSm]="12" [nzXs]="14">
+            <nz-form-control [nzSm]="14" [nzXs]="14">
               <nz-input-group [nzSuffix]="clearQuery">
                 <input nz-input formControlName="productSearchFilter"
                   placeholder="Ingrese Marca, Código, Categoría o Producto" nzSize="small"
@@ -120,14 +140,23 @@
               </ng-template>
             </nz-form-control>
             <div nz-col style="margin: 3px">
-              <button nz-button nzSize="small" nzType="primary" (click)="openComponentProduct()">
+              <button
+                nz-button
+                nzSize="small"
+                nzType="primary"
+                (click)="openComponentProduct()"
+              >
                 <i nz-icon nzType="search" nzTheme="outline"></i> Buscar
               </button>
             </div>
           </nz-form-item>
-        </form>
-
-
+           <!-- Observaciones-->
+           <nz-divider
+           nzText="Observaciones"
+           nzOrientation="left"
+           style="margin-top: 0"
+         ></nz-divider>
+         
         <nz-form-item>
           <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="observation">Observación
           </nz-form-label>

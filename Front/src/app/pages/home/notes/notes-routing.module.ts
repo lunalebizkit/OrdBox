@@ -7,7 +7,7 @@ import { debitMemoListComponent } from './debitMemo-list/debitMemo-list.componen
 
 
 const routes: Routes =[
-    { path: 'debit', component: debitMemoComponent },
+    {path: 'debit', component: debitMemoComponent },
     {path: 'debitList', component: debitMemoListComponent },
     {path: 'credit', component: CreditMemoComponent },
     {path: 'creditList', component: creditMemoListComponent },
