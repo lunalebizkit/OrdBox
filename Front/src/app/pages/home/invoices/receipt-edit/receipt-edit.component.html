@@ -21,7 +21,7 @@
     >
       <nz-content>
         <div nz-row nzJustify="center">
-          <div nz-col class="gutter-row" [nzSpan]="4" style="margin-right: 5px">
+          <div nz-col class="gutter-row" [nzSpan]="4" style="margin-right: 5px; margin-left: 15px;">
             <nz-form-item>
               <nz-form-label nzRequired>Fecha</nz-form-label>
               <nz-form-control>
@@ -93,6 +93,7 @@
                 nzSize="small"
                 nzType="primary"
                 (click)="openComponentSupplier()"
+                class="ml-5"
               >
                 <i nz-icon nzType="search" nzTheme="outline"></i>Buscar
               </button>
@@ -178,6 +179,7 @@
                 nzType="primary"
                 nzType="primary"
                 (click)="openComponentProduct()"
+                class="ml-5"
               >
                 <i nz-icon nzType="search" nzTheme="outline"></i> Buscar
               </button>

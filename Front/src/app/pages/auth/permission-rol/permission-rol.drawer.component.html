@@ -10,15 +10,16 @@
                 <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="roleId">Rol</nz-form-label>
                 <nz-form-control [nzSm]="14" [nzXs]="24">
                     <nz-select  formControlName="roleId" id="roleId"
-                     (ngModelChange)="rolSelectedChange($event)" [nzOptions]="permissionRol">
+                    (ngModelChange)="rolSelectedChange($event)" [nzOptions]="permissionRol">
                     </nz-select>
 
                 </nz-form-control>
             </nz-form-item>
-
-            <nz-transfer [nzTitles]="['Permisos', 'Mis Permisos']" [nzDataSource]="listComplete" [nzDisabled]="disabled"
+            <nz-form-control [nzSm]="24" [nzXs]="24" style="margin-left: 50px;">
+            <nz-transfer class="transfer" [nzTitles]="['Permisos', 'Permisos Asignados']" [nzDataSource]="listComplete" [nzDisabled]="disabled"
                 nzShowSearch (nzChange)="change($event)">
             </nz-transfer>
+            </nz-form-control>
 
 
 
