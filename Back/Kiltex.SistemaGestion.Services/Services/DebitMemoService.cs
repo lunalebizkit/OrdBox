@@ -5,11 +5,6 @@ using Kiltex.SistemaGestion.SDK.Error;
 using Kiltex.SistemaGestion.Services.Common;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kiltex.SistemaGestion.Services.Services
 {
@@ -74,6 +69,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                 await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
 
                 transaction.Commit();
+                return Ok(new IdResponse<long>(debitMemoModel.Id));
 
             }
             catch (Exception ex)
@@ -81,9 +77,6 @@ namespace Kiltex.SistemaGestion.Services.Services
                 _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
                 throw;
             }
-
-
-            return Ok(new IdResponse<long>(debitMemoModel.Id));
         }
         public async Task<OperationResponse<IdResponse<long>>> Update(DtoRequestDebitMemo model, CancellationToken ct = default)
         {

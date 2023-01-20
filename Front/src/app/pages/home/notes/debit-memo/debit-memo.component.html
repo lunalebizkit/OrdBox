@@ -1,17 +1,8 @@
 <nz-page-header class="list-header">
-  <nz-page-header-title>
-    <i nz-icon nzType="container" nzTheme="outline"></i> Nota de
-    Débito</nz-page-header-title
-  >
-  <nz-page-header-extra>
-    <button
-      nz-button
-      routerLink="/home/invoices/invoices-sale"
-      type="submit"
-      nzSize="default"
-    >
-      <i nz-icon nzType="rollback" nzTheme="outline"></i>Volver
-    </button>
+  <nz-page-header-title > <i nz-icon nzType="container" nzTheme="outline"></i> Nota de Débito</nz-page-header-title>
+  <nz-page-header-extra >
+    <button nz-button (click)="direction()" type="submit" nzSize="default" 
+    ><i nz-icon nzType="arrow-left" nzTheme="outline"></i>volver</button>
   </nz-page-header-extra>
 </nz-page-header>
 
@@ -53,6 +44,32 @@
               </nz-form-control>
             </nz-form-item>
           </div>
+          <div nz-col class="gutter-row" style="margin-right: 14px" *ngIf="edit === false">
+            <nz-form-item>
+              <nz-form-label  nzRequired >Tipo </nz-form-label>
+              <nz-form-control>
+                <nz-select
+                  id="type"
+                  formControlName="type"
+                  [nzOptions]="type"
+                  (ngModelChange)="typeSelectedChange($event)"
+                >
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <nz-form-item>
+            <nz-form-label [nzSm]="12" [nzXs]="18" nzRequired >
+              Número de Factura
+            </nz-form-label>
+            <nz-form-control [nzSm]="10" [nzXs]="20">
+              <input
+              nz-input
+                nzSize="small"
+                formControlName="invoiceNumber"
+              />
+             </nz-form-control>
+          </nz-form-item> 
         </div>
 
         <!-- Datos del Cliente -->
@@ -172,26 +189,27 @@
             </div>
           </nz-form-item>
           <br />
-          <!-- Observaciones-->
-          <nz-divider
-            nzText="Observaciones"
-            nzOrientation="left"
-            style="margin-top: 0"
-          ></nz-divider>
-          <nz-form-item>
-            <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="observation"
-              >Observación
-            </nz-form-label>
-            <nz-form-control [nzSm]="14" [nzXs]="24">
-              <input
-                formControlName="observation"
-                nz-input
-                id="observation"
-                maxlength="250"
-              />
-            </nz-form-control>
-          </nz-form-item>
         </form>
+         <!-- Observaciones-->
+         <nz-divider
+         nzText="Observaciones"
+         nzOrientation="left"
+         style="margin-top: 0"
+       ></nz-divider>
+       
+        <nz-form-item>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="observation"
+            >Observación
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <input
+              formControlName="observation"
+              nz-input
+              id="observation"
+              maxlength="250"
+            />
+          </nz-form-control>
+        </nz-form-item>
       </nz-content>
     </nz-collapse-panel>
   </nz-collapse>

@@ -38,12 +38,6 @@ export class HttpAuth401ErrorInterceptor implements HttpInterceptor {
     return next.handle(req).pipe(
       catchError((errorResponse: HttpErrorResponse) => {
         if (errorResponse.status === 401) {
-          if (errorResponse.error) {
-            let message = errorResponse.error.errores[0].titulo;
-            this.message.create('error', message, { nzDuration: 4000 });
-
-            return throwError(() => errorResponse);
-          } else {
             if (!this.modal) {
               this.logout();
               this.showModal();
@@ -55,9 +49,7 @@ export class HttpAuth401ErrorInterceptor implements HttpInterceptor {
                 return next.handle(this.requests[this.current++]);
               })
             );
-          }
         } else {
-          if (errorResponse.status === 403) this.logout();
           return throwError(() => errorResponse);
         }
       })

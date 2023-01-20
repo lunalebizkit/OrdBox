@@ -71,7 +71,7 @@ export class CreditMemoComponent extends BaseComponent implements OnInit {
   };
   paymentSelected: any;
   payment: { value: string; label: string }[] = Object.entries(ePayment).map(([value, label]) => ({ value, label }))
-  id:number= this.route.snapshot.queryParams['id']
+  id: any | number;
   invoiceA: boolean= true;
    type = InvoiceType; 
   type1!:number 
@@ -82,7 +82,7 @@ export class CreditMemoComponent extends BaseComponent implements OnInit {
   totalItems: any;
 
 
-  edit:boolean=false
+  edit:boolean =false
   customerId!: number;
  
 
@@ -105,10 +105,12 @@ constructor(@Inject(LOCALE_ID) public locale: string,
   ){super(notificacionService, el, message);
     this.formCreditMemo = this.fb.group({
     dateTime: [new Date(this.startDate), Validators.required],
+    type: [ 1, Validators.required],
     address: ['', Validators.required],
     customerCuit: ['', Validators.required],
-    customerName: ['', Validators.required],    
-    observation: ['']
+    customerName: ['', Validators.required], 
+    invoiceNumber: [0 , Validators.required],   
+    observation: ['',]
   }); 
   this.formCustomerSearch = this.fb.group({})
   this.formProductSearch = this.fb.group({
@@ -117,15 +119,26 @@ constructor(@Inject(LOCALE_ID) public locale: string,
 
   userId:number= this.serviceUser.currentUser.id
 
-  ngOnInit(): void {
-    if (this.id != null || this.id != undefined || this.id != 0) {
-       this.getInvoice(this.id)
-       this.edit=true
-       }
+  ngOnInit(): void {  
+    this.route.queryParams.subscribe({
+      next: (p) => {
+          if (p['id']) {
+              this.isLoading = true;
+              this.getInvoice(p['id']);
+              this.id = p['id'];
+              this.edit=true;
+          }
+      },
+      error: () => { 
+        this.id = 0
+        this.edit = false
+      }
+  })
+
     }
 
     getInvoice(id: number): void {
-      if (id != 0)
+      if (id != 0 || id !== undefined) {
       this.serviceInvoice.getInvoiceById(id).subscribe({
           next: (r: InvoiceModel) => {
             this.type1 = r.type, 
@@ -133,11 +146,14 @@ constructor(@Inject(LOCALE_ID) public locale: string,
             this.formCreditMemo.controls['address'].setValue(r.customerAddress),
             this.formCreditMemo.controls['customerCuit'].setValue(r.customerCuit),
             this.formCreditMemo.controls['customerName'].setValue(r.customerName),
+            this.formCreditMemo.controls['invoiceNumber'].setValue(r.invoiceNumber),
+            this.formCreditMemo.controls['type'].setValue(r.type),
             this.ivaTotal= r.ivaTotal,
             this.total= r.total,
             this.userId = r.userId,
             this.subTotal= r.total - r.ivaTotal;          
             this.isLoading = false;
+            
             /**parse a Grilla */
              r.invoiceDetails.forEach(modelDetail=>{
             const model = creditMemoGridFromInvoiceParser(modelDetail)
@@ -160,6 +176,7 @@ constructor(@Inject(LOCALE_ID) public locale: string,
       this.creditMemoListTest=[] }
       })
     }
+    }
     save(): void {
       if (this.isValidForm(this.formCreditMemo)) {
         if (this.creditMemoDetails.length == 0) {
@@ -170,18 +187,20 @@ constructor(@Inject(LOCALE_ID) public locale: string,
             id: 0,
             customerId: this.customerId,
             userId: this.userId,
+            invoiceId: this.id,
+            invoiceNumber: this.formCreditMemo.controls['invoiceNumber'].value,
             customerName: this.formCreditMemo.controls['customerName'].value,
             customerCuit: this.formCreditMemo.controls['customerCuit'].value,
             customerAddress: this.formCreditMemo.controls['address'].value,
             observation: this.formCreditMemo.controls['observation'].value,
             dateTime: this.formCreditMemo.controls['dateTime'].value,
+            type: this.formCreditMemo.controls['type'].value,
             total: this.total,
             ivaTotal: this.ivaTotal ,
             creditMemoNumb: 0,
             creditMemoDetail: this.creditMemoDetails
           };
           this.isSaving = true;
-
           
           this.service.saveCreditMemo(model)
             .subscribe({
@@ -263,6 +282,7 @@ constructor(@Inject(LOCALE_ID) public locale: string,
       console.error(error);
     }
   };
+
    invoiceType(id: any):string{
     return eInvoiceType[id]
   }
@@ -459,6 +479,7 @@ constructor(@Inject(LOCALE_ID) public locale: string,
       
     }
   };
+  
   msjConfirmOk(){
     try {
       this.creditMemoList = this.creditMemoList.
@@ -474,7 +495,21 @@ constructor(@Inject(LOCALE_ID) public locale: string,
        
      }
   }
+  typeSelectedChange(id: any): void {
+    this.typeSelectedId = id;    
+    if (id == 1) {      
+      this.invoiceA = true;
+    }else{
+      this.invoiceA= false;
+    }    
+  }
 
-  
+   direction(){
+    if(this.id == 0){
+      this.router.navigate(['/notes/creditList']);
+    }else{
+      this.router.navigate(['/home/invoices/invoices-sale']);
+    }
+   }
   
 }
