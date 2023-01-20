@@ -11,19 +11,29 @@
 >
 </app-header-op-buttons>
 <nz-collapse >
-  <nz-collapse-panel nzHeader="Datos Nota de Débito" [nzActive]="true">
+  <nz-collapse-panel nzHeader="Datos Nota de Débito" [nzActive]="true"  class="{{this.tipo}}">
     <nz-descriptions nzSize="small" [nzColumn]="2">
-        <nz-descriptions-item nzTitle=" * Fecha" [nzSpan]="2">
+        <nz-descriptions-item nzTitle=" * Fecha" [nzSpan]="1">
         <a>{{ dateTime ? (dateTime | date : "YYYY-MM-dd") : "N/A" }} </a>
       </nz-descriptions-item>
+      <nz-descriptions-item nzTitle=" * Tipo" [nzSpan]="1">
+        <nz-page-header-tags>
+          <nz-tag [nzColor]="'blue'">{{ this.debitMemoType(type) }}</nz-tag>
+        </nz-page-header-tags>
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="* Número de Factura" [nzSpan]="2">
+        {{ this.invoiceNumber }}</nz-descriptions-item>
       <nz-descriptions-item nzTitle="* Cliente" [nzSpan]="2">
         {{ this.customerName }}</nz-descriptions-item
       >
-      <nz-descriptions-item nzTitle=" * Cuit" [nzSpan]="2">
+      <nz-descriptions-item nzTitle=" * Cuit" [nzSpan]="3">
         {{ this.customerCuit }}</nz-descriptions-item
       >
-      <nz-descriptions-item nzTitle=" * Dirección" [nzSpan]="3">
+      <nz-descriptions-item nzTitle=" * Dirección" [nzSpan]="2">
         {{ this.customerAddress }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle=" * Observación" [nzSpan]="2">
+        {{ this.observation }}
       </nz-descriptions-item>
      </nz-descriptions>
   </nz-collapse-panel>
@@ -33,6 +43,7 @@
     nzHeader="Detalle Nota de Débito"
     [nzActive]="true"
     [nzShowArrow]="true"
+    class="{{this.tipo}}"
   >
     <nz-content>
       <nz-table [nzBordered]="true" nzTemplateMode [nzSize]="'small'">
@@ -60,16 +71,16 @@
             <td>{{ data.iva }}</td>
           </tr>
         </tbody>
-        <!-- <tfoot>
-          <tr> -->
-            <td colspan="6" [nzAlign]="'right'">
+        <tfoot  class="{{this.tipo}}">
+          <tr> 
+            <td colspan="8" [nzAlign]="'right'">
               <b>Total </b
               ><span style="color: blue"
                 >{{ this.currencyFormat(total) }}
               </span>
             </td>
-        <!--    </tr>
-        </tfoot> -->
+         </tr>
+        </tfoot> 
       </nz-table>
     </nz-content>
   </nz-collapse-panel>

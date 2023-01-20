@@ -1,12 +1,18 @@
 ﻿
 
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
+using System.ComponentModel.DataAnnotations;
 
 namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest
 {
     public class DtoRequestCreditMemo
     {
         public long Id { get; set; }
+
+        [Required]
+        public long InvoiceId { get; set; }
+
+        public long InvoiceNumber { get; set;  }
 
         public long CustomerId { get; set; }
 

@@ -4,7 +4,7 @@ export interface ReceiptIvaReportModel{
 }
 export interface ReceiptIvaReportDetailsModel{
     id:number,
-    invoiceNumber: number,
+    receiptNumber: number,
     supplierName: string,
     supplierCuit: string,
     total: number,   

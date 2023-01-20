@@ -102,7 +102,9 @@ export class InvoiceIvaReportComponent extends BaseComponent implements OnInit {
       
       ngOnInit(): void {        
         if ((this.initPeriod != null) && (this.endPeriod != null)) {
-          this.getIvaVenta(this.initPeriod, this.endPeriod);     
+          this.getIvaVenta(this.initPeriod, this.endPeriod);    
+          this.changeDate(this.initPeriod)
+          this.changeEndDate(this.endPeriod) 
         } 
     }
     getIvaVenta(initPeriod:Date,endPeriod:Date): void {      

@@ -46,21 +46,8 @@ namespace Kiltex.SistemaGestion.Services.Services
 
         public async Task<OperationResponse<IdResponse<long>>> NewMemo(DtoRequestCreditMemo model, CancellationToken ct = default)
         {
-            try
-            {
                 model.Id = 0;
-                if (String.IsNullOrEmpty(model.CustomerName))
-                {
-                    _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
-                    return Error<IdResponse<long>>(new OperationExceptions("000", "Datos incompletos"));
-                }
                 return await AddOrUpdate(model, ct).ConfigureAwait(false);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
-                throw;
-            }
         }
 
         public async Task<OperationResponse<DtoPagination<DtoRequestCreditMemo>>> List(RequestPaginatedData<string> request)
@@ -102,7 +89,7 @@ namespace Kiltex.SistemaGestion.Services.Services
         public async Task<OperationResponse<IdResponse<long>>> AddOrUpdate(DtoRequestCreditMemo model, CancellationToken ct = default)
         {
             var transaction = _contextSql.Database.BeginTransaction();
-            CreditMemo creditModel = new();
+            CreditMemo creditModel = null;
 
             try
             {
@@ -115,6 +102,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                         detail.Price = oldProduct.CashSalePrice;
                     }
                     creditModel = _mapper.Map<CreditMemo>(model);
+                    creditModel.InvoiceId = creditModel.InvoiceId == 0 ? null : creditModel.InvoiceId;
                     await _contextSql.CreditMemo.AddAsync(creditModel, ct).ConfigureAwait(false);
                 }
                 await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
@@ -125,6 +113,25 @@ namespace Kiltex.SistemaGestion.Services.Services
             {
                 _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
                 return Error<IdResponse<long>>(new OperationExceptions(ErrorsCodes.C_999_ERROR_GENERICO, ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO)));
+            }
+        }
+
+        public async Task<OperationResponse<IdResponse<long>>> Update(DtoRequestCreditMemo model, CancellationToken ct = default)
+        {
+            try
+            {
+                if (model.Id == 0)
+                {
+                    _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
+                    return Error<IdResponse<long>>(new OperationExceptions("000", "La nota de credito no tiene ID"));
+                }
+                return await AddOrUpdate(model, ct).ConfigureAwait(false);
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
+                throw;
             }
         }
     }
