@@ -2,6 +2,8 @@ export interface  CreditMemoModel{
      id: number,
      customerId :number,
      userId: number,
+     invoiceId: number,
+     invoiceNumber: number,
      creditMemoNumb:number,
      customerName: string,
      customerCuit: string,

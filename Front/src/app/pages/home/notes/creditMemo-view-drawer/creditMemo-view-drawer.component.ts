@@ -53,8 +53,8 @@ export class CreditMemoViewDrawerComponent
   total!: number;
   ivaTotal!: number;
   type: any;
+  invoiceNumber!: number;
 
-  
  creditMemoDetail: CreditMemoDetails[]=[]
 
   form!: FormGroup;
@@ -79,6 +79,7 @@ export class CreditMemoViewDrawerComponent
       this.service.getCreditMemoById(id).subscribe({
         next: (r) => {
           this.type = r.type
+          this.invoiceNumber = r.invoiceNumber
             this.customerAddress = r.customerAddress,
             this.customerCuit = r.customerCuit,
             this.customerName = r.customerName,
@@ -86,6 +87,7 @@ export class CreditMemoViewDrawerComponent
             this.total = r.total,
             this.userId = r.userId,
             this.dateTime = r.dateTime,
+            this.observation = r.observation,
             this.creditMemoDetail= r.creditMemoDetail
           this.isLoading = false; 
           this.getTipo(r.type); 

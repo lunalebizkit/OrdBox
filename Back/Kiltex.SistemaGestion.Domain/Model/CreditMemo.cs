@@ -23,7 +23,11 @@ namespace Kiltex.SistemaGestion.Domain.Model
         public long UserId { get; set; }
 
         [ForeignKey(nameof(UserId))]
+
         public User User { get; set; }
+
+        [Column("invoice_number")]
+        public long InvoiceNumber { get; set; }
 
         [Column("creditMemo_number")]
         public long CreditMemoNumber { get; set; }

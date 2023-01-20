@@ -58,6 +58,18 @@
               </nz-form-control>
             </nz-form-item>
           </div>
+          <nz-form-item>
+            <nz-form-label [nzSm]="12" [nzXs]="18" nzRequired >
+              Número de Factura
+            </nz-form-label>
+            <nz-form-control [nzSm]="10" [nzXs]="20">
+              <input
+              nz-input
+                nzSize="small"
+                formControlName="invoiceNumber"
+              />
+             </nz-form-control>
+          </nz-form-item> 
         </div>
 
         <!-- Datos del Cliente -->
@@ -174,21 +186,21 @@
               </button>
             </div>
           </nz-form-item>
-
-          <nz-form-item>
-            <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="observation"
-              >Observación
-            </nz-form-label>
-            <nz-form-control [nzSm]="14" [nzXs]="24">
-              <input
-                formControlName="observation"
-                nz-input
-                id="observation"
-                maxlength="250"
-              />
-            </nz-form-control>
-          </nz-form-item>
+          
         </form>
+        <nz-form-item>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="observation"
+            >Observación
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <input
+              formControlName="observation"
+              nz-input
+              id="observation"
+              maxlength="250"
+            />
+          </nz-form-control>
+        </nz-form-item>
       </nz-content>
     </nz-collapse-panel>
   </nz-collapse>

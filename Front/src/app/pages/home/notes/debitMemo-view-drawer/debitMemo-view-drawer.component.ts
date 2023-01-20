@@ -43,6 +43,7 @@ export class DebitMemoViewDrawerComponent
 
   //Variables del comprobante
   userId!: number;
+  invoiceNumber!: number
   customerName!: string;
   customerCuit!: string;
   customerAddress!: string;
@@ -77,6 +78,7 @@ export class DebitMemoViewDrawerComponent
       this.service.getDebitMemoById(id).subscribe({
         next: (r) => {
           this.type= r.type
+          this.invoiceNumber = r.invoiceNumber
             this.customerAddress = r.customerAddress,
             this.customerCuit = r.customerCuit,
             this.customerName = r.customerName,
@@ -84,6 +86,7 @@ export class DebitMemoViewDrawerComponent
             this.total = r.total,
             this.userId = r.userId,
             this.dateTime = r.dateTime,
+            this.observation = r.observation,
             this.debitMemoDetail= r.debitMemoDetails
             this.isLoading = false;
             this.getTipo(r.type); 

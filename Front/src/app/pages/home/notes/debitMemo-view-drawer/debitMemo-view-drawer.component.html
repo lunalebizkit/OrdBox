@@ -21,6 +21,8 @@
           <nz-tag [nzColor]="'blue'">{{ this.debitMemoType(type) }}</nz-tag>
         </nz-page-header-tags>
       </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="* Número de Factura" [nzSpan]="2">
+        {{ this.invoiceNumber }}</nz-descriptions-item>
       <nz-descriptions-item nzTitle="* Cliente" [nzSpan]="2">
         {{ this.customerName }}</nz-descriptions-item
       >
@@ -29,6 +31,9 @@
       >
       <nz-descriptions-item nzTitle=" * Dirección" [nzSpan]="2">
         {{ this.customerAddress }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle=" * Observación" [nzSpan]="2">
+        {{ this.observation }}
       </nz-descriptions-item>
      </nz-descriptions>
   </nz-collapse-panel>
