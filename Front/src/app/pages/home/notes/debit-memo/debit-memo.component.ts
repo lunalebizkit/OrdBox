@@ -70,7 +70,7 @@ export class debitMemoComponent extends BaseComponent  implements OnInit {
   };
   paymentSelected: any;
   payment: { value: string; label: string }[] = Object.entries(ePayment).map(([value, label]) => ({ value, label }))
-  id:number= this.route.snapshot.queryParams['id']
+  id: any | number;
   invoiceA: boolean= true;
    type = InvoiceType; 
   type1!:number 
@@ -121,14 +121,20 @@ constructor(@Inject(LOCALE_ID) public locale: string,
   userId:number= this.serviceUser.currentUser.id
 
   ngOnInit(): void {
-    if (this.id != null || this.id != undefined || this.id != 0) {
-       this.getInvoice(this.id)
-       this.edit=true
-       }
-       if(this.id == null || this.id == undefined || this.id == 0){
+    this.route.queryParams.subscribe({
+      next: (p) => {
+          if (p['id']) {
+              this.isLoading = true;
+              this.getInvoice(p['id']);
+              this.id = p['id'];
+              this.edit=true;
+          }
+      },
+      error: () => { 
         this.id = 0
         this.edit = false
-       }   
+      }
+  })  
     }
 
     getInvoice(id: number): void {

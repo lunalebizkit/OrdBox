@@ -105,7 +105,7 @@
               <ng-container *ngFor="let data of periodListCompra;">
                 <tr *ngIf="data.type == 1">
                   <td style="text-align: right;">{{this.formaterDate(data.dateTime)}}</td>
-                  <td style="text-align: right;">{{data.invoiceNumber}}</td>
+                  <td style="text-align: right;">{{data.receiptNumber}}</td>
                   <td style="text-align: right;">{{this.getReceiptType(data.type)}}</td>
                   <td style="text-align: right;">{{data.supplierName}}</td>
                   <td style="text-align: right;">{{data.supplierCuit}}</td>          
@@ -192,7 +192,7 @@
               <ng-container *ngFor="let data of periodListCompra;">
               <tr *ngIf="data.type == 2">
               <td style="text-align: right;">{{this.formaterDate(data.dateTime)}}</td>
-              <td style="text-align: right;">{{data.invoiceNumber}}</td>
+              <td style="text-align: right;">{{data.receiptNumber}}</td>
               <td style="text-align: right;">{{this.getReceiptType(data.type)}}</td>
               <td style="text-align: right;">{{data.supplierName}}</td>
               <td style="text-align: right;">{{data.supplierCuit}}</td>          
@@ -279,7 +279,7 @@
               <ng-container *ngFor="let data of periodListCompra;">
               <tr *ngIf="data.type == 3">
                 <td style="text-align: right;">{{this.formaterDate(data.dateTime)}}</td>
-                <td style="text-align: right;">{{data.invoiceNumber}}</td>
+                <td style="text-align: right;">{{data.receiptNumber}}</td>
                 <td style="text-align: right;">{{this.getReceiptType(data.type)}}</td>
                 <td style="text-align: right;">{{data.supplierName}}</td>
                 <td style="text-align: right;">{{data.supplierCuit}}</td>          

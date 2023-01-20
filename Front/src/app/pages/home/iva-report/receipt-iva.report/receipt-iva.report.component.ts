@@ -85,9 +85,13 @@ import { ReceiptIvaReportDetailsModel, ReceiptIvaReportModel } from '../model/re
 
    
 
-    ngOnInit(): void {
+    ngOnInit(): void {      
         if ((this.initPeriod != null) && (this.endPeriod != null)){
          this.getIvaCompra(this.initPeriod, this.endPeriod);  
+         /* evento de precargar los datos en calendario */
+         this.changeDate(this.initPeriod)
+         this.changeEndDate(this.endPeriod)
+         /**---------- */
         } 
     }
     getIvaCompra(initPeriod:Date,endPeriod:Date): void {      
