@@ -14,7 +14,8 @@ import { AddOrUpdatePermission, PermissionRol } from "./model/permission-rol.mod
 
 @Component({
     selector: 'app-permission-rol-drawer',
-    templateUrl: './permission-rol.drawer.component.html'
+    templateUrl: './permission-rol.drawer.component.html',
+    styleUrls: ['./permission-rol.drawer.component.css']
 })
 
 export class PermissionRolDrawerComponent extends BaseComponent implements OnInit {

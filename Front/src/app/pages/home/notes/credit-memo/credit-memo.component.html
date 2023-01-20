@@ -10,7 +10,7 @@
       type="submit"
       nzSize="default"
     >
-      <i nz-icon nzType="arrow-left" nzTheme="outline"></i>volver
+      <i nz-icon nzType="rollback" nzTheme="outline"></i>Volver
     </button>
   </nz-page-header-extra>
 </nz-page-header>
@@ -66,7 +66,7 @@
           <nz-form-label [nzSm]="6" [nzXs]="14" nzRequired
             >Cuit - Cuil
           </nz-form-label>
-          <nz-form-control [nzSm]="10" [nzXs]="14">
+          <nz-form-control [nzSm]="14" [nzXs]="14">
             <input
               nz-input
               nzSize="small"
@@ -83,6 +83,7 @@
                 nzSize="small"
                 nzType="primary"
                 (click)="openComponentCustomer()"
+                class="ml-5"
               >
                 <i nz-icon nzType="search" nzTheme="outline"></i>Buscar
               </button>
@@ -93,7 +94,7 @@
           <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired
             >Razón Social - Nombre
           </nz-form-label>
-          <nz-form-control [nzSm]="10" [nzXs]="24">
+          <nz-form-control [nzSm]="14" [nzXs]="24">
             <input
               nz-input
               maxlength="250"
@@ -104,10 +105,10 @@
         </nz-form-item>
 
         <nz-form-item>
-          <nz-form-label [nzSm]="6" [nzXs]="14" nzRequired
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired
             >Domicilio
           </nz-form-label>
-          <nz-form-control [nzSm]="10" [nzXs]="14">
+          <nz-form-control [nzSm]="14" [nzXs]="14">
             <input
               nz-input
               formControlName="address"
@@ -129,7 +130,7 @@
               nzFor="productSearchFilter"
               >Búsqueda de Producto
             </nz-form-label>
-            <nz-form-control [nzSm]="12" [nzXs]="14">
+            <nz-form-control [nzSm]="14" [nzXs]="14">
               <nz-input-group [nzSuffix]="clearQuery">
                 <input
                   nz-input
@@ -164,11 +165,19 @@
                 nzSize="small"
                 nzType="primary"
                 (click)="openComponentProduct()"
+                class="ml-5"
               >
                 <i nz-icon nzType="search" nzTheme="outline"></i> Buscar
               </button>
             </div>
           </nz-form-item>
+          <br />
+          <!-- Observaciones-->
+          <nz-divider
+            nzText="Observaciones"
+            nzOrientation="left"
+            style="margin-top: 0"
+          ></nz-divider>
 
           <nz-form-item>
             <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="observation"

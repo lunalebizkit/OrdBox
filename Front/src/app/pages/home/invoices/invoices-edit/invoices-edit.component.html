@@ -21,7 +21,7 @@
     >
       <nz-content>
         <div nz-row nzJustify="center">
-          <div nz-col class="gutter-row" [nzSpan]="5">
+          <div nz-col class="gutter-row" [nzSpan]="3" style="margin-right: 5px; margin-left: 15px;">
             <nz-form-item>
               <nz-form-label>Fecha</nz-form-label>
               <nz-form-control>
@@ -31,7 +31,7 @@
               </nz-form-control>
             </nz-form-item>
           </div>
-          <div nz-col class="gutter-row" style="margin-right: 14px">
+          <div nz-col class="gutter-row" style="margin-right: 25px">
             <nz-form-item>
               <nz-form-label>Tipo de Factura</nz-form-label>
               <nz-form-control>
@@ -46,7 +46,7 @@
             </nz-form-item>
           </div>
 
-          <div nz-col class="gutter-row" [nzSpan]="8">
+          <div nz-col class="gutter-row" [nzSpan]="9">
             <nz-form-item>
               <nz-form-label>Forma de Pago</nz-form-label>
               <nz-form-control>
@@ -91,6 +91,7 @@
                 nzSize="small"
                 nzType="primary"
                 (click)="openComponentCustomer()"
+                class="ml-5"
               >
                 <i nz-icon nzType="search" nzTheme="outline"></i>Buscar
               </button>
@@ -173,11 +174,20 @@
                 nzSize="small"
                 nzType="primary"
                 (click)="openComponentProduct()"
+                class="ml-5"
               >
                 <i nz-icon nzType="search" nzTheme="outline"></i> Buscar
               </button>
             </div>
           </nz-form-item>
+          <br />
+          <!--Observaciones-->
+          <nz-divider
+          nzText="Observaciones"
+          nzOrientation="left"
+          style="margin-top: 0"
+        ></nz-divider>
+
           <nz-form-item>
             <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="observation"
               >Observación
@@ -315,6 +325,7 @@
               <b>Total </b
               ><b style="color: red">{{ this.currencyFormat(this.total) }}</b>
             </td>
+            <td></td>
             <td colspan="2" [nzAlign]="'right'">
               <button
                 id="actualizarbutton"
