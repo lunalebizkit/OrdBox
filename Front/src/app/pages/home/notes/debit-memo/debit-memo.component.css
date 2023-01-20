@@ -30,3 +30,23 @@
   width: 100%;
   table-layout: fixed;
 }
+#actualizarbutton {
+  transition-duration: 0.4s !important;
+  color: white;
+}
+
+#actualizarbutton:hover {
+  background-color: #4CAF50
+      /* Green */
+      !important;
+  color: white;
+  border-color: white;
+}
+
+#actualizarbutton:focus {
+  background-color: #4CAF50
+      /* Green */
+      !important;
+  color: white;
+  border-color: white;
+}
