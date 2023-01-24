@@ -2,6 +2,8 @@ export interface  CreditMemoModel{
      id: number,
      customerId :number,
      userId: number,
+     invoiceId: number,
+     invoiceNumber: number,
      creditMemoNumb:number,
      customerName: string,
      customerCuit: string,
@@ -10,6 +12,7 @@ export interface  CreditMemoModel{
      dateTime: Date,
      total: number,
      ivaTotal: number,
+     type: number;
     creditMemoDetail: CreditMemoDetails[]
 }
 export interface CreditMemoDetails{

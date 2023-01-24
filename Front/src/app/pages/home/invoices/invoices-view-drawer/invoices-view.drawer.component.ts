@@ -59,7 +59,6 @@ export class InvoicesViewDrawerComponent extends BaseComponent implements OnInit
   }
 
   ngOnInit(): void {
-    console.log (eInvoiceType[eInvoiceType.A])
     if (this.id != null || this.id != undefined || this.id != 0) {
       this.getInvoice(this.id)
   }

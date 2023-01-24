@@ -70,7 +70,7 @@ export class debitMemoComponent extends BaseComponent  implements OnInit {
   };
   paymentSelected: any;
   payment: { value: string; label: string }[] = Object.entries(ePayment).map(([value, label]) => ({ value, label }))
-  id:number= this.route.snapshot.queryParams['id']
+  id: any | number;
   invoiceA: boolean= true;
    type = InvoiceType; 
   type1!:number 
@@ -107,6 +107,8 @@ constructor(@Inject(LOCALE_ID) public locale: string,
     this.formDebitMemo = this.fb.group({
     dateTime: [new Date(this.startDate), Validators.required],
     address: ['', Validators.required],
+    type: [ 1 , Validators.required],
+    invoiceNumber: [ '' , Validators.required],
     customerCuit: ['', Validators.required],
     customerName: ['', Validators.required],    
     observation: ['']
@@ -119,18 +121,28 @@ constructor(@Inject(LOCALE_ID) public locale: string,
   userId:number= this.serviceUser.currentUser.id
 
   ngOnInit(): void {
-    if (this.id != null || this.id != undefined || this.id != 0) {
-       this.getInvoice(this.id)
-       this.edit=true
-       }
+    this.route.queryParams.subscribe({
+      next: (p) => {
+          if (p['id']) {
+              this.isLoading = true;
+              this.getInvoice(p['id']);
+              this.id = p['id'];
+              this.edit=true;
+          }
+      },
+      error: () => { 
+        this.id = 0
+        this.edit = false
+      }
+  })  
     }
 
     getInvoice(id: number): void {
-      if (id != 0)
-      this.serviceInvoice.getInvoiceById(id).subscribe({
+      if (id != 0 || id != undefined)
+        this.serviceInvoice.getInvoiceById(id).subscribe({
           next: (r: InvoiceModel) => {
             this.type1 = r.type, 
-            this.invoiceNumber = r.invoiceNumber,
+            this.formDebitMemo.controls['invoiceNumber'].setValue(r.invoiceNumber),
             this.customerId= r.customerId
             this.formDebitMemo.controls['address'].setValue(r.customerAddress),
             this.formDebitMemo.controls['customerCuit'].setValue(r.customerCuit),
@@ -151,13 +163,11 @@ constructor(@Inject(LOCALE_ID) public locale: string,
               const modelDetail = debitMemoDetailFromInvoiceParser(model);
             this.debitMemoDetails.push(modelDetail);  
             })
-            console.log(r.invoiceDetails)
             
             
           this.totalCalculate()
         },
-
-
+     
           error: () => { this.isLoading = false;
           this.debitMemoDetails=[];
         this.debitMemoList= [];
@@ -174,13 +184,14 @@ constructor(@Inject(LOCALE_ID) public locale: string,
             id: 0,
             customerId: this.customerId,
             invoiceId: this.id,
-            invoiceNumber: this.invoiceNumber,
+            invoiceNumber: this.formDebitMemo.controls['invoiceNumber'].value,
             userId: this.userId,
             customerName: this.formDebitMemo.controls['customerName'].value,
             customerCuit: this.formDebitMemo.controls['customerCuit'].value,
             customerAddress: this.formDebitMemo.controls['address'].value,
             observation: this.formDebitMemo.controls['observation'].value,
             dateTime: this.formDebitMemo.controls['dateTime'].value,
+            type: this.formDebitMemo.controls['type'].value,
             total: this.total,
             ivaTotal: this.ivaTotal,
             debitMemoNumb: 0,
@@ -239,16 +250,15 @@ constructor(@Inject(LOCALE_ID) public locale: string,
       } 
      
       
-     /*  typeSelectedChange(id: any): void {
+       typeSelectedChange(id: any): void {
         this.typeSelectedId = this.id;    
         if (id == 1) {      
           this.invoiceA = true;
         }else{
           this.invoiceA= false;
         }  
-        console.log(this.type1);
           
-      } */
+      } 
       startEdit(id: number): void {
         this.editId = id;
       };
@@ -491,6 +501,13 @@ constructor(@Inject(LOCALE_ID) public locale: string,
      }
   }
 
+  direction(){
+    if(this.id == 0){
+      this.router.navigate(['/notes/debitList']);
+    }else{
+      this.router.navigate(['/home/invoices/invoices-sale']);
+    }
+   }
   
   
 }

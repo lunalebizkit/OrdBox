@@ -60,6 +60,10 @@ export class creditMemoListComponent implements OnInit {
     formaterDate(date: string | number | Date): string {
       return formatDate(date, 'YYYY-MM-dd', this.locale);
     }
+    search(): void {
+      this.queryParams.page = 0;
+      this.getData(this.queryParams);
+    }
     openComponentCreditMemoView(): void {
       const drawerRefCustomer = this.drawerService.create<
         CreditMemoViewDrawerComponent,
@@ -137,8 +141,8 @@ export class creditMemoListComponent implements OnInit {
       ) {
         this.service.getCreditMemo(this.queryParams).subscribe({
           next: (r) => {
-            r.data.map((invoice: CreditMemoModel) =>
-              this.creditMemoList.push(invoice)
+            r.data.map((credit: CreditMemoModel) =>
+              this.creditMemoList.push(credit)
             );
             this.loading = false;
           },

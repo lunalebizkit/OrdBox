@@ -14,6 +14,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { BaseComponent } from 'src/app/common/components/base/base.component';
 import { HeaderOperationsButtonsComponent } from 'src/app/common/components/headers/buttons.oparations.header.component';
+import { eInvoiceType } from '../../invoices/model/invoice-type.Enum';
 import { DebitMemoDetails } from '../model/debitMemo.model';
 import { NoteService } from '../notes.service';
 
@@ -42,6 +43,7 @@ export class DebitMemoViewDrawerComponent
 
   //Variables del comprobante
   userId!: number;
+  invoiceNumber!: number
   customerName!: string;
   customerCuit!: string;
   customerAddress!: string;
@@ -50,6 +52,7 @@ export class DebitMemoViewDrawerComponent
   subTotal!: number;
   total!: number;
   ivaTotal!: number;
+  type: any
   
  debitMemoDetail: DebitMemoDetails[]=[]
 
@@ -74,6 +77,8 @@ export class DebitMemoViewDrawerComponent
     if (id != 0)
       this.service.getDebitMemoById(id).subscribe({
         next: (r) => {
+          this.type= r.type
+          this.invoiceNumber = r.invoiceNumber
             this.customerAddress = r.customerAddress,
             this.customerCuit = r.customerCuit,
             this.customerName = r.customerName,
@@ -81,8 +86,10 @@ export class DebitMemoViewDrawerComponent
             this.total = r.total,
             this.userId = r.userId,
             this.dateTime = r.dateTime,
+            this.observation = r.observation,
             this.debitMemoDetail= r.debitMemoDetails
             this.isLoading = false;
+            this.getTipo(r.type); 
           
         },
         error: () => {
@@ -90,7 +97,20 @@ export class DebitMemoViewDrawerComponent
         },
       });
   }
-
+  getTipo(tipo : number):any {
+    switch (tipo){
+      case  eInvoiceType.A :
+        return this.tipo = 'factA'
+      case  eInvoiceType.B :
+       return this.tipo = 'factB'
+      case  eInvoiceType.C :
+       return this.tipo = 'factC'
+    }
+  }
+  
+  debitMemoType(id: any):string{
+    return eInvoiceType[id]
+  }
 
   currencyFormat(data: any): string {
     if (!this.locale) return '';

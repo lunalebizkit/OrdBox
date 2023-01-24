@@ -14,6 +14,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { BaseComponent } from 'src/app/common/components/base/base.component';
 import { HeaderOperationsButtonsComponent } from 'src/app/common/components/headers/buttons.oparations.header.component';
+import { eInvoiceType } from '../../invoices/model/invoice-type.Enum';
 import { CreditMemoDetails } from '../model/creditMemo.model';
 import { NoteService } from '../notes.service';
 
@@ -51,7 +52,9 @@ export class CreditMemoViewDrawerComponent
   subTotal!: number;
   total!: number;
   ivaTotal!: number;
-  
+  type: any;
+  invoiceNumber!: number;
+
  creditMemoDetail: CreditMemoDetails[]=[]
 
   form!: FormGroup;
@@ -66,7 +69,7 @@ export class CreditMemoViewDrawerComponent
     super(notificacionService, el, message);
   }
 
-  ngOnInit(): void {
+  ngOnInit(): void { 
     if (this.id != null || this.id != undefined || this.id != 0) {
       this.getCreditMemo(this.id); 
     }
@@ -75,6 +78,8 @@ export class CreditMemoViewDrawerComponent
     if (id != 0)
       this.service.getCreditMemoById(id).subscribe({
         next: (r) => {
+          this.type = r.type
+          this.invoiceNumber = r.invoiceNumber
             this.customerAddress = r.customerAddress,
             this.customerCuit = r.customerCuit,
             this.customerName = r.customerName,
@@ -82,15 +87,30 @@ export class CreditMemoViewDrawerComponent
             this.total = r.total,
             this.userId = r.userId,
             this.dateTime = r.dateTime,
+            this.observation = r.observation,
             this.creditMemoDetail= r.creditMemoDetail
-          this.isLoading = false;  
+          this.isLoading = false; 
+          this.getTipo(r.type); 
         },
         error: () => {
           this.isLoading = false;
         },
       });
   }
-
+  getTipo(tipo : number):any {
+    switch (tipo){
+      case  eInvoiceType.A :
+        return this.tipo = 'factA'
+      case  eInvoiceType.B :
+       return this.tipo = 'factB'
+      case  eInvoiceType.C :
+       return this.tipo = 'factC'
+    }
+  }
+  
+  creditMemoType(id: any):string{
+    return eInvoiceType[id]
+  }
 
   currencyFormat(data: any): string {
     if (!this.locale) return '';

@@ -94,6 +94,14 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("dateTime");
 
+                    b.Property<long?>("InvoiceId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("invoice_id");
+
+                    b.Property<long>("InvoiceNumber")
+                        .HasColumnType("bigint")
+                        .HasColumnName("invoice_number");
+
                     b.Property<decimal>("IvaTotal")
                         .HasColumnType("decimal(18,2)")
                         .HasColumnName("iva_total");
@@ -117,6 +125,8 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CustomerId");
+
+                    b.HasIndex("InvoiceId");
 
                     b.HasIndex("UserId");
 
@@ -357,7 +367,6 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                         .HasColumnName("customer_cuit");
 
                     b.Property<long?>("CustomerId")
-                        .IsRequired()
                         .HasColumnType("bigint")
                         .HasColumnName("customer_id");
 
@@ -940,6 +949,10 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Kiltex.SistemaGestion.Domain.Model.Invoice", "Invoice")
+                        .WithMany()
+                        .HasForeignKey("InvoiceId");
+
                     b.HasOne("Kiltex.SistemaGestion.Domain.Model.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
@@ -947,6 +960,8 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                         .IsRequired();
 
                     b.Navigation("Customer");
+
+                    b.Navigation("Invoice");
 
                     b.Navigation("User");
                 });
@@ -1029,9 +1044,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                 {
                     b.HasOne("Kiltex.SistemaGestion.Domain.Model.Customer", "Customer")
                         .WithMany()
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CustomerId");
 
                     b.HasOne("Kiltex.SistemaGestion.Domain.Model.User", "User")
                         .WithMany()

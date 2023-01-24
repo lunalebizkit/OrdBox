@@ -49,6 +49,7 @@ export class AuthModalComponent extends BaseComponent implements OnInit {
       {
         userName: ['', [Validators.required]],
         password: ['', [Validators.required]],
+        recaptcha: [''],
       },
       { updateOn: 'submit' }
     );
@@ -62,16 +63,18 @@ export class AuthModalComponent extends BaseComponent implements OnInit {
 
     this.securityAuthService
       .login(model)
-      .toPromise()
-      .then((r) => {
-        this.authService.tokenLS = r.data.access_token;
-        this.securityAuthService.getUser().subscribe((r) => {
-          this.authService.currentUser = r.data;
-          this.modal.triggerOk();
-        });
+      .subscribe({
+          next: (r) => {
+            this.authService.currentUser = r;
+            this.authService.tokenLS = r.token;
+            this.modal.triggerOk();
+          },
+          error: e => {
+            this.showMessageError('Usuario o Contraseña invalido!!!');
+          }
       })
-      .finally(() => {
+      .add(() => {
         this.isLoading = false;
-      });
+      })
   }
 }

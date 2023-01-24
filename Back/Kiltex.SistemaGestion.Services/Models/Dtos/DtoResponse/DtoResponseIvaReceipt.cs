@@ -17,7 +17,7 @@ namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse
     public class DtoResponseIvaReceipts
     {
         public long Id { get; set; }
-        public long InvoiceNumber { get; set; }
+        public long ReceiptNumber { get; set; }
         public string SupplierName { get; set; }
         public string SupplierCuit { get; set; }
         public string SupplierAddress { get; set; }

@@ -15,6 +15,8 @@ namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest
         [Required]
         public long InvoiceId { get; set; }
 
+        public long InvoiceNumber { get; set; }
+
         public long CustomerId { get; set; }
 
         public long UserId { get; set; }
