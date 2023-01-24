@@ -33,6 +33,7 @@ namespace Kiltex.SistemaGestion.Domain
                 .WithOne(i => i.CreditMemo)
                 .OnDelete(DeleteBehavior.NoAction);
         }
+
         public virtual DbSet<Rol> Rols { get; set; }
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<Permission> Permissions { get; set; }
@@ -56,6 +57,8 @@ namespace Kiltex.SistemaGestion.Domain
         public virtual DbSet<Period> Periods { get; set; }
         public virtual DbSet<DebitMemo> DebitMemos { get; set; }
         public virtual DbSet<DebitMemoDetails> DebitMemoDetails { get; set; }
+        public virtual DbSet<PrinterConfig> PrinterConfig { get; set; }
+
 
 
         //private static void InitialRoles(ModelBuilder modelBuilder)

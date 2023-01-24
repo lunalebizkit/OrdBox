@@ -1,17 +1,19 @@
-﻿using static hfl.argentina.HasarImpresoraFiscalRG3561;
+﻿using hfl.argentina;
+using static hfl.argentina.HasarImpresoraFiscalRG3561;
 
 namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal
 {
-    public interface IPrinter
+    public interface IPrinter 
     {
+
         //Facturas
-        string OpenFacturaA(string cliente = "",
+        RespuestaAbrirDocumento OpenFacturaA(string cliente = "",
             string cuit = "999999995", 
             TiposDeDocumentoCliente tipoDoc = TiposDeDocumentoCliente.TIPO_CUIT,
             TiposDeResponsabilidadesCliente responsabilidad = TiposDeResponsabilidadesCliente.RESPONSABLE_INSCRIPTO, 
             string domicilio = "");
 
-        string OpenFacturaC(
+        RespuestaAbrirDocumento OpenFacturaC(
             string cliente = "Consumidor Final",
            string cuit = "999999999",
            TiposDeDocumentoCliente tipoDoc = TiposDeDocumentoCliente.TIPO_CUIT,
@@ -19,28 +21,28 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal
            string domicilio = "-");
 
         //Debito
-        string OpenNotaDeditoA(
+        RespuestaAbrirDocumento OpenNotaDeditoA(
             string cliente = "",
             string cuit = "999999995",
             TiposDeDocumentoCliente tipoDoc = TiposDeDocumentoCliente.TIPO_CUIT,
             TiposDeResponsabilidadesCliente responsabilidad = TiposDeResponsabilidadesCliente.RESPONSABLE_INSCRIPTO,
             string domicilio = "");
 
-        string OpenNotaDebitoC(string cliente = "",
+        RespuestaAbrirDocumento OpenNotaDebitoC(string cliente = "",
            string cuit = "999999995",
            TiposDeDocumentoCliente tipoDoc = TiposDeDocumentoCliente.TIPO_CUIT,
            TiposDeResponsabilidadesCliente responsabilidad = TiposDeResponsabilidadesCliente.CONSUMIDOR_FINAL,
            string domicilio = "");
 
         //Credito
-        string OpenNotaCreditoA(
+        RespuestaAbrirDocumento OpenNotaCreditoA(
             string cliente = "",
             string cuit = "999999995",
             TiposDeDocumentoCliente tipoDoc = TiposDeDocumentoCliente.TIPO_CUIT,
             TiposDeResponsabilidadesCliente responsabilidad = TiposDeResponsabilidadesCliente.RESPONSABLE_INSCRIPTO,
             string domicilio = "", string NroRef = "");
 
-        string OpenNotaCreditoC(
+        RespuestaAbrirDocumento OpenNotaCreditoC(
             string cliente = "Consumidor Final",
             string cuit = "999999999",
             TiposDeDocumentoCliente tipoDoc = TiposDeDocumentoCliente.TIPO_CUIT,
