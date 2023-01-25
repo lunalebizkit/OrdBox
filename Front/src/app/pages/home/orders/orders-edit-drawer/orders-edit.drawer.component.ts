@@ -51,6 +51,7 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
   }
   @ViewChild('header') headerComponent!: HeaderOperationsButtonsComponent;
   @ViewChild('popup') popupComponent!: PopupConfirmationComponent;
+  @ViewChild('pop') popComponent!: PopupConfirmationComponent;
 
   @ViewChild('drawerTemplate', { static: false }) drawerTemplate?: TemplateRef<{
     $implicit: { filter: string };
@@ -455,6 +456,7 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
         nzTitle: 'Productos',
         nzContent: InvoiceProductSearchComponent,
         nzSize: 'large',
+        nzWidth: 1050,
         nzContentParams: {
           filter: this.formProductSearch.controls['productSearchFilter'].value,
         },
@@ -523,17 +525,17 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
     }
   }
 
+
   msjConfirmOk(){
     try {
       this.orderDetail = this.orderDetail.
        filter(element => element.productId != this.popupComponent.elementSelected);
-     this.popupComponent.isConfirmationvisible = false; 
-     if (
-      this.isValidForm(this.form)
-    || (this.orderDetailGrid.length === 0) ){
-       this.save();
+     this.popComponent.isConfirmationvisible = false; 
+     if 
+    (this.isValidForm(this.formSupplierSearch)&&(this.orderDetailGrid.length !== 0)&& this.isValidForm(this.form)){
+        this.popComponent.showConfirmation() 
      } else{
-       this.showMessageError('No ha seleccionado producto')
+       this.showMessageError
      }
      } catch (error) {
        console.log(error);

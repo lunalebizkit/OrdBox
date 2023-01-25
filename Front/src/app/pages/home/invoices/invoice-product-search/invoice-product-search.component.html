@@ -30,10 +30,10 @@
          [nzPaginationType]="'small'"  (nzQueryParams)="onQueryParamsChange($event)">
          <thead>
            <tr> 
-            <th>Codigo</th> 
+            <th>Código</th> 
              <th>Marca</th>
-             <th>Proveedor</th> 
-             <th >Precio Costo</th>           
+             <th>Producto</th> 
+             <th>Precio Costo</th>           
              <th>Stock</th>
              <th [nzWidth]="'30px'"></th>
            </tr>
@@ -43,7 +43,7 @@
             <td >{{data.code}}</td>
             <td >{{data.brandName}}</td> 
              <td nzBreakWord>{{data.description}}</td> 
-             <td>$ {{data.purchasePrice}}</td> 
+             <td>{{this.currencyFormat(data.purchasePrice)}}</td> 
              <td [style.color]="data.quantity >= 0 ? '' : ' brown' ">{{data.quantity}}             
             </td>           
              <td>

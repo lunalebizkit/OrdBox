@@ -121,6 +121,7 @@ export class SuppliersListComponent implements OnInit {
     >({
       nzContent: SuppliersEditDrawerComponent,
       nzSize: 'large',
+      nzWidth: 1050,
       nzContentParams: {
         filter: this.id > 0 ? this.id : 0,
       },
