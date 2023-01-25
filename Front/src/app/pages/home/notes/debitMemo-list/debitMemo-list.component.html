@@ -12,15 +12,21 @@
       <div nz-row [nzGutter]="[8, 1]" >
         <div nz-col nzSpan="24">
           <nz-form-item>
-            <nz-form-label>Búsqueda</nz-form-label>
+            <nz-form-label>Cuit</nz-form-label>
             <nz-form-control>
               <nz-input-group [nzSuffix]="clearQuery">
-                <input [ngModelOptions]="{ standalone: true }" type="int" placeholder="Ingrese Cuit" nz-input
-                  (keydown.enter)="search()" [(ngModel)]="queryParams.filter" />
+                <input
+                fromControlName="cuit"
+                type="text" 
+                placeholder="Ingrese Cuit" 
+                nz-input
+                [(ngModel)]="queryParams.filter" />
               </nz-input-group>
               <ng-template #clearQuery>
-                <i nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle" *ngIf="queryParams.filter"
-                  (click)="queryParams.filter = ''; search()"></i>
+                <i nz-icon class="ant-input-clear-icon" 
+                nzTheme="fill" nzType="close-circle" 
+                *ngIf="queryParams.filter"
+                (click)="queryParams.filter = ''; search()"></i>
               </ng-template>
             </nz-form-control>
           </nz-form-item>
