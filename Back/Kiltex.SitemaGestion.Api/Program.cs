@@ -1,11 +1,14 @@
 using Kiltex.SistemaGestion.Domain;
 using Kiltex.SistemaGestion.SDK.Error;
 using Kiltex.SistemaGestion.SDK.Extension.Jwt;
+using Kiltex.SistemaGestion.Services.ImpresoraFiscal;
 using Kiltex.SistemaGestion.Services.Mapper;
 using Kiltex.SistemaGestion.Services.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.OpenApi.Models;
 using Serilog;
 
@@ -16,7 +19,6 @@ var logger = new LoggerConfiguration()
   .CreateLogger();
 //builder.Logging.ClearProviders();
 builder.Logging.AddSerilog(logger);
-
 var connectionString = builder.Configuration.GetConnectionString("sqlconnection");
 // Add services to the container.
 
@@ -51,7 +53,6 @@ builder.Services.AddSwaggerGen(c =>
                     }
                 });
 });
-
 builder.Services.AddAutoMapper(typeof(UserMapperProfile));
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<RolService>();
