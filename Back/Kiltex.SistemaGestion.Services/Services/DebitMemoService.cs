@@ -104,7 +104,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                                     .DebitMemos
                                     .AsNoTracking()
                                     .Include(p => p.DebitMemoDetails)
-                                    .Where(p => p.CustomerCuit.ToLower().Contains(request.Filter ?? ""));
+                                    .Where(p => p.InvoiceNumber.ToString().ToLower().Contains(request.Filter ?? "") || p.CustomerCuit.ToLower().Contains(request.Filter ?? ""));
 
                 var count = await query.CountAsync().ConfigureAwait(false);
 
