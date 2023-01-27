@@ -1,16 +1,14 @@
 using Kiltex.SistemaGestion.Domain;
 using Kiltex.SistemaGestion.SDK.Error;
 using Kiltex.SistemaGestion.SDK.Extension.Jwt;
-using Kiltex.SistemaGestion.Services.ImpresoraFiscal;
 using Kiltex.SistemaGestion.Services.Mapper;
 using Kiltex.SistemaGestion.Services.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.OpenApi.Models;
 using Serilog;
+
 
 var builder = WebApplication.CreateBuilder(args);
 var logger = new LoggerConfiguration()

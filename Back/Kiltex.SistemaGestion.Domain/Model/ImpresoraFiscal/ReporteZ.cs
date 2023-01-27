@@ -1,9 +1,16 @@
-﻿using System.Text.Json.Serialization;
+﻿using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 
 namespace Kiltex.SistemaGestion.Domain.Model.ImpresoraFiscal
-{
-    public class ReporteZ
+{   
+
+    public class ReportarZetasPorNumeroZeta
+    {
+        [JsonProperty("ReportarZetasPorNumeroZeta")]
+        public ReportarZetasPorNumeroZetaBody ReportarZetasPorNumeroZetaBody { get; set; }
+    }
+    public class ReportarZetasPorNumeroZetaBody
     {
         [JsonPropertyName("ZetaInicial")]
         public int ZetaInicial { get; set; }

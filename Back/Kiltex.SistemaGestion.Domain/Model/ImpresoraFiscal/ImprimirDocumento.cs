@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,7 +8,12 @@ using System.Threading.Tasks;
 
 namespace Kiltex.SistemaGestion.Domain.Model.ImpresoraFiscal
 {
-    public class ImprimirDocumento
+    public class ImprimirItem
+    {
+        [JsonProperty("ImprimirItem")]
+        public ImprimirItemBody ImprimirItemBody { get; set; }
+    }
+    public class ImprimirItemBody
     {
         [JsonPropertyName("Descripcion")]
         public string Descripcion { get; set; }
