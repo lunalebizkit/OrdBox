@@ -6,7 +6,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace Kiltex.SistemaGestion.Domain.Model.ImpresoraFiscal
+namespace Kiltex.SistemaGestion.Domain.Model.ImpresoraFiscal.Printer250F.Dto
 {
 
     public class CerrarDocumento

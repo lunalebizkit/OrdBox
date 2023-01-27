@@ -1,4 +1,5 @@
 using Kiltex.SistemaGestion.Domain;
+using Kiltex.SistemaGestion.Domain.Model.ImpresoraFiscal.Printer250F;
 using Kiltex.SistemaGestion.SDK.Error;
 using Kiltex.SistemaGestion.SDK.Extension.Jwt;
 using Kiltex.SistemaGestion.Services.Mapper;
@@ -8,7 +9,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Serilog;
-
 
 var builder = WebApplication.CreateBuilder(args);
 var logger = new LoggerConfiguration()
@@ -102,5 +102,12 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+//var x = new PrinterF250(new PrinterConfig
+//{
+//    Ip = ""
+//});
+//var result = x.OpenInvoice(Kiltex.SistemaGestion.Domain.Enum.ETypeReceipt.B,"28765277",eTypeDocumentClient.Cuil).Result;
+//x.PrintItem()
 
 app.Run();

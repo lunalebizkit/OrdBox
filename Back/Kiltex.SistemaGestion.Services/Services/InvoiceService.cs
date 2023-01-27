@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using DocumentFormat.OpenXml.Office.CustomUI;
 using Kiltex.SistemaGestion.Domain;
+using Kiltex.SistemaGestion.Domain.Enum;
 using Kiltex.SistemaGestion.Domain.Model;
 using Kiltex.SistemaGestion.SDK.Error;
 using Kiltex.SistemaGestion.Services.Common;
@@ -11,9 +13,13 @@ namespace Kiltex.SistemaGestion.Services.Services
 {
     public class InvoiceService : BaseService
     {
-        public InvoiceService(ErrorManager logger, DBContext context, IMapper maper) :
+
+        private readonly IPrinter _printer;
+        public InvoiceService(ErrorManager logger, DBContext context, IMapper maper, IPrinter printer) :
             base(logger, context, maper)
-        { }
+        {
+            _printer = printer;
+        }
         public async Task<OperationResponse<DtoRequestInvoice>> GetById(long id)
         {
             try
@@ -31,7 +37,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                 }
 
                 var result = _mapper.Map<DtoRequestInvoice>(factura);
-           
+
 
                 return new OperationResponse<DtoRequestInvoice>(result);
             }
@@ -47,7 +53,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             try
             {
                 model.Id = 0;
-                if (String.IsNullOrEmpty(model.CustomerName) )
+                if (String.IsNullOrEmpty(model.CustomerName))
                 {
                     _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
                     return Error<IdResponse<long>>(new OperationExceptions("000", "Datos incompletos"));
@@ -100,8 +106,8 @@ namespace Kiltex.SistemaGestion.Services.Services
             var transaction = _contextSql.Database.BeginTransaction();
             var invoiceModel = _mapper.Map<Invoice>(model);
             var productDetail = new Product();
-           
-           try
+
+            try
             {
                 if (invoiceModel.Id == 0)
                 {
@@ -110,19 +116,25 @@ namespace Kiltex.SistemaGestion.Services.Services
                         var user = await _contextSql.Customers.AsNoTracking().FirstOrDefaultAsync(p => p.Name == "Admin");
                         invoiceModel.CustomerId = user.Id;
                     }
-                    
+
                     foreach (var detail in invoiceModel.InvoiceDetails)
                     {
                         var oldProduct = await _contextSql.Products.AsNoTracking().FirstAsync(p => p.Id == detail.ProductId).ConfigureAwait(false);
 
-                        productDetail= oldProduct;
-                        productDetail.UpdateStock(- detail.Quantity);
+                        productDetail = oldProduct;
+                        productDetail.UpdateStock(-detail.Quantity);
                         _contextSql.Products.Update(productDetail);
                     }
-                    
-                    await _contextSql.Invoices.AddAsync(invoiceModel, ct).ConfigureAwait(false);  
+
+                    await _contextSql.Invoices.AddAsync(invoiceModel, ct).ConfigureAwait(false);
                 }
+
+                invoiceModel.InvoiceNumber = long.Parse(await PrintInvoice(model));
+
                 await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
+        
+               
+                
                 transaction.Commit();
                 return Ok(new IdResponse<long>(invoiceModel.Id));
             }
@@ -130,7 +142,24 @@ namespace Kiltex.SistemaGestion.Services.Services
             {
                 _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
                 return Error<IdResponse<long>>(new OperationExceptions(ErrorsCodes.C_999_ERROR_GENERICO, ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO)));
-            }         
+            }
+        }
+
+        public async Task<string> PrintInvoice(DtoRequestInvoice model)
+        {
+            await _printer.CargarDatosCliente();
+
+            await _printer.OpenInvoice((ETypeReceipt)model.Type, model.CustomerCuit);
+
+            //TODO por cada item mandar a imprimir
+            foreach(var itewm in model.InvoiceDetails)
+            {
+                await _printer.PrintItem(Ititemem.produname, );
+            }
+
+           
+
+            return await _printer.CloseFactura();
         }
     }
 }

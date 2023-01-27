@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 
 
-namespace Kiltex.SistemaGestion.Domain.Model.ImpresoraFiscal
+namespace Kiltex.SistemaGestion.Domain.Model.ImpresoraFiscal.Printer250F.Dto
 {
     public class BaseEstado
     {
