@@ -261,7 +261,14 @@
                 (ngModelChange)="changeQuantity($event)"
               ></nz-input-number>
             </td>
-            <td [nzAlign]="'right'">{{ this.currencyFormat(data.price) }}</td>
+            <td>
+              <div class="editable-cell" [hidden]="editId === data.productId" (click)="startEdit(data.productId)">
+                {{ this.currencyFormat(data.price)  }}
+              </div>
+              <nz-input-number [hidden]="editId !== data.productId" [nzMin]="1" [nzMax]="10000000"
+                [(ngModel)]="data.price" (nzBlur)="stopEdit()"
+                (ngModelChange)="changePrice($event)"></nz-input-number>
+            </td>
             <td [nzAlign]="'right'">
               {{ this.currencyFormat(data.subTotal) }}
             </td>

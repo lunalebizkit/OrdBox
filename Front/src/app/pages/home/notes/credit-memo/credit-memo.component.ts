@@ -451,12 +451,29 @@ constructor(@Inject(LOCALE_ID) public locale: string,
 
     this.creditMemoList.filter(
       detail => detail.ownCode == this.editId
-      )[0].subTotal= quantity * product.price;
+      )[0].subTotal= quantity *  product.price;
 
     this.totalCalculate();
     this.creditMemoDetails.filter(
       detail => detail.productId == this.editId
       )[0].quantity= quantity;
+      
+  };
+  changePrice(price: number):void{
+    if (price == 0 || price == null){
+      price = 1;
+    }
+    let product= this.creditMemoList.filter(
+      detail => detail.productId == this.editId)[0]; 
+
+    this.creditMemoList.filter(
+      detail => detail.productId == this.editId
+      )[0].subTotal= product.quantity * price;
+
+    this.totalCalculate();
+    this.creditMemoDetails.filter(
+      detail => detail.productId == this.editId
+      )[0].price = price; 
       
   };
 

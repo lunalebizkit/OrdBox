@@ -9,7 +9,9 @@ import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { ActivatedRoute } from '@angular/router';
 import { NzDrawerRef } from 'ng-zorro-antd/drawer';
-import { formatDate } from '@angular/common';
+import { DatePipe, formatDate } from '@angular/common';
+import { DisabledTimeFn, DisabledTimePartial } from 'ng-zorro-antd/date-picker';
+
 
 
 @Component({
@@ -17,18 +19,27 @@ import { formatDate } from '@angular/common';
   templateUrl: './new-periods.drawer.component.html',
 })
 export class periodsDrawerComponent  extends BaseComponent implements OnInit {
+  newInitDate!: any;
+  disabled: boolean = false;
   @Input() set filter(value: number) {
     this.id = value;
   }
 
   @ViewChild('header') headerComponent!: HeaderOperationsButtonsComponent;
   @ViewChild('popup') popupComponent!: PopupConfirmationComponent;
-
+  periodList:PeriodsModel[] = [];
+  period: any ;
+  queryData = {
+    filter: '',
+    page: 0,
+    pageSize: 10,
+  };
   isLoading!: boolean;
   isSaving!: boolean;
   form!: FormGroup;
   id!: number;
   editPeriod :boolean= false
+  pipe = new DatePipe('en-US');
   constructor(
     private service: PeriodsService,
     notificacionService: NzNotificationService,
@@ -49,7 +60,9 @@ export class periodsDrawerComponent  extends BaseComponent implements OnInit {
   if (this.id != null || this.id != undefined || this.id != 0) {
     this.getPeriod(this.id);
   }
- }
+  this.getData(this.queryData)
+  
+ } 
  getPeriod(id: number): void {
   if (id != 0) {
     this.service.getById(id).subscribe({
@@ -65,6 +78,25 @@ export class periodsDrawerComponent  extends BaseComponent implements OnInit {
     });
   }
 }
+getData(params: any): void {
+  this.service.getByFilter(params).subscribe({
+    next: (r) => {
+      this.periodList = r.data;
+      this.period = this.periodList.find(element => element.endPeriod)?.endPeriod
+      this.sumarDias(new Date(this.period), 1)
+    },
+    error: () => {
+      this.isLoading = false;
+    },
+  });
+}
+sumarDias(fecha:any, dias: any){
+  fecha.setDate(fecha.getDate ()+ dias);
+  this.period = fecha
+  return fecha;
+} 
+disabledDate = (current: Date): boolean => true
+
 save(): void {
   if (this.isValidForm(this.form)) {
     const model: PeriodsModel = {
@@ -109,12 +141,12 @@ msjConfirmOk(){
    }
 }
 formaterDate(date: string | number | Date): string {
-  return formatDate(date, 'YYYY-MM-dd', this.locale);
+  return formatDate(date, 'MM/dd/YYYY', this.locale);
 }
-  
 }
 
   
 
 
  
+

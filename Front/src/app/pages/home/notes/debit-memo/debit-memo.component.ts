@@ -465,6 +465,24 @@ constructor(@Inject(LOCALE_ID) public locale: string,
       )[0].quantity= quantity;
       
   };
+  
+  changePrice(price: number):void{
+    if (price == 0 || price == null){
+      price = 1;
+    }
+    let product= this.debitMemoList.filter(
+      detail => detail.productId == this.editId)[0]; 
+
+    this.debitMemoList.filter(
+      detail => detail.productId == this.editId
+      )[0].subTotal= product.quantity * price;
+
+    this.totalCalculate();
+    this.debitMemoDetails.filter(
+      detail => detail.productId == this.editId
+      )[0].price = price; 
+      
+  };
 
   handleOk() {
     try {
