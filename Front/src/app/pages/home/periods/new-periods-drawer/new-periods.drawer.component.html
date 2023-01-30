@@ -1,5 +1,5 @@
 <app-header-op-buttons #header [btnCloseText]="'Cancelar'" [btnSaveText]="'Guardar'" [title]="'Período'"
-    [showSpinner]="isSaving"  [iconBack]="'rollback'" [iconSave]="'save'" [iconTitle]="'tags'" (onSaveClick)="pop.showConfirmation()" 
+    [showSpinner]="isSaving"  [iconBack]="'rollback'" [iconSave]="'save'" [iconTitle]="'tags'" (onSaveClick)="msjConfirmOk()" 
     (onCloseClick)="close()" [hideClose]="true" [hideBack]="true">
 </app-header-op-buttons>
 <nz-spin [nzSpinning]="isLoading" style="margin-top: 20px;">
@@ -40,6 +40,6 @@
   [title]="'Confirmar Guardado de Período'"
   [header]="'¿Está seguro que desea Guardar el Período?'"
   [message]="'Esta acción no se puede revertir'"
-  (handleOk)="msjConfirmOk()"
+  (handleOk)="save()"
 >
 </app-popup-confirmation>

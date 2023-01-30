@@ -58,9 +58,21 @@
               </nz-form-control>
             </nz-form-item>
           </div>
-          <nz-form-item>
+          <nz-form-item *ngIf="edit === true">
             <nz-form-label [nzSm]="12" [nzXs]="18" nzRequired >
               Número de Factura
+            </nz-form-label>
+            <nz-form-control [nzSm]="10" [nzXs]="20">
+              <input
+              nz-input
+                nzSize="small"
+                formControlName="invoiceNumber"
+              />
+             </nz-form-control>
+          </nz-form-item> 
+          <nz-form-item *ngIf="edit === false">
+            <nz-form-label [nzSm]="12" [nzXs]="18" nzRequired >
+              Número Nota de Débito
             </nz-form-label>
             <nz-form-control [nzSm]="10" [nzXs]="20">
               <input
@@ -336,7 +348,7 @@
                 nz-button
                 nzSize="large"
                 style="background-color: #24ce41"
-                (click)="pop.showConfirmation()"
+                (click)=" msjConfirmOk()"
               >
                 <i nz-icon nzType="save" nzTheme="outline"></i>Grabar
               </button>
@@ -364,6 +376,6 @@
   [title]="'Confirmar Guardado de comprobante'"
   [header]="'¿Está seguro que desea guardar el comprobante?'"
   [message]="'Esta acción no se puede revertir'"
-  (handleOk)="msjConfirmOk()"
+  (handleOk)="save()"
 >
 </app-popup-confirmation>

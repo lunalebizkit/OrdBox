@@ -17,8 +17,8 @@
     <nz-collapse>
       <nz-collapse-panel nzSize="small" nzHeader="Filtros" [nzActive]="true">
         <form nz-form [formGroup]="formSearch">
-          <div nz-row nzJustify="space-between">
-            <div nz-col nzSpan="5">
+          <div nz-row nzJustify="space-around">
+            <div nz-col nzSpan="12">
               <nz-form-item>
                 <nz-form-label>Producto</nz-form-label>
                 <nz-form-control>
@@ -38,15 +38,15 @@
                       class="ant-input-clear-icon"
                       nzTheme="fill"
                       nzType="close-circle"
-                      *ngIf="formSearch.get('product')?.value"
-                      (click)="formSearch.get('product')?.setValue('')"
+                      *ngIf="formSearch.get('invoice')?.value"
+                      (click)="formSearch.get('invoice')?.setValue('')"
                     ></i>
                   </ng-template>
                 </nz-form-control>
               </nz-form-item>
             </div>
 
-            <div nz-col nzSpan="5">
+            <div nz-col nzSpan="8">
               <nz-form-item>
                 <nz-form-label>Marca</nz-form-label>
                 <nz-form-control>
@@ -72,8 +72,9 @@
                 </nz-form-control>
               </nz-form-item>
             </div>
-
-            <div nz-col nzSpan="6" class="mb-2">
+          </div> 
+          <div nz-row nzJustify="space-around">  
+            <div nz-col nzSpan="8" class="mb-2">
               <nz-form-item>
                 <nz-form-label>Proveedor</nz-form-label>
                 <nz-form-control>
@@ -106,10 +107,10 @@
                 </nz-form-control>
               </nz-form-item>
             </div>
-            <div nz-col nzSpan="5">
+            <div nz-col nzSpan="8">
               <nz-form-item>
                 <nz-form-label nzFor="category">Categoría </nz-form-label>
-                <nz-form-control [nzSm]="14" [nzXs]="24">
+                <nz-form-control>
                   <nz-spin [nzSpinning]="isLoadingCategory">
                     <nz-select
                       id="category"
@@ -134,8 +135,6 @@
                 </nz-form-control>
               </nz-form-item>
             </div>
-          </div>
-          <div nz-row nzJustify="end">
             <div>
               <button nz-button nzType="primary" (click)="search()">
                 <i nz-icon nzType="search"></i>
@@ -143,6 +142,7 @@
               </button>
             </div>
           </div>
+          <div style="color: red;font-size: 12px;">* Si no se aplica un filtro la actualización de precios se realizará sobre todos los productos</div>
         </form>
       </nz-collapse-panel>
     </nz-collapse>
@@ -150,8 +150,8 @@
     <!-- Opciones para Actualizar Productos-->
     <form nz-form [formGroup]="form">
       <div nz-row nzJustify="space-around" style="padding: 10px">
-        <div>
-          <nz-form-label [nzSm]="10" [nzXs]="12" nzRequired nzFor="idPrice"
+        <div nz-col nzSpan="14">
+          <nz-form-label nzRequired nzFor="idPrice"
             >Opciones
           </nz-form-label>
           <nz-select
@@ -160,12 +160,12 @@
             nzPlaceHolder="Opciones"
             (ngModelChange)="optionsSelectedChange($event)"
             [nzOptions]="updateList"
-            style="width: 175px"
+            style="width: 400px"
           >
           </nz-select>
         </div>
-        <div>
-          <nz-form-label [nzSm]="10" [nzXs]="12" nzRequired nzFor="value"
+        <div nz-col nzSpan="8">
+          <nz-form-label  nzRequired nzFor="value"
             >Valor
           </nz-form-label>
           <nz-input-number
@@ -173,6 +173,7 @@
             id="value"
             [nzMax]="1000000"
             [nzFormatter]="formatterPesoOPorcentaje"
+            style="width: 100px"
           ></nz-input-number>
         </div>
       </div>
@@ -195,11 +196,11 @@
             <th nzEllipsis nzWidth="75px">Categoría</th>
             <th nzEllipsis nzWidth="70px">Marca</th>
             <th nzEllipsis nzWidth="65px">Proveedor</th>
-            <th nzEllipsis nzWidth="40px">Código</th>
-            <th nzEllipsis nzWidth="65px">Precio Costo</th>
-            <th nzEllipsis nzWidth="65px">Precio Lista</th>
-            <th nzEllipsis nzWidth="65px">Precio Tarjeta</th>
-            <th nzEllipsis nzWidth="65px">Precio Contado</th>
+            <th nzEllipsis nzWidth="45px">Código</th>
+            <th nzEllipsis nzWidth="55px">P.Costo</th>
+            <th nzEllipsis nzWidth="55px">P.Lista</th>
+            <th nzEllipsis nzWidth="55px">P.Tarjeta</th>
+            <th nzEllipsis nzWidth="55px">P.Contado</th>
           </tr>
         </thead>
         <tbody>
@@ -219,16 +220,16 @@
             <td nzEllipsis>{{ data.supplierName }}</td>
             <td nzEllipsis>{{ data.code }}</td>
             <td style="color: blue; text-align: right; font-weight: bold">
-              $ {{ data.purchasePrice }}
+              {{ this.currencyFormat(data.purchasePrice) }}
             </td>
             <td style="color: green; text-align: right; font-weight: bold">
-              $ {{ data.salePrice }}
+             {{ this.currencyFormat(data.salePrice) }}
             </td>
             <td style="color: red; text-align: right; font-weight: bold">
-              $ {{ data.cardSalePrice }}
+              {{ this.currencyFormat(data.cardSalePrice) }}
             </td>
             <td style="text-align: right; font-weight: bold">
-              $ {{ data.cashSalePrice }}
+              {{ this.currencyFormat(data.cashSalePrice) }}
             </td>
           </tr>
         </tbody>

@@ -30,6 +30,7 @@ import { NoteService } from '../notes.service';
 })
 export class debitMemoComponent extends BaseComponent  implements OnInit {
   @ViewChild('popup') popupComponent!: PopupConfirmationComponent;
+  @ViewChild('pop') popComponent!: PopupConfirmationComponent;
 
   cuit!: string;
   isLoading: boolean= false;
@@ -508,8 +509,9 @@ constructor(@Inject(LOCALE_ID) public locale: string,
       this.debitMemoList = this.debitMemoList.
        filter(element => element.ownCode != this.popupComponent.elementSelected);
      this.popupComponent.isConfirmationvisible = false; 
-     if (this.debitMemoList.length != 0 ){
-       this.save();
+     if (this.isValidForm(this.formDebitMemo) && this.isValidForm(this.formCustomerSearch) &&
+     this.debitMemoList.length != 0 && this.isValidForm(this.formProductSearch)){
+       this.popComponent.showConfirmation();
      } else{
        this.showMessageError('No ha seleccionado producto')
      }
@@ -520,10 +522,11 @@ constructor(@Inject(LOCALE_ID) public locale: string,
   }
 
   direction(){
-    if(this.id == 0){
-      this.router.navigate(['/notes/debitList']);
-    }else{
+    if(this.id != 0){
       this.router.navigate(['/home/invoices/invoices-sale']);
+      
+    }if(this.id == 0 || this.id == undefined || this.id == null){
+      this.router.navigate(['/notes/debitList']);
     }
    }
   

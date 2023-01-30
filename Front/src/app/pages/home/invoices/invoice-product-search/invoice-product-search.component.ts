@@ -1,4 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { formatCurrency } from '@angular/common';
+import { Component, Inject, Input, LOCALE_ID, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { NzDrawerRef } from 'ng-zorro-antd/drawer';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
@@ -42,6 +43,7 @@ export class InvoiceProductSearchComponent implements OnInit {
   constructor(
     private drawerRef: NzDrawerRef<string>,
     private service: ProductService,
+    @Inject(LOCALE_ID) public locale: string,
     private fb: FormBuilder) { }
 
   ngOnInit(): void {
@@ -94,5 +96,8 @@ export class InvoiceProductSearchComponent implements OnInit {
         this.productList = [];
       }
     })
+  }
+  currencyFormat(data: any): string {
+    return formatCurrency(data, this.locale, '$', 'ARS', '1.1-2');
   }
 }

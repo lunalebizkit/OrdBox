@@ -1,5 +1,5 @@
 <app-header-op-buttons #header [btnCancelText]="'Cancelar'" [btnSaveText]="'Guardar'" [title]="'Proveedor'"
-    [showSpinner]="isSaving" [iconBack]="'rollback'" [iconSave]="'save'" [iconTitle]="'tags'" (onSaveClick)="pop.showConfirmation()"
+    [showSpinner]="isSaving" [iconBack]="'rollback'" [iconSave]="'save'" [iconTitle]="'tags'" (onSaveClick)="msjConfirmOk()"
     (onCloseClick)="close()" [hideClose]="true" [hideBack]="true">
 </app-header-op-buttons>
 
@@ -98,6 +98,6 @@
   [title]="'Confirmar Proveedor'"
   [header]="'¿Está seguro que desea guardar Proveedor?'"
   [message]="'Esta acción no se puede revertir'"
-  (handleOk)="msjConfirmOk()"
+  (handleOk)="save()"
 >
 </app-popup-confirmation>

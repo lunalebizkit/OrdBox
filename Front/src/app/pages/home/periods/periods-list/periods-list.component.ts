@@ -154,6 +154,7 @@ export class PeriodsListComponent extends BaseComponent implements OnInit {
     >({
       nzContent: periodsDrawerComponent,
       nzSize: 'large',
+      nzWidth: 1050,
       nzContentParams: {
         filter: this.id > 0 ? this.id : 0,
       },

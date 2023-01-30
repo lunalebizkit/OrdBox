@@ -33,7 +33,8 @@ export class periodsDrawerComponent  extends BaseComponent implements OnInit {
     filter: '',
     page: 0,
     pageSize: 10,
-  };
+  };  @ViewChild('popup') popComponent!: PopupConfirmationComponent;
+
   isLoading!: boolean;
   isSaving!: boolean;
   form!: FormGroup;
@@ -131,9 +132,9 @@ close(id: number | void): void {
 msjConfirmOk(){
   try {
    if (this.isValidForm(this.form)){
-     this.save();
+     this.popComponent.showConfirmation();
    } else{
-     this.showMessageError('Formulario Vacío')
+     this.showMessageError
    }
    } catch (error) {
      console.log(error);
