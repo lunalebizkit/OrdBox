@@ -39,6 +39,7 @@ import {
 import { OrdersService } from '../orders.service';
 import { differenceInCalendarDays, setHours } from 'date-fns';
 import { eStatus, StatusType } from '../models/status-type.enum';
+import { SendOrderEmail } from '../models/sendorderemail.model';
 
 @Component({
   selector: 'app-orders-edit-drawer',
@@ -76,6 +77,7 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
    */
   switchValue!: boolean;
   switchSendValue!: boolean;
+  emailList: string[]=[];
 
   /*
    ** Variables globales
@@ -286,6 +288,7 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
           orderDetail: this.orderDetail,
           dateTime: this.form.controls['datetime'].value,
           supplierName: null,
+          supplierEmail:this.form.controls['emailEntity'].value
         };
         this.isSaving = true;
         this.ordersService.saveOrder(model).subscribe({
@@ -523,23 +526,57 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
     }
   }
 
-  msjConfirmOk(){
-    try {
-      this.orderDetail = this.orderDetail.
-       filter(element => element.productId != this.popupComponent.elementSelected);
-     this.popupComponent.isConfirmationvisible = false; 
-     if (
-      this.isValidForm(this.form)
-    || (this.orderDetailGrid.length === 0) ){
-       this.save();
-     } else{
-       this.showMessageError('No ha seleccionado producto')
-     }
-     } catch (error) {
-       console.log(error);
-       
-     }
-  }
+    msjConfirmOk(){
+      try {
+        this.orderDetail = this.orderDetail.
+        filter(element => element.productId != this.popupComponent.elementSelected);
+      this.popupComponent.isConfirmationvisible = false; 
+      if (
+        this.isValidForm(this.form)
+      || (this.orderDetailGrid.length === 0) ){
+        this.save();
+      } else{
+        this.showMessageError('No ha seleccionado producto')
+      }
+      } catch (error) {
+        console.log(error);
+        
+      }
+    }
+    msjConfirmOkEmail(){
+      try {
+        this.orderDetail = this.orderDetail.
+        filter(element => element.productId != this.popupComponent.elementSelected);
+      this.popupComponent.isConfirmationvisible = false; 
+      if (
+        this.isValidForm(this.form)
+      || (this.orderDetailGrid.length === 0) ){
+        this.saveAndSend();
+      } else{
+        this.showMessageError('No ha seleccionado producto')
+      }
+      } catch (error) {
+        console.log(error);
+        
+      }
+    }
+    msjConfirmOkEmailOnly(){
+      try {
+        this.orderDetail = this.orderDetail.
+        filter(element => element.productId != this.popupComponent.elementSelected);
+      this.popupComponent.isConfirmationvisible = false; 
+      if (
+        this.isValidForm(this.form)
+      || (this.orderDetailGrid.length === 0) ){
+        this.sendEmail();
+      } else{
+        this.showMessageError('No ha seleccionado producto')
+      }
+      } catch (error) {
+        console.log(error);
+        
+      }
+    }
 
   getStatusName(id: number) {
     return eStatus[id];
@@ -550,6 +587,101 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
   }
 
   close(id: number | void): void {
-    this.drawerRef.close(id);
+    this.drawerRef.close(id);  }
+/*
+   ** Enviar solo el email
+   */
+  sendEmail(){
+    if(this.emailList.length>0){
+    const model: SendOrderEmail = {
+      id: this.id,
+      emails: this.emailList
+    }
+    this.ordersService.sendEmail(model).subscribe({
+      next: (r) => {
+        this.showNotificationSuccess(
+          'Email enviado correctamente',
+          `Se realizo correctamente el envio del email`
+        );
+        this.isSaving = false;
+        this.close(r.id);
+      },
+      error: () => {
+        this.isSaving = false;
+        this.showMessageError('No se pudo realizar el envio del email');
+        this.close();
+      },
+    })} else {
+      this.showMessageError('No hay emails seleccionados');
+    }
+  }
+  /*
+   ** Guardar pedido y enviar email
+   */
+  saveAndSend(): void {
+    if(this.emailList.length>0){
+      
+    
+    if (
+      this.isValidForm(this.form) &&
+      this.isValidForm(this.formSupplierSearch)
+    ) {
+      if (this.orderDetail.length === 0) {
+        this.showMessageError('No hay Productos Seleccionados');
+      } else {
+        const model: NewOrder = {
+          id: this.id !== undefined ? this.id : 0,
+          supplierId: this.formSupplierSearch.controls['supplierId'].value,
+          isPaid: this.form.controls['isPaid'].value,
+          statusId:
+            this.id != undefined && this.id == 0
+              ? 1
+              : this.form.controls['statusId'].value,
+          orderDetail: this.orderDetail,
+          dateTime: this.form.controls['datetime'].value,
+          supplierName: null,
+          supplierEmail:this.emailList
+        };
+        this.isSaving = true;
+        this.ordersService.saveOrderAndSendEmail(model).subscribe({
+          next: (r) => {
+            this.showNotificationSuccess(
+              'Guardado y enviado correcto',
+              `Se guardo correctamente el pedido y se envio el email`
+            );
+            this.isSaving = false;
+            this.close(r.id);
+          },
+          error: () => {
+            this.isSaving = false;
+            this.showMessageError('No se pudo Guardar el pedido');
+            this.close();
+          },
+        });
+      }
+    }
+  } else {
+    this.showMessageError('No hay emails seleccionados');
+  }
+  }
+  /*
+   ** Seleccionar email/s para enviar
+   */
+  // selectEmails(){
+  //   let emails = ["carlabgo95@gmail.com", "carlabgo95@hotmail.com"];
+  //   this.emailsEntityArray.setValue(emails)
+  //   console.log(this.emailsArray)
+  // }
+  selectEmails(data:string,) {
+
+    let isEmail=this.emailList.find((email:string)=> email == data);
+    
+    if (isEmail){
+      this.emailList= this.emailList.filter((email:string) => email != data)
+    }else{
+      this.emailList.push(data);
+    }
+    console.log(this.emailList);
+    
   }
 }
