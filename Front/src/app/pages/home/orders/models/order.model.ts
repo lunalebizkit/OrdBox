@@ -6,6 +6,7 @@ export interface NewOrder {
   isPaid: boolean;
   dateTime: Date;
   statusId: number;
+  supplierEmail: string[];
   orderDetail: NewOrderDetail[];
 }
 export interface NewOrderDetail {

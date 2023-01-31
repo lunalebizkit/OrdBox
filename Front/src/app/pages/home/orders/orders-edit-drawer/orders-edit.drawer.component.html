@@ -2,16 +2,21 @@
   #header
   [btnCancelText]="'Cancelar'"
   [btnSaveText]="'Guardar'"
-  [btnSendText]="'Enviar'"
-  [hideSend]="false"
+  [btnSendText]="'Guardar y Enviar'"
+  [btnSendEmail]="'Enviar'"
+  [hideSend]="id != 0"
   [title]="'Pedidos'"
   [iconBack]="'rollback'"
   [iconSave]="'save'"
   [iconTitle]="'shopping-cart'"
   [iconSend]="'mail'"
   (onSaveClick)="  msjConfirmOk()"
+  (onSaveClick)="pop.showConfirmation()"
+  (onSendClick)="email.showConfirmation()"
+  (onSendEmailClick)="onlyEmail.showConfirmation()"
   (onCloseClick)="close()"
   [hideClose]="true"
+  [hideEmail]="id == 0"
   [hideBack]="true"
   [disabled]="this.disabled"
 >
@@ -166,6 +171,7 @@
                   <nz-switch
                     nzCheckedChildren="Enviar"
                     nzUnCheckedChildren="No enviar"
+                    (click)="selectEmails(data.value)"
                   ></nz-switch>
                 </div>
               </div> </ng-container
@@ -366,5 +372,21 @@
   [header]="'¿Está seguro que desea guardar pedido?'"
   [message]="'Esta acción no se puede revertir'"
   (handleOk)="save()"
+>
+</app-popup-confirmation>
+<app-popup-confirmation
+  #email
+  [title]="'Confirmar Pedido y enviar mail'"
+  [header]="'¿Está seguro que desea guardar pedido?'"
+  [message]="'Esta acción no se puede revertir'"
+  (handleOk)="msjConfirmOkEmail()"
+>
+</app-popup-confirmation>
+<app-popup-confirmation
+  #onlyEmail
+  [title]="'Enviar mail'"
+  [header]="'¿Está seguro que desea enviar el mail?'"
+  [message]="'Esta acción no se puede revertir'"
+  (handleOk)="msjConfirmOkEmailOnly()"
 >
 </app-popup-confirmation>
