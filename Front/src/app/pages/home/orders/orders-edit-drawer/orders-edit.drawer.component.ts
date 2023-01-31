@@ -535,11 +535,12 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
         filter(element => element.productId != this.popupComponent.elementSelected);
       this.popupComponent.isConfirmationvisible = false; 
       if (
-        this.isValidForm(this.form)
-      || (this.orderDetailGrid.length === 0) ){
-        this.save();
+        this.isValidForm(this.form) && this.isValidForm(this.formSupplierSearch) && 
+        this.isValidForm(this.formProductSearch) 
+      ){
+        this.popComponent.showConfirmation() 
       } else{
-        this.showMessageError('No ha seleccionado producto')
+        this.showMessageError
       }
       } catch (error) {
         console.log(error);
