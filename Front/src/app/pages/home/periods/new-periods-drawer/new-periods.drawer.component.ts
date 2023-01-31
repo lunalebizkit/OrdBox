@@ -27,20 +27,22 @@ export class periodsDrawerComponent  extends BaseComponent implements OnInit {
 
   @ViewChild('header') headerComponent!: HeaderOperationsButtonsComponent;
   @ViewChild('popup') popupComponent!: PopupConfirmationComponent;
+  @ViewChild('popup') popComponent!: PopupConfirmationComponent;
+  
   periodList:PeriodsModel[] = [];
   period: any ;
   queryData = {
     filter: '',
     page: 0,
     pageSize: 10,
-  };  @ViewChild('popup') popComponent!: PopupConfirmationComponent;
+  }; 
 
   isLoading!: boolean;
   isSaving!: boolean;
   form!: FormGroup;
   id!: number;
   editPeriod :boolean= false
-  pipe = new DatePipe('en-US');
+  
   constructor(
     private service: PeriodsService,
     notificacionService: NzNotificationService,
@@ -85,6 +87,7 @@ getData(params: any): void {
       this.periodList = r.data;
       this.period = this.periodList.find(element => element.endPeriod)?.endPeriod
       this.sumarDias(new Date(this.period), 1)
+      
     },
     error: () => {
       this.isLoading = false;
@@ -96,7 +99,6 @@ sumarDias(fecha:any, dias: any){
   this.period = fecha
   return fecha;
 } 
-disabledDate = (current: Date): boolean => true
 
 save(): void {
   if (this.isValidForm(this.form)) {

@@ -76,9 +76,7 @@ export class PeriodsListComponent extends BaseComponent implements OnInit {
         this.selectedIndex = 0;
         this.selectedPeriod = this.periodList[this.selectedIndex];
         document.getElementById(this.selectedIndex.toString())?.focus();
-      /*   this.period = this.periodList.find(element => element.endPeriod)?.endPeriod
 
-        console.log(this.period); */
       },
       error: () => {
         this.loading = false;
@@ -92,7 +90,7 @@ export class PeriodsListComponent extends BaseComponent implements OnInit {
   }
 
   formaterDate(date: string | number | Date): string {
-    return formatDate(date, 'dd/MM/YYYY', this.locale);
+    return formatDate(date, 'yyyy/MM/dd', this.locale);
   }
 
   onDoubleClicked(datos: any) {

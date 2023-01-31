@@ -12,7 +12,7 @@
                     <nz-form-item>
                         <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="name">Nombre
                         </nz-form-label>
-                        <nz-form-control [nzSm]="14" [nzXs]="24">
+                        <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="Ingrese un Nombre válido">
                             <input formControlName="name" nz-input id="name" maxlength="250" />
                         </nz-form-control>
                     </nz-form-item>
@@ -27,16 +27,16 @@
                     <nz-form-item>
                         <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="dni">Dni
                         </nz-form-label>
-                        <nz-form-control [nzSm]="14" [nzXs]="24">
-                            <input formControlName="dni" nz-input id="dni" />
+                        <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="Ingrese un DNI válido">
+                            <input formControlName="dni" nz-input id="dni" pattern="^[1-9]\d*$" />
                         </nz-form-control>
                     </nz-form-item>
 
                     <nz-form-item>
                         <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="address">Dirección
                         </nz-form-label>
-                        <nz-form-control [nzSm]="14" [nzXs]="24">
-                            <input formControlName="address" nz-input id="address" maxlength="250" />
+                        <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="Ingrese un Dirección válida">
+                            <input formControlName="address" nz-input id="address" maxlength="250" pe="text" pattern="[a-zA-Z0-9\sd*$]+[1-55]" />
                         </nz-form-control>
                     </nz-form-item>
                 
@@ -69,8 +69,8 @@
                                 <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="email" >
                                     Email  {{i + 1}}
                                 </nz-form-label>
-                                <nz-form-control [nzSm]="14" [nzXs]="24">
-                                    <input [formControl]="e" nz-input />
+                                <nz-form-control [nzSm]="14" [nzXs]="24"  nzErrorTip="Ingrese una dirección de email válida">
+                                    <input [formControl]="e" nz-input type="email" id="email"/>
                                     <i nz-icon nzType="minus-circle-o" class="dynamic-delete-button" style="color: rgb(243, 79, 79); position: absolute; margin-top: -7x; margin-left: 4px;"
                                     (click)="removeEmailField($event, i)"></i>
                                 </nz-form-control>

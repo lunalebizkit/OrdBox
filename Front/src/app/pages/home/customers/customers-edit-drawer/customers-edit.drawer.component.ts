@@ -69,10 +69,10 @@ export class CustomersEditDrawerComponent extends BaseComponent implements OnIni
     ) {
         super(notificacionService, el, message);
         this.form = this.fb.group({
-            dni: ['', [Validators.required]],
+            dni: ['', [Validators.required, Validators.pattern]],
             cuit: ['', [Validators.required]],
             name: ['', [Validators.required]],
-            address: ['', [Validators.required]],
+            address: ['', [Validators.required,Validators.maxLength]],
             phoneEntity: new FormArray([]),
             emailEntity: new FormArray([])
 
@@ -144,7 +144,7 @@ export class CustomersEditDrawerComponent extends BaseComponent implements OnIni
             e.preventDefault();
         }   
         let emailForm = this.form.controls['emailEntity'] as FormArray;
-        emailForm.push(new FormControl(''));  
+        emailForm.push(new FormControl('',Validators.email));  
     };
 
     removeEmailField( e: MouseEvent, index: number): void {

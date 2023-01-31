@@ -129,8 +129,8 @@
                   style="background-color: rgb(2, 145, 2); font-size:10px; border-color: rgb(2, 145, 2);margin-right: 25px"
                   routerLink="/home/iva/ivaCompra"
                   [queryParams]="{
-                    from: this.formaterDate(period.initPeriod),
-                    to: this.formaterDate(period.endPeriod)
+                    from: formaterDate(period.initPeriod),
+                    to: formaterDate(period.endPeriod)
                   }"
                 >
                   Iva Compra
@@ -143,8 +143,8 @@
                 style="font-size:10px"
                 routerLink="/home/iva/ivaVenta"
                 [queryParams]="{
-                  from: this.formaterDate(period.initPeriod),
-                  to: this.formaterDate(period.endPeriod)
+                  from: formaterDate(period.initPeriod),
+                  to: formaterDate(period.endPeriod)
                 }"
               >
                 Iva Venta
