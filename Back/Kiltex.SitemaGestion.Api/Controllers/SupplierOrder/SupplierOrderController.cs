@@ -28,6 +28,14 @@ namespace Kiltex.SistemaGestion.Api.Controllers.SupplierOrder
         {
             return Return(await _service.AddOrUpdate(model).ConfigureAwait(false));
         }
+        [HttpPost]
+        [AllowAccess(Permission = new EPermission[] { EPermission.CreateOrderSupplier })]
+        [Route("orderAndEmail")]
+        public async Task<IActionResult> NewWithEmail([FromBody] DtoRequestSupplierOrder model)
+        {
+            return Return(await _service.AddOrUpdateEmail(model).ConfigureAwait(false));
+        }
+
         [HttpPut]
         [AllowAccess(Permission = new EPermission[] { EPermission.EditOrderSupplier })]
         public async Task<IActionResult> Edit([FromBody] DtoRequestSupplierOrder model)
@@ -40,6 +48,13 @@ namespace Kiltex.SistemaGestion.Api.Controllers.SupplierOrder
         public async Task<IActionResult> List([FromBody] RequestPaginatedData<ProductFilter> filter)
         {
             return Return(await _service.List(filter).ConfigureAwait(false));
+        }
+        [HttpPost]
+        [AllowAccess(Permission = new EPermission[] { EPermission.CreateOrderSupplier })]
+        [Route("email")]
+        public async Task<IActionResult> SendOrderEmail(DtoSendOrderEmail model)
+        {
+            return Return(await _service.SendOrderEmail(model).ConfigureAwait(false));
         }
     }
 }
