@@ -67,6 +67,16 @@
     </button>
     <button
       style="margin: 2px"
+      *ngIf="!hideEmail"
+      nz-button
+      nzType="primary"
+      [nzLoading]="showSpinner"
+      (click)="onSendEmailClick?.emit($event)"
+    >
+      <i nz-icon [nzType]="iconSend"></i>{{ btnSendEmail }}
+    </button>
+    <button
+      style="margin: 2px"
       *ngIf="!hideUpdate"
       nz-button
       class="btnGreen"

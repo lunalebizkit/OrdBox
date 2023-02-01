@@ -9,7 +9,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 })
 export class HeaderOperationsButtonsComponent implements OnInit {
   @Input('btnSaveText') btnSaveText: string = 'Guardar';
-  @Input('btnSendText') btnSendText: string = 'Enviar';
+  @Input('btnSendText') btnSendText: string = 'Guardar y Enviar';
+  @Input('btnSendEmail') btnSendEmail?: string = 'Enviar';
   @Input('btnCancelText') btnCancelText: string = 'Volver';
   @Input('btnCloseText') btnCloseText: string = 'Volver';
   @Input('btnDeleteText') btnDeleteText: string = 'Eliminar';
@@ -31,10 +32,13 @@ export class HeaderOperationsButtonsComponent implements OnInit {
   @Input('hideClose') hideClose: boolean = false;
   @Input('hideDelete') hideDelete: boolean = true;
   @Input('hideSend') hideSend: boolean = true;
+  @Input('hideEmail') hideEmail: boolean = true;
   @Input('disabled') disabled: boolean = false;
   @Output('onSaveClick') onSaveClick: EventEmitter<any> =
     new EventEmitter<any>();
   @Output('onSendClick') onSendClick: EventEmitter<any> =
+    new EventEmitter<any>();
+  @Output('onSendEmailClick') onSendEmailClick: EventEmitter<any> =
     new EventEmitter<any>();
   @Output('onCancelClick') onCancelClick: EventEmitter<any> =
     new EventEmitter<any>();
@@ -45,9 +49,9 @@ export class HeaderOperationsButtonsComponent implements OnInit {
   @Output('onUpdateClick') onUpdateClick: EventEmitter<any> =
     new EventEmitter<any>();
 
-  constructor(private route: ActivatedRoute, private router: Router) {}
+  constructor(private route: ActivatedRoute, private router: Router) { }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
   goBack() {
     if (this.onCancelClick.length > 0) {

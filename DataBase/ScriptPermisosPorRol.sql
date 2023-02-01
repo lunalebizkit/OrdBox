@@ -1,7 +1,7 @@
 USE [Gestion_Stock]
 GO
 
-INSERT INTO [dbo].[permission]
+INSERT INTO [dbo].[permission_x_rol]
            ([role_id]
 		   ,[permission_id])	
      VALUES

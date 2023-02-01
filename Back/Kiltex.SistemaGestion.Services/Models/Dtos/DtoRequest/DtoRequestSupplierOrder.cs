@@ -8,7 +8,9 @@ namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest
         public long SupplierId { get; set; }
         public bool IsPaid { get; set; }
         public DateTime DateTime { get; set; }
+        public long SupplierOrderNumber { get; set; }
         public long StatusId { get; set; }
+        public List<string> SupplierEmail { get; set; }
 
         public List<DtoRequestOrderDetail> OrderDetail { get; set; }
 
