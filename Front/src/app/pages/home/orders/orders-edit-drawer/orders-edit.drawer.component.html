@@ -10,7 +10,7 @@
   [iconSave]="'save'"
   [iconTitle]="'shopping-cart'"
   [iconSend]="'mail'"
-  (onSaveClick)="pop.showConfirmation()"
+  (onSaveClick)="  msjConfirmOk()"
   (onSendClick)="email.showConfirmation()"
   (onSendEmailClick)="onlyEmail.showConfirmation()"
   (onCloseClick)="close()"
@@ -26,12 +26,26 @@
     <nz-collapse-panel nzHeader="Datos Pedido" [nzActive]="true">
       <nz-content>
         <form nz-form [formGroup]="form">
+        <div nz-row nzJustify="space-around" >
+          <nz-form-item> 
+            <nz-form-label [nzSm]="10" [nzXs]="28" nzRequired nzFor="datetime"
+              >Fecha
+            </nz-form-label>
+            <nz-form-control [nzSm]="20" [nzXs]="24">
+              <b *ngIf="viewOrder; else elseBlockDate">
+                {{ startDate ? (startDate | date : "YYYY-MM-dd") : "N/A" }}
+              </b>
+              <ng-template #elseBlockDate>
+                <b>
+                  {{ dateTime ? (dateTime | date : "YYYY-MM-dd") : "N/A" }}
+                </b>
+              </ng-template>
+            </nz-form-control>
+          </nz-form-item>
           <form nz-form [formGroup]="formSupplierSearch">
-            <div nzSpan="12" class="mb-2">
+            <div nzSpan="20" class="mb-2">
               <nz-form-item>
                 <nz-form-label
-                  [nzSm]="6"
-                  [nzXs]="24"
                   nzRequired
                   nzFor="supplierId"
                   >Proveedor
@@ -44,7 +58,7 @@
                   nzServerSearch
                   (nzOnSearch)="onSearch($event)"
                   formControlName="supplierId"
-                  style="width: 200px"
+                  style="width: 400px"
                   (ngModelChange)="onChange($event)"
                 >
                   <ng-container *ngFor="let o of entityList">
@@ -60,25 +74,27 @@
                   </nz-option>
                 </nz-select>
                 <ng-template #elseBlock>
-                  <nz-form-control [nzSm]="6" [nzXs]="24">
+                  <nz-form-control >
                     <b> {{ supplierName }}</b>
                   </nz-form-control>
                 </ng-template>
               </nz-form-item>
             </div>
           </form>
-
-          <div nzSpan="12" class="mb-2">
+        </div> 
+        <div nz-row nzJustify="space-around" >
+          <div nzSpan="8" class="mb-2">
             <nz-form-item>
               <nz-form-label
                 [nzSm]="6"
-                [nzXs]="24"
+                [nzXs]="28"
                 nzRequired
                 nzFor="supplierId"
                 >Estado
               </nz-form-label>
               <nz-select
                 nzShowSearch
+                style="width: 190px"
                 nzAllowClear
                 nzPlaceHolder="Estado"
                 id="statusId"
@@ -89,60 +105,51 @@
               </nz-select>
             </nz-form-item>
           </div>
-
-          <nz-form-item>
-            <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="datetime"
-              >Fecha
-            </nz-form-label>
-            <nz-form-control [nzSm]="6" [nzXs]="24">
-              <b *ngIf="viewOrder; else elseBlockDate">
-                {{ startDate ? (startDate | date : "YYYY-MM-dd") : "N/A" }}
-              </b>
-              <ng-template #elseBlockDate>
-                <b>
-                  {{ dateTime ? (dateTime | date : "YYYY-MM-dd") : "N/A" }}
-                </b>
-              </ng-template>
-            </nz-form-control>
-          </nz-form-item>
-
-          <nz-form-item>
-            <nz-form-label [nzSm]="6" [nzXs]="14" nzRequired nzFor="isPaid"
+          <div nzSpan="18"  style="width: 240px">
+          <nz-form-item >
+            <nz-form-label nzRequired nzFor="isPaid"
               >Pagado
             </nz-form-label>
             <nz-switch
+              class="mb-2"
+             
               formControlName="isPaid"
               [ngModel]="switchValue"
               [nzDisabled]="disabled"
             ></nz-switch>
           </nz-form-item>
-
+          </div>
+        </div> 
+       <!--  <div nz-row nzJustify="space-around" >  -->
           <!-- Va creando divs segun la cantidad de mails creados que tenga el proveedor en caso de una orden existente  -->
-          <div *ngIf="viewOrder">
+          <div nz-row nzJustify="space-around" *ngIf="viewOrder">
             <ng-container formArrayName="supplierEmail">
               <ng-container *ngFor="let data of emailsControls; let i = index">
                 <div nz-row>
-                  <div nz-col nzSpan="12">
+                  <div nz-col nzSpan="28">
                     <nz-form-item>
-                      <nz-form-label [nzSm]="12" [nzXs]="24">
+                      <nz-form-label >
                         Email {{ i + 1 }}
                       </nz-form-label>
-                      <nz-form-control [nzSm]="14" [nzXs]="24" nzFor="email">
+                      <nz-form-control  nzFor="email">
                         <input
+                          nz
                           [formControl]="data"
                           nz-input
                         /> </nz-form-control
                     ></nz-form-item>
                   </div>
-                  <div nz-col>
+                  <div>
                     <nz-switch
                       nzCheckedChildren="Enviar"
                       nzUnCheckedChildren="No enviar"
                       [nzDisabled]="disabled"
                     ></nz-switch>
-                  </div></div></ng-container
+                  </div>
+                </div>
+              </ng-container
             ></ng-container>
-          </div>
+       
           <!-- Va creando divs segun la cantidad de mails creados que tenga el proveedor en caso de una orden nueva  -->
 
           <ng-container formArrayName="emailEntity">
@@ -150,12 +157,12 @@
               *ngFor="let data of emailsEntityControls; let i = index"
             >
               <div nz-row>
-                <div nz-col nzSpan="12">
+                <div nz-col nzSpan="28">
                   <nz-form-item>
-                    <nz-form-label [nzSm]="12" [nzXs]="24">
+                    <nz-form-label>
                       Email {{ i + 1 }}
                     </nz-form-label>
-                    <nz-form-control [nzSm]="14" [nzXs]="24">
+                    <nz-form-control >
                       <input [formControl]="data" nz-input /> </nz-form-control
                   ></nz-form-item>
                 </div>
@@ -168,6 +175,7 @@
                 </div>
               </div> </ng-container
           ></ng-container>
+         </div> 
         </form>
       </nz-content>
 
@@ -178,17 +186,17 @@
         nzOrientation="left"
       ></nz-divider>
 
-      <div [hidden]="editOrder" nz-row nzJustify="start" nzAlign="middle">
-        <form nz-form [formGroup]="formProductSearch" col nzSpan="12">
-          <div>
+      <div [hidden]="editOrder" nz-row [nzGutter]="[8, 1]">
+        <form nz-form [formGroup]="formProductSearch" nz-col nzSpan="18">
+          <div >
             <nz-form-item>
-              <nz-form-label [nzSm]="12" [nzXs]="24"
+              <nz-form-label
                 >Búsqueda de Producto</nz-form-label
               >
-              <nz-form-control [nzSm]="14" [nzXs]="24">
+              <nz-form-control >
                 <nz-input-group [nzSuffix]="clearQuery">
                   <input
-                    nzSize="small"
+                    nzSize= "small" 
                     formControlName="productSearchFilter"
                     placeholder="Ingrese Marca, Código, Categoria o Producto"
                     nz-input
@@ -245,6 +253,7 @@
           [nzBordered]="true"
           [nzData]="orderDetailGrid"
           nzShowPagination="false"
+          nzSize="small"
         >
           <thead>
             <tr>
@@ -305,7 +314,7 @@
               <ng-template #viewOrders>
                 <td>{{ data.orderedQuantity }}</td>
               </ng-template>
-              <td [nzAlign]="'right'">{{ data.price }}</td>
+              <td [nzAlign]="'right'">{{ currencyFormat(data.price) }}</td>
               <td [nzAlign]="'right'">
                 {{ currencyFormat(data.subTotal) }}
               </td>
@@ -361,7 +370,7 @@
   [title]="'Confirmar Pedido'"
   [header]="'¿Está seguro que desea guardar pedido?'"
   [message]="'Esta acción no se puede revertir'"
-  (handleOk)="msjConfirmOk()"
+  (handleOk)="save()"
 >
 </app-popup-confirmation>
 <app-popup-confirmation

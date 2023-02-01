@@ -34,6 +34,7 @@ import { IvaType } from "../model/iva-type.Enum";
 export class InvoicesEditComponent extends BaseComponent implements OnInit {
   @ViewChild('popup') popupComponent!: PopupConfirmationComponent;
   @ViewChild('header') headerComponent!: HeaderOperationsButtonsComponent;
+  @ViewChild('pop') popComponent!: PopupConfirmationComponent;
 
   @ViewChild('drawerTemplate', { static: false }) drawerTemplate?: TemplateRef<{
     $implicit: { filter: string },
@@ -176,6 +177,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
       nzTitle: 'Cliente',
       nzContent: InvoiceCustomerSearchComponent,
       nzSize: 'large',
+      nzWidth: 1050,
       nzClosable: false
     });
     drawerRefCustomer.afterClose.subscribe({
@@ -200,6 +202,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
         nzTitle: 'Productos',
         nzContent: InvoiceProductSearchComponent,
         nzSize: 'large',
+        nzWidth: 1050,
         nzContentParams: {
           filter: this.formProductSearch.controls['productSearchFilter'].value
         },
@@ -391,8 +394,9 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
       this.invoiceDetailsList = this.invoiceDetailsList.
        filter(element => element.ownCode != this.popupComponent.elementSelected);
      this.popupComponent.isConfirmationvisible = false; 
-     if (this.invoiceDetailsList.length != 0 ){
-       this.save();
+     if (this.isValidForm(this.formInvoice) && (this.invoiceDetailsList.length != 0 ) && 
+     this.isValidForm(this.formCustomerSearch) && this.isValidForm(this.formProductSearch)){
+      this.popComponent.showConfirmation() 
      } else{
        this.showMessageError('No ha seleccionado producto')
      }

@@ -1,5 +1,5 @@
 <app-header-op-buttons #header [btnSaveText]="'Guardar'" [title]="'Producto'" [showSpinner]="isSaving"
-    [iconBack]="'rollback'" [iconSave]="'save'" [iconTitle]="'tags'" (onSaveClick)="pop.showConfirmation()"
+    [iconBack]="'rollback'" [iconSave]="'save'" [iconTitle]="'tags'" (onSaveClick)="msjConfirmOk()"
     (onCloseClick)="close()" [hideClose]="true" [hideBack]="true">
 </app-header-op-buttons>
 
@@ -20,7 +20,7 @@
                     <nz-form-item>
                         <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="code">Código </nz-form-label>
                         <nz-form-control [nzSm]="14" [nzXs]="24">
-                            <nz-input-number formControlName="code" nz-input id="code" [nzMin]="0"></nz-input-number>
+                            <nz-input-number style="width: 120px;"  formControlName="code" nz-input id="code" [nzMin]="0"></nz-input-number>
                         </nz-form-control>
                     </nz-form-item>
 
@@ -72,17 +72,17 @@
                     <nz-form-item>
                         <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="pointOrder">Punto Pedido
                         </nz-form-label>
-                        <nz-input-number formControlName="pointOrder" id="pointOrder" [nzMin]="0"></nz-input-number>
+                        <nz-input-number style="width: 120px;" formControlName="pointOrder" id="pointOrder" [nzMin]="0" ></nz-input-number>
 
                     </nz-form-item>
                     <nz-form-item>
                         <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="quantity">Cantidad
                         </nz-form-label>
-                        <nz-input-number formControlName="quantity" id="quantity" [nzMin]="0"></nz-input-number>
+                        <nz-input-number style="width: 120px;" formControlName="quantity" id="quantity" [nzMin]="0"></nz-input-number>
 
                         <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="purchasePrice">Precio Costo
                         </nz-form-label>
-                        <nz-input-number formControlName="purchasePrice" [nzFormatter]="formatterPeso"
+                        <nz-input-number style="width: 120px;"  formControlName="purchasePrice" [nzFormatter]="formatterPeso"
                             id="purchasePrice" [nzMin]="0" [nzMax]="10000000" (ngModelChange)="onPrecioCosto($event)">
                         </nz-input-number>
                     </nz-form-item>
@@ -90,12 +90,12 @@
                     <nz-form-item>
                         <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="salePrice">Precio Lista
                         </nz-form-label>
-                        <nz-input-number id="salePrice" formControlName="salePrice" [nzMin]="0"
+                        <nz-input-number style="width: 120px;" id="salePrice" formControlName="salePrice" [nzMin]="0"
                             [nzFormatter]="formatterPeso"></nz-input-number>
 
                         <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="salePercentage">Porcentaje
                         </nz-form-label>
-                        <nz-input-number formControlName="salePercentage" id="salePercentage" [nzMin]="0"
+                        <nz-input-number style="width: 120px;"  formControlName="salePercentage" id="salePercentage" [nzMin]="0"
                             (ngModelChange)="valuechange($event)" [nzFormatter]="formatterPorcentaje">
                         </nz-input-number>
                     </nz-form-item>
@@ -103,14 +103,14 @@
                         <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="cashSalePrice">Precio
                             Contado
                         </nz-form-label>
-                        <nz-input-number formControlName="cashSalePrice" id="cashSalePrice"
+                        <nz-input-number style="width: 120px;"  formControlName="cashSalePrice" id="cashSalePrice"
                             [nzFormatter]="formatterPeso" [nzMin]="0" [nzMax]="10000000"></nz-input-number>
 
                         <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="cashSalePercentage">
                             Porcentaje
                             Contado
                         </nz-form-label>
-                        <nz-input-number formControlName="cashSalePercentage" id="cashSalePercentage" [nzMin]="0"
+                        <nz-input-number style="width: 120px;" formControlName="cashSalePercentage" id="cashSalePercentage" [nzMin]="0"
                             [nzMax]="10000000" [nzStep]="1" [nzFormatter]="formatterPorcentaje"
                             (ngModelChange)="valuechange($event)"></nz-input-number>
                     </nz-form-item>
@@ -118,7 +118,7 @@
                         <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="cardSalePrice">Precio
                             Tarjeta
                         </nz-form-label>
-                        <nz-input-number formControlName="cardSalePrice" id="cardSalePrice"
+                        <nz-input-number style="width: 120px;" formControlName="cardSalePrice" id="cardSalePrice"
                             [nzFormatter]="formatterPeso" [nzMin]="0" [nzMax]="10000000" [nzStep]="1">
                         </nz-input-number>
 
@@ -126,7 +126,7 @@
                             Porcentaje
                             Tarjeta
                         </nz-form-label>
-                        <nz-input-number formControlName="cardSalePercentage" id="cardSalePercentage" [nzMin]="0"
+                        <nz-input-number style="width: 120px;"  formControlName="cardSalePercentage" id="cardSalePercentage" [nzMin]="0"
                             [nzMax]="10000000" [nzFormatter]="formatterPorcentaje"
                             (ngModelChange)="valuechange($event)"></nz-input-number>
                     </nz-form-item>
@@ -142,6 +142,6 @@
   [title]="'Confirmar Producto'"
   [header]="'¿Está seguro que desea guardar producto?'"
   [message]="'Esta acción no se puede revertir'"
-  (handleOk)="msjConfirmOk()"
+  (handleOk)="save()"
 >
 </app-popup-confirmation>

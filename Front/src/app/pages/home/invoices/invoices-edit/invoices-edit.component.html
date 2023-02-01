@@ -6,6 +6,7 @@
   [tagText]="'Comprobante'"
   [title]="'Refrigeraciones Dante'"
   [iconBack]="'rollback'"
+  [color]="'blue'"
   [iconUpdate]="'check'"
   (onCancelClick)="back()"
 >
@@ -19,11 +20,11 @@
       [nzActive]="true"
       [nzShowArrow]="true"
     >
-      <nz-content>
+      <nz-content> 
         <div nz-row nzJustify="center">
-          <div nz-col class="gutter-row" [nzSpan]="3" style="margin-right: 5px; margin-left: 15px;">
+          <div style=" margin-right: 25px">
             <nz-form-item>
-              <nz-form-label>Fecha</nz-form-label>
+              <nz-form-label >Fecha</nz-form-label>
               <nz-form-control>
                 <b>
                   {{ startDate ? (startDate | date : "YYYY-MM-dd") : "N/A" }}
@@ -31,7 +32,7 @@
               </nz-form-control>
             </nz-form-item>
           </div>
-          <div nz-col class="gutter-row" style="margin-right: 25px">
+          <div nz-col class="gutter-row" style="margin-right: 20px">
             <nz-form-item>
               <nz-form-label>Tipo de Factura</nz-form-label>
               <nz-form-control>
@@ -46,7 +47,7 @@
             </nz-form-item>
           </div>
 
-          <div nz-col class="gutter-row" [nzSpan]="9">
+          <div nz-col class="gutter-row" [nzSpan]="8">
             <nz-form-item>
               <nz-form-label>Forma de Pago</nz-form-label>
               <nz-form-control>
@@ -332,7 +333,7 @@
                 nz-button
                 nzSize="large"
                 style="background-color: #24ce41"
-                (click)="pop.showConfirmation()"
+                (click)="msjConfirmOk()"
               >
                 <i nz-icon nzType="save" nzTheme="outline"></i>Grabar
               </button>
@@ -360,6 +361,6 @@
   [title]="'Confirmar Guardado de comprobante'"
   [header]="'¿Está seguro que desea guardar el comprobante?'"
   [message]="'Esta acción no se puede revertir'"
-  (handleOk)="msjConfirmOk()"
+  (handleOk)="save()"
 >
 </app-popup-confirmation>
