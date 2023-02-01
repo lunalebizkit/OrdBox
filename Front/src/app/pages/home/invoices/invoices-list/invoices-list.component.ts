@@ -6,7 +6,6 @@ import { formatCurrency, formatDate } from '@angular/common';
 import { NzDrawerService } from 'ng-zorro-antd/drawer';
 import { InvoicesViewDrawerComponent } from '../invoices-view-drawer/invoices-view.drawer.component';
 import { Permission } from 'src/app/common/auth/models/permissions.enum';
-import { SpecificFilter } from 'src/app/common/components/model/request-param.model';
 
 @Component({
   selector: 'app-invoices-list',
