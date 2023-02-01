@@ -16,7 +16,7 @@
             <nz-form-control>
               <nz-input-group [nzSuffix]="clearQuery">
                 <input [ngModelOptions]="{ standalone: true }" type="int" placeholder="Ingrese Cuit" nz-input
-                  (keydown.enter)="search()" [(ngModel)]="specificFilter.filter.cuit" />
+                  (keydown.enter)="search()" [(ngModel)]="queryParams.filter" />
               </nz-input-group>
               <ng-template #clearQuery>
                 <i nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle"
@@ -52,10 +52,10 @@
       [nzLoading]="loading" [nzPaginationType]="'small'" nzShowPagination="false">
       <thead>
         <tr>
-          <th>Número</th>
-          <th>Fecha</th>
-          <th>Cuit</th>
-          <th>Nombre</th>
+          <th >Número</th>
+          <th >Fecha</th>
+          <th >Cuit</th>
+          <th >Nombre</th>
           <th [nzAlign]="'center'">Total</th>
           <th [nzAlign]="'center'">Acción</th>
         </tr>
@@ -69,7 +69,7 @@
           <td>{{this.formaterDate(data.dateTime)}}</td>
           <td>{{data.customerCuit}}</td>
           <td>{{data.customerName}}</td>
-          <td [nzAlign]="'center'">{{ this.currencyFormat( data.total)}}</td>
+          <td [nzAlign]="'center'" style="font-weight: bold;">{{ this.currencyFormat( data.total)}}</td>
           <td style="text-align: center">
             <a>
               <i nz-icon nzType="eye" nzTheme="outline" style="font-size: 16px" (click)="onDoubleClicked(data)"></i>
@@ -77,6 +77,6 @@
           </td>
         </tr>
       </tbody>
-    </nz-table>
-  </div>
+    </nz-table> 
+    </div>
 </nz-layout>

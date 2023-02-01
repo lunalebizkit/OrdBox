@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { formatCurrency } from '@angular/common';
+import { Component, Inject, LOCALE_ID, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { NzDrawerService } from 'ng-zorro-antd/drawer';
 import { Permission } from 'src/app/common/auth/models/permissions.enum';
@@ -64,7 +65,8 @@ export class ProductsListComponent implements OnInit {
    */
   constructor(
     private service: ProductService,
-    private drawerService: NzDrawerService
+    private drawerService: NzDrawerService,
+    @Inject(LOCALE_ID) public locale: string,
   ) {}
 
   selectedIndex!: number;
@@ -197,6 +199,7 @@ export class ProductsListComponent implements OnInit {
     >({
       nzContent: ProductsEditDrawerComponent,
       nzSize: 'large',
+      nzWidth: 1050, 
       nzContentParams: {
         filter: this.id > 0 ? this.id : 0,
       },
@@ -226,5 +229,8 @@ export class ProductsListComponent implements OnInit {
         this.id = 0;
       },
     });
+  }
+  currencyFormat(data: any):string  {    
+    return formatCurrency(data, this.locale, '$', 'ARS', '1.1-2')
   }
 }

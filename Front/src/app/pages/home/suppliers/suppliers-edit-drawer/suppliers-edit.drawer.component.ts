@@ -1,5 +1,5 @@
 import { ElementRef, Input, OnInit, ViewChild, Component } from "@angular/core";
-import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
+import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
 import { NzDrawerRef } from "ng-zorro-antd/drawer";
 import { NzMessageService } from "ng-zorro-antd/message";
 import { NzNotificationService } from "ng-zorro-antd/notification";
@@ -24,6 +24,7 @@ export class SuppliersEditDrawerComponent extends BaseComponent implements OnIni
 */
     @ViewChild('header') headerComponent!: HeaderOperationsButtonsComponent;
     @ViewChild('popup') popupComponent!: PopupConfirmationComponent;
+    @ViewChild('pop') popComponent!: PopupConfirmationComponent;
     /*
    ** Determina si esta en proceso de guardado
    */
@@ -69,10 +70,10 @@ export class SuppliersEditDrawerComponent extends BaseComponent implements OnIni
     ) {
         super(notificacionService, el, message);
         this.form = this.fb.group({
-            dni: ['', [Validators.required]],
+            dni: ['', [Validators.required, Validators.pattern, Validators.maxLength]],
             cuit: ['', [Validators.required]],
             name: ['', [Validators.required]],
-            address: ['', [Validators.required]],
+            address: ['', [Validators.required, Validators.maxLength]],
             observation: ['', [Validators.required]],
             phoneEntity: new FormArray([]),
             emailEntity: new FormArray([])
@@ -149,7 +150,7 @@ export class SuppliersEditDrawerComponent extends BaseComponent implements OnIni
             e.preventDefault();
         }   
         let emailForm = this.form.controls['emailEntity'] as FormArray;
-        emailForm.push(new FormControl(''));  
+        emailForm.push(new FormControl('',Validators.email));  
     };
 
     removeEmailField( e: MouseEvent, index: number): void {
@@ -165,9 +166,9 @@ export class SuppliersEditDrawerComponent extends BaseComponent implements OnIni
     msjConfirmOk(){
         try {
          if (this.isValidForm(this.form) ){
-           this.save();
+           this.popComponent.showConfirmation();
          } else{
-           this.showMessageError('Formulario vacío')
+           this.showMessageError
          }
          } catch (error) {
            console.log(error);

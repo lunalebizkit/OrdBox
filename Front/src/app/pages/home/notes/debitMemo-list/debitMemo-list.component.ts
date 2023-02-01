@@ -81,6 +81,7 @@ export class debitMemoListComponent implements OnInit {
       >({
         nzContent: DebitMemoViewDrawerComponent,
         nzSize: 'large',
+        nzWidth: 1050,
         nzContentParams: {
           filter: this.id > 0 ? this.id : 0,
         },

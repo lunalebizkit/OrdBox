@@ -54,6 +54,8 @@ export class CreditMemoViewDrawerComponent
   ivaTotal!: number;
   type: any;
   invoiceNumber!: number;
+  creditMemoNumber!:number
+  edit:boolean= false
 
  creditMemoDetail: CreditMemoDetails[]=[]
 
@@ -72,6 +74,9 @@ export class CreditMemoViewDrawerComponent
   ngOnInit(): void { 
     if (this.id != null || this.id != undefined || this.id != 0) {
       this.getCreditMemo(this.id); 
+      this.edit=true
+    }else{
+      this.edit=false
     }
   }
   getCreditMemo(id: number): void {
@@ -80,6 +85,7 @@ export class CreditMemoViewDrawerComponent
         next: (r) => {
           this.type = r.type
           this.invoiceNumber = r.invoiceNumber
+          this.creditMemoNumber = r.creditMemoNumber
             this.customerAddress = r.customerAddress,
             this.customerCuit = r.customerCuit,
             this.customerName = r.customerName,

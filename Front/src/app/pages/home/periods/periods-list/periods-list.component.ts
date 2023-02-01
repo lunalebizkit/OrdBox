@@ -27,7 +27,7 @@ export class PeriodsListComponent extends BaseComponent implements OnInit {
   @ViewChild('drawer') drawerComponent!: periodsDrawerComponent;
   @ViewChild('popup') popupComponent!: PopupConfirmationComponent;
   periodList: PeriodsModel[] = [];
-
+  period:any;
   permissions = Permission;
 
   queryData = {
@@ -49,6 +49,7 @@ export class PeriodsListComponent extends BaseComponent implements OnInit {
   isDeleteConfirmationVisible!: boolean;
   datos!: PeriodsModel;
 
+
   constructor(
     private service: PeriodsService,
     private drawerService: NzDrawerService,
@@ -63,6 +64,7 @@ export class PeriodsListComponent extends BaseComponent implements OnInit {
 
   ngOnInit() {
     this.getPeriod(this.queryData);
+    
   }
 
   getPeriod(params: any): void {
@@ -74,6 +76,7 @@ export class PeriodsListComponent extends BaseComponent implements OnInit {
         this.selectedIndex = 0;
         this.selectedPeriod = this.periodList[this.selectedIndex];
         document.getElementById(this.selectedIndex.toString())?.focus();
+
       },
       error: () => {
         this.loading = false;
@@ -87,7 +90,7 @@ export class PeriodsListComponent extends BaseComponent implements OnInit {
   }
 
   formaterDate(date: string | number | Date): string {
-    return formatDate(date, 'MM/dd/YYYY', this.locale);
+    return formatDate(date, 'yyyy/MM/dd', this.locale);
   }
 
   onDoubleClicked(datos: any) {
@@ -149,6 +152,7 @@ export class PeriodsListComponent extends BaseComponent implements OnInit {
     >({
       nzContent: periodsDrawerComponent,
       nzSize: 'large',
+      nzWidth: 1050,
       nzContentParams: {
         filter: this.id > 0 ? this.id : 0,
       },

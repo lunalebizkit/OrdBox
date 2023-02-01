@@ -56,7 +56,7 @@ export function debitMemoGridParser(value: any, iva: number) {
           productId: value.id,
           productName: value.description,
           productCode: value.code,
-          price: value.price,
+          price: value.cashSalePrice,
           quantity: 1,
          iva: iva
         }}   

@@ -31,6 +31,7 @@ import { NoteService } from '../notes.service';
 })
 export class CreditMemoComponent extends BaseComponent implements OnInit {
   @ViewChild('popup') popupComponent!: PopupConfirmationComponent;
+  @ViewChild('pop') popComponent!: PopupConfirmationComponent;
 
   cuit!: string;
   isLoading: boolean= false;
@@ -292,6 +293,7 @@ constructor(@Inject(LOCALE_ID) public locale: string,
       nzTitle: 'Cliente',
       nzContent: InvoiceCustomerSearchComponent,
       nzSize: 'large',
+      nzWidth:1050,
       nzClosable: false
     });
     drawerRefCustomer.afterClose.subscribe({
@@ -316,6 +318,7 @@ constructor(@Inject(LOCALE_ID) public locale: string,
         nzTitle: 'Productos',
         nzContent: InvoiceProductSearchComponent,
         nzSize: 'large',
+        nzWidth: 1050,
         nzContentParams: {
           filter: this.formProductSearch.controls['productSearchFilter'].value
         },
@@ -338,19 +341,19 @@ constructor(@Inject(LOCALE_ID) public locale: string,
                   newListElement.subTotal += data.cashSalePrice * newListElement.quantity;
                   /**cashSalePrice es el precio de Costo */
                   this.totalCalculate();
+                  this.changePrice(data.cardSalePrice)  
                   this.isLoading= false;
                   this.formProductSearch.controls['productSearchFilter'].setValue('');
                 }else {
 
                   /* Parseo dato a la grilla de Tabla */
               const model: CreditMemoDetailList = creditMemoGridParser(data, this.iva);
-             this.creditMemoListTest.push(model)
-                      
+             this.creditMemoListTest.push(model)   
              this.creditMemoList = this.creditMemoListTest;
              /* Parseo dato a Dto Factura Detalle */
              const modelDetail : CreditMemoDetails = creditMemoDetailParser(data, this.iva);
              this.creditMemoDetails.push(modelDetail);  
-                           
+                       
             this.totalCalculate();
             this.isLoading= false;
             this.formProductSearch.controls['productSearchFilter'].setValue('');
@@ -451,12 +454,29 @@ constructor(@Inject(LOCALE_ID) public locale: string,
 
     this.creditMemoList.filter(
       detail => detail.ownCode == this.editId
-      )[0].subTotal= quantity * product.price;
+      )[0].subTotal= quantity *  product.price;
 
     this.totalCalculate();
     this.creditMemoDetails.filter(
       detail => detail.productId == this.editId
       )[0].quantity= quantity;
+      
+  };
+  changePrice(price: number):void{
+    if (price == 0 || price == null){
+      price = 1;
+    }
+    let product= this.creditMemoList.filter(
+      detail => detail.productId == this.editId)[0]; 
+
+    this.creditMemoList.filter(
+      detail => detail.productId == this.editId
+      )[0].subTotal= product.quantity * price;
+
+    this.totalCalculate();
+    this.creditMemoDetails.filter(
+      detail => detail.productId == this.editId
+      )[0].price = price; 
       
   };
 
@@ -485,10 +505,11 @@ constructor(@Inject(LOCALE_ID) public locale: string,
       this.creditMemoList = this.creditMemoList.
        filter(element => element.ownCode != this.popupComponent.elementSelected);
      this.popupComponent.isConfirmationvisible = false; 
-     if (this.creditMemoList.length != 0 ){
-       this.save();
+     if (this.isValidForm(this.formCreditMemo) && this.isValidForm(this.formCustomerSearch) &&
+     this.creditMemoList.length != 0 && this.isValidForm(this.formProductSearch)){
+       this.popComponent.showConfirmation();
      } else{
-       this.showMessageError('No ha seleccionado producto')
+       this.showMessageError
      }
      } catch (error) {
        console.log(error);
@@ -504,11 +525,12 @@ constructor(@Inject(LOCALE_ID) public locale: string,
     }    
   }
 
-   direction(){
-    if(this.id == 0){
-      this.router.navigate(['/notes/creditList']);
-    }else{
+  direction(){
+    if(this.id != 0){
       this.router.navigate(['/home/invoices/invoices-sale']);
+      
+    }if(this.id == 0 || this.id == undefined || this.id == null){
+      this.router.navigate(['/notes/creditList']);
     }
    }
   

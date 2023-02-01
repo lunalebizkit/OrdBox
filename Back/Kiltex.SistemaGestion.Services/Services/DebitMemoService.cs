@@ -56,11 +56,6 @@ namespace Kiltex.SistemaGestion.Services.Services
             {
                 if (model.Id == 0)
                 {
-                    foreach (var detail in model.DebitMemoDetails)
-                    {
-                        var oldProduct = await _contextSql.Products.AsNoTracking().FirstAsync(p => p.Id == detail.ProductId).ConfigureAwait(false);
-                        detail.Price = oldProduct.CashSalePrice;
-                    }
                     debitMemoModel = _mapper.Map<DebitMemo>(model);
                     debitMemoModel.InvoiceId = debitMemoModel.InvoiceId == 0 ? null : debitMemoModel.InvoiceId;
                     await _contextSql.DebitMemos.AddAsync(debitMemoModel, ct).ConfigureAwait(false);

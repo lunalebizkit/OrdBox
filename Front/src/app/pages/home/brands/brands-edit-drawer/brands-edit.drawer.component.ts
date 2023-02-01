@@ -21,6 +21,7 @@ export class BrandsEditDrawerComponent extends BaseComponent implements OnInit {
 
   @ViewChild('header') headerComponent!: HeaderOperationsButtonsComponent;
   @ViewChild('popup') popupComponent!: PopupConfirmationComponent;
+  @ViewChild('pop') popComponent!: PopupConfirmationComponent;
 
   isLoading!: boolean;
   isSaving!: boolean;
@@ -94,9 +95,9 @@ export class BrandsEditDrawerComponent extends BaseComponent implements OnInit {
   msjConfirmOk(){
     try {
      if (this.isValidForm(this.form)){
-       this.save();
+       this.popComponent.showConfirmation();
      } else{
-       this.showMessageError('Formulario Vacío')
+       this.showMessageError
      }
      } catch (error) {
        console.log(error);

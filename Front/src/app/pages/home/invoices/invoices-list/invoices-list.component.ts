@@ -6,7 +6,6 @@ import { formatCurrency, formatDate } from '@angular/common';
 import { NzDrawerService } from 'ng-zorro-antd/drawer';
 import { InvoicesViewDrawerComponent } from '../invoices-view-drawer/invoices-view.drawer.component';
 import { Permission } from 'src/app/common/auth/models/permissions.enum';
-import { SpecificFilter } from 'src/app/common/components/model/request-param.model';
 
 @Component({
   selector: 'app-invoices-list',
@@ -203,6 +202,7 @@ export class InvoicesListComponent implements OnInit {
     >({
       nzContent: InvoicesViewDrawerComponent,
       nzSize: 'large',
+      nzWidth: 1050,
       nzContentParams: {
         filter: this.id > 0 ? this.id : 0,
       },
