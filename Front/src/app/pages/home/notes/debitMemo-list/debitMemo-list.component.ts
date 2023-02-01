@@ -27,6 +27,17 @@ export class debitMemoListComponent implements OnInit {
     page: 0,
     pageSize: 20
   };
+  specificFilter = {
+    filter: {
+      supplier: "",
+      category: "",
+      statusid: 0,
+      number: 0,
+      cuit: ""
+    },
+    page: 0,
+    pageSize: 20
+  }
   index!: number;
 
   constructor(
@@ -35,7 +46,7 @@ export class debitMemoListComponent implements OnInit {
     private drawerService: NzDrawerService
   ){}
     ngOnInit(): void {
-      this.getData(this.queryParams)
+      this.getData(this.specificFilter)
     }
     getData(params: any): void {
       this.loading = true;
@@ -58,8 +69,9 @@ export class debitMemoListComponent implements OnInit {
       return formatDate(date, 'YYYY-MM-dd', this.locale);
     }
     search(): void {
-      this.queryParams.page = 0;
-      this.getData(this.queryParams);
+      this.getData(this.specificFilter);
+      this.specificFilter.page = 0;
+      this.specificFilter.pageSize = 20;
     }
     openComponentDebitMemoView(): void {
       const drawerRefCustomer = this.drawerService.create<

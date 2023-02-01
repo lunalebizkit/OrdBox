@@ -6,6 +6,7 @@ import { formatCurrency, formatDate } from '@angular/common';
 import { NzDrawerService } from 'ng-zorro-antd/drawer';
 import { InvoicesViewDrawerComponent } from '../invoices-view-drawer/invoices-view.drawer.component';
 import { Permission } from 'src/app/common/auth/models/permissions.enum';
+import { SpecificFilter } from 'src/app/common/components/model/request-param.model';
 
 @Component({
   selector: 'app-invoices-list',
@@ -38,6 +39,17 @@ export class InvoicesListComponent implements OnInit {
     page: 0,
     pageSize: 20,
   };
+  specificFilter = {
+    filter: {
+      supplier: "",
+      category: "",
+      statusid: 0,
+      number: 0,
+      cuit: ""
+    },
+    page: 0,
+    pageSize: 20
+  }
 
   /*
    ** Constructor
@@ -46,7 +58,7 @@ export class InvoicesListComponent implements OnInit {
     private service: InvoiceService,
     @Inject(LOCALE_ID) public locale: string,
     private drawerService: NzDrawerService
-  ) {}
+  ) { }
 
   selectedIndex!: number;
   selectedInvoice: any;
@@ -55,14 +67,16 @@ export class InvoicesListComponent implements OnInit {
    ** Evento de inicio de angular
    */
   ngOnInit(): void {
-    this.getData(this.queryParams);
+
+    this.getData(this.specificFilter);
   }
   /*
    ** Evento al presionar buscar o presionar enter
    */
   search(): void {
-    this.queryParams.page = 0;
-    this.getData(this.queryParams);
+    this.getData(this.specificFilter);
+    this.specificFilter.page = 0;
+    this.specificFilter.pageSize = 20;
   }
   /*
    ** Evento de busqueda datos en el server
