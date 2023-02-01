@@ -63,7 +63,7 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
   queryData = {
     filter: '',
     page: 0,
-    pageSize: 10,
+    pageSize: 20,
   };
 
   totalItems = 0;
@@ -308,34 +308,45 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
         this.orderDetailList = [];
         this.id = 0;
         if (data != undefined && data != 0) {
-          this.serviceOrders.getById(data).subscribe({
-            next: (r: NewOrder) => {
-              let order =
-                this.allOrders[this.allOrders.findIndex((r) => r.id == data)];
-              if (order != undefined) {
-                let newDetalle: NewOrderDetail[] = [];
-                r.orderDetail.forEach((e: NewOrderDetail) => {
-                  newDetalle.push(orderDetailbyIdParser(e));
-                });
-                this.allOrders[this.allOrders.findIndex((r) => r.id == data)] =
-                  order;
-                this.allOrders[
-                  this.allOrders.findIndex((r) => r.id == data)
-                ].orderDetail = newDetalle;
-              } else {
-                let newDetalle: NewOrderDetail[] = [];
-                r.orderDetail.forEach((e: NewOrderDetail) => {
-                  newDetalle.push(orderDetailbyIdParser(e));
-                });
-                r.orderDetail = newDetalle;
-                this.allOrders.push(r);
-              }
-            },
-            error: () => {
-              this.id = 0;
-            },
-          });
+          this.getAllOrders();
         }
+        /**Comento estas Lineas para que actualice la grilla de listados de ordenes ya que, de la siguiente manera
+         * actualizaba la lista pero no el Estado (nombre de estado) 
+         * ALe
+         */
+
+        
+        //   this.serviceOrders.getById(data).subscribe({
+        //     next: (r: NewOrder) => {
+        //       let order =
+        //         this.allOrders[this.allOrders.findIndex((r) => r.id == data)];
+        //       if (order != undefined) {
+        //         let newDetalle: NewOrderDetail[] = [];
+        //         r.orderDetail.forEach((e: NewOrderDetail) => {
+        //           newDetalle.push(orderDetailbyIdParser(e));
+        //         });
+        //         this.allOrders[this.allOrders.findIndex((r) => r.id == data)] =
+        //           order;
+        //         this.allOrders[
+        //           this.allOrders.findIndex((r) => r.id == data)
+        //         ].orderDetail = newDetalle;
+        //       } else {
+        //         let newDetalle: NewOrderDetail[] = [];
+        //         r.orderDetail.forEach((e: NewOrderDetail) => {
+        //           newDetalle.push(orderDetailbyIdParser(e));
+        //         });
+        //         r.orderDetail = newDetalle;
+        //         this.allOrders.push(r);
+        //         this.allOrders.forEach(e =>{
+        //           this.getStatusName(e.statusId)
+        //         })
+        //       }
+        //     },
+        //     error: () => {
+        //       this.id = 0;
+        //     },
+        //   });
+        // }
       },
       error: () => {
         this.orderDetailList = [];
