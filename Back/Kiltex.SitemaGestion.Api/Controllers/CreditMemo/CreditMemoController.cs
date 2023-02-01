@@ -26,7 +26,7 @@ namespace Kiltex.SistemaGestion.Api.Controllers.CreditMemoController
         [HttpPost]
         [AllowAccess(Permission = new EPermission[] { EPermission.GetMemo })]
         [Route("[action]")]
-        public async Task<IActionResult> List([FromBody] RequestPaginatedData<string> filter)
+        public async Task<IActionResult> List([FromBody] RequestPaginatedData<SpecificFilter> filter)
         {
             return Return(await _service.List(filter).ConfigureAwait(false));
         }

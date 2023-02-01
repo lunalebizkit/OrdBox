@@ -23,11 +23,13 @@ namespace Kiltex.SistemaGestion.Services.Common
         public long? Status { get; set; }
         public List<long> Supplier { get; set; }
     }
-    public class SupplierOrderFilter
+    public class SpecificFilter
     {
         public string? Supplier { get; set; }
         public string? Category { get; set; }
         public int? StatusId { get; set; }
+        public long? Number { get; set; }
+        public string? Cuit { get; set; }
     }
   
 }

@@ -26,7 +26,9 @@
           <nz-tag [nzColor]="'blue'">{{ this.creditMemoType(type) }}</nz-tag>
         </nz-page-header-tags>
       </nz-descriptions-item>
-      <nz-descriptions-item nzTitle="* Número de Factura" >
+      <nz-descriptions-item *ngIf="edit == true" nzTitle="* Número de Factura" >
+        {{ this.invoiceNumber }}</nz-descriptions-item>
+        <nz-descriptions-item *ngIf=" edit == false" nzTitle="* Número de Nota de Crédito" >
         {{ this.invoiceNumber }}</nz-descriptions-item>
      <!--  </nz-descriptions> 
       <nz-descriptions nzSize="small" [nzColumn]="2">   -->

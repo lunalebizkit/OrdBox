@@ -624,8 +624,6 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
    */
   saveAndSend(): void {
     if(this.emailList.length>0){
-      
-    
     if (
       this.isValidForm(this.form) &&
       this.isValidForm(this.formSupplierSearch)
@@ -671,11 +669,7 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
   /*
    ** Seleccionar email/s para enviar
    */
-  // selectEmails(){
-  //   let emails = ["carlabgo95@gmail.com", "carlabgo95@hotmail.com"];
-  //   this.emailsEntityArray.setValue(emails)
-  //   console.log(this.emailsArray)
-  // }
+
   selectEmails(data:string,) {
 
     let isEmail=this.emailList.find((email:string)=> email == data);
@@ -685,7 +679,6 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
     }else{
       this.emailList.push(data);
     }
-    console.log(this.emailList);
     
   }
 }

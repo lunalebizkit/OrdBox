@@ -91,7 +91,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                 throw;
             }
         }
-        public async Task<OperationResponse<DtoPagination<DtoRequestDebitMemo>>> List(RequestPaginatedData<string> request)
+        public async Task<OperationResponse<DtoPagination<DtoRequestDebitMemo>>> List(RequestPaginatedData<SpecificFilter> request)
         {
             try
             {
@@ -99,7 +99,8 @@ namespace Kiltex.SistemaGestion.Services.Services
                                     .DebitMemos
                                     .AsNoTracking()
                                     .Include(p => p.DebitMemoDetails)
-                                    .Where(p => p.InvoiceNumber.ToString().ToLower().Contains(request.Filter ?? "") || p.CustomerCuit.ToLower().Contains(request.Filter ?? ""));
+                                    .Where(p => (!string.IsNullOrEmpty(request.Filter.Cuit) ? p.CustomerCuit.ToLower().Contains(request.Filter.Cuit) : true)
+                                     && ((request.Filter.Number.HasValue && request.Filter.Number != 0) ? p.Id == request.Filter.Number : true));
 
                 var count = await query.CountAsync().ConfigureAwait(false);
 

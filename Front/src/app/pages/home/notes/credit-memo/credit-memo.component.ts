@@ -341,19 +341,19 @@ constructor(@Inject(LOCALE_ID) public locale: string,
                   newListElement.subTotal += data.cashSalePrice * newListElement.quantity;
                   /**cashSalePrice es el precio de Costo */
                   this.totalCalculate();
+                  this.changePrice(data.cardSalePrice)  
                   this.isLoading= false;
                   this.formProductSearch.controls['productSearchFilter'].setValue('');
                 }else {
 
                   /* Parseo dato a la grilla de Tabla */
               const model: CreditMemoDetailList = creditMemoGridParser(data, this.iva);
-             this.creditMemoListTest.push(model)
-                      
+             this.creditMemoListTest.push(model)   
              this.creditMemoList = this.creditMemoListTest;
              /* Parseo dato a Dto Factura Detalle */
              const modelDetail : CreditMemoDetails = creditMemoDetailParser(data, this.iva);
              this.creditMemoDetails.push(modelDetail);  
-                           
+                       
             this.totalCalculate();
             this.isLoading= false;
             this.formProductSearch.controls['productSearchFilter'].setValue('');

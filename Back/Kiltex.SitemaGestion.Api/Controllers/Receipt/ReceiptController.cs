@@ -36,7 +36,7 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Receipt
         [HttpPost]
         [Route("[action]")]
         [AllowAccess(Permission = new EPermission[] { EPermission.GetReceipt })]
-        public async Task<IActionResult> List([FromBody] RequestPaginatedData<string> filter)
+        public async Task<IActionResult> List([FromBody] RequestPaginatedData<SpecificFilter> filter)
         {
             return Return(await _service.ListReceipt(filter).ConfigureAwait(false));
         }
