@@ -536,8 +536,8 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
       this.popupComponent.isConfirmationvisible = false; 
       if (
         this.isValidForm(this.form) && this.isValidForm(this.formSupplierSearch) && 
-        this.isValidForm(this.formProductSearch) 
-      ){
+        this.orderDetail.length != 0) 
+      {
         this.popComponent.showConfirmation() 
       } else{
         this.showMessageError

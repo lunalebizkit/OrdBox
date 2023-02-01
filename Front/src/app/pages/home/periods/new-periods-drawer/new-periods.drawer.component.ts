@@ -27,7 +27,7 @@ export class periodsDrawerComponent  extends BaseComponent implements OnInit {
 
   @ViewChild('header') headerComponent!: HeaderOperationsButtonsComponent;
   @ViewChild('popup') popupComponent!: PopupConfirmationComponent;
-  @ViewChild('popup') popComponent!: PopupConfirmationComponent;
+  @ViewChild('pop') popComponent!: PopupConfirmationComponent;
   
   periodList:PeriodsModel[] = [];
   period: any ;
@@ -42,6 +42,7 @@ export class periodsDrawerComponent  extends BaseComponent implements OnInit {
   form!: FormGroup;
   id!: number;
   editPeriod :boolean= false
+  startDate = Date.now();
   
   constructor(
     private service: PeriodsService,
@@ -96,7 +97,12 @@ getData(params: any): void {
 }
 sumarDias(fecha:any, dias: any){
   fecha.setDate(fecha.getDate ()+ dias);
-  this.period = fecha
+  if(this.periodList.length == 0){
+    this.period = new Date(this.startDate)
+  }else{
+    this.period = fecha
+  }
+  
   return fecha;
 } 
 
@@ -134,7 +140,7 @@ close(id: number | void): void {
 msjConfirmOk(){
   try {
    if (this.isValidForm(this.form)){
-     this.popComponent.showConfirmation();
+    this.popComponent.showConfirmation()
    } else{
      this.showMessageError
    }

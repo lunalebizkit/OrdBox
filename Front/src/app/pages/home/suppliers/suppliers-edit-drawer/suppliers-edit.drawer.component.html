@@ -28,7 +28,7 @@
                         <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="dni" >Dni
                         </nz-form-label>
                         <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="Ingrese un DNI válido">
-                            <input formControlName="dni" nz-input id="dni"  pattern="^[1-9]\d*$" />
+                            <input formControlName="dni" nz-input id="dni" maxlength="10" pattern="^[1-9]\d*$" />
                         </nz-form-control>
                     </nz-form-item>
 
