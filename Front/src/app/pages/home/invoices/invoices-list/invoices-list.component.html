@@ -13,19 +13,35 @@
     <nz-collapse>
       <nz-collapse-panel nzSize="small" nzHeader="Filtros">
         <form nz-form>
-          <div nz-row [nzGutter]="[8, 1]">
-            <div nz-col nzSpan="24">
+          <div nz-row nzJustify="space-around">
+            <div nz-col nzSpan="8">
               <nz-form-item>
-                <nz-form-label>Búsqueda</nz-form-label>
+                <nz-form-label>CUIT</nz-form-label>
                 <nz-form-control>
                   <nz-input-group [nzSuffix]="clearQuery">
                     <input [ngModelOptions]="{ standalone: true }" type="text" placeholder="Ingrese CUIT/CUIL o DNI" nz-input
-                      (keydown.enter)="search()" [(ngModel)]="queryParams.filter" />
+                      (keydown.enter)="search()" [(ngModel)]="specificFilter.filter.cuit" />
                   </nz-input-group>
 
                   <ng-template #clearQuery>
                     <i nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle"
-                      *ngIf="queryParams.filter" (click)="queryParams.filter = ''; search()"></i>
+                      *ngIf="specificFilter.filter.cuit" (click)="specificFilter.filter.cuit = ''; search()"></i>
+                  </ng-template>
+                </nz-form-control>
+              </nz-form-item>
+              </div>
+              <div nz-col nzSpan="8">
+              <nz-form-item>
+                <nz-form-label>Numero de comprobante</nz-form-label>
+                <nz-form-control>
+                  <nz-input-group [nzSuffix]="clearQuery">
+                    <input [ngModelOptions]="{ standalone: true }" type="number" placeholder="Ingrese numero de factura" nz-input
+                      (keydown.enter)="search()" [(ngModel)]="specificFilter.filter.number" />
+                  </nz-input-group>
+
+                  <ng-template #clearQuery>
+                    <i nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle"
+                      *ngIf="specificFilter.filter.number" (click)="specificFilter.filter.number = 0; search()"></i>
                   </ng-template>
                 </nz-form-control>
               </nz-form-item>
