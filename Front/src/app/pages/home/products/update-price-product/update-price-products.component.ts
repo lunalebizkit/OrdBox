@@ -44,11 +44,11 @@ export class UpdatePriceProductsComponent extends BaseComponent implements OnIni
   /*
   ** Lista de opciones a actualizar
   */
-  updateList= [ {value:1 , label:'Se incrementa el Precio Costo en un valor de'},
-  {value:2 , label:'Se incrementa el precio en un porcentaje de'}, 
-  {value:3 , label:'Se incrementa el Precio Efectivo en un porcentaje de'}, 
-  {value:4 , label:'Se incrementa el Precio Tarjeta en un porcentaje de '}, 
-  {value:5 , label:'Se incrementa el Precio Lista en un porcentaje de'}];
+  updateList= [ {value:1 , label:'Se incrementará el Precio Costo en un valor de'},
+  {value:2 , label:'Se incrementaraá el Precio Costo en un porcentaje de'}, 
+  {value:3 , label:'Se Modificará el Porcentaje Efectivo por'}, 
+  {value:4 , label:'Se Modificará el Porcentaje Tarjeta por '}, 
+  {value:5 , label:'Se Modificará el Porcentaje Lista por'}];
 
   /*
   ** Lista de Productos
