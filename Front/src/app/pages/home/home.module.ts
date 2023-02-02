@@ -11,6 +11,8 @@ import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { AgGridModule } from 'ag-grid-angular';
 import { InfiniteScrollModule } from "ngx-infinite-scroll";
 import { UsuariosModule } from './users/users.module';
+import { NzPageHeaderModule } from 'ng-zorro-antd/page-header';
+
 
 @NgModule({
   declarations: [
@@ -27,7 +29,8 @@ import { UsuariosModule } from './users/users.module';
     NzDividerModule,
     AgGridModule,
     InfiniteScrollModule,
-    UsuariosModule
+    UsuariosModule,
+    NzPageHeaderModule
   ],
   exports: [HomeComponent]
 })
