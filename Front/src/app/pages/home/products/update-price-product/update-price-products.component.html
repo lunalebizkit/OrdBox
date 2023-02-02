@@ -142,7 +142,7 @@
               </button>
             </div>
           </div>
-          <div style="color: red;font-size: 12px;">* Si no se aplica un filtro la actualización de precios se realizará sobre todos los productos</div>
+          <div style="color: red;font-size: 13px;">* Si no se aplica un filtro la actualización de precios se realizará sobre todos los productos</div>
         </form>
       </nz-collapse-panel>
     </nz-collapse>
@@ -163,6 +163,7 @@
             style="width: 400px"
           >
           </nz-select>
+          
         </div>
         <div nz-col nzSpan="8">
           <nz-form-label  nzRequired nzFor="value"
@@ -177,7 +178,22 @@
           ></nz-input-number>
         </div>
       </div>
-    </form>
+</form>
+    <div *ngIf="optionSelected == 1" style="color: red;font-size: 13px; padding-bottom: 4px; padding-left: 10px;">
+          * El valor que se elija será incrementado en el precio de costo y este se recalculara.
+      </div>
+      <div *ngIf="optionSelected == 2"  style="color: red;font-size: 13px;padding-bottom: 4px; padding-left: 10px;">
+        * El porcentaje que se elija será incrementado en el precio de costo y este se recalculara.
+    </div>
+    <div  *ngIf="optionSelected == 3" style="color: red;font-size: 13px;padding-bottom: 4px; padding-left: 10px;">
+      * El porcentaje elegido reemplazará al porcentaje efectivo y se recalculara todos los precios de efectivo.
+  </div>
+  <div *ngIf="optionSelected == 4" style="color: red;font-size: 13px;padding-bottom: 4px; padding-left: 10px;">
+    * El porcentaje elegido reemplazará al porcentaje tarjeta y se recalculara todos los precios de Tarjeta.
+</div>
+<div *ngIf="optionSelected == 5" style="color: red;font-size: 13px;padding-bottom: 4px; padding-left: 10px;">
+  * El porcentaje elegido reemplazará al porcentaje lista y se recalculara todos los precios de lista. 
+</div> 
     <!-- Tabla -->
 
     <div class="table" (scroll)="onScroll($event)">
