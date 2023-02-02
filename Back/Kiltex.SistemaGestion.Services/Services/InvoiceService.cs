@@ -5,6 +5,7 @@ using Kiltex.SistemaGestion.Domain.Enum;
 using Kiltex.SistemaGestion.Domain.Model;
 using Kiltex.SistemaGestion.SDK.Error;
 using Kiltex.SistemaGestion.Services.Common;
+using Kiltex.SistemaGestion.Services.ImpresoraFiscal;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,6 +15,7 @@ namespace Kiltex.SistemaGestion.Services.Services
     public class InvoiceService : BaseService
     {
 
+        
         private readonly IPrinter _printer;
         public InvoiceService(ErrorManager logger, DBContext context, IMapper maper, IPrinter printer) :
             base(logger, context, maper)
@@ -125,12 +127,36 @@ namespace Kiltex.SistemaGestion.Services.Services
                         productDetail.UpdateStock(-detail.Quantity);
                         _contextSql.Products.Update(productDetail);
                     }
+                    var numberInvoice = await PrintInvoice(invoiceModel).ConfigureAwait(false);
 
+                    if(numberInvoice == "ErrorCliente")
+                    {
+                        _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
+                        return Error<IdResponse<long>>(new OperationExceptions("000", "Se produjo un Error al cargar los datos del Cliente, intentelo nuevamente"));
+                    }
+
+
+                    if (numberInvoice == "ErrorAbrir")
+                    {
+                        _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
+                        return Error<IdResponse<long>>(new OperationExceptions("000", "Se produjo un Error al Abrir el Documento, intentelo nuevamente"));
+                    }
+
+
+                    if (numberInvoice == "ErrorImprimir")
+                    {
+                        _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
+                        return Error<IdResponse<long>>(new OperationExceptions("000", "Se produjo un Error al imprimir los item, intente nuevamente"));
+                    }
+
+                    if (numberInvoice == "ErrorCerrar")
+                    {
+                        _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
+                        return Error<IdResponse<long>>(new OperationExceptions("000", "Se produjo un Error al cerrar el documento, intente con un cierre Z"));
+                    }
+                    invoiceModel.InvoiceNumber = long.Parse(numberInvoice);
                     await _contextSql.Invoices.AddAsync(invoiceModel, ct).ConfigureAwait(false);
                 }
-
-                invoiceModel.InvoiceNumber = long.Parse(await PrintInvoice(model));
-
                 await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
         
                
@@ -145,21 +171,48 @@ namespace Kiltex.SistemaGestion.Services.Services
             }
         }
 
-        public async Task<string> PrintInvoice(DtoRequestInvoice model)
+        public async Task<string> PrintInvoice(Invoice model, CancellationToken ct = default)
         {
-            await _printer.CargarDatosCliente();
 
-            await _printer.OpenInvoice((ETypeReceipt)model.Type, model.CustomerCuit);
+            //MANEJO DE ERRORES
+            var cargarCliente = await _printer.CargarDatosCliente(model.CustomerName, model.CustomerCuit,model.CustomerAddress, (ETypeReceipt)model.Type).ConfigureAwait(false);
 
-            //TODO por cada item mandar a imprimir
-            foreach(var itewm in model.InvoiceDetails)
+            if(cargarCliente == null)
             {
-                await _printer.PrintItem(Ititemem.produname, );
+                await _printer.CerrarJornadaFiscal();
+                return "ErrorCliente";
             }
 
-           
+            var openDoc = await _printer.OpenInvoice((ETypeReceipt)model.Type, model.CustomerName,eTypeDocumentClient.Cuil, model.CustomerAddress).ConfigureAwait(false);
 
-            return await _printer.CloseFactura();
+            if(openDoc == null)
+            {
+                await _printer.CloseFactura(1, model.CustomerName).ConfigureAwait(false);
+                return "ErrorAbrir";
+            }
+            //TODO por cada item mandar a imprimir
+            foreach(var item in model.InvoiceDetails)
+            {
+                var imprimir = await _printer.PrintItem(item.ProductName,item.Quantity,item.Price,item.Iva,item.ProductCode.ToString()).ConfigureAwait(false);
+                
+                if(imprimir == null)
+                {
+                    await _printer.CloseFactura(1, model.CustomerName).ConfigureAwait(false);
+                    return "ErrorImprimir";
+                }
+            }
+
+            var closeFactura = await _printer.CloseFactura(1, model.CustomerName).ConfigureAwait(false);
+            
+            if(closeFactura == null)
+            {
+                await _printer.CerrarJornadaFiscal();
+                return "ErrorCerrar";
+            }
+
+
+            return closeFactura;
+
         }
     }
 }

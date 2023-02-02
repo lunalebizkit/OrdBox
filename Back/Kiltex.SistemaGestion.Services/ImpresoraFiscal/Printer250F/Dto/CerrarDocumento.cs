@@ -1,12 +1,6 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
-namespace Kiltex.SistemaGestion.Domain.Model.ImpresoraFiscal.Printer250F.Dto
+namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.Printer250F.Dto
 {
 
     public class CerrarDocumento
@@ -16,10 +10,10 @@ namespace Kiltex.SistemaGestion.Domain.Model.ImpresoraFiscal.Printer250F.Dto
     }
     public class CerrarDocumentoBody
     {
-        [JsonPropertyName("Copias")]
+        [JsonProperty("Copias")]
         public int Copias { get; set; }
 
-        [JsonPropertyName("DireccionEmail")]
+        [JsonProperty("DireccionEmail")]
         public string? DireccionEmail { get; set; }
 
     }

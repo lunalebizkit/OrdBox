@@ -1,13 +1,17 @@
-﻿using Kiltex.SistemaGestion.Domain.Model.ImpresoraFiscal.Printer250F.Dto;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Kiltex.SistemaGestion.Services.ImpresoraFiscal.Printer250F.Dto;
+using Newtonsoft.Json;
 
 namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse
 {
-    public class DtoResponseReporteZ : BaseEstado
+
+    public class DtoResponseReporteZ
+    {
+        [JsonProperty("CerrarJornadaFiscal")]
+        public DtoResponseReporteZBody Body { get; set; }
+    }
+
+
+    public class DtoResponseReporteZBody : Estado
     {
 
     }

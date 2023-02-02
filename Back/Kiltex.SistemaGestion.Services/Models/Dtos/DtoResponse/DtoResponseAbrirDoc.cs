@@ -1,9 +1,15 @@
-﻿using Kiltex.SistemaGestion.Domain.Model.ImpresoraFiscal.Printer250F.Dto;
+﻿using Kiltex.SistemaGestion.Services.ImpresoraFiscal.Printer250F.Dto;
 using Newtonsoft.Json;
 
 namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse
 {
-    public  class DtoResponseAbrirDoc : BaseEstado
+
+    public class DtoResponseAbrirDoc
+    {
+        [JsonProperty("AbrirDocumento")]
+        public DtoResponseAbrirDocBody Body { get; set; }
+    }
+    public  class DtoResponseAbrirDocBody :Estado
     {
         [JsonProperty("NumeroComprobante")]
         public string? NumeroComprobante { get; set; }
