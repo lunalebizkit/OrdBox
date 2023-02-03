@@ -43,6 +43,7 @@ import { IvaType } from '../model/iva-type.Enum';
 export class ReceiptEditComponent extends BaseComponent implements OnInit {
   @ViewChild('popup') popupComponent!: PopupConfirmationComponent;
   @ViewChild('header') headerComponent!: HeaderOperationsButtonsComponent;
+  @ViewChild('pop') popComponent!: PopupConfirmationComponent;
 
   @ViewChild('drawerTemplate', { static: false }) drawerTemplate?: TemplateRef<{
     $implicit: { filter: string };
@@ -234,6 +235,7 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
       nzTitle: 'Proveedor',
       nzContent: ReceiptSupplierSearchComponent,
       nzSize: 'large',
+      nzWidth: 1050,
       nzClosable: false,
     });
     drawerRefSupplier.afterClose.subscribe({
@@ -371,8 +373,9 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
         (element) => element.productId != this.popupComponent.elementSelected
       );
       this.popupComponent.isConfirmationvisible = false;
-      if (this.receiptDetailsGrid.length != 0) {
-        this.save();
+      if (this.isValidForm(this.formReceipt)&&(this.receiptDetailsGrid.length != 0)
+      && this.isValidForm(this.formSupplierSearch) && this.isValidForm(this.formProductSearch)){
+        this.popComponent.showConfirmation() 
       } else {
         this.showMessageError('No ha seleccionado producto');
       }
@@ -463,6 +466,7 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
         nzTitle: 'Productos',
         nzContent: InvoiceProductSearchComponent,
         nzSize: 'large',
+        nzWidth:1050,
         nzContentParams: {
           filter: this.formProductSearch.controls['productSearchFilter'].value,
         },

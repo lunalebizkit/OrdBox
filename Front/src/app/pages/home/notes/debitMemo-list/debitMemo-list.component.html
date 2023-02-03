@@ -7,41 +7,55 @@
       </button>
     </nz-page-header-extra>
   </nz-page-header>
-  <nz-collapse >
+  <nz-collapse>
     <nz-collapse-panel nzSize="small" nzHeader="Filtros">
-      <div nz-row [nzGutter]="[8, 1]" >
-        <div nz-col nzSpan="24">
+      <div nz-row nzJustify="space-around">
+        <div nz-col nzSpan="8">
           <nz-form-item>
-            <nz-form-label>Búsqueda</nz-form-label>
+            <nz-form-label>CUIT</nz-form-label>
             <nz-form-control>
               <nz-input-group [nzSuffix]="clearQuery">
                 <input [ngModelOptions]="{ standalone: true }" type="int" placeholder="Ingrese Cuit" nz-input
                   (keydown.enter)="search()" [(ngModel)]="queryParams.filter" />
               </nz-input-group>
               <ng-template #clearQuery>
-                <i nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle" *ngIf="queryParams.filter"
-                  (click)="queryParams.filter = ''; search()"></i>
+                <i nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle"
+                  *ngIf="SpecificFilter.filter.cuit" (click)="SpecificFilter.filter.cuit = ''; search()"></i>
               </ng-template>
             </nz-form-control>
           </nz-form-item>
         </div>
-      </div>
+        <div nz-col nzSpan="8">
+          <nz-form-item>
+            <nz-form-label>Nro de comprobante</nz-form-label>
+            <nz-form-control>
+              <nz-input-group [nzSuffix]="clearQuery">
+                <input [ngModelOptions]="{ standalone: true }" type="int" placeholder="Ingrese número de comprobante"
+                  nz-input (keydown.enter)="search()" [(ngModel)]="SpecificFilter.filter.number" />
+              </nz-input-group>
+              <ng-template #clearQuery>
+                <i nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle"
+                  *ngIf="SpecificFilter.filter.number" (click)="SpecificFilter.filter.number = 0; search()"></i>
+              </ng-template>
+            </nz-form-control>
+          </nz-form-item>
+          </div>
+        </div>
+
     </nz-collapse-panel>
   </nz-collapse>
 
- <nz-divider
-  style="margin: auto"
-></nz-divider> 
-        <!-- tabla detalle -->
+  <nz-divider style="margin: auto"></nz-divider>
+  <!-- tabla detalle -->
   <div class="table" (scroll)="onScroll($event)">
     <nz-table class="tabla" nzShowSizeChanger nzBordered="false" [nzData]="debitMemoList" [nzSize]="'small'"
       [nzLoading]="loading" [nzPaginationType]="'small'" nzShowPagination="false">
       <thead>
         <tr>
-          <th>Número</th>
-          <th>Fecha</th>
-          <th>Cuit</th>
-          <th>Nombre</th>
+          <th >Número</th>
+          <th >Fecha</th>
+          <th >Cuit</th>
+          <th >Nombre</th>
           <th [nzAlign]="'center'">Total</th>
           <th [nzAlign]="'center'">Acción</th>
         </tr>
@@ -55,7 +69,7 @@
           <td>{{this.formaterDate(data.dateTime)}}</td>
           <td>{{data.customerCuit}}</td>
           <td>{{data.customerName}}</td>
-          <td [nzAlign]="'center'">{{ this.currencyFormat( data.total)}}</td>
+          <td [nzAlign]="'center'" style="font-weight: bold;">{{ this.currencyFormat( data.total)}}</td>
           <td style="text-align: center">
             <a>
               <i nz-icon nzType="eye" nzTheme="outline" style="font-size: 16px" (click)="onDoubleClicked(data)"></i>
@@ -63,6 +77,6 @@
           </td>
         </tr>
       </tbody>
-    </nz-table>
-  </div>
+    </nz-table> 
+    </div>
 </nz-layout>

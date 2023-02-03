@@ -50,7 +50,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                 return await AddOrUpdate(model, ct).ConfigureAwait(false);
         }
 
-        public async Task<OperationResponse<DtoPagination<DtoRequestCreditMemo>>> List(RequestPaginatedData<string> request)
+        public async Task<OperationResponse<DtoPagination<DtoRequestCreditMemo>>> List(RequestPaginatedData<SpecificFilter> request)
         {
             try
             {
@@ -59,7 +59,8 @@ namespace Kiltex.SistemaGestion.Services.Services
                                     .OrderByDescending(p => p.DateTime)
                                     .AsNoTracking()
                                     .Include(p => p.CreditMemoDetail)
-                                    .Where(p => p.CustomerCuit.ToLower().Contains(request.Filter ?? ""));
+                                    .Where(p => (!string.IsNullOrEmpty(request.Filter.Cuit) ? p.CustomerCuit.ToLower().Contains(request.Filter.Cuit) : true)
+                                     && ((request.Filter.Number.HasValue && request.Filter.Number != 0) ? p.Id == request.Filter.Number : true));
 
                 var count = await query.CountAsync().ConfigureAwait(false);
 
@@ -95,12 +96,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             {
                 if (model.Id == 0)
                 {
-                    foreach (var detail in model.CreditMemoDetail)
-                    {
-                        var oldProduct = await _contextSql.Products.AsNoTracking().FirstAsync(p => p.Id == detail.ProductId).ConfigureAwait(false);
-
-                        detail.Price = oldProduct.CashSalePrice;
-                    }
+        
                     creditModel = _mapper.Map<CreditMemo>(model);
                     creditModel.InvoiceId = creditModel.InvoiceId == 0 ? null : creditModel.InvoiceId;
                     await _contextSql.CreditMemo.AddAsync(creditModel, ct).ConfigureAwait(false);

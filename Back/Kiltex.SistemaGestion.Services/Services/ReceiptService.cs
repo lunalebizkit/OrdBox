@@ -69,7 +69,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                 throw;
             }
         }
-        public async Task<OperationResponse<DtoPagination<DtoRequestReceipt>>> ListReceipt(RequestPaginatedData<string> request)
+        public async Task<OperationResponse<DtoPagination<DtoRequestReceipt>>> ListReceipt(RequestPaginatedData<SpecificFilter> request)
         {
 
             try
@@ -78,7 +78,8 @@ namespace Kiltex.SistemaGestion.Services.Services
                                     .Receipts
                                     .AsNoTracking()
                                     .Include(x => x.ReceiptDetails)
-                                    .Where(p => ((p.SupplierCuit.ToLower().Contains(request.Filter ?? ""))));
+                                     .Where(p => (!string.IsNullOrEmpty(request.Filter.Cuit) ? p.SupplierCuit.ToLower().Contains(request.Filter.Cuit) : true)
+                                     && ((request.Filter.Number.HasValue && request.Filter.Number != 0) ? p.ReceiptNumber == request.Filter.Number : true));
 
                 var count = await query.CountAsync().ConfigureAwait(false);
 

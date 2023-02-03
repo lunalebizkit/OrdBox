@@ -27,6 +27,17 @@ export class debitMemoListComponent implements OnInit {
     page: 0,
     pageSize: 20
   };
+  SpecificFilter = {
+    filter: {
+     /*  supplier: "",
+      category: "",
+      statusid: 0, */
+      number: 0,
+      cuit: ""
+    },
+    page: 0,
+    pageSize: 20
+  }
   index!: number;
 
   constructor(
@@ -35,7 +46,7 @@ export class debitMemoListComponent implements OnInit {
     private drawerService: NzDrawerService
   ){}
     ngOnInit(): void {
-      this.getData(this.queryParams)
+      this.getData(this.SpecificFilter)
     }
     getData(params: any): void {
       this.loading = true;
@@ -58,8 +69,9 @@ export class debitMemoListComponent implements OnInit {
       return formatDate(date, 'YYYY-MM-dd', this.locale);
     }
     search(): void {
-      this.queryParams.page = 0;
-      this.getData(this.queryParams);
+      this.getData(this.SpecificFilter);
+      this.SpecificFilter.page = 0;
+      this.SpecificFilter.pageSize = 20;
     }
     openComponentDebitMemoView(): void {
       const drawerRefCustomer = this.drawerService.create<
@@ -69,6 +81,7 @@ export class debitMemoListComponent implements OnInit {
       >({
         nzContent: DebitMemoViewDrawerComponent,
         nzSize: 'large',
+        nzWidth: 1050,
         nzContentParams: {
           filter: this.id > 0 ? this.id : 0,
         },
@@ -128,15 +141,15 @@ export class debitMemoListComponent implements OnInit {
     );     
     if (
       ScrollPosition <= 5 &&
-      this.totalItems / this.queryParams.page > this.queryParams.page
+      this.totalItems / this. SpecificFilter .page > this.SpecificFilter.page
     ) {
-      let page = this.queryParams.page;
-      this.queryParams.page = this.queryParams.page + 1;
+      let page = this.SpecificFilter.page;
+      this.SpecificFilter.page = this.SpecificFilter.page + 1;
       if (
         this.totalItems === undefined ||
-        this.queryParams.page * this.queryParams.pageSize <= this.totalItems
+        this.SpecificFilter.page * this.SpecificFilter.pageSize <= this.totalItems
       ) {
-        this.service.getDebitMemo(this.queryParams).subscribe({
+        this.service.getDebitMemo(this.SpecificFilter).subscribe({
           next: (r) => {
             r.data.map((debit: DebitMemoModel) =>
               this.debitMemoList.push(debit)
@@ -149,7 +162,7 @@ export class debitMemoListComponent implements OnInit {
           },
         });
       } else {
-        this.queryParams.page = page;
+        this.SpecificFilter.page = page;
       }
     }
   }

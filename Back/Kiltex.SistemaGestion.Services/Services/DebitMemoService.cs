@@ -56,11 +56,6 @@ namespace Kiltex.SistemaGestion.Services.Services
             {
                 if (model.Id == 0)
                 {
-                    foreach (var detail in model.DebitMemoDetails)
-                    {
-                        var oldProduct = await _contextSql.Products.AsNoTracking().FirstAsync(p => p.Id == detail.ProductId).ConfigureAwait(false);
-                        detail.Price = oldProduct.CashSalePrice;
-                    }
                     debitMemoModel = _mapper.Map<DebitMemo>(model);
                     debitMemoModel.InvoiceId = debitMemoModel.InvoiceId == 0 ? null : debitMemoModel.InvoiceId;
                     await _contextSql.DebitMemos.AddAsync(debitMemoModel, ct).ConfigureAwait(false);
@@ -96,7 +91,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                 throw;
             }
         }
-        public async Task<OperationResponse<DtoPagination<DtoRequestDebitMemo>>> List(RequestPaginatedData<string> request)
+        public async Task<OperationResponse<DtoPagination<DtoRequestDebitMemo>>> List(RequestPaginatedData<SpecificFilter> request)
         {
             try
             {
@@ -104,7 +99,8 @@ namespace Kiltex.SistemaGestion.Services.Services
                                     .DebitMemos
                                     .AsNoTracking()
                                     .Include(p => p.DebitMemoDetails)
-                                    .Where(p => p.CustomerCuit.ToLower().Contains(request.Filter ?? ""));
+                                    .Where(p => (!string.IsNullOrEmpty(request.Filter.Cuit) ? p.CustomerCuit.ToLower().Contains(request.Filter.Cuit) : true)
+                                     && ((request.Filter.Number.HasValue && request.Filter.Number != 0) ? p.Id == request.Filter.Number : true));
 
                 var count = await query.CountAsync().ConfigureAwait(false);
 

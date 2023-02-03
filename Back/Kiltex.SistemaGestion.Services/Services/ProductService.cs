@@ -231,6 +231,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                             break;
                         case (int)ePriceProduct.CardSalePercentage:
                         case (int)ePriceProduct.CashSalePercentage:
+                        case (int)ePriceProduct.SalePercentage:
                             item.UpdatePrecentage(model.Value, model.IdPrice);
                             break;
                     }                    

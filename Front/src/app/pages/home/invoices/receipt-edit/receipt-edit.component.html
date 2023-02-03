@@ -223,6 +223,7 @@
         nzShowPagination="false"
         style="overflow: auto"
         [nzLoading]="loading"
+        nzSize= "small" 
       >
         <thead>
           <tr class="small-text">
@@ -261,8 +262,8 @@
                 (ngModelChange)="changeQuantity($event)"
               ></nz-input-number>
             </td>
-            <td [nzAlign]="'right'">{{ data.price }}</td>
-            <td [nzAlign]="'right'">{{ data.subTotal }}</td>
+            <td [nzAlign]="'right'">{{  this.currencyFormat(data.price) }}</td>
+            <td [nzAlign]="'right'">{{  this.currencyFormat(data.subTotal) }}</td>
             <td>
               <div
                class="editable-cell"
@@ -358,7 +359,7 @@
                 nz-button
                 nzSize="large"
                 style="background-color: #24ce41"
-                (click)="pop.showConfirmation()"
+                (click)="msjConfirmOk()"
               >
                 <i nz-icon nzType="save" nzTheme="outline"></i>Grabar
               </button>
@@ -386,7 +387,7 @@
   [title]="'Confirmar Guardado de comprobante'"
   [header]="'¿Está seguro que desea guardar el comprobante?'"
   [message]="'Esta acción no se puede revertir'"
-  (handleOk)="msjConfirmOk()"
+  (handleOk)="save()"
 >
   >
 </app-popup-confirmation>

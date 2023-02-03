@@ -19,11 +19,11 @@ import { ReceiptIvaReportDetailsModel, ReceiptIvaReportModel } from '../model/re
  
   export class ReceiptIvaReportComponent extends BaseComponent implements OnInit {
     periodListCompra: ReceiptIvaReportDetailsModel[]=[] ;  
-    periodIvaList!: ReceiptIvaReportModel ;   
+    periodIvaList: ReceiptIvaReportModel [] =[];   
     startDate: any;
     endDate: any;
-    newInitDate: any;
-    newEndDate: any;
+    newInitDate!: any;
+    newEndDate!: any;
     formReport: FormGroup;
     loading!: boolean;
     PeriodTotal!:number;
@@ -65,6 +65,7 @@ import { ReceiptIvaReportDetailsModel, ReceiptIvaReportModel } from '../model/re
  
     initPeriod= this.route.snapshot.queryParams['from']
     endPeriod= this.route.snapshot.queryParams['to']
+    period: any;
 
     constructor(
       private service: InvoiceIvaReportService,
@@ -97,7 +98,7 @@ import { ReceiptIvaReportDetailsModel, ReceiptIvaReportModel } from '../model/re
     getIvaCompra(initPeriod:Date,endPeriod:Date): void {      
     this.service.getListIvaCompra(initPeriod,endPeriod).subscribe({
       next: (r) => {    
-        this.periodIvaList = r;   
+        this.periodIvaList = r.data;   
         this.periodListCompra=r.dtoResponseIvaReceipts;     
         this.PeriodTotal= r.periodTotal;
         this.loading = false;  
@@ -209,10 +210,13 @@ import { ReceiptIvaReportDetailsModel, ReceiptIvaReportModel } from '../model/re
     }
     changeDate( fecha: any):void {
       this.newInitDate = this.formaterDate(fecha)
-      
+
+      console.log(this.newInitDate);
     }
     changeEndDate( fecha: any):void {
-      this.newEndDate = this.formaterDate(fecha);        
+      this.newEndDate = this.formaterDate(fecha)  
+      console.log(fecha); 
+            
     }
 
   getNewIvaCompra(){

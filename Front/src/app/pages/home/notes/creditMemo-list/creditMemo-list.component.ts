@@ -27,6 +27,17 @@ export class creditMemoListComponent implements OnInit {
     page: 0,
     pageSize: 20
   };
+  SpecificFilter = {
+    filter: {
+      supplier: "",
+      category: "",
+      statusid: 0,
+      number: 0,
+      cuit: ""
+    },
+    page: 0,
+    pageSize: 20
+  }
   index!: number;
   constructor(
     private service: NoteService,
@@ -36,7 +47,7 @@ export class creditMemoListComponent implements OnInit {
 
 
     ngOnInit(): void {
-        this.getData(this.queryParams)
+        this.getData(this.SpecificFilter)
     }
 
     getData(params: any): void {
@@ -61,8 +72,9 @@ export class creditMemoListComponent implements OnInit {
       return formatDate(date, 'YYYY-MM-dd', this.locale);
     }
     search(): void {
-      this.queryParams.page = 0;
-      this.getData(this.queryParams);
+      this.getData(this.SpecificFilter);
+      this.SpecificFilter.page = 0;
+      this.SpecificFilter.pageSize = 20;
     }
     openComponentCreditMemoView(): void {
       const drawerRefCustomer = this.drawerService.create<
@@ -72,6 +84,7 @@ export class creditMemoListComponent implements OnInit {
       >({
         nzContent: CreditMemoViewDrawerComponent,
         nzSize: 'large',
+        nzWidth: 1050,
         nzContentParams: {
           filter: this.id > 0 ? this.id : 0,
         },
@@ -131,15 +144,15 @@ export class creditMemoListComponent implements OnInit {
     );
     if (
       ScrollPosition <= 5 &&
-      this.totalItems / this.queryParams.page > this.queryParams.page
+      this.totalItems / this.SpecificFilter.page > this.SpecificFilter.page
     ) {
-      let page = this.queryParams.page;
-      this.queryParams.page = this.queryParams.page + 1;
+      let page = this.SpecificFilter.page;
+      this.SpecificFilter.page = this.SpecificFilter.page + 1;
       if (
         this.totalItems === undefined ||
-        this.queryParams.page * this.queryParams.pageSize <= this.totalItems
+        this.SpecificFilter.page * this.SpecificFilter.pageSize <= this.totalItems
       ) {
-        this.service.getCreditMemo(this.queryParams).subscribe({
+        this.service.getCreditMemo(this.SpecificFilter).subscribe({
           next: (r) => {
             r.data.map((credit: CreditMemoModel) =>
               this.creditMemoList.push(credit)
@@ -152,7 +165,7 @@ export class creditMemoListComponent implements OnInit {
           },
         });
       } else {
-        this.queryParams.page = page;
+        this.SpecificFilter.page = page;
       }
     }
   }

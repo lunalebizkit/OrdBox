@@ -38,7 +38,7 @@ namespace Kiltex.SistemaGestion.Api.Controllers.DebitMemo
         [HttpPost]
         [Route("[action]")]
         [AllowAccess(Permission = new EPermission[] { EPermission.GetMemo })]
-        public async Task<IActionResult> List([FromBody] RequestPaginatedData<string> filter)
+        public async Task<IActionResult> List([FromBody] RequestPaginatedData<SpecificFilter> filter)
         {
             return Return(await _service.List(filter).ConfigureAwait(false));
         }

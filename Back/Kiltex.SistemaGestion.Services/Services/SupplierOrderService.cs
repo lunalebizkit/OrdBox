@@ -12,9 +12,12 @@ namespace Kiltex.SistemaGestion.Services.Services
 {
     public class SupplierOrderService : BaseService
     {
-        public SupplierOrderService(ErrorManager logger, DBContext context, IMapper maper) :
+        private readonly EmailService _emailService;
+        public SupplierOrderService(ErrorManager logger, DBContext context, IMapper maper, EmailService emailService) :
             base(logger, context, maper)
-        { }
+        {
+            this._emailService = emailService;
+        }
         public async Task<OperationResponse<DtoResponseSupplierOrderById>> GetById(long id)
         {
             try
@@ -44,7 +47,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                 throw;
             }
         }
-        public async Task<OperationResponse<IdResponse<long>>> AddOrUpdate(DtoRequestSupplierOrder model, CancellationToken ct = default)
+        public async Task<OperationResponse<IdResponse<long>>> AddOrUpdateEmail(DtoRequestSupplierOrder model, CancellationToken ct = default)
         {
             var transaction = _contextSql.Database.BeginTransaction();
             var newOrder = _mapper.Map<SupplierOrder>(model);
@@ -54,8 +57,9 @@ namespace Kiltex.SistemaGestion.Services.Services
                 if (newOrder.Id == 0)
                 {
                     newOrder.StatusId = (int)ESupplierOrderStatuses.Pendiente;
+                  
                     await _contextSql.SupplierOrders.AddAsync(newOrder, ct).ConfigureAwait(false);
-
+                        
                 }
                 else
                 {
@@ -90,7 +94,16 @@ namespace Kiltex.SistemaGestion.Services.Services
                 }
                 
                 await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
+
                 transaction.Commit();
+
+                if (model.SupplierEmail.Count>0){
+                    await SendOrderEmail(new DtoSendOrderEmail { 
+                        Id = newOrder.Id,
+                        Emails = model.SupplierEmail
+                    });
+                }
+                return Ok(new IdResponse<long>(newOrder.Id));
             }
             catch (Exception ex)
             {
@@ -98,9 +111,113 @@ namespace Kiltex.SistemaGestion.Services.Services
                 throw;
             }
            
-            return Ok(new IdResponse<long>(newOrder.Id));
+            
         }
-  
+        public async Task<OperationResponse<IdResponse<long>>> AddOrUpdate(DtoRequestSupplierOrder model, CancellationToken ct = default)
+        {
+            var transaction = _contextSql.Database.BeginTransaction();
+            var newOrder = _mapper.Map<SupplierOrder>(model);
+            var productDetail = new Product();
+            try
+            {
+                if (newOrder.Id == 0)
+                {
+                    newOrder.StatusId = (int)ESupplierOrderStatuses.Pendiente;
+
+                    await _contextSql.SupplierOrders.AddAsync(newOrder, ct).ConfigureAwait(false);
+
+
+                }
+                else
+                {
+                    var oldOrder = await _contextSql
+                        .SupplierOrders
+                        .AsNoTracking()
+                        .Include(p => p.Supplier)
+                        .Include(p => p.SupplierOrderDetail)
+                        .FirstAsync(p => p.Id == newOrder.Id, ct)
+                        .ConfigureAwait(false);
+
+                    _contextSql.SupplierOrders.Update(newOrder);
+
+                    if (newOrder.StatusId == (int)ESupplierOrderStatuses.Aceptado)
+                    {
+                        foreach (var detail in newOrder.SupplierOrderDetail)
+                        {
+                            var oldProduct = await _contextSql.
+                                                    Products
+                                                    .AsNoTracking()
+                                                    .FirstOrDefaultAsync(p => p.Id == detail.ProductId, ct)
+                                                    .ConfigureAwait(false);
+
+                            productDetail = _mapper.Map<Product>(oldProduct);
+                            productDetail.UpdateStock(detail.RecievedQuantity);
+                            _contextSql.Products.Update(productDetail);
+                        }
+
+                    }
+
+
+                }
+
+                await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
+
+                transaction.Commit();
+                return Ok(new IdResponse<long>(newOrder.Id));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_010_ERROR_EXCEPTION), ex);
+                throw;
+            }
+
+
+        }
+
+        public async Task<OperationResponse<bool>> SendOrderEmail(DtoSendOrderEmail model)
+        {
+            try
+            {
+                var order = await _contextSql
+                                    .SupplierOrders
+                                    .Include(p => p.Supplier)
+                                    .Include(p => p.SupplierOrderDetail)
+                                    .ThenInclude(p => p.Product)
+                                    .AsNoTracking()
+                                    .FirstOrDefaultAsync(p => p.Id == model.Id)
+                                    .ConfigureAwait(false);
+                if (order == null)
+                {
+                    _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
+                    return Error<bool>(new OperationExceptions("000", $"Orden no encontrada ID :{model.Id}"));
+                }
+                if (order.StatusId == (int)ESupplierOrderStatuses.Pendiente)
+                {
+                    var result = _mapper.Map<DtoResponseSupplierOrderById>(order);
+                    List<DtoResponseOrderByIdDetail> orderDetail = new List<DtoResponseOrderByIdDetail>(result.OrderDetail);
+                   
+                    var email = await _emailService.SendOrder(model.Emails, order.Supplier.Name, order.Id.ToString(), order.DateTime.ToString(), order.IsPaid, orderDetail);
+
+                    if (email.Success)
+                    {
+                        return new OperationResponse<bool>(true);
+
+                    }
+                    else
+                    {
+                        return new OperationResponse<bool>(false);
+                    }
+
+                }
+                return new OperationResponse<bool>(false);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
+                throw;
+            }
+        }
+
         public async Task<OperationResponse<DtoPagination<DtoResponseSupplierOrder>>> List(RequestPaginatedData<ProductFilter> request)
         {
             try
@@ -124,7 +241,8 @@ namespace Kiltex.SistemaGestion.Services.Services
 
                 var count = await query.CountAsync().ConfigureAwait(false);
 
-                var list = await query.OrderBy(p => p.Id)
+                var list = await query.OrderByDescending(p => p.StatusId == (int)ESupplierOrderStatuses.Pendiente)
+                                      .ThenBy(p => p.DateTime)
                                       .Skip(request.Page * request.PageSize)
                                       .Take(request.PageSize)
                                       .ToListAsync()

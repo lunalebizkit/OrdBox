@@ -25,7 +25,37 @@
     <nz-collapse>
       <nz-collapse-panel nzSize="small" nzHeader="Filtros" [nzActive]="true">
         <form nz-form [formGroup]="formSearch">
-          <div nz-row nzJustify="space-between">
+          <div nz-row nzJustify="space-around">
+          <div  nzSpan="8" class="mb-2">
+            <nz-form-item>
+              <nz-form-label nzFor="supplier">Proveedor</nz-form-label>
+              <nz-form-control>
+                <nz-select
+                  id="supplier"
+                  style="width: 770px"
+                  nzPlaceHolder="Seleccione Proveedor"
+                  nzAllowClear
+                  nzShowSearch
+                  formControlName="supplier"
+                  (ngModelChange)="supplierSelectedChange($event)"
+                  [nzOptions]="allSuppliers"
+                >
+                  <ng-template #clearQuery>
+                    <i
+                      nz-icon
+                      class="ant-input-clear-icon"
+                      nzTheme="fill"
+                      nzType="close-circle"
+                      *ngIf="formSearch.get('supplier')?.value"
+                      (click)="formSearch.get('supplier')?.setValue([])"
+                    ></i>
+                  </ng-template>
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+          <div nz-row nzJustify="space-around">
             <div nz-col nzSpan="5">
               <nz-form-item>
                 <nz-form-label>Estado</nz-form-label>
@@ -54,37 +84,10 @@
                 </nz-form-control>
               </nz-form-item>
             </div>
-            <div nz-col nzSpan="6" class="mb-2">
-              <nz-form-item>
-                <nz-form-label nzFor="supplier">Proveedor</nz-form-label>
-                <nz-form-control>
-                  <nz-select
-                    id="supplier"
-                    nzPlaceHolder="Seleccione Proveedor"
-                    nzAllowClear
-                    nzShowSearch
-                    formControlName="supplier"
-                    (ngModelChange)="supplierSelectedChange($event)"
-                    [nzOptions]="allSuppliers"
-                  >
-                    <ng-template #clearQuery>
-                      <i
-                        nz-icon
-                        class="ant-input-clear-icon"
-                        nzTheme="fill"
-                        nzType="close-circle"
-                        *ngIf="formSearch.get('supplier')?.value"
-                        (click)="formSearch.get('supplier')?.setValue([])"
-                      ></i>
-                    </ng-template>
-                  </nz-select>
-                </nz-form-control>
-              </nz-form-item>
-            </div>
-            <div nz-col nzSpan="5">
+            <div nz-col nzSpan="8">
               <nz-form-item>
                 <nz-form-label nzFor="category">Categoría </nz-form-label>
-                <nz-form-control [nzSm]="14" [nzXs]="24">
+                <nz-form-control [nzSm]="16" [nzXs]="24">
                   <nz-spin [nzSpinning]="isLoadingCategory">
                     <nz-select
                       id="category"
@@ -109,8 +112,6 @@
                 </nz-form-control>
               </nz-form-item>
             </div>
-          </div>
-          <div nz-row nzJustify="end">
             <div>
               <button nz-button nzType="primary" (click)="search()">
                 <i nz-icon nzType="search"></i>

@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Inject, LOCALE_ID, OnInit, ViewChild } from '@angular/core';
 
 import { ProductsModel } from '../model/product.model';
 import { ProductService } from '../product.service';
@@ -13,6 +13,7 @@ import { BrandsService } from '../../brands/brands.services';
 import { EntityService } from '../../customers/customer.service';
 import { HeaderOperationsButtonsComponent } from 'src/app/common/components/headers/buttons.oparations.header.component';
 import { PopupConfirmationComponent } from 'src/app/common/components/popup-confirmation/popup-confirmation.component';
+import { formatCurrency } from '@angular/common';
 
 @Component({
   selector: 'app-products-list',
@@ -43,11 +44,11 @@ export class UpdatePriceProductsComponent extends BaseComponent implements OnIni
   /*
   ** Lista de opciones a actualizar
   */
-  updateList= [ {value:1 , label:'Precio Costo'},
-  {value:2 , label:'Porcentaje'}, 
-  {value:3 , label:'Porcentaje Efectivo'}, 
-  {value:4 , label:'Porcentaje Tarjeta'}, 
-  {value:5 , label:'Porcentaje Lista'}];
+  updateList= [ {value:1 , label:'Se incrementará el Precio Costo en un valor de'},
+  {value:2 , label:'Se incrementaraá el Precio Costo en un porcentaje de'}, 
+  {value:3 , label:'Se Modificará el Porcentaje Efectivo por'}, 
+  {value:4 , label:'Se Modificará el Porcentaje Tarjeta por '}, 
+  {value:5 , label:'Se Modificará el Porcentaje Lista por'}];
 
   /*
   ** Lista de Productos
@@ -107,7 +108,8 @@ export class UpdatePriceProductsComponent extends BaseComponent implements OnIni
     message: NzMessageService,
     private route: ActivatedRoute,
     private fb: FormBuilder,    
-    private router: Router,)
+    private router: Router,
+    @Inject(LOCALE_ID) public locale: string)
      {
     super(notificacionService, el, message);
     this.form = this.fb.group({
@@ -276,7 +278,7 @@ supplierSelectedChange(id: any): void {
    this.queryParams.filter.supplier=this.formSearch.controls['supplier'].value;
  
 }
-formatterPesoOPorcentaje =(value: number):string => (this.optionSelected == 1) ? `$ ${value}` : `${value} %`;
+formatterPesoOPorcentaje =(value: number):string => (this.optionSelected == 1) ? formatCurrency(value, this.locale, '$', 'ARS', '1.1-2') : `${value} %`;
 
 onClick(datos:any, index:number): void {
   this.selectedIndex = index 
@@ -329,4 +331,8 @@ onScroll(event:any): void {
     }
   }
   };
+
+  currencyFormat(data: any):string  {    
+    return formatCurrency(data, this.locale, '$', 'ARS', '1.1-2')
+  }
 }

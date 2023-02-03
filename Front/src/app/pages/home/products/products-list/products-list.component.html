@@ -67,14 +67,14 @@
           <th nzEllipsis nzWidth="275px">Producto</th>
           <th nzEllipsis nzWidth="75px">Categoría</th>
           <th nzEllipsis nzWidth="70px">Marca</th>
-          <th nzEllipsis nzWidth="45px">Cantidad</th>
-          <th nzEllipsis nzWidth="65px">Precio Costo</th>
-          <th nzEllipsis nzWidth="65px">Precio Lista</th>
-          <th nzEllipsis nzWidth="65px">Precio Contado</th>
-          <th nzEllipsis nzWidth="65px">Precio Tarjeta</th>
+          <th nzEllipsis nzWidth="50px">Cantidad</th>
+          <th nzEllipsis nzWidth="70px">P.Costo</th>
+          <th nzEllipsis nzWidth="70px">P.Lista</th>
+          <th nzEllipsis nzWidth="70px">P.Contado</th>
+          <th nzEllipsis nzWidth="70px">P.Tarjeta</th>
           <th nzEllipsis nzWidth="45px">Código</th>
         </tr>
-      </thead>
+      </thead> 
       <tbody>
         <tr
           id="{{ i }}"
@@ -95,16 +95,16 @@
           <td nzEllipsis style="text-align: right"
           [style.color]="product.quantity >= 0 ? '' : 'red' ">{{ product.quantity }}</td>
           <td style="color: blue; text-align: right; font-weight: bold">
-            ${{ product.purchasePrice }} 
+            {{ this.currencyFormat(product.purchasePrice) }} 
           </td>
           <td style="color: green; text-align: right; font-weight: bold">
-            ${{ product.salePrice }}
+            {{ this.currencyFormat(product.salePrice) }}
           </td>
           <td style="color: rgb(194, 44, 44); text-align: right; font-weight: bold">
-          ${{ product.cashSalePrice }}
+          {{ this.currencyFormat(product.cashSalePrice) }}
           </td>
           <td style="text-align: right; font-weight: bold">
-            ${{ product.cardSalePrice }}
+          {{ this.currencyFormat(product.cardSalePrice) }}
           </td>
           <td nzEllipsis style="text-align: right">{{ product.code }}</td>
         </tr>

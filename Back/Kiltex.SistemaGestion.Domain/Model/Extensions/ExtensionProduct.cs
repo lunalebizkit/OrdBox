@@ -34,7 +34,11 @@ namespace Kiltex.SistemaGestion.Domain.Model
                 case (int)ePriceProduct.CashSalePercentage:
                     this.CashSalePercentage = value;
                     this.CashSalePrice = this.PurchasePrice * (1 + (this.CashSalePercentage / 100.00m));
-                    break ;
+                    break;
+                case (int)ePriceProduct.SalePercentage:
+                    this.SalePercentage = (int)value;
+                    this.SalePrice = this.PurchasePrice * (1 + (this.SalePercentage / 100.00m));
+                    break;
 
             }
           

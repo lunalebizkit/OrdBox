@@ -1,4 +1,5 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { formatCurrency } from '@angular/common';
+import { Component, ElementRef, Inject, Input, LOCALE_ID, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NzDrawerRef } from 'ng-zorro-antd/drawer';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -24,6 +25,7 @@ export class ProductsEditDrawerComponent extends BaseComponent implements OnInit
 
     @ViewChild('header') headerComponent!: HeaderOperationsButtonsComponent;
     @ViewChild('popup') popupComponent!: PopupConfirmationComponent;
+    @ViewChild('pop') popComponent!: PopupConfirmationComponent;
     /*
    ** Determina si esta en proceso de guardado
    */
@@ -75,7 +77,8 @@ export class ProductsEditDrawerComponent extends BaseComponent implements OnInit
       el: ElementRef,
       message: NzMessageService,
       private fb: FormBuilder,
-      private drawerRef: NzDrawerRef<string>
+      private drawerRef: NzDrawerRef<string>,
+      @Inject(LOCALE_ID) public locale: string,
     ) {
       super(notificacionService, el, message);
       this.form = this.fb.group({
@@ -242,7 +245,8 @@ export class ProductsEditDrawerComponent extends BaseComponent implements OnInit
         }
       })
     }
-    formatterPeso = (value: number): string => `$ ${value}`;
+    formatterPeso = (value: number): string => formatCurrency(value, this.locale, '$', 'ARS', '1.1-2');
+    
     formatterPorcentaje = (value: number): string => `${value} %`;
     
     valuechange(newValue: any) {    
@@ -262,7 +266,7 @@ export class ProductsEditDrawerComponent extends BaseComponent implements OnInit
     msjConfirmOk(){
       try {
        if (this.isValidForm(this.form)){
-         this.save();
+         this.popComponent.showConfirmation();
        } else{
          this.showMessageError('Formulario vacio') 
        }
@@ -270,5 +274,8 @@ export class ProductsEditDrawerComponent extends BaseComponent implements OnInit
          console.log(error);
          
        }
+    }
+    currencyFormat(data: any):string  {    
+      return formatCurrency(data, this.locale, '$', 'ARS', '1.1-2')
     }
   }

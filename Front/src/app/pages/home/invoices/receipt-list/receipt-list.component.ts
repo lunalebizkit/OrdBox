@@ -30,6 +30,17 @@ export class ReceiptListComponent implements OnInit {
     page: 0,
     pageSize: 10,
   };
+  specificFilter = {
+    filter: {
+      supplier: "",
+      category: "",
+      statusid: 0,
+      number: 0,
+      cuit: ""
+    },
+    page: 0,
+    pageSize: 20
+  }
 
   receiptList: receiptModel[] = [];
 
@@ -44,7 +55,7 @@ export class ReceiptListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.getData(this.queryParams); 
+    this.getData(this.specificFilter); 
   }
 
   /*
@@ -57,8 +68,9 @@ export class ReceiptListComponent implements OnInit {
    ** Evento al presionar buscar o presionar enter
    */
   search(): void {
-    this.queryParams.page = 0;
-    this.getData(this.queryParams);
+    this.getData(this.specificFilter);
+    this.specificFilter.page = 0;
+    this.specificFilter.pageSize = 20;
   }
 
   /*
@@ -114,6 +126,7 @@ export class ReceiptListComponent implements OnInit {
     >({
       nzContent: ReceiptViewDrawerComponent,
       nzSize: 'large',
+      nzWidth: 1050,
       nzContentParams: {
         filter: this.id > 0 ? this.id : 0,
       },

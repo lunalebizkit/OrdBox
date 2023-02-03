@@ -24,6 +24,7 @@ export class CategoryEditDrawerComponent extends BaseComponent implements OnInit
   */
   @ViewChild('header') headerComponent!: HeaderOperationsButtonsComponent;
   @ViewChild('popup') popupComponent!: PopupConfirmationComponent;
+  @ViewChild('pop') popComponent!: PopupConfirmationComponent;
 
     /*
    ** Determina si esta en proceso de guardado
@@ -105,9 +106,9 @@ export class CategoryEditDrawerComponent extends BaseComponent implements OnInit
     msjConfirmOk(){
       try {
        if (this.isValidForm(this.form)){
-         this.save();
+        this.popComponent.showConfirmation();
        } else{
-         this.showMessageError('Formulario Vacío')
+         this.showMessageError
        }
        } catch (error) {
          console.log(error);
