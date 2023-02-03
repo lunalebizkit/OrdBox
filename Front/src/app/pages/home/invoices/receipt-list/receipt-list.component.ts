@@ -170,15 +170,15 @@ export class ReceiptListComponent implements OnInit {
     );
     if (
       ScrollPosition <= 5 &&
-      this.totalItems / this.queryParams.page > this.queryParams.page
+      this.totalItems / this.specificFilter.page > this.specificFilter.page
     ) {
-      let page = this.queryParams.page;
-      this.queryParams.page = this.queryParams.page + 1;
+      let page = this.specificFilter.page;
+      this.specificFilter .page = this.specificFilter.page + 1;
       if (
         this.totalItems === undefined ||
-        this.queryParams.page * this.queryParams.pageSize <= this.totalItems
+        this.specificFilter.page * this.specificFilter.pageSize <= this.totalItems
       ) {
-        this.service.getReceipt(this.queryParams).subscribe({
+        this.service.getReceipt(this.specificFilter).subscribe({
           next: (r) => {
             r.data.map((data: receiptModel) =>
               this.receiptList.push(data)
@@ -191,7 +191,7 @@ export class ReceiptListComponent implements OnInit {
           },
         });
       } else {
-        this.queryParams.page = page;
+        this.specificFilter.page = page;
       }
     }
   }

@@ -168,15 +168,15 @@ export class InvoicesListComponent implements OnInit {
     );
     if (
       ScrollPosition <= 5 &&
-      this.totalItems / this.queryParams.page > this.queryParams.page
+      this.totalItems / this.specificFilter.page > this.specificFilter.page
     ) {
       let page = this.queryParams.page;
-      this.queryParams.page = this.queryParams.page + 1;
+      this.specificFilter.page = this.specificFilter.page + 1;
       if (
         this.totalItems === undefined ||
-        this.queryParams.page * this.queryParams.pageSize <= this.totalItems
+        this.specificFilter.page * this.specificFilter.pageSize <= this.totalItems
       ) {
-        this.service.getInvoices(this.queryParams).subscribe({
+        this.service.getInvoices(this.specificFilter).subscribe({
           next: (r) => {
             r.data.map((invoice: InvoiceModel) =>
               this.invoicesList.push(invoice)
@@ -189,7 +189,7 @@ export class InvoicesListComponent implements OnInit {
           },
         });
       } else {
-        this.queryParams.page = page;
+        this.specificFilter.page = page;
       }
     }
   }
