@@ -71,6 +71,7 @@
       nz-button
       nzType="primary"
       [nzLoading]="showSpinner"
+      [disabled]="disabled"
       (click)="onSendEmailClick?.emit($event)"
     >
       <i nz-icon [nzType]="iconSend"></i>{{ btnSendEmail }}

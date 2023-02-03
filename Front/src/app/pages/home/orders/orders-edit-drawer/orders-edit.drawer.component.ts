@@ -90,6 +90,7 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
 
   paymentSelected: any;
   supplierName!: string;
+  supplierEmail!: string;
   statusId!: number;
   allStatus = StatusType;
   status: number = 0;
@@ -107,6 +108,7 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
    */
   viewOrder: boolean = true;
   editOrder!: boolean;
+  disableMail!: boolean;
 
   /*
    ** Deshabilitar
@@ -237,11 +239,12 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
           this.dateTime = r.dateTime;
           this.form.controls['statusId'].setValue(r.statusId);
           this.form.controls['isPaid'].setValue(r.isPaid);
-          r.supplierEmail.forEach((e: any) => {
-            this.emailsArray.push(
-              new FormControl(`${e}`, [Validators.required])
-            );
-          });
+            r.supplierEmail.forEach((e: any) => {
+              this.emailsArray.push(
+                new FormControl(`${e}`, [Validators.required])
+              );
+            });
+          debugger
           /*Bindeo detalles*/
           r.orderDetail.forEach((orderDetail: OrderDetailGrid) => {
             /**Parseo viejo Producto a Grid */
@@ -253,10 +256,13 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
           if (r.statusId == 1) {
             this.editOrder = false;
             this.disabled = false;
+            this.disableMail = true;
           } else {
             this.editOrder = true;
             this.disabled = true;
+            this.disableMail = false;
           }
+          
           this.totalCalculate();
           this.loading = false;
         },
