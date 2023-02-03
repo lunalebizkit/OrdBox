@@ -1,5 +1,8 @@
 <nz-page-header>
-  <nz-avatar nz-page-header-avatar nzSrc="../../../assets/img/logoSideBar.png" alt="logo"></nz-avatar>
+  <nz-page-header-extra style="margin-left: -15%; margin-top: 1rem;">
+    <img nz-image width="150px" nzSrc="../../../assets/img/ordbox.png" alt="ordbox" 
+    />
+  </nz-page-header-extra>
 
   <nz-page-header-extra>
     <ul nz-menu nzMode="horizontal">
@@ -51,17 +54,17 @@
       </li>
 
       <li nz-submenu nzPlacement="bottomRight" nzTitle="Comprobantes" nzIcon="file-excel">
-        <ul>      
-            <ul>
-              <li nz-menu-item nzMatchRouter style="padding-left: 5%;">
-                <span nz-icon [nzType]="'file-excel'" [nzTheme]="'twotone'" [nzTwotoneColor]="'#52c41a'"> </span>
-                <a routerLink="/home/invoices/invoices-sale" style="padding-left: 5%;">Comp de Venta</a>
-              </li>
-              <li nz-menu-item nzMatchRouter style="padding-left: 5%;">
-                <span nz-icon [nzType]="'file-excel'" [nzTheme]="'twotone'" [nzTwotoneColor]="'#52c41a'"> </span>
-                <a routerLink="/home/invoices/receipt" style="padding-left: 5%;">Comp de Compra</a>
-              </li>
-            </ul>         
+        <ul>
+          <ul>
+            <li nz-menu-item nzMatchRouter style="padding-left: 5%;">
+              <span nz-icon [nzType]="'file-excel'" [nzTheme]="'twotone'" [nzTwotoneColor]="'#52c41a'"> </span>
+              <a routerLink="/home/invoices/invoices-sale" style="padding-left: 5%;">Comp de Venta</a>
+            </li>
+            <li nz-menu-item nzMatchRouter style="padding-left: 5%;">
+              <span nz-icon [nzType]="'file-excel'" [nzTheme]="'twotone'" [nzTwotoneColor]="'#52c41a'"> </span>
+              <a routerLink="/home/invoices/receipt" style="padding-left: 5%;">Comp de Compra</a>
+            </li>
+          </ul>
           <li nz-menu-group nzTitle="">
             <ul>
               <li nz-menu-item nzMatchRouter style="padding-left: 5%;">
@@ -97,10 +100,10 @@
 
     </ul>
   </nz-page-header-extra>
-  <nz-page-header-extra>   
-      <nz-avatar [nzGap]="3" [ngStyle]="{ 'background-color': color }" [nzText]="usuario" nzSize="large"
-      style="vertical-align: middle;">  
-    </nz-avatar> 
+  <nz-page-header-extra style="margin-top: 1rem;">
+    <nz-avatar [nzGap]="3" [ngStyle]="{ 'background-color': color }" [nzText]="usuario" nzSize="large"
+      style="vertical-align: middle;">
+    </nz-avatar>
   </nz-page-header-extra>
 
   <nz-page-header-content>

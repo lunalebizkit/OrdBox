@@ -123,7 +123,7 @@ export class PermissionService {
 
     let hasPermission = this.checkPermissions(url, permissions);
     if (!hasPermission) {
-      this.router.navigate(['home']);
+      this.router.navigate(['home/products/list']);
     }
 
     return hasPermission;

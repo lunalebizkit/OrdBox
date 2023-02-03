@@ -12,7 +12,7 @@ import { AgGridModule } from 'ag-grid-angular';
 import { InfiniteScrollModule } from "ngx-infinite-scroll";
 import { UsuariosModule } from './users/users.module';
 import { NzPageHeaderModule } from 'ng-zorro-antd/page-header';
-
+import { NzImageModule } from 'ng-zorro-antd/image';
 
 @NgModule({
   declarations: [
@@ -30,7 +30,8 @@ import { NzPageHeaderModule } from 'ng-zorro-antd/page-header';
     AgGridModule,
     InfiniteScrollModule,
     UsuariosModule,
-    NzPageHeaderModule
+    NzPageHeaderModule,
+    NzImageModule
   ],
   exports: [HomeComponent]
 })
