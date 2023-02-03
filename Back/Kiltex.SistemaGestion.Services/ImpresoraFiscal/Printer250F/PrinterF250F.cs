@@ -138,7 +138,7 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
                 if (Item.ToString().Contains("Error"))
                 {
                     await CloseFactura(1, "");
-                    await CerrarJornadaFiscal();
+                    return null;
                 }
             }
 

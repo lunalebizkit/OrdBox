@@ -60,7 +60,6 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
   isLoading: boolean= false;
   loading!: boolean;
   isSaving!: boolean;
-
   formInvoice!: FormGroup;
   formProductSearch!: FormGroup;
   formProduct!: FormGroup;
@@ -402,7 +401,6 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
      }
      } catch (error) {
        console.log(error);
-       
      }
   }
   
@@ -430,7 +428,8 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
         this.isSaving = true;
         this.serviceInvoice.saveInvoice(model)
           .subscribe({
-            next: () => {
+            next: (r) => {
+              this.showMessageError(r.descripcion)
               this.showNotificationSuccess(
                 'Guardado correcto',
                 `Comprobante creado correctamente`
@@ -438,9 +437,11 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
               this.isSaving = false;
               this.router.navigate(['/home/invoices/invoices-sale']);
             },
-            error: () => {
+            error: (r) => {
               this.isSaving = false;
-              this.showMessageError('No se pudo crear el Comprobante')
+              // this.showMessageError('No se pudo crear el Comprobante')
+              this.showMessageError(r.code)
+              console.log("Holaaaaaaaa")
             }
           });
       }
