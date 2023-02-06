@@ -13,7 +13,7 @@ namespace Kiltex.SistemaGestion.Services.Mapper
                 .AfterMap((o, d, c) =>
                 {
                     d.Total = o.InvoiceDetails.Sum(p => (p.Quantity * p.Price));
-                    d.IvaTotal = o.InvoiceDetails.Sum( e => (e.Quantity * e.Price) * e.Iva / 100.00m);                    
+                    d.IvaTotal = o.InvoiceDetails.Sum( e => (e.Quantity * (e.Price -(e.Price / (1 + e.Iva / 100.00m)))));                    
                 });
 
             CreateMap<Invoice, DtoRequestInvoice>();

@@ -335,17 +335,16 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
     this.ivaTotal = 0;
     try {
       this.invoiceDetailsList.forEach(detail => {
-        this.subtotal +=detail.price * detail.quantity -
-        this.ivaCalculate(detail.price * detail.quantity, detail.iva);         
+            /**Caluclo subtotal = precio y multiplico por cantidad*/
+        this.subtotal += detail.quantity *
+        this.ivaCalculate(detail.price, detail.iva);         
       });
       this.invoiceDetailsList.forEach( (dato) => {
-        this.ivaTotal += this.ivaCalculate(
-          dato.price  * dato.quantity,
-           dato.iva
-        );
+        /**Calculo iva restandolo al precio y multiplico por cantidad*/
+        this.ivaTotal += (dato.price - this.ivaCalculate(dato.price, dato.iva) ) * dato.quantity;
        this.total +=  dato.price  * dato.quantity ;     
       });
-      /* this.total += this.concNoGravado + this.percIngBrutos + this.percIva; */
+   
     } catch (error) {}   
   };
 
@@ -364,9 +363,11 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
     }
   };
 
-  ivaCalculate(data: number, iva:number): number {         
-    return (data * iva / 100); 
-  }
+  ivaCalculate(data: number, iva:number): number { 
+    let newIva =1 + (iva / 100) ;
+    return (data / newIva); 
+  };
+
 
   handleOk() {
     try {
@@ -428,8 +429,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
         this.isSaving = true;
         this.serviceInvoice.saveInvoice(model)
           .subscribe({
-            next: (r) => {
-              this.showMessageError(r.descripcion)
+            next: (r) => {            
               this.showNotificationSuccess(
                 'Guardado correcto',
                 `Comprobante creado correctamente`
@@ -439,9 +439,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
             },
             error: (r) => {
               this.isSaving = false;
-              // this.showMessageError('No se pudo crear el Comprobante')
-              this.showMessageError(r.code)
-              console.log("Holaaaaaaaa")
+              this.showMessageError(r.error.descripcion)
             }
           });
       }
@@ -489,8 +487,10 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
       this.invoiceDetailsList.filter(
         (detail) => detail.productId == id
       )[0].iva = newIva;
-       this.totalCalculate();
+      this.totalCalculate();
+
      this.stopEditIva();
+
     } catch (error) {
       console.error(error);
     }

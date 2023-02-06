@@ -28,7 +28,7 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.Printer250F.Dto
         public string OperacionMonto { get; set; } = "ModoSumaMonto";
 
         [JsonProperty("TipoImpuestoInterno")]
-        public string TipoImpuestoInterno { get; set; } = "IIVariableKIVA";
+        public string TipoImpuestoInterno { get; set; } = "IIFijoMonto";
 
         [JsonProperty("MagnitudImpuestoInterno")]
         public string MagnitudImpuestoInterno { get; set; } = "0.00";

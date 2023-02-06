@@ -78,7 +78,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                                     .AsNoTracking()
                                     .Include(p => p.InvoiceDetails)
                                     .Where(p => (!string.IsNullOrEmpty(request.Filter.Cuit) ? p.CustomerCuit.ToLower().Contains(request.Filter.Cuit) : true)
-                                     && ((request.Filter.Number.HasValue && request.Filter.Number != 0) ? p.Id == request.Filter.Number : true));
+                                     && ((request.Filter.Number.HasValue && request.Filter.Number != 0) ? p.InvoiceNumber == request.Filter.Number : true));
 
                 var count = await query.CountAsync().ConfigureAwait(false);
 
@@ -193,7 +193,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             }
             //TODO por cada item mandar a imprimir
             foreach(var item in model.InvoiceDetails)
-            {
+            {               
                 var imprimir = await _printer.PrintItem(item.ProductName,item.Quantity,item.Price,item.Iva,item.ProductCode.ToString()).ConfigureAwait(false);
                 
                 if(imprimir == null)
