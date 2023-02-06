@@ -67,7 +67,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         this.isSaving = false;
         this.token.tokenLS = r.token;
         this.token.currentUser = r;
-        this.router.navigate(['/home'], { relativeTo: this.route });
+        this.router.navigate(['/home/products/list'], { relativeTo: this.route });
         this.message.success('Bienvenido' + ' ' + r.userName);
       },
       error: () => {

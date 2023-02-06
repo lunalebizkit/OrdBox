@@ -36,7 +36,7 @@
                 <nz-form-control>
                   <nz-input-group [nzSuffix]="clearQuery">
                     <input [ngModelOptions]="{ standalone: true }" type="number" placeholder="Ingrese numero de factura" nz-input
-                      (keydown.enter)="search()" [(ngModel)]="specificFilter.filter.number" />
+                      (keydown.enter)="search()" [(ngModel)]="specificFilter.filter.number" min="0"/>
                   </nz-input-group>
 
                   <ng-template #clearQuery>

@@ -30,8 +30,8 @@
             <nz-form-label>Nro de comprobante</nz-form-label>
             <nz-form-control>
               <nz-input-group [nzSuffix]="clearQuery">
-                <input [ngModelOptions]="{ standalone: true }" type="int" placeholder="Ingrese número de comprobante"
-                  nz-input (keydown.enter)="search()" [(ngModel)]="SpecificFilter.filter.number" />
+                <input [ngModelOptions]="{ standalone: true }" type="number" placeholder="Ingrese número de comprobante"
+                  nz-input (keydown.enter)="search()" [(ngModel)]="SpecificFilter.filter.number" min="0" />
               </nz-input-group>
               <ng-template #clearQuery>
                 <i nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle"
