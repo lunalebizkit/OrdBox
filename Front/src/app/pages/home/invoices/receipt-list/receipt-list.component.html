@@ -21,17 +21,17 @@
   <nz-content>
     <nz-collapse>
       <nz-collapse-panel nzSize="small" nzHeader="Filtros">
-        <form nz-form>
-          <div nz-row nzJustify="space-around">
-            <div nz-col nzSpan="8">
-              <nz-form-item>
+        <form nz-form style="margin-left: 13px;">
+          <div nz-row>
+            <div nz-col nzSpan="14">
+              <nz-form-item style="margin-left: 15px;">
                 <nz-form-label>CUIT</nz-form-label>
                 <nz-form-control>
                   <nz-input-group [nzSuffix]="clearQuery">
                     <input
                       [ngModelOptions]="{ standalone: true }"
                       type="text"
-                      placeholder="Ingrese CUIT"
+                      placeholder="Ingrese CUIT/CUIL o DNI"
                       nz-input
                       (keydown.enter)="search()"
                       [(ngModel)]="specificFilter.filter.cuit"
@@ -51,7 +51,7 @@
               </nz-form-item>
               </div>
               <div nz-col nzSpan="8">
-              <nz-form-item>
+              <nz-form-item style="margin-left: 25px;">
                 <nz-form-label>Nro de comprobante</nz-form-label>
                 <nz-form-control>
                   <nz-input-group [nzSuffix]="clearQuery">
@@ -77,7 +77,7 @@
                   </ng-template>
                 </nz-form-control>
               </nz-form-item>
-              <div style="color: red;font-size: 12px;">* Debe ingresar el número de comprobante completo</div>
+              <div style="color: red;font-size: 12px; margin-left: 20px;">* Debe ingresar el número de comprobante completo</div>
             </div>
           </div>
         </form>
