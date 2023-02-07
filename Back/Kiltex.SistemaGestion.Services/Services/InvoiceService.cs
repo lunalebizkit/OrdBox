@@ -125,9 +125,36 @@ namespace Kiltex.SistemaGestion.Services.Services
                         productDetail.UpdateStock(- detail.Quantity);
                         _contextSql.Products.Update(productDetail);
                     }
-                    
+                    var error = await PrintInvoice(invoiceModel, ct);
+
+                    if(error == "ErrorCliente")
+                    {
+                        _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
+                        return Error<IdResponse<long>>(new OperationExceptions("000", "Error al cargar cliente, compruebe el CUIT/DNI"));
+                    }
+
+                    if(error == "ErrorAbrir")
+                    {
+                        _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
+                        return Error<IdResponse<long>>(new OperationExceptions("000", "Error al abrir documento , intente nuevamente"));
+                    }
+
+                    if(error == "ErrorImprimir")
+                    {
+                        _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
+                        return Error<IdResponse<long>>(new OperationExceptions("000", "Error al imprimir item, intente con un cierre Z"));
+                    }
+
+                    if (error == "ErrorCerrar")
+                    {
+                        _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
+                        return Error<IdResponse<long>>(new OperationExceptions("000", "Error al cerrar documento, intente con un cierre Z"));
+                    }
+
+                    invoiceModel.InvoiceNumber = long.Parse(error);
                     await _contextSql.Invoices.AddAsync(invoiceModel, ct).ConfigureAwait(false);  
                 }
+
                 await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
                 transaction.Commit();
                 return Ok(new IdResponse<long>(invoiceModel.Id));
@@ -177,7 +204,6 @@ namespace Kiltex.SistemaGestion.Services.Services
                 await _printer.CerrarJornadaFiscal();
                 return "ErrorCerrar";
             }
-
 
             return closeFactura;
 
