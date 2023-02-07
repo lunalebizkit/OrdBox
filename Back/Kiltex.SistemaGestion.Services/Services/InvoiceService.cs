@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using DocumentFormat.OpenXml.Office.CustomUI;
 using Kiltex.SistemaGestion.Domain;
 using Kiltex.SistemaGestion.Domain.Enum;
 using Kiltex.SistemaGestion.Domain.Model;
@@ -14,12 +13,10 @@ namespace Kiltex.SistemaGestion.Services.Services
 {
     public class InvoiceService : BaseService
     {
-
-        
         private readonly IPrinter _printer;
         public InvoiceService(ErrorManager logger, DBContext context, IMapper maper, IPrinter printer) :
             base(logger, context, maper)
-        {
+        { 
             _printer = printer;
         }
         public async Task<OperationResponse<DtoRequestInvoice>> GetById(long id)
@@ -39,7 +36,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                 }
 
                 var result = _mapper.Map<DtoRequestInvoice>(factura);
-
+           
 
                 return new OperationResponse<DtoRequestInvoice>(result);
             }
@@ -55,7 +52,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             try
             {
                 model.Id = 0;
-                if (String.IsNullOrEmpty(model.CustomerName))
+                if (String.IsNullOrEmpty(model.CustomerName) )
                 {
                     _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
                     return Error<IdResponse<long>>(new OperationExceptions("000", "Datos incompletos"));
@@ -109,8 +106,8 @@ namespace Kiltex.SistemaGestion.Services.Services
             var transaction = _contextSql.Database.BeginTransaction();
             var invoiceModel = _mapper.Map<Invoice>(model);
             var productDetail = new Product();
-
-            try
+           
+           try
             {
                 if (invoiceModel.Id == 0)
                 {
@@ -119,49 +116,19 @@ namespace Kiltex.SistemaGestion.Services.Services
                         var user = await _contextSql.Customers.AsNoTracking().FirstOrDefaultAsync(p => p.Name == "Admin");
                         invoiceModel.CustomerId = user.Id;
                     }
-
+                    
                     foreach (var detail in invoiceModel.InvoiceDetails)
                     {
                         var oldProduct = await _contextSql.Products.AsNoTracking().FirstAsync(p => p.Id == detail.ProductId).ConfigureAwait(false);
 
-                        productDetail = oldProduct;
-                        productDetail.UpdateStock(-detail.Quantity);
+                        productDetail= oldProduct;
+                        productDetail.UpdateStock(- detail.Quantity);
                         _contextSql.Products.Update(productDetail);
                     }
-                    var numberInvoice = await PrintInvoice(invoiceModel).ConfigureAwait(false);
-
-                    if(numberInvoice == "ErrorCliente")
-                    {
-                        _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
-                        return Error<IdResponse<long>>(new OperationExceptions("000", "Se produjo un Error al cargar los datos del Cliente, intentelo nuevamente"));
-                    }
-
-
-                    if (numberInvoice == "ErrorAbrir")
-                    {
-                        _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
-                        return Error<IdResponse<long>>(new OperationExceptions("000", "Se produjo un Error al Abrir el Documento, intentelo nuevamente"));
-                    }
-
-
-                    if (numberInvoice == "ErrorImprimir")
-                    {
-                        _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
-                        return Error<IdResponse<long>>(new OperationExceptions("000", "Se produjo un Error al imprimir los item, intente nuevamente"));
-                    }
-
-                    if (numberInvoice == "ErrorCerrar")
-                    {
-                        _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
-                        return Error<IdResponse<long>>(new OperationExceptions("000", "Se produjo un Error al cerrar el documento, intente con un cierre Z"));
-                    }
-                    invoiceModel.InvoiceNumber = long.Parse(numberInvoice);
-                    await _contextSql.Invoices.AddAsync(invoiceModel, ct).ConfigureAwait(false);
+                    
+                    await _contextSql.Invoices.AddAsync(invoiceModel, ct).ConfigureAwait(false);  
                 }
                 await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
-        
-               
-                
                 transaction.Commit();
                 return Ok(new IdResponse<long>(invoiceModel.Id));
             }

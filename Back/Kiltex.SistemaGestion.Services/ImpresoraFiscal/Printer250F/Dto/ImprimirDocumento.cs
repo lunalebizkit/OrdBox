@@ -31,7 +31,7 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.Printer250F.Dto
         public string TipoImpuestoInterno { get; set; } = "IIFijoMonto";
 
         [JsonProperty("MagnitudImpuestoInterno")]
-        public string MagnitudImpuestoInterno { get; set; } = "0.00";
+        public double MagnitudImpuestoInterno { get; set; } = 0;
 
         [JsonProperty("ModoDisplay")]
         public string ModoDisplay { get; set; } = "DisplayNo";      
