@@ -275,7 +275,8 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
   }
 
   ivaCalculate(data: number, iva: number): number {
-    return (data * iva) / 100;
+    let newIva =1 + (iva / 100) ;
+    return (data / newIva); 
   }
 
   totalCalculate(): void {
@@ -285,14 +286,12 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
     try {
       this.receiptDetailsGrid.forEach((detail) => {
         this.subtotal +=
-          detail.price * detail.quantity -
-          this.ivaCalculate(detail.price * detail.quantity, detail.iva);
+           detail.quantity *
+          this.ivaCalculate(detail.price, detail.iva);
       });
       this.receiptDetailsGrid.forEach((dato) => {
-        this.ivaTotal += this.ivaCalculate(
-          dato.price * dato.quantity,
-          dato.iva
-        );
+        this.ivaTotal += ( dato.price - this.ivaCalculate(dato.price, dato.iva)
+        ) * dato.quantity;
         this.total += dato.price * dato.quantity;
       });
       this.total += this.concNoGravado + this.percIngBrutos + this.percIva;
