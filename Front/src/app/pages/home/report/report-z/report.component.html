@@ -7,13 +7,21 @@
             nzTooltipTitle="Generar Reporte Z"
             nz-button
             nzType="primary"
-            nzShape="circle"
-          >
-            <i nz-icon nzType="plus" 
-            nzTheme="outline"
-            (click)="reportZ()"
-            ></i>
+            (click)="msjConfirmOk()"
+          >Generar Reporte Z
           </button>
         </nz-page-header-extra>
       </nz-page-header>
 </nz-layout>
+
+
+<app-popup-confirmation
+  #pop
+  [title]="'Confirmar Reporte Z'"
+  [header]="'¿Está seguro que desea realizar un Reporte Z?'"
+  [message]="'Esta acción no se puede revertir'"
+  (handleOk)="reportZ()"
+>
+  >
+</app-popup-confirmation>
+
