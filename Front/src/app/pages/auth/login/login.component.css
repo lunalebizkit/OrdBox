@@ -3,7 +3,6 @@
   height: 100%;
 }
 
-
 .login{
 	height: 100%;
   display: flex;
@@ -11,7 +10,7 @@
   justify-content: center;
 }
 .card{
-  max-width: 70%;
+  max-width: 50%;
   border-radius: 12px;
   box-shadow: 0 4px 25px 0 rgba(0,173,181);
 }
@@ -21,9 +20,10 @@
   .overlay {
     /* border-right: 1px solid rgba($primary-color, 0.2); */
     display: flex;
-    flex-direction: column;
+    flex-direction:column;
     justify-content: space-between;
-    padding: 10%;
+    margin-top: 140px;
+    margin-left: 50px
   }
 
     img{
@@ -41,10 +41,10 @@
 
   @media only screen and (max-width: 1000px) {
     .overlay {
-        display: flex; 
+        display:flex; 
         position: absolute;
-        opacity: 0.2;
-    }
+        opacity: 0.9;
+    } 
     img{
       display: none;
     }
@@ -52,11 +52,27 @@
       display: flex;
       overflow: auto;
       margin: 0;
-      width: 271px;
+      width: 200px;
       height: auto;
-      margin-left: 40px;
-      margin-top: 10px;
+      margin-left: -25px;
+      margin-top: -110px;
+      overflow: auto;
+    
     }
+    .copyright{
+      margin-left: -30px;
+      margin-top: 260px;
+     }
+     .card{
+      width: 350px;
+     }
+     h1{
+      display:none;
+     }
+     .login-sidebar{
+     width: auto;
+     margin: 50px;
+     }
 
   }
   @media (max-width:500px){
@@ -96,7 +112,7 @@
     }
   
 
-  .logo-container{
+  .login-container{
     display: flex;
     justify-content: center;
   }

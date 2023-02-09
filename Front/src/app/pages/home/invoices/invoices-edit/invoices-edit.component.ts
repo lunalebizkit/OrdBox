@@ -41,6 +41,8 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
     drawerRef: NzDrawerRef<string>;
   }>;
 
+  selectedDni:boolean = false
+
   /*
  ** Cantidad total de productos
  */
@@ -80,6 +82,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
   customer: CustomerModel[] = [];
   invoiceDetailsList: InvoiceDetailList[] = [];
   invoiceDetails: InvoiceDetails[] = []
+  customerDni: any
 
   /*
   **Variables de la tabla detalle
@@ -133,6 +136,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
       payment: ['', Validators.required],
       address: ['', Validators.required],
       customerCuit: ['', Validators.required],
+      customerDni:[''],
       customerName: ['', Validators.required],    
       observation: ['']
     });   
@@ -267,6 +271,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
           this.formInvoice.controls['address'].setValue(data.address);
           this.formInvoice.controls['customerCuit'].setValue(data.cuit);
           this.formInvoice.controls['customerName'].setValue(data.name);
+          this.formInvoice.controls['customerDni'].setValue(data.dni)
         },
         error: () => {this.showMessageError('No se encontro Cliente'); }
       });
@@ -417,7 +422,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
           customerId: this.customerId,
           userId:this.userId,
           invoiceNumber: this.totalItems,
-          customerName: this.formInvoice.controls['customerName'].value,          
+          customerName: this.formInvoice.controls['customerName'].value,         
           customerCuit: this.formInvoice.controls['customerCuit'].value,  
           customerAddress: this.formInvoice.controls['address'].value,          
           observation: this.formInvoice.controls['observation'].value,
@@ -505,6 +510,19 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
 
   formaterDate(date: string | number | Date): string {
     return formatDate(date, 'MM/dd/YYYY', this.locale);
+  }
+
+  select() {
+    this.selectedDni= true
+    let dni = this.formInvoice.controls['customerDni'].value
+    console.log(dni)
+    
+    /* if (isEmail){
+      this.emailList = this.emailList.filter((email:string) => email != data)
+    }else{
+      this.emailList.push(data);
+    } */
+    
   }
 
 }
