@@ -74,9 +74,9 @@
             (click)="onClick(data, i)" (keydown)="myNavegation($event)" [style.background-color]="
               data === selectedInvoice ? 'lightblue' : ''
             " (keydown.enter)="onEnter($event)" (dblclick)="onDoubleClicked(data)">
-            <td>{{ data.id }}</td>
+            <td>{{ data.invoiceNumber }}</td>
             <td>{{ this.formaterDate(data.dateTime) }}</td>
-            <td>{{ data.customerCuit }}</td>
+            <td>{{ data.customerCuit | cuit}}</td>
             <td>{{ data.customerName }}</td>
             <td [nzAlign]="'right'">
               <b>{{ this.currencyFormat(data.total) }}</b>

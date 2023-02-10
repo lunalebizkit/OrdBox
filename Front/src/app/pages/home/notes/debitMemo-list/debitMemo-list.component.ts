@@ -98,6 +98,10 @@ export class debitMemoListComponent implements OnInit {
       this.id = datos.id;
       this.openComponentDebitMemoView();
     }
+    onDoubleClick(datos: DebitMemoModel) {
+      this.id = datos.id;
+      this.openComponentDebitMemoView();
+    }
     currencyFormat(data: any):string  {    
       return formatCurrency(data, this.locale, '$', 'ARS', '1.1-2')
     } 

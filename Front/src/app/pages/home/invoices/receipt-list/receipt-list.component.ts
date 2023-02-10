@@ -112,6 +112,10 @@ export class ReceiptListComponent implements OnInit {
     this.id = datos.id;
     this.openComponentReceiptView();
   }
+  onDoubleClick(datos: receiptModel) {
+    this.id = datos.id;
+    this.openComponentReceiptView();
+  }
   onClick(datos: receiptModel, index: number): void {
     this.index = index;
     this.selectedIndex = index;

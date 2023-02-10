@@ -76,7 +76,7 @@ export class debitMemoComponent extends BaseComponent  implements OnInit {
    type = InvoiceType; 
   type1!:number 
   ivaType = IvaType;
-  typeSelectedId: number = 1;
+  typeSelectedId!: number;
   ivaSelectedId: number = 1;
   ivaSelected!: number;
   totalItems: any;
@@ -110,7 +110,7 @@ constructor(@Inject(LOCALE_ID) public locale: string,
     address: ['', Validators.required],
     type: [ 1 , Validators.required],
     invoiceNumber: [ '' , Validators.required],
-    customerCuit: ['', Validators.required],
+    customerCuit: ['', [Validators.required, Validators.pattern('[0-9]{11}'),]],
     customerName: ['', Validators.required],    
     observation: ['']
   }); 
@@ -142,7 +142,8 @@ constructor(@Inject(LOCALE_ID) public locale: string,
       if (id != 0 || id != undefined)
         this.serviceInvoice.getInvoiceById(id).subscribe({
           next: (r: InvoiceModel) => {
-            this.type1 = r.type, 
+            this.formDebitMemo.controls['type'].setValue(r.type),
+            this.type1 = r.type,
             this.formDebitMemo.controls['invoiceNumber'].setValue(r.invoiceNumber),
             this.customerId= r.customerId
             this.formDebitMemo.controls['address'].setValue(r.customerAddress),
@@ -211,9 +212,9 @@ constructor(@Inject(LOCALE_ID) public locale: string,
                 
                 this.router.navigate(['/notes/debitList']);
               },
-              error: () => {
+              error: (r) => {
                 this.isSaving = false;
-                this.showMessageError('No se pudo crear la Nota de Débito')
+                this.showMessageError(r.error.descripcion)
               }
             });
         }
@@ -231,20 +232,21 @@ constructor(@Inject(LOCALE_ID) public locale: string,
         this.ivaTotal = 0;
         try {
           this.debitMemoList.forEach(detail => {
-            this.subTotal +=  detail.price * detail.quantity -
-            this.ivaCalculate(detail.price * detail.quantity, detail.iva);         
+                   /**Caluclo subtotal = precio y multiplico por cantidad*/
+        this.subTotal += detail.quantity *
+        this.ivaCalculate(detail.price, detail.iva);              
           });
           this.debitMemoList.forEach( (dato) => {
-            this.ivaTotal += this.ivaTotal + this.ivaCalculate(
-              dato.price  * dato.quantity,
-               dato.iva
-            );
-           this.total += dato.price  * dato.quantity ;     
+             /**Calculo iva restandolo al precio y multiplico por cantidad*/
+             this.ivaTotal += (dato.price - this.ivaCalculate(dato.price, dato.iva) ) * dato.quantity;
+             this.total +=  dato.price  * dato.quantity ;    
           });
         } catch (error) {}   
       };
+
       ivaCalculate(data: number, iva:number): number {         
-        return (data * iva / 100); 
+        let newIva =1 + (iva / 100) ;
+        return (data / newIva); 
       }
       currencyFormat(data: any):string  {    
         return formatCurrency(data, this.locale, '$', 'ARS', '1.1-2')

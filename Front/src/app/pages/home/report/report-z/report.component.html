@@ -1,0 +1,27 @@
+<nz-layout>
+    <nz-page-header class="list-header">
+        <nz-page-header-title>Reporte Z</nz-page-header-title>
+        <nz-page-header-extra>
+          <button
+            nz-tooltip
+            nzTooltipTitle="Generar Reporte Z"
+            nz-button
+            nzType="primary"
+            (click)="msjConfirmOk()"
+          >Generar Reporte Z
+          </button>
+        </nz-page-header-extra>
+      </nz-page-header>
+</nz-layout>
+
+
+<app-popup-confirmation
+  #pop
+  [title]="'Confirmar Reporte Z'"
+  [header]="'¿Está seguro que desea realizar un Reporte Z?'"
+  [message]="'Esta acción no se puede revertir'"
+  (handleOk)="reportZ()"
+>
+  >
+</app-popup-confirmation>
+
