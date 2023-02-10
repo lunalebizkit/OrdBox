@@ -76,7 +76,7 @@
             " (keydown.enter)="onEnter($event)" (dblclick)="onDoubleClicked(data)">
             <td>{{ data.invoiceNumber }}</td>
             <td>{{ this.formaterDate(data.dateTime) }}</td>
-            <td>{{ data.customerCuit }}</td>
+            <td>{{ data.customerCuit | cuit}}</td>
             <td>{{ data.customerName }}</td>
             <td [nzAlign]="'right'">
               <b>{{ this.currencyFormat(data.total) }}</b>

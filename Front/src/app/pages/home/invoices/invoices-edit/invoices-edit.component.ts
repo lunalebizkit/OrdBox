@@ -219,12 +219,11 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
           if (data != undefined) {
             if (this.invoiceDetails.find(item => item.productId == data.id)) {
                 /*Actualizo la lista que envio al back */
-                   this.invoiceDetails.filter(item => item.productId == data.id)[0]
+                  this.invoiceDetails.filter(item => item.productId == data.id)[0]
                   .quantity += 1;                        
 
                    /*Actualizo la lista de la tabla */
                   let newListElement = this.invoiceDetailsList.filter(item => item.ownCode == data.id)[0];
-               
                   newListElement.quantity += 1;
                   newListElement.subTotal += this.bindPrice(data) * newListElement.quantity;
                 
