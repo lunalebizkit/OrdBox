@@ -12,13 +12,13 @@
   <nz-content>
     <nz-collapse>
       <nz-collapse-panel nzSize="small" nzHeader="Filtros">
-        <form nz-form>
-          <div nz-row nzJustify="space-around">
-            <div nz-col nzSpan="8">
-              <nz-form-item>
+        <form nz-form style="margin-left: 13px;">
+          <div nz-row >
+            <div nz-col nzSpan="14" >
+              <nz-form-item style="margin-left: 15px;">
                 <nz-form-label>CUIT</nz-form-label>
                 <nz-form-control>
-                  <nz-input-group [nzSuffix]="clearQuery">
+                  <nz-input-group [nzSuffix]="clearQuery" style="width: 100%;">
                     <input [ngModelOptions]="{ standalone: true }" type="text" placeholder="Ingrese CUIT/CUIL o DNI" nz-input
                       (keydown.enter)="search()" [(ngModel)]="specificFilter.filter.cuit" />
                   </nz-input-group>
@@ -31,10 +31,10 @@
               </nz-form-item>
               </div>
               <div nz-col nzSpan="8">
-              <nz-form-item>
-                <nz-form-label>Numero de comprobante</nz-form-label>
+              <nz-form-item style="margin-left: 25px;">
+                <nz-form-label>Nro de comprobante</nz-form-label>
                 <nz-form-control>
-                  <nz-input-group [nzSuffix]="clearQuery">
+                  <nz-input-group [nzSuffix]="clearQuery" style="width: 100%;">
                     <input [ngModelOptions]="{ standalone: true }" type="number" placeholder="Ingrese numero de factura" nz-input
                       (keydown.enter)="search()" [(ngModel)]="specificFilter.filter.number" min="0"/>
                   </nz-input-group>
@@ -74,7 +74,7 @@
             (click)="onClick(data, i)" (keydown)="myNavegation($event)" [style.background-color]="
               data === selectedInvoice ? 'lightblue' : ''
             " (keydown.enter)="onEnter($event)" (dblclick)="onDoubleClicked(data)">
-            <td>{{ data.id }}</td>
+            <td>{{ data.invoiceNumber }}</td>
             <td>{{ this.formaterDate(data.dateTime) }}</td>
             <td>{{ data.customerCuit }}</td>
             <td>{{ data.customerName }}</td>

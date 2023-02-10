@@ -1,12 +1,8 @@
 ﻿using Kiltex.SistemaGestion.Api.Extension;
 using Kiltex.SistemaGestion.Domain.Enum;
-using Kiltex.SistemaGestion.Domain.Model;
-using Kiltex.SistemaGestion.SDK.Security;
-using Microsoft.AspNetCore.Authentication.OAuth.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using System.Linq;
-using System.Security.Claims;
+
 
 namespace Kiltex.SistemaGestion.Api.Filter
 {

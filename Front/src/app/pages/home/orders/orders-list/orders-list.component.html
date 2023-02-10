@@ -23,16 +23,16 @@
 
   <nz-content>
     <nz-collapse>
-      <nz-collapse-panel nzSize="small" nzHeader="Filtros" [nzActive]="true">
-        <form nz-form [formGroup]="formSearch">
-          <div nz-row nzJustify="space-around">
-          <div  nzSpan="8" class="mb-2">
+      <nz-collapse-panel nzSize="small" nzHeader="Filtros" [nzActive]="true" >
+        <form nz-form [formGroup]="formSearch" style="margin-left: 30px;">
+          <div nz-row>
+          <div  nzSpan="24" class="mb-2">
             <nz-form-item>
               <nz-form-label nzFor="supplier">Proveedor</nz-form-label>
               <nz-form-control>
                 <nz-select
                   id="supplier"
-                  style="width: 770px"
+                  style="width: 980px"
                   nzPlaceHolder="Seleccione Proveedor"
                   nzAllowClear
                   nzShowSearch
@@ -55,8 +55,8 @@
             </nz-form-item>
           </div>
         </div>
-          <div nz-row nzJustify="space-around">
-            <div nz-col nzSpan="5">
+          <div nz-row >
+            <div nz-col nzSpan="8">
               <nz-form-item>
                 <nz-form-label>Estado</nz-form-label>
                 <nz-form-control>
@@ -84,13 +84,14 @@
                 </nz-form-control>
               </nz-form-item>
             </div>
-            <div nz-col nzSpan="8">
-              <nz-form-item>
+            <div nz-col nzSpan="10">
+              <nz-form-item style="margin-left: 15px;">
                 <nz-form-label nzFor="category">Categoría </nz-form-label>
-                <nz-form-control [nzSm]="16" [nzXs]="24">
+                <nz-form-control [nzSm]="24">
                   <nz-spin [nzSpinning]="isLoadingCategory">
                     <nz-select
                       id="category"
+                      nzPlaceHolder="Categoría"
                       nzShowSearch
                       nzAllowClear
                       formControlName="category"
@@ -112,7 +113,7 @@
                 </nz-form-control>
               </nz-form-item>
             </div>
-            <div>
+            <div style="margin-left: 20px;">
               <button nz-button nzType="primary" (click)="search()">
                 <i nz-icon nzType="search"></i>
                 Buscar
