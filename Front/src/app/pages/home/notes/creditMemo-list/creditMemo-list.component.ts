@@ -101,6 +101,10 @@ export class creditMemoListComponent implements OnInit {
       this.id = datos.id;
       this.openComponentCreditMemoView();
     }
+    onDoubleClick(datos: CreditMemoModel) {
+      this.id = datos.id;
+      this.openComponentCreditMemoView();
+    }
     currencyFormat(data: any):string  {    
       return formatCurrency(data, this.locale, '$', 'ARS', '1.1-2')
     } 

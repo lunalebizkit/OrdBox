@@ -59,9 +59,10 @@
       overflow: auto;
     
     }
-    .copyright{
-      margin-left: -30px;
-      margin-top: 260px;
+    p {
+         margin-left: -30px;
+        /*  margin-top: -2560px; */
+      margin-block-start: 240px;
      }
      .card{
       width: 350px;
