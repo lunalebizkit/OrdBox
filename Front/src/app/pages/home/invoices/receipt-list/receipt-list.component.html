@@ -49,7 +49,7 @@
                   </ng-template>
                 </nz-form-control>
               </nz-form-item>
-              </div>
+            </div>
               <div nz-col nzSpan="8">
               <nz-form-item style="margin-left: 25px;">
                 <nz-form-label>Nro de comprobante</nz-form-label>
@@ -122,10 +122,11 @@
               data === selectedReceipt ? 'lightblue' : ''
             "
             (click)="onClick(data, i)"
+            (dblclick)="onDoubleClick(data)"
           >
             <td>{{ data.id }}</td>
             <td>{{ this.formaterDate(data.dateTime) }}</td>
-            <td>{{ data.supplierCuit }}</td>
+            <td>{{ data.supplierCuit | cuit}}</td>
             <td>{{ data.supplierName }}</td>
             <td [nzAlign]="'right'">
               <b>{{ this.currencyFormat(data.total) }}</b>

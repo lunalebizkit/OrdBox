@@ -1,19 +1,24 @@
 ﻿using AutoMapper;
 using Kiltex.SistemaGestion.Domain;
+using Kiltex.SistemaGestion.Domain.Enum;
 using Kiltex.SistemaGestion.Domain.Model;
 using Kiltex.SistemaGestion.SDK.Error;
 using Kiltex.SistemaGestion.Services.Common;
+using Kiltex.SistemaGestion.Services.ImpresoraFiscal;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
 using Microsoft.EntityFrameworkCore;
-
+using System.Text.RegularExpressions;
 
 namespace Kiltex.SistemaGestion.Services.Services
 {
     public class InvoiceService : BaseService
     {
-        public InvoiceService(ErrorManager logger, DBContext context, IMapper maper) :
+        private readonly IPrinter _printer;
+        public InvoiceService(ErrorManager logger, DBContext context, IMapper maper, IPrinter printer) :
             base(logger, context, maper)
-        { }
+        { 
+            _printer = printer;
+        }
         public async Task<OperationResponse<DtoRequestInvoice>> GetById(long id)
         {
             try
@@ -70,7 +75,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                                     .AsNoTracking()
                                     .Include(p => p.InvoiceDetails)
                                     .Where(p => (!string.IsNullOrEmpty(request.Filter.Cuit) ? p.CustomerCuit.ToLower().Contains(request.Filter.Cuit) : true)
-                                     && ((request.Filter.Number.HasValue && request.Filter.Number != 0) ? p.Id == request.Filter.Number : true));
+                                     && ((request.Filter.Number.HasValue && request.Filter.Number != 0) ? p.InvoiceNumber == request.Filter.Number : true));
 
                 var count = await query.CountAsync().ConfigureAwait(false);
 
@@ -101,17 +106,51 @@ namespace Kiltex.SistemaGestion.Services.Services
             var transaction = _contextSql.Database.BeginTransaction();
             var invoiceModel = _mapper.Map<Invoice>(model);
             var productDetail = new Product();
-           
            try
             {
                 if (invoiceModel.Id == 0)
                 {
                     if (invoiceModel.CustomerId == 0)
                     {
-                        var user = await _contextSql.Customers.AsNoTracking().FirstOrDefaultAsync(p => p.Name == "Admin");
+                        var user = await _contextSql.Customers.AsNoTracking().FirstOrDefaultAsync(p => p.Name.ToLower() == "admin");
                         invoiceModel.CustomerId = user.Id;
                     }
-                    
+
+                    var regex = new Regex(@"^-?[0-9][0-9,\.]+$");
+
+                    //Verifico que el DNI O CUIT no tenga letras
+                    if (!regex.IsMatch(model.CustomerCuit))
+                    {
+                        _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
+                        return Error<IdResponse<long>>(new OperationExceptions("000", "Error al cargar cliente, El CUIT/DNI tiene que ser numerico"));
+                    }
+                    //Verifico que el CUIT O DNI no se pasen de los parametros
+                    if (model.CustomerCuit.Length > 11 || model.CustomerCuit.Length < 7)
+                    {
+                        _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
+                        return Error<IdResponse<long>>(new OperationExceptions("000", "Error al cargar cliente, verifique cantidad de digitos"));
+                    }
+
+                    //Verfico que la factura A no pueda realizarse al colocar un DNI
+                    if (model.Type == 1 && model.CustomerCuit.Length != 11)
+                    {
+                        _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
+                        return Error<IdResponse<long>>(new OperationExceptions("000", "Error al cargar cliente, no puede cargar un DNI con Factura tipo A"));
+                    }
+
+                    //Verfico que la factura C no pueda realizarse al colocar un DNI
+                    if (model.Type == 3 && model.CustomerCuit.Length != 11)
+                    {
+                        _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
+                        return Error<IdResponse<long>>(new OperationExceptions("000", "Error al cargar cliente, no puede cargar un DNI con Factura tipo C"));
+                    }
+                    //Verifico que el DNI tenga mayor a 7 caracteres y menor a 9
+                    if (model.Type == 2 && model.CustomerCuit.Length < 7 || model.CustomerCuit.Length > 9 && model.CustomerCuit.Length != 11)
+                    {
+                        _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
+                        return Error<IdResponse<long>>(new OperationExceptions("000", "Error al cargar cliente, verifique DNI"));
+                    }
+
                     foreach (var detail in invoiceModel.InvoiceDetails)
                     {
                         var oldProduct = await _contextSql.Products.AsNoTracking().FirstAsync(p => p.Id == detail.ProductId).ConfigureAwait(false);
@@ -120,9 +159,36 @@ namespace Kiltex.SistemaGestion.Services.Services
                         productDetail.UpdateStock(- detail.Quantity);
                         _contextSql.Products.Update(productDetail);
                     }
-                    
+                    var error = await PrintInvoice(invoiceModel, ct);
+
+                    if(error == "ErrorCliente")
+                    {
+                        _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
+                        return Error<IdResponse<long>>(new OperationExceptions("000", "Error al cargar cliente, compruebe el CUIT/DNI"));
+                    }
+
+                    if(error == "ErrorAbrir")
+                    {
+                        _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
+                        return Error<IdResponse<long>>(new OperationExceptions("000", "Error al abrir documento , intente nuevamente"));
+                    }
+
+                    if(error == "ErrorImprimir")
+                    {
+                        _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
+                        return Error<IdResponse<long>>(new OperationExceptions("000", "Error al imprimir item, intente con un cierre Z"));
+                    }
+
+                    if (error == "ErrorCerrar")
+                    {
+                        _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
+                        return Error<IdResponse<long>>(new OperationExceptions("000", "Error al cerrar documento, intente con un cierre Z"));
+                    }
+
+                    invoiceModel.InvoiceNumber = long.Parse(error);
                     await _contextSql.Invoices.AddAsync(invoiceModel, ct).ConfigureAwait(false);  
                 }
+
                 await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
                 transaction.Commit();
                 return Ok(new IdResponse<long>(invoiceModel.Id));
@@ -131,7 +197,50 @@ namespace Kiltex.SistemaGestion.Services.Services
             {
                 _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
                 return Error<IdResponse<long>>(new OperationExceptions(ErrorsCodes.C_999_ERROR_GENERICO, ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO)));
-            }         
+            }
+        }
+
+        public async Task<string> PrintInvoice(Invoice model, CancellationToken ct = default)
+        {
+
+            //MANEJO DE ERRORES
+            var cargarCliente = await _printer.CargarDatosCliente(model.CustomerName, model.CustomerCuit,model.CustomerAddress, (ETypeReceipt)model.Type).ConfigureAwait(false);
+
+            if(cargarCliente == null)
+            {
+                await _printer.CerrarJornadaFiscal();
+                return "ErrorCliente";
+            }
+
+            var openDoc = await _printer.OpenInvoice((ETypeReceipt)model.Type, model.CustomerName,eTypeDocumentClient.Cuil, model.CustomerAddress).ConfigureAwait(false);
+
+            if(openDoc == null)
+            {
+                await _printer.CloseFactura(1, model.CustomerName).ConfigureAwait(false);
+                return "ErrorAbrir";
+            }
+            //TODO por cada item mandar a imprimir
+            foreach(var item in model.InvoiceDetails)
+            {               
+                var imprimir = await _printer.PrintItem(item.ProductName,item.Quantity,item.Price,item.Iva,item.ProductCode.ToString()).ConfigureAwait(false);
+                
+                if(imprimir == null)
+                {
+                    await _printer.CloseFactura(1, model.CustomerName).ConfigureAwait(false);
+                    return "ErrorImprimir";
+                }
+            }
+
+            var closeFactura = await _printer.CloseFactura(1, model.CustomerName).ConfigureAwait(false);
+            
+            if(closeFactura == null)
+            {
+                await _printer.CerrarJornadaFiscal();
+                return "ErrorCerrar";
+            }
+
+            return closeFactura;
+
         }
     }
 }

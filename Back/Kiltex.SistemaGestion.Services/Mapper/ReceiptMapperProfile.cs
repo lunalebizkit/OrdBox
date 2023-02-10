@@ -13,8 +13,8 @@ namespace Kiltex.SistemaGestion.Services.Mapper
             CreateMap<DtoRequestReceipt, Receipt>()
                 .AfterMap((o, d, c) =>
                 {
-                    d.Total = o.ReceiptDetails.Sum(p => (p.Quantity * p.Price));
-                    d.IvaTotal = o.ReceiptDetails.Sum(e => (e.Quantity * e.Price) * e.Iva / 100.00m);
+                    d.Total = o.ConcNoGravado + o.PercIngBrutos + o.PercIva + o.ReceiptDetails.Sum(p => (p.Quantity * p.Price) );
+                    d.IvaTotal = o.ReceiptDetails.Sum(e => e.Quantity *( e.Price - (e.Price /( 1 + e.Iva / 100.00m))) );
                 });
 
             CreateMap<Receipt, DtoRequestReceipt>();

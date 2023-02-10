@@ -74,16 +74,22 @@
           <nz-form-label [nzSm]="6" [nzXs]="14" nzRequired nzFor="customerCuit"
             >Cuit - Cuil
           </nz-form-label>
-          <nz-form-control [nzSm]="14" [nzXs]="14">
+          <nz-form-control [nzSm]="14" [nzXs]="14" [nzErrorTip]="cuit">
             <input
               nz-input
-              maxlength="250"
               (keydown.enter)="searchCustomer(); $event.preventDefault()"
               nzSize="small"
               formControlName="customerCuit"
             />
           </nz-form-control>
-
+          <ng-template #cuit let-control>
+            <ng-container *ngIf="control.hasError('required')"> 
+              Debe ingresar un cuit valido.
+            </ng-container>
+            <ng-container *ngIf="!control.hasError('required') && control.hasError('pattern')"> 
+              El cuit ingresado debe tener 11 caracteres numericos.
+            </ng-container>
+          </ng-template>
           <!-- Boton que abre el buscador de CLiente en drawer -->
           <form nz-form [formGroup]="formCustomerSearch">
             <div style="margin: 3px">
@@ -100,6 +106,22 @@
           </form>
         </nz-form-item>
 
+         <nz-form-item *ngIf="typeSelectedId == 2">
+           <nz-form-label [nzSm]="6" [nzXs]="14" nzFor="customerDni" 
+              >Dni
+            </nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="14">
+            <input
+              nz-input
+              maxlength="8"
+              nzSize="small"
+              formControlName="customerDni"
+              />
+            </nz-form-control>
+              <nz-switch style="margin-left: 5px;" (click)="select($event)" 
+               nzCheckedChildren="seleccionado" nzUnCheckedChildren="No seleccionado" 
+            ></nz-switch>
+      </nz-form-item>
         <nz-form-item>
           <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="customerName"
             >Razón Social - Nombre

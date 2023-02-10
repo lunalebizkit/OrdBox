@@ -2,6 +2,7 @@
 using Kiltex.SistemaGestion.Domain;
 using Kiltex.SistemaGestion.SDK.Error;
 using Kiltex.SistemaGestion.Services.Common;
+using Kiltex.SistemaGestion.Services.ImpresoraFiscal;
 
 namespace Kiltex.SistemaGestion.Services.Services
 {

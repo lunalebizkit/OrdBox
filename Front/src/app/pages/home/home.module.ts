@@ -16,7 +16,7 @@ import { NzImageModule } from 'ng-zorro-antd/image';
 
 @NgModule({
   declarations: [
-    HomeComponent
+    HomeComponent,
   ],
   imports: [
     HomeRoutingModule,
