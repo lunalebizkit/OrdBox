@@ -87,12 +87,12 @@ namespace Kiltex.SistemaGestion.Services.Services
             try
             {
                 var query = _contextSql
-                                    .Suppliers
+                                    .Entities.OfType<Supplier>()
                                     .AsNoTracking()
                                     .Include(p => p.EmailEntities)
                                     .Include(p => p.PhoneEntities)
                                     .Where(p => p.Name.ToLower().Contains(request.Filter ?? "") || 
-                                       (!p.Dni.HasValue || p.Dni.ToString().Contains(request.Filter ?? "")) ||
+                                        p.Dni.ToString().Contains(request.Filter ?? "") ||
                                        p.Cuit.ToLower().Contains(request.Filter ?? ""));
 
                 var count = await query.CountAsync().ConfigureAwait(false);

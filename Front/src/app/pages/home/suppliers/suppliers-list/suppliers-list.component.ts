@@ -34,7 +34,7 @@ export class SuppliersListComponent implements OnInit {
   queryParams = {
     filter: '',
     page: 0,
-    pageSize: 10,
+    pageSize: 20,
   };
 
   /*

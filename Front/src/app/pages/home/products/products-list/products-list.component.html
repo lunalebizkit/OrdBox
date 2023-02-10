@@ -67,12 +67,12 @@
           <th nzEllipsis nzWidth="275px">Producto</th>
           <th nzEllipsis nzWidth="75px">Categoría</th>
           <th nzEllipsis nzWidth="70px">Marca</th>
-          <th nzEllipsis nzWidth="50px">Cantidad</th>
-          <th nzEllipsis nzWidth="70px">P.Costo</th>
-          <th nzEllipsis nzWidth="70px">P.Lista</th>
-          <th nzEllipsis nzWidth="70px">P.Contado</th>
-          <th nzEllipsis nzWidth="70px">P.Tarjeta</th>
-          <th nzEllipsis nzWidth="45px">Código</th>
+          <th nzEllipsis nzWidth="50px" style="text-align: center">Cantidad</th>
+          <th nzEllipsis nzWidth="70px" style="text-align: right">P.Costo</th>
+          <th nzEllipsis nzWidth="70px" style="text-align: right">P.Lista</th>
+          <th nzEllipsis nzWidth="70px" style="text-align: right;">P.Contado</th>
+          <th nzEllipsis nzWidth="70px"  style="text-align: right">P.Tarjeta</th>
+          <th nzEllipsis nzWidth="45px" style="text-align: right">Código</th>
         </tr>
       </thead> 
       <tbody>
@@ -92,7 +92,7 @@
           <td nzEllipsis>{{ product.description }}</td>
           <td nzEllipsis>{{ product.categoryName }}</td>
           <td nzEllipsis>{{ product.brandName }}</td>
-          <td nzEllipsis style="text-align: right"
+          <td nzEllipsis style="text-align: center"
           [style.color]="product.quantity >= 0 ? '' : 'red' ">{{ product.quantity }}</td>
           <td style="color: blue; text-align: right; font-weight: bold">
             {{ this.currencyFormat(product.purchasePrice) }} 

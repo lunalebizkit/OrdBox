@@ -28,9 +28,34 @@
                         <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="categoryName">Categoría </nz-form-label>
                         <nz-form-control [nzSm]="14" [nzXs]="24">
                             <nz-spin [nzSpinning]="isLoadingCategory">
-                                <nz-select formControlName="categoryName" id="categoryName"
+                                <nz-select                              
+                                nzAllowClear
+                                nzShowSearch
+                                nzServerSearch
+                                (nzOnSearch)="onSearchCategory($event)"
+                                formControlName="categoryName"
+                                (nzModelChange)="categorySelectedChange($event)"
+                                id="categoryName"
+                              >                          
+                                <nz-option
+                                  *ngFor="let p of allCategories; let id = index"
+                                  [nzValue]="p.value"
+                                  [nzLabel]="p.label"
+                                ></nz-option>
+  
+                                <nz-option *ngIf="isLoadingCategory" nzDisabled nzCustomContent>
+                                  <span
+                                    nz-icon
+                                    nzType="loading"
+                                    class="loading-icon"
+                                  ></span>
+                                  Loading Data...
+                                </nz-option>
+                             
+                              </nz-select>
+                                <!-- <nz-select formControlName="categoryName" id="categoryName"
                                     (nzModelChange)="categorySelectedChange($event)" [nzOptions]="allCategories">
-                                </nz-select>
+                                </nz-select> -->
                             </nz-spin>
                         </nz-form-control>
                     </nz-form-item>
@@ -39,9 +64,34 @@
                         <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="brandName">Marca </nz-form-label>
                         <nz-form-control [nzSm]="14" [nzXs]="24">
                             <nz-spin [nzSpinning]="isLoadingBrand">
-                                <nz-select formControlName="brandName" id="brandName"
+                                <nz-select                              
+                                nzAllowClear
+                                nzShowSearch
+                                nzServerSearch
+                                (nzOnSearch)="onSearchBrand($event)"
+                                formControlName="brandName"
+                                (nzModelChange)="brandSelectedChange($event)"
+                                id="brandName"
+                              >                          
+                                <nz-option
+                                  *ngFor="let p of allBrands; let id = index"
+                                  [nzValue]="p.value"
+                                  [nzLabel]="p.label"
+                                ></nz-option>
+  
+                                <nz-option *ngIf="isLoadingBrand" nzDisabled nzCustomContent>
+                                  <span
+                                    nz-icon
+                                    nzType="loading"
+                                    class="loading-icon"
+                                  ></span>
+                                  Loading Data...
+                                </nz-option>
+                             
+                              </nz-select>
+                                <!-- <nz-select formControlName="brandName" id="brandName"
                                     (nzModelChange)="brandSelectedChange($event)" [nzOptions]="allBrands">
-                                </nz-select>
+                                </nz-select> -->
                             </nz-spin>
                         </nz-form-control>
                     </nz-form-item>
@@ -50,11 +100,34 @@
                         <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="supplierName">Proveedor </nz-form-label>
                         <nz-form-control [nzSm]="14" [nzXs]="24">
                             <nz-spin [nzSpinning]="isLoadingEntity">
-                                <nz-select formControlName="supplierName" id="supplierName"
-                                    (nzModelChange)="entitySelectedChange($event)" [nzOptions]="allSuppliers">
-                                </nz-select>
-                            </nz-spin>
-                        </nz-form-control>
+                            <nz-select                              
+                              nzAllowClear
+                              nzShowSearch
+                              nzServerSearch
+                              (nzOnSearch)="onSearch($event)"
+                              formControlName="supplierName"
+                              (nzModelChange)="entitySelectedChange($event)"
+                              id="supplierName"
+                            >                          
+                              <nz-option
+                                *ngFor="let p of allSuppliers; let id = index"
+                                [nzValue]="p.value"
+                                [nzLabel]="p.label"
+                              ></nz-option>
+
+                              <nz-option *ngIf="isLoadingEntity" nzDisabled nzCustomContent>
+                                <span
+                                  nz-icon
+                                  nzType="loading"
+                                  class="loading-icon"
+                                ></span>
+                                Loading Data...
+                              </nz-option>
+                           
+                            </nz-select>
+                        </nz-spin>
+                          </nz-form-control>
+                 
                     </nz-form-item>
                     <nz-form-item>
                         <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="observation">Observación

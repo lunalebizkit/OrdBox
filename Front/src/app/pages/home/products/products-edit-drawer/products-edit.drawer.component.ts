@@ -30,6 +30,12 @@ export class ProductsEditDrawerComponent extends BaseComponent implements OnInit
    ** Determina si esta en proceso de guardado
    */
     isSaving!: boolean;
+    queryData = {
+      filter: '',
+      page: 0,
+      pageSize: 100,
+    };
+
   
     /*
      ** Determina si esta buscando el usuario
@@ -41,7 +47,7 @@ export class ProductsEditDrawerComponent extends BaseComponent implements OnInit
     categorySelected: any = null;
     brandSelected: any = null;
     entitySelected: any = null;
-  
+    timeout!: any;
     /*
      ** id del usuario a editar, si es nuevo...
      */
@@ -65,9 +71,9 @@ export class ProductsEditDrawerComponent extends BaseComponent implements OnInit
         */
        imagesList: NzUploadFile[] = [];
   
-    allCategories/*: {value: number, label: string}[] */ =[];
-    allBrands = [];
-    allSuppliers = [];
+    allCategories: { value: string, label: string }[] = [];
+    allBrands: { value: string, label: string }[] = [];
+    allSuppliers: { value: string, label: string }[] = [];
     constructor(
       private service: ProductService,
       private serviceCategory: CategoriesService,
@@ -101,51 +107,101 @@ export class ProductsEditDrawerComponent extends BaseComponent implements OnInit
       })
     }
   
-    ngOnInit(): void {    
-      this.getAllCategories();
-      this.getAllBrands();
-      this.getAllSupplier();
+    ngOnInit(): void {             
       if (this.id != null || this.id != undefined || this.id != 0) {
         this.getProduct(this.id)
-    }
-     
-    }
+    }     
+    };
+      /*
+  ** Evento de busqueda datos en el server
+  */
+  onSearch(value: string): void {
+    clearTimeout(this.timeout);
+    this.timeout = setTimeout(()=>{
+      
+      if (value.length > 2){
+        this.allSuppliers= [];
+        this.queryData.filter= value;
+        this.getAllSupplier();
+      }  }, 1000);    
+  };
+
+  onSearchBrand(value: string): void {
+    clearTimeout(this.timeout);
+    this.timeout = setTimeout(()=>{
+      
+      if (value.length > 2){
+        this.allBrands= [];
+        this.queryData.filter= value;
+        this.getAllBrands();
+      }  }, 1000);    
+  };
+
+  onSearchCategory(value: string): void {
+    clearTimeout(this.timeout);
+    this.timeout = setTimeout(()=>{
+      
+      if (value.length > 2){
+        this.allCategories= [];
+        this.queryData.filter= value;
+        this.getAllCategories();
+      }  }, 1000);    
+  };
   
     getProduct(id: number): void {
       if (id != 0)
       this.service.getById(id).subscribe({
-        next: (r ) => {
+        next: (r ) => {          
+         
           Object.keys(this.form.controls).forEach((key: string)=>{
             const ctr= this.form.controls[key];
             const value= r[key]
             if (value !== undefined && value !== null){
               switch (key) {
-                case "categoryName":                
+                case "categoryName":  
+                this.categorySelectedChange(r.categoryName); 
+                this.getAllCategories();
+                clearTimeout(this.timeout);
+                setTimeout(() => {
                   ctr.setValue
-                (this.allCategories
-                  .filter((v: { value: any, label: string}) =>  v.label.toLocaleLowerCase() == value.toLocaleLowerCase())
-                  .map((v: any) => v.value)[0] ); break;
-                
-                case "supplierName":
-                  ctr.setValue
-                  (this.allSuppliers
+                  (this.allCategories
                     .filter((v: { value: any, label: string}) =>  v.label.toLocaleLowerCase() == value.toLocaleLowerCase())
-                    .map((v: any) => v.value)[0] ); break;  
+                    .map((v: any) => v.value)[0] );
+                    this.isLoadingCategory= false;
+                }, 800);             
+                 break;
+                
+                case "supplierName":                 
+                  this.entitySelectedChange(r.supplierName);
+                  this.getAllSupplier();
+                  clearTimeout(this.timeout);
+                  this.timeout= setTimeout(()=> {
+                    ctr.setValue
+                    (this.allSuppliers
+                      .filter((v: { value: any, label: string}) =>  v.label.toLocaleLowerCase() == value.toLocaleLowerCase())
+                      .map((v: any) => v.value)[0] ) ;
+                      this.isLoadingEntity= false;
+                  }, 1000);break;                  
                 
                   case "brandName":
+                    this.brandSelectedChange(r.brandName);
+                    this.getAllBrands();
+                     setTimeout(()=> {
                     ctr.setValue
                     (this.allBrands
                       .filter((v: { value: any, label: string}) =>  v.label.toLocaleLowerCase() == value.toLocaleLowerCase())
-                      .map((v: any) => v.value)[0] ); break;
+                      .map((v: any) => v.value)[0] ); 
+                      this.isLoadingBrand= false;}, 900);
+                      break;
                 default:
                   ctr.setValue(value)
               }  
              
              
             }         
-          })          
+          });      
   
-          this.isLoading = false
+          this.isLoading = false;  
         },
         error: () => { this.isLoading = false; }
       })
@@ -153,14 +209,15 @@ export class ProductsEditDrawerComponent extends BaseComponent implements OnInit
     }
   
     entitySelectedChange(id: any): void {
-      this.entitySelected = id;
+    this.queryData.filter=id != undefined ? id : this.form.controls['supplierName'].value;      
+
     }
   
     categorySelectedChange(id: any): void {
-      this.categorySelected = id;
+      this.queryData.filter=id != undefined ? id : this.form.controls['categoryName'].value;  
     }
     brandSelectedChange(id: any): void {
-      this.brandSelected = id;
+      this.queryData.filter=id != undefined ? id : this.form.controls['brandName'].value;  
     }
     save(): void {
       if (this.isValidForm(this.form)) {
@@ -183,28 +240,26 @@ export class ProductsEditDrawerComponent extends BaseComponent implements OnInit
           supplierid: this.form.controls['supplierName'].value
         };
         this.isSaving = true;
-        this.service.saveProduct(model).subscribe({
-          next: (r) => {
-            this.showNotificationSuccess(
-              'Guardado correcto',
-              `Se guardo correctamente el Producto ${model.description}`
-            );
-            this.isSaving = false;
-            this.close(r.id);
-          },
-          error: () => {
-            this.isSaving = false;
-            this.showMessageError('No se pudo Guardar el Producto');
-            this.close();
-          }
-        })
+        console.log(model);
+        
+        // this.service.saveProduct(model).subscribe({
+        //   next: (r) => {
+        //     this.showNotificationSuccess(
+        //       'Guardado correcto',
+        //       `Se guardo correctamente el Producto ${model.description}`
+        //     );
+        //     this.isSaving = false;
+        //     this.close(r.id);
+        //   },
+        //   error: () => {
+        //     this.isSaving = false;
+        //     this.showMessageError('No se pudo Guardar el Producto');
+        //     this.close();
+        //   }
+        // })
       }
     }
-    queryData = {
-      filter: '',
-      page: 0,
-      pageSize: 100,
-    }
+
     getAllCategories(): void {
       this.isLoadingCategory = true;
       this.serviceCategory.getByFilter(this.queryData).subscribe({
