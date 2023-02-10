@@ -211,9 +211,9 @@ constructor(@Inject(LOCALE_ID) public locale: string,
                 
                 this.router.navigate(['/notes/debitList']);
               },
-              error: () => {
+              error: (r) => {
                 this.isSaving = false;
-                this.showMessageError('No se pudo crear la Nota de Débito')
+                this.showMessageError(r.error.descripcion)
               }
             });
         }

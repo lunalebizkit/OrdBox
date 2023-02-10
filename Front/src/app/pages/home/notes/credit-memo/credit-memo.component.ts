@@ -215,9 +215,9 @@ constructor(@Inject(LOCALE_ID) public locale: string,
                               
                 this.router.navigate(['/notes/creditList']);
               },
-              error: () => {
+              error: (r) => {
                 this.isSaving = false;
-                this.showMessageError('No se pudo crear la Nota de Crédito')
+                this.showMessageError(r.error.descripcion)
               }
             });
         }
