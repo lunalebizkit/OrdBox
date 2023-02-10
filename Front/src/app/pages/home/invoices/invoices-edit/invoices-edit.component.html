@@ -99,19 +99,20 @@
             </div>
           </form>
         </nz-form-item>
-         <nz-form-item *ngIf=" typeSelectedId == 2">
+
+         <nz-form-item *ngIf="typeSelectedId == 2">
            <nz-form-label [nzSm]="6" [nzXs]="14" nzFor="customerDni" 
               >Dni
             </nz-form-label>
             <nz-form-control [nzSm]="14" [nzXs]="14">
             <input
               nz-input
-              maxlength="10"
+              maxlength="8"
               nzSize="small"
-              formControlName="CustomerDni"
+              formControlName="customerDni"
               />
             </nz-form-control>
-              <nz-switch style="margin-left: 5px;"  [nzControl]="true" 
+              <nz-switch style="margin-left: 5px;" (click)="select($event)" 
                nzCheckedChildren="seleccionado" nzUnCheckedChildren="No seleccionado" 
             ></nz-switch>
       </nz-form-item>

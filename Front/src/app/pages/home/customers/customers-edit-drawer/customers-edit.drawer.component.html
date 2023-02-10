@@ -19,8 +19,8 @@
 
                     <nz-form-item>
                         <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="cuit">CUIT </nz-form-label>
-                        <nz-form-control [nzSm]="14" [nzXs]="24">
-                            <input nz-input [(ngModel)]="demoCuit" formControlName="cuit" id="cuit" />
+                        <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="Ingrese un CUIT válido">
+                            <input nz-input [(ngModel)]="demoCuit" formControlName="cuit" id="cuit" maxlength="11"  pattern="^[1-9]\d*$" />
                         </nz-form-control>
                     </nz-form-item>
 
@@ -28,7 +28,7 @@
                         <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="dni">Dni
                         </nz-form-label>
                         <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="Ingrese un DNI válido">
-                            <input nz-input formControlName="dni" id="dni" maxlength="10" pattern="^[1-9]\d*$"/>
+                            <input nz-input formControlName="dni" id="dni" maxlength="8" pattern="^[1-9]\d*$"/>
                         </nz-form-control>
                     </nz-form-item>
 
@@ -36,7 +36,7 @@
                         <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="address">Dirección
                         </nz-form-label>
                         <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="Ingrese un Dirección válida">
-                            <input formControlName="address" nz-input id="address" maxlength="250" pe="text" />
+                            <input formControlName="address" nz-input id="address" maxlength="250" type="text" pattern="[a-zA-Z0-9\sd*$]+[1-55]" />
                         </nz-form-control>
                     </nz-form-item>
                 
