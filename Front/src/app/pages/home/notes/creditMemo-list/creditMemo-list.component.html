@@ -63,7 +63,7 @@
         <tr class="small-text" tabindex="-1" *ngFor="let data of creditMemoList; let i = index"
           (click)="onClick(data, i)" (keydown)="myNavegation($event)" [style.background-color]="
              data === selectedCreditMemo ? 'lightblue' : ''
-            ">
+            "  (dblclick)="onDoubleClick(data)">
           <td>{{data.id}}</td>
           <td>{{this.formaterDate(data.dateTime)}}</td>
           <td>{{data.customerCuit}}</td>

@@ -112,7 +112,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                 {
                     if (invoiceModel.CustomerId == 0)
                     {
-                        var user = await _contextSql.Customers.AsNoTracking().FirstOrDefaultAsync(p => p.Name == "Admin");
+                        var user = await _contextSql.Customers.AsNoTracking().FirstOrDefaultAsync(p => p.Name.ToLower() == "admin");
                         invoiceModel.CustomerId = user.Id;
                     }
 

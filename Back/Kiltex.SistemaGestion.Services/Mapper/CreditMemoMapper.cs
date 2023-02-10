@@ -14,7 +14,7 @@ namespace Kiltex.SistemaGestion.Services.Mapper
                 .AfterMap((o, d, c) =>
                 {
                     d.Total = o.CreditMemoDetail.Sum(p => (p.Quantity * p.Price));
-                    d.IvaTotal = o.CreditMemoDetail.Sum(e => (e.Quantity * e.Price) * e.Iva / 100.00m);
+                    d.IvaTotal = o.CreditMemoDetail.Sum(e => e.Quantity * (e.Price - (e.Price / (1 + e.Iva / 100.00m))) );
                     d.DateTime = o.DateTime = DateTime.Now;
                 });
 

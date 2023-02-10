@@ -235,20 +235,19 @@ constructor(@Inject(LOCALE_ID) public locale: string,
         this.ivaTotal = 0;
         try {
           this.creditMemoList.forEach(detail => {
-            this.subTotal +=  detail.price * detail.quantity -
-            this.ivaCalculate(detail.price * detail.quantity, detail.iva);         
+            this.subTotal +=  detail.quantity *
+            this.ivaCalculate(detail.price, detail.iva);         
           });
           this.creditMemoList.forEach( (dato) => {
-            this.ivaTotal += this.ivaTotal + this.ivaCalculate(
-              dato.price  * dato.quantity,
-               dato.iva
-            );
+            this.ivaTotal += (dato.price - this.ivaCalculate( dato.price,dato.iva)) * dato.quantity;
+            
            this.total += dato.price * dato.quantity ;     
           });
         } catch (error) {}   
       };
       ivaCalculate(data: number, iva:number): number {         
-        return (data * iva / 100); 
+        let newIva =1 + (iva / 100) ;
+        return (data / newIva); 
       }
       currencyFormat(data: any):string  {    
         return formatCurrency(data, this.locale, '$', 'ARS', '1.1-2')

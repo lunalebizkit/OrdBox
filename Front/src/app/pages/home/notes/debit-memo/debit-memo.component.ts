@@ -232,20 +232,21 @@ constructor(@Inject(LOCALE_ID) public locale: string,
         this.ivaTotal = 0;
         try {
           this.debitMemoList.forEach(detail => {
-            this.subTotal +=  detail.price * detail.quantity -
-            this.ivaCalculate(detail.price * detail.quantity, detail.iva);         
+                   /**Caluclo subtotal = precio y multiplico por cantidad*/
+        this.subTotal += detail.quantity *
+        this.ivaCalculate(detail.price, detail.iva);              
           });
           this.debitMemoList.forEach( (dato) => {
-            this.ivaTotal += this.ivaTotal + this.ivaCalculate(
-              dato.price  * dato.quantity,
-               dato.iva
-            );
-           this.total += dato.price  * dato.quantity ;     
+             /**Calculo iva restandolo al precio y multiplico por cantidad*/
+             this.ivaTotal += (dato.price - this.ivaCalculate(dato.price, dato.iva) ) * dato.quantity;
+             this.total +=  dato.price  * dato.quantity ;    
           });
         } catch (error) {}   
       };
+
       ivaCalculate(data: number, iva:number): number {         
-        return (data * iva / 100); 
+        let newIva =1 + (iva / 100) ;
+        return (data / newIva); 
       }
       currencyFormat(data: any):string  {    
         return formatCurrency(data, this.locale, '$', 'ARS', '1.1-2')

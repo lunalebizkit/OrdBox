@@ -109,7 +109,10 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
     page: 0,
     pageSize: 10
   };
- 
+
+  selectedDni: boolean = false;
+  dni: any;
+   
   constructor(
     private fb: FormBuilder,
     notificacionService: NzNotificationService,
@@ -132,6 +135,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
       payment: ['', Validators.required],
       address: ['', Validators.required],
       customerCuit: ['', Validators.required],
+      customerDni:['',],
       customerName: ['', Validators.required],    
       observation: ['']
     });   
@@ -186,6 +190,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
           this.formInvoice.controls['address'].setValue(data.address);
           this.formInvoice.controls['customerCuit'].setValue(data.cuit);
           this.formInvoice.controls['customerName'].setValue(data.name);
+          this.formInvoice.controls['customerDni'].setValue(data.dni)
         }
       },
       error: () => {
@@ -266,6 +271,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
           this.formInvoice.controls['address'].setValue(data.address);
           this.formInvoice.controls['customerCuit'].setValue(data.cuit);
           this.formInvoice.controls['customerName'].setValue(data.name);
+          this.formInvoice.controls['customerDni'].setValue(data.dni)
         },
         error: () => {this.showMessageError('No se encontro Cliente'); }
       });
@@ -273,6 +279,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
   };
 
   searchProduct():void {
+    console.log(this.formInvoice)
     this.product= this.formProductSearch.controls['productSearchFilter'].value;
     this.queryParams.filter= this.product;   
     if (this.product.length > 0) {
@@ -407,17 +414,24 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
   
   save(): void {
     if (this.isValidForm(this.formInvoice)) {
+
+      if(this.selectedDni && this.formInvoice.controls['customerDni'].value.length < 8){
+          return this.showMessageError('DNI Invalido');
+        } ;       
+      
+      
       if (this.invoiceDetails.length == 0) {
         this.showMessageError('No hay Productos Seleccionados');
 
       } else {
+       this.dni= this.formInvoice.controls['customerDni'].value
         const model: InvoiceModel = {
           id: 0,
           customerId: this.customerId,
           userId:this.userId,
           invoiceNumber: this.totalItems,
-          customerName: this.formInvoice.controls['customerName'].value,          
-          customerCuit: this.formInvoice.controls['customerCuit'].value,  
+          customerName: this.formInvoice.controls['customerName'].value,         
+          customerCuit: this.selectedDni? this.dni : this.formInvoice.controls['customerCuit'].value,  
           customerAddress: this.formInvoice.controls['address'].value,          
           observation: this.formInvoice.controls['observation'].value,
           dateTime: this.formInvoice.controls['dateTime'].value,
@@ -442,7 +456,9 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
               this.showMessageError(r.error.descripcion)
             }
           });
-      }
+      
+    }
+    
     }
   };
 
@@ -506,6 +522,16 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
 
   formaterDate(date: string | number | Date): string {
     return formatDate(date, 'MM/dd/YYYY', this.locale);
+  }
+
+  select(dni: any) {
+    this.selectedDni = !this.selectedDni;
+    if(this.selectedDni){
+      this.dni = this.formInvoice.controls['customerDni'].value      
+     
+    } else{
+      this.dni = null;
+    }
   }
 
 }
