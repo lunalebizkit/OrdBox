@@ -369,16 +369,17 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
 
   msjConfirmOk() {
     try {
+      this.receiptDetailsGrid = this.receiptDetailsGrid.filter(
+        (element) => element.productId != this.popupComponent.elementSelected
+      );
       this.popupComponent.isConfirmationvisible = false;
       if (this.isValidForm(this.formReceipt)&&(this.receiptDetailsGrid.length != 0)
       && this.isValidForm(this.formSupplierSearch) && this.isValidForm(this.formProductSearch)){
         this.popComponent.showConfirmation() 
       } else {
+        this.showMessageError('No ha seleccionado producto');
       }
-    } catch (error) {
-      this.showMessageError('No ha seleccionado producto');
-    }
-   
+    } catch (error) {}
   }
 
   searchProduct(): void {
