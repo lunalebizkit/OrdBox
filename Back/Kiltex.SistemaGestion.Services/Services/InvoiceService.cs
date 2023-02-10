@@ -124,33 +124,31 @@ namespace Kiltex.SistemaGestion.Services.Services
                         _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
                         return Error<IdResponse<long>>(new OperationExceptions("000", "Error al cargar cliente, El CUIT/DNI tiene que ser numerico"));
                     }
+                    //Verifico que el CUIT O DNI no se pasen de los parametros
+                    if (model.CustomerCuit.Length > 11 || model.CustomerCuit.Length < 7)
+                    {
+                        _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
+                        return Error<IdResponse<long>>(new OperationExceptions("000", "Error al cargar cliente, verifique cantidad de digitos"));
+                    }
 
                     //Verfico que la factura A no pueda realizarse al colocar un DNI
                     if (model.Type == 1 && model.CustomerCuit.Length != 11)
                     {
                         _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
-                        return Error<IdResponse<long>>(new OperationExceptions("000", "Error al cargar cliente, no puede cargar un DNI con Factura tipo A o C"));
+                        return Error<IdResponse<long>>(new OperationExceptions("000", "Error al cargar cliente, no puede cargar un DNI con Factura tipo A"));
                     }
 
                     //Verfico que la factura C no pueda realizarse al colocar un DNI
                     if (model.Type == 3 && model.CustomerCuit.Length != 11)
                     {
                         _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
-                        return Error<IdResponse<long>>(new OperationExceptions("000", "Error al cargar cliente, no puede cargar un DNI con Factura tipo A o C"));
+                        return Error<IdResponse<long>>(new OperationExceptions("000", "Error al cargar cliente, no puede cargar un DNI con Factura tipo C"));
                     }
-
                     //Verifico que el DNI tenga mayor a 7 caracteres y menor a 9
-                    if (model.Type == 2 && model.CustomerCuit.Length < 7 || model.CustomerCuit.Length > 9)
+                    if (model.Type == 2 && model.CustomerCuit.Length < 7 || model.CustomerCuit.Length > 9 && model.CustomerCuit.Length != 11)
                     {
                         _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
                         return Error<IdResponse<long>>(new OperationExceptions("000", "Error al cargar cliente, verifique DNI"));
-                    }
-
-                    //Verifico que el CUIT O DNI no se pasen de los parametros
-                    if (model.CustomerCuit.Length > 11 || model.CustomerCuit.Length < 7)
-                    {
-                        _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
-                        return Error<IdResponse<long>>(new OperationExceptions("000", "Error al cargar cliente, verifique cantidad de digitos"));
                     }
 
                     foreach (var detail in invoiceModel.InvoiceDetails)

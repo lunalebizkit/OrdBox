@@ -202,7 +202,7 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
 
             var typeDocumemt = tipoDocumento switch
             {
-                ETypeReceipt.C => "ResponsableInscripto",
+                ETypeReceipt.C => "ConsumidorFinal",
                 ETypeReceipt.A => "ResponsableInscripto",
                 ETypeReceipt.B => "ConsumidorFinal",
                 _ => throw new NotImplementedException()

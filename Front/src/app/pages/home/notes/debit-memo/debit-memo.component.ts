@@ -76,7 +76,7 @@ export class debitMemoComponent extends BaseComponent  implements OnInit {
    type = InvoiceType; 
   type1!:number 
   ivaType = IvaType;
-  typeSelectedId: number = 1;
+  typeSelectedId!: number;
   ivaSelectedId: number = 1;
   ivaSelected!: number;
   totalItems: any;
@@ -142,7 +142,8 @@ constructor(@Inject(LOCALE_ID) public locale: string,
       if (id != 0 || id != undefined)
         this.serviceInvoice.getInvoiceById(id).subscribe({
           next: (r: InvoiceModel) => {
-            this.type1 = r.type, 
+            this.formDebitMemo.controls['type'].setValue(r.type),
+            this.type1 = r.type,
             this.formDebitMemo.controls['invoiceNumber'].setValue(r.invoiceNumber),
             this.customerId= r.customerId
             this.formDebitMemo.controls['address'].setValue(r.customerAddress),
