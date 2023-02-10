@@ -185,7 +185,7 @@
             <td>{{data.id}}</td>
             <td>{{this.getInvoiceType(data.type)}}</td>
             <td>{{data.customerName}}</td>
-            <td>{{data.customerCuit}}</td>          
+            <td>{{data.customerCuit  | cuit }}</td>          
              <td>{{this.currencyFormat( data.importeNeto )}}</td>          
             <td>{{this.currencyFormat(data.iva10)}}</td>          
             <td>{{this.currencyFormat(data.iva21)}}</td>          

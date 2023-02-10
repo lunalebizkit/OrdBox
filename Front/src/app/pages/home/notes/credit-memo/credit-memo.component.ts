@@ -108,7 +108,7 @@ constructor(@Inject(LOCALE_ID) public locale: string,
     dateTime: [new Date(this.startDate), Validators.required],
     type: [ 1, Validators.required],
     address: ['', Validators.required],
-    customerCuit: ['', Validators.required],
+    customerCuit: ['', [Validators.required, Validators.pattern('[0-9]{11}'),]],
     customerName: ['', Validators.required], 
     invoiceNumber: [0 , Validators.required],   
     observation: ['',]

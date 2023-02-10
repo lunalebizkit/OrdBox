@@ -125,7 +125,7 @@
           >
             <td>{{ data.id }}</td>
             <td>{{ this.formaterDate(data.dateTime) }}</td>
-            <td>{{ data.supplierCuit }}</td>
+            <td>{{ data.supplierCuit | cuit}}</td>
             <td>{{ data.supplierName }}</td>
             <td [nzAlign]="'right'">
               <b>{{ this.currencyFormat(data.total) }}</b>

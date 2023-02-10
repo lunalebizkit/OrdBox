@@ -129,7 +129,7 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
       type: [1, Validators.required],
       receiptNumber: ['', Validators.required],
       supplierAddress: ['', Validators.required],
-      supplierCuit: ['', Validators.required],
+      supplierCuit: ['', [Validators.required, Validators.pattern('[0-9]{11}'),]],
       supplierName: ['', Validators.required],
       observation: [''],
     });
