@@ -8,7 +8,7 @@ namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest
 
         public string Description { get; set; }
 
-        public int? Code { get; set; }
+        public string? Code { get; set; }
 
         public long CategoryId { get; set; }
 

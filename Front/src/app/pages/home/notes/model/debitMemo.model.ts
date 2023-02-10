@@ -20,7 +20,7 @@ export interface DebitMemoDetails{
     debitId:number,
     productId:number,
     productName:string,
-    productCode:number,
+    productCode:string,
     quantity:number,
     price:number,
     iva:number

@@ -12,7 +12,7 @@ namespace Kiltex.SistemaGestion.Domain.Model
         public string? Description { get; set; }
 
         [Column("code")]
-        public int? Code { get; set; }
+        public string? Code { get; set; }
 
         [Column("category_id")]
         public long CategoryId { get; set; }

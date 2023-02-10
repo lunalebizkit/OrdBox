@@ -7,7 +7,7 @@ namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse
 
         public string Description { get; set; }
 
-        public int? Code { get; set; }
+        public string? Code { get; set; }
 
         public string CategoryName { get; set; }
 

@@ -22,14 +22,14 @@ export interface receiptDetails {
   receiptId: number;
   productId: number;
   productName: string;
-  productCode: number;
+  productCode: string;
   quantity: number;
   price: number;
   iva: number;
 }
 export interface receiptDetailsGrid {
   productId: number;
-  code: number;
+  code: string;
   description: string;
   quantity: number;
   subTotal: number;

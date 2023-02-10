@@ -107,7 +107,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                                     p.Category.Description.ToLower().Contains(request.Filter ?? "") ||              
                                     p.Supplier.Name.ToLower().Contains(request.Filter ?? "") ||
                                     p.Brand.Description.ToLower().Contains(request.Filter ?? "") ||
-                                    p.Code.ToString().Contains(request.Filter ?? "")
+                                    p.Code.ToLower().Contains(request.Filter ?? "")
                                     ));
 
                 var count = await query.CountAsync().ConfigureAwait(false);

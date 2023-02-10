@@ -2,7 +2,7 @@ export interface ProductAddModel {
    
     id: number,
     description: string,
-    code: number,
+    code: string,
     categoryid: number,
     brandid: number,
     quantity: number,

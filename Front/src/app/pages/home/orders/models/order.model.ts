@@ -19,7 +19,7 @@ export interface NewOrderDetail {
 
 export interface OrderDetailGrid {
   id: number;
-  code: number;
+  code: string;
   productName: string;
   orderedQuantity: number;
   price: number;
