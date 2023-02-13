@@ -1,5 +1,5 @@
 export interface CustomerModel {
-id: number,
+    id: number,
     dni: string,
     cuit: string,
     name: string,

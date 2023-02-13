@@ -17,7 +17,7 @@ namespace Kiltex.SistemaGestion.Services.Services
           base(logger, context, maper)
 
         { }
-        public async Task<OperationResponse<DtoSupplier>> GetSupplierById(long id)
+        public async Task<OperationResponse<DtoEntity>> GetSupplierById(long id)
         {
             try
             {
@@ -31,10 +31,10 @@ namespace Kiltex.SistemaGestion.Services.Services
                 if (proveedor == null)
                 {
                     _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
-                    return Error<DtoSupplier>(new OperationExceptions("000", $"Proveedor no encontrado ID: {id}"));
+                    return Error<DtoEntity>(new OperationExceptions("000", $"Proveedor no encontrado ID: {id}"));
                 }
 
-                var result = new DtoSupplier()
+                var result = new DtoEntity()
                 {
                     Id = id,
                     Dni = proveedor.Dni,
@@ -47,7 +47,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                     PhoneEntity = proveedor.PhoneEntities.Select(p => p.PhoneNumber).ToList()
                 };
 
-                return new OperationResponse<DtoSupplier>(result);
+                return new OperationResponse<DtoEntity>(result);
             }
             catch (Exception ex)
             {
@@ -57,7 +57,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             
         }
 
-        public async Task<OperationResponse<DtoSupplier>> GetSupplierByCuit(string cuit)
+        public async Task<OperationResponse<DtoEntity>> GetSupplierByCuit(string cuit)
         {
             try
             {
@@ -69,12 +69,12 @@ namespace Kiltex.SistemaGestion.Services.Services
                 if (entidad == null)
                 {
                     _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
-                    return Error<DtoSupplier>(new OperationExceptions("000", $"Proveedor no encontrado CUIT: {cuit}"));
+                    return Error<DtoEntity>(new OperationExceptions("000", $"Proveedor no encontrado CUIT: {cuit}"));
                 }
 
                 var result = _mapper.Map<DtoSupplier>(entidad);
 
-                return new OperationResponse<DtoSupplier>(result);
+                return new OperationResponse<DtoEntity>(result);
             }
             catch (Exception ex)
             {
@@ -120,7 +120,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                 throw;
             }
         }
-        public async Task<OperationResponse<IdResponse<long>>> AddSupplier(DtoSupplier model, CancellationToken ct = default)
+        public async Task<OperationResponse<IdResponse<long>>> AddSupplier(DtoEntity model, CancellationToken ct = default)
         {
             try
             {
@@ -139,7 +139,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             }
         }
 
-        public async Task<OperationResponse<IdResponse<long>>> UpdateSupplier(DtoSupplier model, CancellationToken ct = default)
+        public async Task<OperationResponse<IdResponse<long>>> UpdateSupplier(DtoEntity model, CancellationToken ct = default)
         {
             try
             {
@@ -162,7 +162,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                 throw;
             }
         }
-        public async Task<OperationResponse<IdResponse<long>>> AddOrUpdateSupplier(DtoSupplier model, CancellationToken ct = default)
+        public async Task<OperationResponse<IdResponse<long>>> AddOrUpdateSupplier(DtoEntity model, CancellationToken ct = default)
         {
             try
             {
