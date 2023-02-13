@@ -15,5 +15,6 @@
         public List<string> PhoneEntity { get; set; }
 
         public List<string> EmailEntity { get; set; }
+        public string? Observation { get; set; }
     }
 }

@@ -17,5 +17,6 @@
         public string? PhoneEntity { get; set; }
 
         public string? EmailEntity { get; set; }
+
     }
 }
