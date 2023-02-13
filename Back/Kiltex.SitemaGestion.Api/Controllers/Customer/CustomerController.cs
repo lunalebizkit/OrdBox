@@ -38,7 +38,7 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Customer
         }
         [HttpPost]
         [AllowAccess(Permission = new EPermission[] { EPermission.CreateCustomer })]
-        public async Task<IActionResult> New([FromBody] DtoSupplier model)
+        public async Task<IActionResult> New([FromBody] DtoEntity model)
         {
             return Return(await _service.Add(model).ConfigureAwait(false));
         }

@@ -23,7 +23,8 @@ namespace Kiltex.SistemaGestion.Services.Services
 
                 if(cerrarJornada == null)
                 {
-                    return new OperationResponse<bool>(false);
+                    _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
+                    return Error<bool>(new OperationExceptions("000", "No se pudo realizar reporte Z , verifique conexion a la impresora"));
                 }
 
                 return new OperationResponse<bool>(true);
