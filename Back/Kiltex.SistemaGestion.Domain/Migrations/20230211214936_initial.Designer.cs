@@ -4,6 +4,7 @@ using Kiltex.SistemaGestion.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Kiltex.SistemaGestion.Domain.Migrations
 {
     [DbContext(typeof(DBContext))]
-    partial class DBContextModelSnapshot : ModelSnapshot
+    [Migration("20230211214936_initial")]
+    partial class initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -793,14 +795,6 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("rol");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1L,
-                            Key = "1",
-                            Name = "Admin"
-                        });
                 });
 
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.SupplierOrder", b =>
@@ -933,19 +927,6 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("user");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1L,
-                            Email = "admin",
-                            FirstName = "admin",
-                            IsDeleted = false,
-                            LastName = "admin",
-                            Password = "$MYHASH$V1$100$K5WjB1bC/tpy4LO9+m4c0XYQHizxn8rgEbKJA0IcduCo9EZS",
-                            RoleId = 1L,
-                            UserName = "admin"
-                        });
                 });
 
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.Customer", b =>
@@ -953,16 +934,6 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                     b.HasBaseType("Kiltex.SistemaGestion.Domain.Model.Entity");
 
                     b.ToTable("customer");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1L,
-                            Address = "S/N",
-                            Cuit = "0",
-                            Dni = 0,
-                            Name = "admin"
-                        });
                 });
 
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.Supplier", b =>

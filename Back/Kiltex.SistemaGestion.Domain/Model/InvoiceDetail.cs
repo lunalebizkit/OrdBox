@@ -23,7 +23,7 @@ namespace Kiltex.SistemaGestion.Domain.Model
         public string? ProductName { get; set; }
 
         [Column("product_code")]
-        public int ProductCode { get; set; }
+        public string? ProductCode { get; set; }
 
         [Column("quantity")]
         public int Quantity { get; set; }

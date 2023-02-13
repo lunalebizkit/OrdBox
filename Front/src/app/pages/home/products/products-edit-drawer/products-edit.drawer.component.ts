@@ -89,7 +89,7 @@ export class ProductsEditDrawerComponent extends BaseComponent implements OnInit
       super(notificacionService, el, message);
       this.form = this.fb.group({
         description: ['', [Validators.required]],
-        code: [0, [Validators.required]],
+        code: ['', [Validators.required]],
         categoryName: ['', [Validators.required]],
         brandName: ['', [Validators.required]],
         salePercentage: [50, [Validators.required]],
@@ -239,24 +239,22 @@ export class ProductsEditDrawerComponent extends BaseComponent implements OnInit
           observation: this.form.controls['observation'].value,
           supplierid: this.form.controls['supplierName'].value
         };
-        this.isSaving = true;
-        console.log(model);
-        
-        // this.service.saveProduct(model).subscribe({
-        //   next: (r) => {
-        //     this.showNotificationSuccess(
-        //       'Guardado correcto',
-        //       `Se guardo correctamente el Producto ${model.description}`
-        //     );
-        //     this.isSaving = false;
-        //     this.close(r.id);
-        //   },
-        //   error: () => {
-        //     this.isSaving = false;
-        //     this.showMessageError('No se pudo Guardar el Producto');
-        //     this.close();
-        //   }
-        // })
+        this.isSaving = true;        
+        this.service.saveProduct(model).subscribe({
+          next: (r) => {
+            this.showNotificationSuccess(
+              'Guardado correcto',
+              `Se guardo correctamente el Producto ${model.description}`
+            );
+            this.isSaving = false;
+            this.close(r.id);
+          },
+          error: () => {
+            this.isSaving = false;
+            this.showMessageError('No se pudo Guardar el Producto');
+            this.close();
+          }
+        })
       }
     }
 

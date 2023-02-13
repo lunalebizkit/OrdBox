@@ -20,7 +20,7 @@
                     <nz-form-item>
                         <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="code">Código </nz-form-label>
                         <nz-form-control [nzSm]="14" [nzXs]="24">
-                            <nz-input-number style="width: 120px;"  formControlName="code" nz-input id="code" [nzMin]="0"></nz-input-number>
+                            <input formControlName="code" nz-input id="code" maxlength="250" />
                         </nz-form-control>
                     </nz-form-item>
 

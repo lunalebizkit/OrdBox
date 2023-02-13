@@ -63,21 +63,25 @@ const routes: Routes = [
           import('./orders/orders.module').then((m) => m.OrdersModule),
       },
       {
+        canActivate: [AuthGuard],
         path: 'periods',
         loadChildren: () =>
           import('./periods/periods.module').then((m) => m.PeriodsModule),
       },
        {
+        canActivate: [AuthGuard],
         path: 'iva',
         loadChildren: () =>
           import('./iva-report/iva-report.module').then((m) => m.IvaReportModule ),
       }, 
       {
+        canActivate: [AuthGuard],
         path: 'notes',
         loadChildren: () =>
           import('./notes/notes.module').then((m) => m.NotesModule ),
       },
       {
+        canActivate: [AuthGuard],
         path: 'report',
         loadChildren:()=>
           import('./report/report.module').then((m)=> m.ReportModule)

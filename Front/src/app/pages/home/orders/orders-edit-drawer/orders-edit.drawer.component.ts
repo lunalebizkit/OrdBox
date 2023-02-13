@@ -244,7 +244,7 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
                 new FormControl(`${e}`, [Validators.required])
               );
             });
-          debugger
+        
           /*Bindeo detalles*/
           r.orderDetail.forEach((orderDetail: OrderDetailGrid) => {
             /**Parseo viejo Producto a Grid */
@@ -401,7 +401,6 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
     this.orderDetail.filter(
       (detail) => detail.productId == this.editIdrecievedQuantity
     )[0].recievedQuantity = quantity;
-    console.log(quantity)
   }
 
   /*

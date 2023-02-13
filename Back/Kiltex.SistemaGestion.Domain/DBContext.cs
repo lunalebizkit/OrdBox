@@ -1,4 +1,5 @@
 ﻿using Kiltex.SistemaGestion.Domain.Model;
+using Kiltex.SistemaGestion.SDK.Security;
 using Microsoft.EntityFrameworkCore;
 
 namespace Kiltex.SistemaGestion.Domain
@@ -15,23 +16,54 @@ namespace Kiltex.SistemaGestion.Domain
         }
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            base.OnModelCreating(builder);
             builder.Entity<SupplierOrder>()
                 .HasMany(i => i.SupplierOrderDetail)
                 .WithOne(i => i.SupplierOrder)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            base.OnModelCreating(builder);
+            //base.OnModelCreating(builder);
             builder.Entity<Receipt>()
                 .HasMany(i => i.ReceiptDetails)
                 .WithOne(i => i.Receipt)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            base.OnModelCreating(builder);
+            //base.OnModelCreating(builder);
             builder.Entity<CreditMemo>()
                 .HasMany(i => i.CreditMemoDetail)
                 .WithOne(i => i.CreditMemo)
                 .OnDelete(DeleteBehavior.NoAction);
+
+            builder.Entity<Rol>().HasData(
+               new Rol()
+               {
+                   Id = 1,
+                   Key = "1",
+                   Name = "Admin",
+               });
+
+            builder.Entity<User>().HasData(
+                new User()
+                {
+                    Id = 1,
+                    FirstName = "admin",
+                    LastName = "admin",
+                    UserName = "admin",
+                    Email = "admin",
+                    Password = SecurePasswordHasher.Hash("admin123", 100),
+                    IsDeleted = false,
+                    RoleId = 1,
+                });
+            builder.Entity<Customer>().HasData(
+               new Customer()
+               {
+                   Id = 1,
+                   Name = "admin",
+                   Dni= 0,
+                   Address= "S/N",
+                   Cuit="0"    
+               });
+          
+            base.OnModelCreating(builder);
         }
 
         public virtual DbSet<Rol> Rols { get; set; }
@@ -58,7 +90,7 @@ namespace Kiltex.SistemaGestion.Domain
         public virtual DbSet<DebitMemo> DebitMemos { get; set; }
         public virtual DbSet<DebitMemoDetails> DebitMemoDetails { get; set; }
 
-
+        
         //private static void InitialRoles(ModelBuilder modelBuilder)
         //{
         //    modelBuilder.Entity<Rol>().HasData(
@@ -68,7 +100,28 @@ namespace Kiltex.SistemaGestion.Domain
         //            Name = Enums.ERols.Admin
         //        }
         //    );
-        //}; 
+        //};
+        //private static void InitialAdmin(ModelBuilder modelBuilder) 
+        //{
+        //    modelBuilder.Entity<Rol>().HasData(
+        //        new Rol()
+        //        {
+        //            Id=1,
+        //            Key="Admin",
+        //            Name= "Admin",
+        //        });
+        //    modelBuilder.Entity<User>().HasData(
+        //        new User()
+        //        {
+        //            Id = 1,
+        //            FirstName= "admin",
+        //            LastName= "admin",
+        //            Email= "admin",
+        //            Password= SecurePasswordHasher.Hash("admin123", 100),
+        //            IsDeleted= false,   
+        //            RoleId= 1,
+        //        });
+        //}
 
     }
 }

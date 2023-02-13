@@ -1,7 +1,6 @@
 <nz-page-header>
-  <nz-page-header-extra style="margin-left: -15%; margin-top: 1rem;">
-    <img nz-image width="150px" nzSrc="../../../assets/img/ordbox.png" alt="ordbox" 
-    />
+  <nz-page-header-extra style="margin-left: -10%; margin-top: 1rem;">
+    <img nz-image width="150px" nzSrc="../../../assets/img/ordbox.png" alt="ordbox" />
   </nz-page-header-extra>
 
   <nz-page-header-extra>
@@ -111,7 +110,12 @@
   </nz-page-header-extra>
 
   <nz-page-header-content>
+
     <router-outlet></router-outlet>
+
+    <div *ngIf="this.permiso.length == 0" style="height: 25em; position: absolute; width: 100vh;"></div>
+
+
     <nz-footer> ©{{ getYear() }}</nz-footer>
   </nz-page-header-content>
 

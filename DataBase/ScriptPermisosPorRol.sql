@@ -1,4 +1,4 @@
-USE [Gestion_Stock]
+USE [Ordbox]
 GO
 
 INSERT INTO [dbo].[permission_x_rol]
@@ -18,5 +18,5 @@ INSERT INTO [dbo].[permission_x_rol]
 		   (1,30),(1,31),
 		   (1,32),
 		   (1,33),(1,34),(1,35),(1,36),
-		   (1,37),(1,38)
+		   (1,37),(1,38),(1,39)
 GO
