@@ -31,13 +31,13 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Supplier
         }
         [HttpPost]
         [AllowAccess(Permission = new EPermission[] { EPermission.CreateSupplier })]
-        public async Task<IActionResult> New([FromBody] DtoSupplier model)
+        public async Task<IActionResult> New([FromBody] DtoEntity model)
         {
             return Return(await _service.AddSupplier(model).ConfigureAwait(false));
         }
         [HttpPut]
         [AllowAccess(Permission = new EPermission[] { EPermission.EditSupplier })]
-        public async Task<IActionResult> Edit([FromBody] DtoSupplier model)
+        public async Task<IActionResult> Edit([FromBody] DtoEntity model)
         {
             return Return(await _service.UpdateSupplier(model).ConfigureAwait(false));
         }

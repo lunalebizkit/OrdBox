@@ -72,7 +72,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                     return Error<DtoEntity>(new OperationExceptions("000", $"Proveedor no encontrado CUIT: {cuit}"));
                 }
 
-                var result = _mapper.Map<DtoSupplier>(entidad);
+                var result = _mapper.Map<DtoEntity>(entidad);
 
                 return new OperationResponse<DtoEntity>(result);
             }
