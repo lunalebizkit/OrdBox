@@ -209,6 +209,10 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("dateTime");
 
+                    b.Property<long>("DebitMemoNumber")
+                        .HasColumnType("bigint")
+                        .HasColumnName("debitMemo_number");
+
                     b.Property<long?>("InvoiceId")
                         .HasColumnType("bigint")
                         .HasColumnName("invoice_id");
@@ -367,6 +371,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                         .HasColumnName("customer_cuit");
 
                     b.Property<long?>("CustomerId")
+                        .IsRequired()
                         .HasColumnType("bigint")
                         .HasColumnName("customer_id");
 
@@ -927,6 +932,10 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                 {
                     b.HasBaseType("Kiltex.SistemaGestion.Domain.Model.Entity");
 
+                    b.Property<string>("Observation")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("observation");
+
                     b.ToTable("customer");
                 });
 
@@ -1044,7 +1053,9 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                 {
                     b.HasOne("Kiltex.SistemaGestion.Domain.Model.Customer", "Customer")
                         .WithMany()
-                        .HasForeignKey("CustomerId");
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Kiltex.SistemaGestion.Domain.Model.User", "User")
                         .WithMany()
