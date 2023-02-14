@@ -202,7 +202,7 @@ constructor(@Inject(LOCALE_ID) public locale: string,
             type: this.formDebitMemo.controls['type'].value,
             total: this.total,
             ivaTotal: this.ivaTotal,
-            debitMemoNumb: 0,
+            debitMemoNumber: 0,
             debitMemoDetails: this.debitMemoDetails,            
           };
           this.isSaving = true;

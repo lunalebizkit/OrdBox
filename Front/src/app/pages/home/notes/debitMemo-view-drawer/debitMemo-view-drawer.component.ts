@@ -47,6 +47,7 @@ export class DebitMemoViewDrawerComponent
   customerName!: string;
   customerCuit!: string;
   customerAddress!: string;
+  debitMemoNumber!:number;
   observation!: string;
   dateTime!: Date;
   subTotal!: number;
@@ -82,6 +83,7 @@ export class DebitMemoViewDrawerComponent
             this.customerAddress = r.customerAddress,
             this.customerCuit = r.customerCuit,
             this.customerName = r.customerName,
+            this.debitMemoNumber = r.debitMemoNumber,
             this.ivaTotal = r.ivaTotal,
             this.total = r.total,
             this.userId = r.userId,
