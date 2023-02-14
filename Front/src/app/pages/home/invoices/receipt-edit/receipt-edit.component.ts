@@ -238,7 +238,7 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
       nzTitle: 'Proveedor',
       nzContent: ReceiptSupplierSearchComponent,
       nzSize: 'large',
-      nzWidth: 1050,
+      nzWidth: '90%',
       nzClosable: false,
     });
     drawerRefSupplier.afterClose.subscribe({
@@ -472,7 +472,7 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
         nzTitle: 'Productos',
         nzContent: InvoiceProductSearchComponent,
         nzSize: 'large',
-        nzWidth:1050,
+        nzWidth:'90%',
         nzContentParams: {
           filter: this.formProductSearch.controls['productSearchFilter'].value,
         },

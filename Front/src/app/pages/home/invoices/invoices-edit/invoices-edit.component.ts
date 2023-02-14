@@ -180,7 +180,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
       nzTitle: 'Cliente',
       nzContent: InvoiceCustomerSearchComponent,
       nzSize: 'large',
-      nzWidth: 1050,
+      nzWidth: '90%',
       nzClosable: false
     });
     drawerRefCustomer.afterClose.subscribe({
@@ -206,7 +206,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
         nzTitle: 'Productos',
         nzContent: InvoiceProductSearchComponent,
         nzSize: 'large',
-        nzWidth: 1050,
+        nzWidth: '90%',
         nzContentParams: {
           filter: this.formProductSearch.controls['productSearchFilter'].value
         },

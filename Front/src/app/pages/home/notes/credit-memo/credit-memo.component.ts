@@ -294,7 +294,7 @@ constructor(@Inject(LOCALE_ID) public locale: string,
       nzTitle: 'Cliente',
       nzContent: InvoiceCustomerSearchComponent,
       nzSize: 'large',
-      nzWidth:1050,
+      nzWidth:'90%',
       nzClosable: false
     });
     drawerRefCustomer.afterClose.subscribe({
@@ -320,7 +320,7 @@ constructor(@Inject(LOCALE_ID) public locale: string,
         nzTitle: 'Productos',
         nzContent: InvoiceProductSearchComponent,
         nzSize: 'large',
-        nzWidth: 1050,
+        nzWidth: '90%',
         nzContentParams: {
           filter: this.formProductSearch.controls['productSearchFilter'].value
         },

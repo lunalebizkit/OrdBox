@@ -180,10 +180,14 @@ constructor(@Inject(LOCALE_ID) public locale: string,
     }
     save(): void {
       if (this.isValidForm(this.formDebitMemo)) {
+        if(this.selectedDni && this.formDebitMemo.controls['customerDni'].value.length < 8){
+          return this.showMessageError('DNI Invalido');
+        } ;  
         if (this.debitMemoDetails.length == 0) {
           this.showMessageError('No hay Productos Seleccionados');
   
         } else {
+          this.dni= this.formDebitMemo.controls['customerDni'].value
           const model: DebitMemoModel = {  
             id: 0,
             customerId: this.customerId,
@@ -256,14 +260,15 @@ constructor(@Inject(LOCALE_ID) public locale: string,
      
       
        typeSelectedChange(id: any): void {
-        this.typeSelectedId = this.id;    
+        this.typeSelectedId = id;    
         if (id == 1) {      
           this.invoiceA = true;
         }else{
           this.invoiceA= false;
-          console.log(this.id);
           
         }  
+        console.log(this.typeSelectedId);
+        
           
       } 
       startEdit(id: number): void {
