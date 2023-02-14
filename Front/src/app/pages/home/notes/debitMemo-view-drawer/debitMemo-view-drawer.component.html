@@ -22,9 +22,10 @@
             <nz-tag [nzColor]="'blue'">{{ this.debitMemoType(type) }}</nz-tag>
           </nz-page-header-tags>
         </nz-descriptions-item>
-          <nz-descriptions-item nzTitle="* Número de Factura" >
+          <nz-descriptions-item nzTitle="* Factura Relacionada" >
             {{ this.invoiceNumber }}</nz-descriptions-item>
-      
+            <nz-descriptions-item nzTitle="* Nro de Nota de Debito" >
+              {{ this.debitMemoNumber }}</nz-descriptions-item>  
         <nz-descriptions-item nzTitle="* Cliente" >
           {{ this.customerName }}</nz-descriptions-item
         > 

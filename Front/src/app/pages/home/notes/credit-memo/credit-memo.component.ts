@@ -61,6 +61,7 @@ export class CreditMemoComponent extends BaseComponent implements OnInit {
   creditMemoDetails:CreditMemoDetails[]=[]
   creditMemoListTest: CreditMemoDetailList[] = [];
   creditMemoList: CreditMemoDetailList[] = [];
+  creditMemoNumber!: number;
   formCreditMemo: FormGroup;
   formCustomerSearch!: FormGroup;
   formProductSearch: FormGroup;
@@ -199,6 +200,7 @@ constructor(@Inject(LOCALE_ID) public locale: string,
             dateTime: this.formCreditMemo.controls['dateTime'].value,
             type: this.formCreditMemo.controls['type'].value,
             total: this.total,
+            creditMemoNumber: this.creditMemoNumber,
             ivaTotal: this.ivaTotal ,
             creditMemoNumb: 0,
             creditMemoDetail: this.creditMemoDetails
