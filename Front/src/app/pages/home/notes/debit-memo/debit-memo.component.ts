@@ -82,7 +82,8 @@ export class debitMemoComponent extends BaseComponent  implements OnInit {
   totalItems: any;
   invoiceId!: number;
   invoiceNumber!: number
-
+  selectedDni: boolean = false;
+  dni: any;
 
   edit:boolean=false
   customerId!: number;
@@ -111,6 +112,7 @@ constructor(@Inject(LOCALE_ID) public locale: string,
     type: [ 1 , Validators.required],
     invoiceNumber: [ '' , Validators.required],
     customerCuit: ['', [Validators.required, Validators.pattern('[0-9]{11}'),]],
+    customerDni:[''],
     customerName: ['', Validators.required],    
     observation: ['']
   }); 
@@ -189,7 +191,7 @@ constructor(@Inject(LOCALE_ID) public locale: string,
             invoiceNumber: this.formDebitMemo.controls['invoiceNumber'].value,
             userId: this.userId,
             customerName: this.formDebitMemo.controls['customerName'].value,
-            customerCuit: this.formDebitMemo.controls['customerCuit'].value,
+            customerCuit:  this.selectedDni? this.dni.toString() : this.formDebitMemo.controls['customerCuit'].value,
             customerAddress: this.formDebitMemo.controls['address'].value,
             observation: this.formDebitMemo.controls['observation'].value,
             dateTime: this.formDebitMemo.controls['dateTime'].value,
@@ -259,6 +261,8 @@ constructor(@Inject(LOCALE_ID) public locale: string,
           this.invoiceA = true;
         }else{
           this.invoiceA= false;
+          console.log(this.id);
+          
         }  
           
       } 
@@ -309,6 +313,7 @@ constructor(@Inject(LOCALE_ID) public locale: string,
           this.formDebitMemo.controls['address'].setValue(data.address);
           this.formDebitMemo.controls['customerCuit'].setValue(data.cuit);
           this.formDebitMemo.controls['customerName'].setValue(data.name);
+          this.formDebitMemo.controls['customerDni'].setValue(data.dni)
         }
       },
       error: () => {
@@ -429,6 +434,7 @@ constructor(@Inject(LOCALE_ID) public locale: string,
       this.openComponentProduct();
     }
   };
+
   searchCustomer(): void {
     this.cuit =
       this.formDebitMemo.controls['customerCuit'].value;
@@ -445,6 +451,7 @@ constructor(@Inject(LOCALE_ID) public locale: string,
           this.formDebitMemo.controls['address'].setValue(data.address);
           this.formDebitMemo.controls['customerCuit'].setValue(data.cuit);
           this.formDebitMemo.controls['customerName'].setValue(data.name);
+          
         },
         error: () => {this.showMessageError('No se encontro Cliente'); }
       });
@@ -531,6 +538,15 @@ constructor(@Inject(LOCALE_ID) public locale: string,
       this.router.navigate(['/notes/debitList']);
     }
    }
+
+   select() {
+    this.selectedDni = !this.selectedDni;
+    if(this.selectedDni){
+      this.dni = this.formDebitMemo.controls['customerDni'].value 
+    } else{
+      this.dni = null;
+    }
+  }
   
   
 }

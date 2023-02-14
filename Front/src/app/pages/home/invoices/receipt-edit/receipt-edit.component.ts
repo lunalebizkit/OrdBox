@@ -100,6 +100,8 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
   value3!: string;
 
   userId: number = this.serviceUser.currentUser.id;
+  selectedDni: boolean = false;
+  dni: any;
 
   /*
    ** Parametros de busqueda
@@ -130,6 +132,7 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
       receiptNumber: ['', Validators.required],
       supplierAddress: ['', Validators.required],
       supplierCuit: ['', [Validators.required, Validators.pattern('[0-9]{11}'),]],
+      supplierDni:['',],
       supplierName: ['', Validators.required],
       observation: [''],
     });
@@ -245,6 +248,7 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
           this.formReceipt.controls['supplierAddress'].setValue(data.address);
           this.formReceipt.controls['supplierCuit'].setValue(data.cuit);
           this.formReceipt.controls['supplierName'].setValue(data.name);
+          this.formReceipt.controls['supplierDni'].setValue(data.dni)
         }
       },
       error: () => {},
@@ -300,6 +304,9 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
 
   save(): void {
     if (this.isValidForm(this.formReceipt)) {
+      if(this.selectedDni && this.formReceipt.controls['supplierDni'].value.length < 8){
+        return this.showMessageError('DNI Invalido');
+      } ;  
       if (this.receiptDetailsGrid.length == 0) {
         this.showMessageError('No hay Productos Seleccionados');
       } else {
@@ -309,7 +316,7 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
           userId: this.userId,
           receiptNumber: this.formReceipt.controls['receiptNumber'].value,
           supplierName: this.formReceipt.controls['supplierName'].value,
-          supplierCuit: this.formReceipt.controls['supplierCuit'].value,
+          supplierCuit:  this.selectedDni? this.dni.toString() : this.formReceipt.controls['supplierCuit'].value,
           supplierAddress: this.formReceipt.controls['supplierAddress'].value,
           observation: this.formReceipt.controls['observation'].value,
           dateTime: this.formReceipt.controls['dateTime'].value,
@@ -530,5 +537,14 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
         },
       });
   
+  }
+  
+  select() {
+    this.selectedDni = !this.selectedDni;
+    if(this.selectedDni){
+      this.dni = this.formReceipt.controls['supplierDni'].value   
+    } else{
+      this.dni = null;
+    }
   }
 }
