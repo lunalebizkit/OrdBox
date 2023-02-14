@@ -299,7 +299,8 @@ namespace Kiltex.SistemaGestion.Services.Services
                     Dni = entidad.Dni,
                     Cuit = entidad.Cuit,
                     Name = entidad.Name,
-                    Address = entidad.Address,            
+                    Address = entidad.Address,  
+                    Observation = entidad.Observation,
                     EmailEntity = entidad.EmailEntities.Select(p => p.Email
                     ).ToList(),
                     PhoneEntity = entidad.PhoneEntities.Select(p => 
