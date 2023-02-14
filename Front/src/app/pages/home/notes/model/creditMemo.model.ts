@@ -8,6 +8,7 @@ export interface  CreditMemoModel{
      customerName: string,
      customerCuit: string,
      customerAddress: string,
+     creditMemoNumber: number,
      observation: string,
      dateTime: Date,
      total: number,
@@ -23,7 +24,7 @@ export interface CreditMemoDetails{
      productCode:number,
      quantity:number,
      price:number,
-     iva:number
+     iva:number,
 }
 export interface CreditMemoDetailList {
      stock: number,

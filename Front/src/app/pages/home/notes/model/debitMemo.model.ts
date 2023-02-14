@@ -4,7 +4,7 @@ export interface  DebitMemoModel{
     invoiceId: number,
     invoiceNumber: number,
     userId: number,
-    debitMemoNumb:number,
+    debitMemoNumber:number,
     customerName: string,
     customerCuit: string,
     customerAddress: string,
