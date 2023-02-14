@@ -130,7 +130,7 @@ export class ReceiptListComponent implements OnInit {
     >({
       nzContent: ReceiptViewDrawerComponent,
       nzSize: 'large',
-      nzWidth: 1050,
+      nzWidth: '90%',
       nzContentParams: {
         filter: this.id > 0 ? this.id : 0,
       },

@@ -180,7 +180,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
       nzTitle: 'Cliente',
       nzContent: InvoiceCustomerSearchComponent,
       nzSize: 'large',
-      nzWidth: 1050,
+      nzWidth: '90%',
       nzClosable: false
     });
     drawerRefCustomer.afterClose.subscribe({
@@ -206,7 +206,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
         nzTitle: 'Productos',
         nzContent: InvoiceProductSearchComponent,
         nzSize: 'large',
-        nzWidth: 1050,
+        nzWidth: '90%',
         nzContentParams: {
           filter: this.formProductSearch.controls['productSearchFilter'].value
         },
@@ -430,7 +430,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
           userId:this.userId,
           invoiceNumber: this.totalItems,
           customerName: this.formInvoice.controls['customerName'].value,         
-          customerCuit: this.selectedDni? this.dni : this.formInvoice.controls['customerCuit'].value,  
+          customerCuit: this.selectedDni? this.dni.toString() : this.formInvoice.controls['customerCuit'].value,  
           customerAddress: this.formInvoice.controls['address'].value,          
           observation: this.formInvoice.controls['observation'].value,
           dateTime: this.formInvoice.controls['dateTime'].value,
@@ -523,11 +523,10 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
     return formatDate(date, 'MM/dd/YYYY', this.locale);
   }
 
-  select(dni: any) {
+  select() {
     this.selectedDni = !this.selectedDni;
     if(this.selectedDni){
-      this.dni = this.formInvoice.controls['customerDni'].value      
-     
+      this.dni = this.formInvoice.controls['customerDni'].value 
     } else{
       this.dni = null;
     }

@@ -100,7 +100,7 @@ export class UsersListComponent implements OnInit {
     >({
       nzContent: UsersEditDrawerComponent,
       nzSize: 'large',
-      nzWidth: 1050,
+      nzWidth: '90%',
       nzContentParams: {
         filter: this.id > 0 ? this.id : 0,
       },

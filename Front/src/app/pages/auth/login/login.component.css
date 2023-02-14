@@ -33,10 +33,10 @@
       display: none;
     }
     
-    .copyright {
+   /*  .copyright {
       color:rgb(226, 234, 241);
       font-size: 0.85rem;
-    }
+    } */
   
 
   @media only screen and (max-width: 1000px) {
@@ -60,9 +60,11 @@
     
     }
     p {
-         margin-left: -30px;
-        /*  margin-top: -2560px; */
-      margin-block-start: 240px;
+      margin-top: 0px;
+      margin-bottom: 0px;
+      margin-block-end: auto;
+      margin-right: auto;
+
      }
      .card{
       width: 350px;

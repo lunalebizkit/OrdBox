@@ -4,8 +4,13 @@ nz-footer {
   background-color: white;
 }
 nz-page-header {
-  height: 50px;
+  height: auto;
   padding: 0 24px;
-  width: 100%;
+  width: auto;
   z-index: 2;
+  overflow: auto;
+}
+.menu{
+  margin-right: 100px;
+  margin-top: 15px
 }
