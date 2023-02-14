@@ -93,6 +93,7 @@ export class CustomersEditDrawerComponent extends BaseComponent implements OnIni
                 this.form.controls['cuit'].setValue(r.cuit);
                 this.form.controls['name'].setValue(r.name);
                 this.form.controls['address'].setValue(r.address);
+                this.form.controls['observation'].setValue(r.observation);
                 r.phoneEntity.forEach((e: any) => {
                     this.phoneNumberArray.push(new FormControl(e, [Validators.required]));
                 });

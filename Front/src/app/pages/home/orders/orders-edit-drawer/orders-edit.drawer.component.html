@@ -56,7 +56,7 @@
                 <nz-form-label [nzSm]="6" [nzXs]="28" nzRequired nzFor="supplierId">Estado
                 </nz-form-label>
                 <nz-select nzShowSearch style="width: 190px" nzAllowClear nzPlaceHolder="Estado" id="statusId"
-                  formControlName="statusId" [nzOptions]="allStatus" [nzDisabled]="id == 0 ? true : editOrder">
+                  formControlName="statusId" [nzOptions]="allStatus" [nzDisabled]="id == 0 ? true : viewOrder">
                 </nz-select>
               </nz-form-item>
             </div>
@@ -140,7 +140,11 @@
               <th>Código</th>
               <th>Descripción</th>
               <th>Cantidad</th>
+<<<<<<< HEAD
               <th *ngIf="editOrder">Cantidad Recibida</th>
+=======
+              <th *ngIf="id != 0 ? true : editOrder">Cantidad Recibida</th>
+>>>>>>> fde6ba51ed4fd9eb82497d41f2eca73c6583f479
               <th>Precio</th>
               <th>Subtotal</th>
               <th *ngIf="statusId == 1 ? true : disableMail" [nzAlign]="'center'">Acción</th>
@@ -150,7 +154,11 @@
             <tr *ngFor="let data of orderDetailGrid" class="small-text">
               <td>{{ data.code }}</td>
               <td>{{ data.productName }}</td>
+<<<<<<< HEAD
               <td *ngIf="viewOrder">
+=======
+              <td >
+>>>>>>> fde6ba51ed4fd9eb82497d41f2eca73c6583f479
                 <div class="editable-cell" [hidden]="editId === data.id" (click)="startEdit(data.id)">
                   {{ data.orderedQuantity }}
                 </div>
@@ -163,14 +171,14 @@
                 <td>{{ data.orderedQuantity }}</td>
               </ng-template>
 
-              <td *ngIf="viewOrder" [nzAlign]="'right'">
-                <div *ngIf="editOrder; else viewOrders" class="editable-cell"
-                  [hidden]="editIdrecievedQuantity === data.id" (click)="startEditrecievedQuantity(data.id)">
+              <td *ngIf="id != 0 ? true : editOrder"  [nzAlign]="'right'">
+                <div *ngIf="statusId != 1 ? true: editOrder" class="editable-cell"
+                  [hidden]="editIdrecievedQuantity === data.id" (click)="startEditrecievedQuantity(data.id)" >
                   {{ data.recievedQuantity }}
                 </div>
                 <nz-input-number [hidden]="editIdrecievedQuantity !== data.id" [nzMin]="0" [nzMax]="10000"
-                  [(ngModel)]="data.recievedQuantity" (nzBlur)="stopEditrecievedQuantity()"
-                  (ngModelChange)="changeQuantityrecievedQuantity($event)">
+                  [(ngModel)]="data.recievedQuantity" (nzBlur)="stopEditrecievedQuantity()" [nzDisabled]="statusId == 1 ? true : disabled"  (ngModelChange)="changeQuantityrecievedQuantity($event) " >
+                 
                 </nz-input-number>
               </td>
               <ng-template #viewOrders>
