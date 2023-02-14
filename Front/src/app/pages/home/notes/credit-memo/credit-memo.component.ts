@@ -81,7 +81,8 @@ export class CreditMemoComponent extends BaseComponent implements OnInit {
   ivaSelectedId: number = 1;
   ivaSelected!: number;
   totalItems: any;
-
+  selectedDni: boolean = false;
+  dni: any;
 
   edit:boolean =false
   customerId!: number;
@@ -110,6 +111,7 @@ constructor(@Inject(LOCALE_ID) public locale: string,
     address: ['', Validators.required],
     customerCuit: ['', [Validators.required, Validators.pattern('[0-9]{11}'),]],
     customerName: ['', Validators.required], 
+    customerDni:[''],
     invoiceNumber: [0 , Validators.required],   
     observation: ['',]
   }); 
@@ -191,7 +193,7 @@ constructor(@Inject(LOCALE_ID) public locale: string,
             invoiceId: this.id,
             invoiceNumber: this.formCreditMemo.controls['invoiceNumber'].value,
             customerName: this.formCreditMemo.controls['customerName'].value,
-            customerCuit: this.formCreditMemo.controls['customerCuit'].value,
+            customerCuit:  this.selectedDni? this.dni.toString() : this.formCreditMemo.controls['customerCuit'].value,
             customerAddress: this.formCreditMemo.controls['address'].value,
             observation: this.formCreditMemo.controls['observation'].value,
             dateTime: this.formCreditMemo.controls['dateTime'].value,
@@ -292,7 +294,7 @@ constructor(@Inject(LOCALE_ID) public locale: string,
       nzTitle: 'Cliente',
       nzContent: InvoiceCustomerSearchComponent,
       nzSize: 'large',
-      nzWidth:1050,
+      nzWidth:'90%',
       nzClosable: false
     });
     drawerRefCustomer.afterClose.subscribe({
@@ -302,6 +304,7 @@ constructor(@Inject(LOCALE_ID) public locale: string,
           this.formCreditMemo.controls['address'].setValue(data.address);
           this.formCreditMemo.controls['customerCuit'].setValue(data.cuit);
           this.formCreditMemo.controls['customerName'].setValue(data.name);
+          this.formCreditMemo.controls['customerDni'].setValue(data.dni)
         }
       },
       error: () => {
@@ -317,7 +320,7 @@ constructor(@Inject(LOCALE_ID) public locale: string,
         nzTitle: 'Productos',
         nzContent: InvoiceProductSearchComponent,
         nzSize: 'large',
-        nzWidth: 1050,
+        nzWidth: '90%',
         nzContentParams: {
           filter: this.formProductSearch.controls['productSearchFilter'].value
         },
@@ -533,4 +536,12 @@ constructor(@Inject(LOCALE_ID) public locale: string,
     }
    }
   
+   select() {
+    this.selectedDni = !this.selectedDni;
+    if(this.selectedDni){
+      this.dni = this.formCreditMemo.controls['customerDni'].value 
+    } else{
+      this.dni = null;
+    }
+  }
 }

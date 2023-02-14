@@ -40,7 +40,7 @@
           </div>
           <div nz-col class="gutter-row" *ngIf="edit === false">
             <nz-form-item>
-              <nz-form-label nzRequired>Tipo </nz-form-label>
+              <nz-form-label  nzRequired>Tipo </nz-form-label>
               <nz-form-control>
                 <nz-select id="type" formControlName="type" [nzOptions]="type"
                   (ngModelChange)="typeSelectedChange($event)">
@@ -102,6 +102,22 @@
             </div>
           </form>
         </nz-form-item>
+        <nz-form-item *ngIf="typeSelectedId == 2">
+          <nz-form-label [nzSm]="6" [nzXs]="14" nzFor="customerDni" 
+             >Dni
+           </nz-form-label>
+           <nz-form-control [nzSm]="10" [nzXs]="14">
+           <input
+             nz-input
+             maxlength="8"
+             nzSize="small"
+             formControlName="customerDni"
+             />
+           </nz-form-control>
+             <nz-switch style="margin-left: 5px;" (click)="select()"
+              nzCheckedChildren="seleccionado" nzUnCheckedChildren="No seleccionado" 
+           ></nz-switch>
+     </nz-form-item>
         <nz-form-item>
           <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired>Razón Social - Nombre
           </nz-form-label>

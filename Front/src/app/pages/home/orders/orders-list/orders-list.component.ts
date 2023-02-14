@@ -298,7 +298,7 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
     >({
       nzContent: OrdersEditDrawerComponent,
       nzSize: 'large',
-      nzWidth: '100%',
+      nzWidth: '90%',
       nzContentParams: {
         filter: this.id > 0 ? this.id : 0,
       },

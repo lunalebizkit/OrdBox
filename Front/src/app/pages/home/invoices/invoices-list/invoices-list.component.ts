@@ -38,7 +38,7 @@ export class InvoicesListComponent implements OnInit {
     page: 0,
     pageSize: 20,
   };
-  specificFilter = {
+  SpecificFilter = {
     filter: {
       supplier: "",
       category: "",
@@ -67,15 +67,15 @@ export class InvoicesListComponent implements OnInit {
    */
   ngOnInit(): void {
 
-    this.getData(this.specificFilter);
+    this.getData(this.SpecificFilter);
   }
   /*
    ** Evento al presionar buscar o presionar enter
    */
   search(): void {
-    this.getData(this.specificFilter);
-    this.specificFilter.page = 0;
-    this.specificFilter.pageSize = 20;
+    this.getData(this.SpecificFilter);
+    this.SpecificFilter.page = 0;
+    this.SpecificFilter.pageSize = 20;
   }
   /*
    ** Evento de busqueda datos en el server
@@ -168,15 +168,15 @@ export class InvoicesListComponent implements OnInit {
     );
     if (
       ScrollPosition <= 5 &&
-      this.totalItems / this.specificFilter.page > this.specificFilter.page
+      this.totalItems / this.SpecificFilter.page > this.SpecificFilter.page
     ) {
-      let page = this.queryParams.page;
-      this.specificFilter.page = this.specificFilter.page + 1;
+      let page = this.SpecificFilter.page;
+      this.SpecificFilter.page = this.SpecificFilter.page + 1;
       if (
         this.totalItems === undefined ||
-        this.specificFilter.page * this.specificFilter.pageSize <= this.totalItems
+        this.SpecificFilter.page * this.SpecificFilter.pageSize <= this.totalItems
       ) {
-        this.service.getInvoices(this.specificFilter).subscribe({
+        this.service.getInvoices(this.SpecificFilter).subscribe({
           next: (r) => {
             r.data.map((invoice: InvoiceModel) =>
               this.invoicesList.push(invoice)
@@ -189,7 +189,7 @@ export class InvoicesListComponent implements OnInit {
           },
         });
       } else {
-        this.specificFilter.page = page;
+        this.SpecificFilter.page = page;
       }
     }
   }
@@ -202,7 +202,7 @@ export class InvoicesListComponent implements OnInit {
     >({
       nzContent: InvoicesViewDrawerComponent,
       nzSize: 'large',
-      nzWidth: 1050,
+      nzWidth: '90%',
       nzContentParams: {
         filter: this.id > 0 ? this.id : 0,
       },

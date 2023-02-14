@@ -27,7 +27,7 @@
         <div>
             <nz-table class="tablaCustomer" nzShowSizeChanger [nzData]="allCustomer" nzBordered=true [nzSize]="'small'"
                 [nzLoading]="loading" [nzTotal]="totalItems" [nzPageSize]="queryParams.pageSize" [nzPageIndex]="1"
-                [nzFrontPagination]="false" [nzPaginationType]="'small'" (nzQueryParams)="onQueryParamsChange($event)">
+                [nzFrontPagination]="false" [nzPaginationType]="'small'" (nzQueryParams)="onQueryParamsChange($event)" >
                 <thead>
                     <tr>
                         <th>Nombre</th>
