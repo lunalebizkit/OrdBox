@@ -202,7 +202,6 @@ constructor(@Inject(LOCALE_ID) public locale: string,
             total: this.total,
             creditMemoNumber: this.creditMemoNumber,
             ivaTotal: this.ivaTotal ,
-            creditMemoNumb: 0,
             creditMemoDetail: this.creditMemoDetails
           };
           this.isSaving = true;

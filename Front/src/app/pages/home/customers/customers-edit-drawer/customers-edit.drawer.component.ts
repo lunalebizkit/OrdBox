@@ -73,7 +73,7 @@ export class CustomersEditDrawerComponent extends BaseComponent implements OnIni
             cuit: ['', [Validators.required, Validators.maxLength, Validators.pattern]],
             name: ['', [Validators.required]],
             address: ['', [Validators.required]],
-            observation: ['', [Validators.required]],
+            observation: ['', ],
             phoneEntity: new FormArray([]),
             emailEntity: new FormArray([])
         })

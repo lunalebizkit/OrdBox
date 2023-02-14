@@ -138,8 +138,7 @@ export class PermissionService {
     //#endregion
   ];
 
-  public hasPermission(url: string) {
-    debugger;
+  public hasPermission(url: string) {    
     if (!this.auth.currentUser) {
       return this.router.navigate(['auth/login']);
     }

@@ -64,7 +64,7 @@
           (click)="onClick(data, i)" (keydown)="myNavegation($event)" [style.background-color]="
              data === selectedCreditMemo ? 'lightblue' : ''
             "  (dblclick)="onDoubleClick(data)">
-          <td>{{data.id}}</td>
+          <td>{{data.creditMemoNumber}}</td>
           <td>{{this.formaterDate(data.dateTime)}}</td>
           <td>{{data.customerCuit | cuit}}</td>
           <td>{{data.customerName}}</td>

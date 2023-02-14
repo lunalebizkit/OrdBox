@@ -140,11 +140,7 @@
               <th>Código</th>
               <th>Descripción</th>
               <th>Cantidad</th>
-<<<<<<< HEAD
-              <th *ngIf="editOrder">Cantidad Recibida</th>
-=======
               <th *ngIf="id != 0 ? true : editOrder">Cantidad Recibida</th>
->>>>>>> fde6ba51ed4fd9eb82497d41f2eca73c6583f479
               <th>Precio</th>
               <th>Subtotal</th>
               <th *ngIf="statusId == 1 ? true : disableMail" [nzAlign]="'center'">Acción</th>
@@ -154,11 +150,7 @@
             <tr *ngFor="let data of orderDetailGrid" class="small-text">
               <td>{{ data.code }}</td>
               <td>{{ data.productName }}</td>
-<<<<<<< HEAD
-              <td *ngIf="viewOrder">
-=======
               <td >
->>>>>>> fde6ba51ed4fd9eb82497d41f2eca73c6583f479
                 <div class="editable-cell" [hidden]="editId === data.id" (click)="startEdit(data.id)">
                   {{ data.orderedQuantity }}
                 </div>

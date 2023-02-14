@@ -4,7 +4,6 @@ export interface  CreditMemoModel{
      userId: number,
      invoiceId: number,
      invoiceNumber: number,
-     creditMemoNumb:number,
      customerName: string,
      customerCuit: string,
      customerAddress: string,
