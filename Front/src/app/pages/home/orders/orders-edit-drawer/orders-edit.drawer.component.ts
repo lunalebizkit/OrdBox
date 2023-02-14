@@ -254,11 +254,13 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
             this.orderDetail.push(orderOldProductParser(orderDetail));
           });
           if (r.statusId == 1) {
-            this.editOrder = false;
+            this.editOrder = true;
             this.disabled = false;
             this.disableMail = true;
+            this.viewOrder = false;
           } else {
-            this.editOrder = true;
+            this.viewOrder = true;
+            this.editOrder = false;
             this.disabled = true;
             this.disableMail = false;
           }
