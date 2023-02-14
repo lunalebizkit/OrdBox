@@ -21,6 +21,7 @@ export class debitMemoListComponent implements OnInit {
   debitMemoList: DebitMemoModel[] = [];
   selectedIndex!: number;
   selectedDebitMemo: any;
+  permissions = Permission;
 
   queryParams = {
     filter: '',

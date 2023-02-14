@@ -2,7 +2,8 @@
   <nz-page-header class="list-header">
     <nz-page-header-title>Listado Nota de Débito</nz-page-header-title>
     <nz-page-header-extra>
-      <button nz-tooltip nzTooltipTitle="Nuevo" nz-button nzType="primary" nzShape="circle" routerLink="/notes/debit">
+      <button *authPermission="[permissions.GetMemo]" 
+      nz-tooltip nzTooltipTitle="Nuevo" nz-button nzType="primary" nzShape="circle" routerLink="/notes/debit">
         <i nz-icon nzType="plus" nzTheme="outline"></i>
       </button>
     </nz-page-header-extra>

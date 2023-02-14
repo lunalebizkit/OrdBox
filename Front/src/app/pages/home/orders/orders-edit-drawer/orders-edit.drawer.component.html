@@ -69,36 +69,10 @@
               </nz-form-item>
             </div>
           </div>
-          <!--  <div nz-row nzJustify="space-around" >  -->
+          
           <!-- Va creando divs segun la cantidad de mails creados que tenga el proveedor en caso de una orden existente  -->
           <div nz-row nzJustify="space-around">
-            <!-- <ng-container formArrayName="supplierEmail">
-              <ng-container *ngFor="let data of emailsControls; let i = index">
-                <div nz-row>
-                  <div nz-col nzSpan="28">
-                    <nz-form-item>
-                      <nz-form-label >
-                        Email {{ i + 1 }}
-                      </nz-form-label>
-                      <nz-form-control  nzFor="email">
-                        <input
-                          nz
-                          [formControl]="data"
-                          nz-input
-                        /> </nz-form-control
-                    ></nz-form-item>
-                  </div>
-                  <div>
-                    <nz-switch
-                      nzCheckedChildren="Enviar"
-                      nzUnCheckedChildren="No enviar"
-                      [nzDisabled]="disabled"
-                    ></nz-switch>
-                  </div>
-                </div>
-              </ng-container
-            ></ng-container>
-        -->
+           
             <!-- Va creando divs segun la cantidad de mails creados que tenga el proveedor en caso de una orden nueva  -->
 
             <ng-container formArrayName="emailEntity">
@@ -166,7 +140,7 @@
               <th>Código</th>
               <th>Descripción</th>
               <th>Cantidad</th>
-              <th *ngIf="!viewOrder">Cantidad Recibida</th>
+              <th *ngIf="editOrder">Cantidad Recibida</th>
               <th>Precio</th>
               <th>Subtotal</th>
               <th *ngIf="statusId == 1 ? true : disableMail" [nzAlign]="'center'">Acción</th>
@@ -176,7 +150,7 @@
             <tr *ngFor="let data of orderDetailGrid" class="small-text">
               <td>{{ data.code }}</td>
               <td>{{ data.productName }}</td>
-              <td *ngIf="!viewOrder">
+              <td *ngIf="viewOrder">
                 <div class="editable-cell" [hidden]="editId === data.id" (click)="startEdit(data.id)">
                   {{ data.orderedQuantity }}
                 </div>
@@ -189,8 +163,8 @@
                 <td>{{ data.orderedQuantity }}</td>
               </ng-template>
 
-              <td *ngIf="!viewOrder" [nzAlign]="'right'">
-                <div *ngIf="!editOrder; else viewOrders" class="editable-cell"
+              <td *ngIf="viewOrder" [nzAlign]="'right'">
+                <div *ngIf="editOrder; else viewOrders" class="editable-cell"
                   [hidden]="editIdrecievedQuantity === data.id" (click)="startEditrecievedQuantity(data.id)">
                   {{ data.recievedQuantity }}
                 </div>

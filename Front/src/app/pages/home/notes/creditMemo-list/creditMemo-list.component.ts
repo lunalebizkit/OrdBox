@@ -22,6 +22,7 @@ export class creditMemoListComponent implements OnInit {
   creditMemoList: CreditMemoModel[] = [];
   selectedIndex!: number;
   selectedCreditMemo: any;
+  permissions = Permission;
   queryParams = {
     filter: '',
     page: 0,

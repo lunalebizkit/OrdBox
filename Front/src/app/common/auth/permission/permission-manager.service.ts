@@ -111,10 +111,35 @@ export class PermissionService {
         Permission.EditPeriod,
       ],
     },
+    //#endregion  
+    //#region Notes
+    {
+      url: new RegExp('/home/notes/creditList'),
+      permissions: [
+        Permission.GetMemo,
+      ],
+    },
+    {
+      url: new RegExp('/home/notes/debitList'),
+      permissions: [
+        Permission.GetMemo,
+      ],
+    }, {
+      url: new RegExp('/notes/debit'),
+      permissions: [
+        Permission.GetMemo,
+      ],
+    }, {
+      url: new RegExp('/notes/credit'),
+      permissions: [
+        Permission.GetMemo,
+      ],
+    },
     //#endregion
   ];
 
   public hasPermission(url: string) {
+    debugger;
     if (!this.auth.currentUser) {
       return this.router.navigate(['auth/login']);
     }

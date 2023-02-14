@@ -106,7 +106,9 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
   /*
    ** Si algunos campos son visibles o no
    */
-  viewOrder: boolean = true;
+   /**Estado Rechazado y Aceptado (1) */
+  viewOrder: boolean= true;
+  /**Estado Pendiente (1) */
   editOrder!: boolean;
   disableMail!: boolean;
 
@@ -183,6 +185,8 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
   ngOnInit(): void {
     if (this.id != null || this.id != undefined || this.id != 0) {
       this.getOrder(this.id);
+      console.log(this.viewOrder);
+      
     }
   }
 
@@ -232,8 +236,7 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
   getOrder(id: number): void {
     if (id != 0)
       this.ordersService.getById(id).subscribe({
-        next: (r) => {
-          this.viewOrder = false;
+        next: (r) => {        
           this.supplierName = r.supplierName;
           this.formSupplierSearch.controls['supplierId'].setValue(r.supplierId);
           this.dateTime = r.dateTime;
@@ -254,14 +257,18 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
             this.orderDetail.push(orderOldProductParser(orderDetail));
           });
           if (r.statusId == 1) {
-            this.editOrder = false;
+            this.editOrder = true;
             this.disabled = false;
             this.disableMail = true;
+            this.viewOrder= false;
           } else {
+            this.viewOrder= true;
             this.editOrder = true;
             this.disabled = true;
             this.disableMail = false;
           }
+          console.log(this.viewOrder);
+          console.log(this.editOrder);
           
           this.totalCalculate();
           this.loading = false;
@@ -493,6 +500,8 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
             } else {
               /* Parseo dato Producto a la grilla de Tabla */
               const model: OrderDetailGrid = orderGridProductParser(data);
+              console.log(model);
+              
               this.orderListGridTest.push(model);
               this.orderDetailGrid = this.orderListGridTest;
               /* Parseo dato a Dto Order Detalle */
