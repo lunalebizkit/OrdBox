@@ -30,7 +30,10 @@
                 <nz-form-item>
                   <nz-form-label nzRequired nzFor="supplierId">Proveedor
                   </nz-form-label>
-                  <nz-select *ngIf="viewOrder; else elseBlock" nzPlaceHolder="Seleccione Proveedor" nzAllowClear
+                  <div>
+                    
+                  </div>
+                  <nz-select *ngIf="newOrder; else elseBlock" nzPlaceHolder="Seleccione Proveedor" nzAllowClear
                     nzShowSearch nzServerSearch (nzOnSearch)="onSearch($event)" formControlName="supplierId"
                     style="width: 400px" (ngModelChange)="onChange($event)">
                     <ng-container *ngFor="let o of entityList">
@@ -41,11 +44,13 @@
                       Cargando ...
                     </nz-option>
                   </nz-select>
+
                   <ng-template #elseBlock>
                     <nz-form-control>
                       <b> {{ supplierName }}</b>
                     </nz-form-control>
                   </ng-template>
+
                 </nz-form-item>
               </div>
             </form>
@@ -150,21 +155,22 @@
             <tr *ngFor="let data of orderDetailGrid" class="small-text">
               <td>{{ data.code }}</td>
               <td>{{ data.productName }}</td>
-              <td >
+
+              <td *ngIf="newOrder; else editOrderView">
                 <div class="editable-cell" [hidden]="editId === data.id" (click)="startEdit(data.id)">
                   {{ data.orderedQuantity }}
                 </div>
                 <nz-input-number [hidden]="editId !== data.id" [nzMin]="1" [nzMax]="10000"
                   [(ngModel)]="data.orderedQuantity" (nzBlur)="stopEdit()" (ngModelChange)="changeQuantity($event)"
-                  [nzDisabled]="statusId == 1 ? true : disabled">
+                >
                 </nz-input-number>
               </td>
               <ng-template #editOrderView>
                 <td>{{ data.orderedQuantity }}</td>
               </ng-template>
 
-              <td *ngIf="id != 0 ? true : editOrder"  [nzAlign]="'right'">
-                <div *ngIf="statusId != 1 ? true: editOrder" class="editable-cell"
+              <td *ngIf="!newOrder"  [nzAlign]="'right'">
+                <div *ngIf="editOrder; else viewOrders" class="editable-cell"
                   [hidden]="editIdrecievedQuantity === data.id" (click)="startEditrecievedQuantity(data.id)" >
                   {{ data.recievedQuantity }}
                 </div>
@@ -176,6 +182,7 @@
               <ng-template #viewOrders>
                 <td>{{ data.orderedQuantity }}</td>
               </ng-template>
+
               <td [nzAlign]="'right'">{{ currencyFormat(data.price) }}</td>
               <td [nzAlign]="'right'">
                 {{ currencyFormat(data.subTotal) }}
@@ -195,12 +202,9 @@
           </tbody>
           <tfoot style="background-color: #fafafa">
             <tr>
-              <td colspan="6" [nzAlign]="'right'">
+              <td colspan="7" [nzAlign]="'right'">
                 <b>Total </b><b style="color: red">{{ this.currencyFormat(this.total) }}</b>
-              </td>
-              <ng-template #elseBlock>
-                <td colspan="2"></td>
-              </ng-template>
+              </td>           
             </tr>
           </tfoot>
         </nz-table>

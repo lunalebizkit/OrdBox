@@ -87,6 +87,7 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
   product!: string;
   dateFormat = 'dd/MM/yyyy';
   today = new Date();
+  newOrder=true;
 
   paymentSelected: any;
   supplierName!: string;
@@ -182,11 +183,11 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {
-    if (this.id != null || this.id != undefined || this.id != 0) {
-      this.getOrder(this.id);
-      console.log(this.viewOrder);
-      
+  ngOnInit(): void {    
+    
+    if (this.id) {
+      this.getOrder(this.id);        
+      this.newOrder = false;
     }
   }
 
@@ -266,12 +267,11 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
             this.editOrder = false;
             this.disabled = true;
             this.disableMail = false;
-          }
-          console.log(this.viewOrder);
-          console.log(this.editOrder);
+          }     
           
           this.totalCalculate();
           this.loading = false;
+          this.newOrder= false;   
         },
         error: () => {
           this.loading = false;
@@ -500,7 +500,6 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
             } else {
               /* Parseo dato Producto a la grilla de Tabla */
               const model: OrderDetailGrid = orderGridProductParser(data);
-              console.log(model);
               
               this.orderListGridTest.push(model);
               this.orderDetailGrid = this.orderListGridTest;
