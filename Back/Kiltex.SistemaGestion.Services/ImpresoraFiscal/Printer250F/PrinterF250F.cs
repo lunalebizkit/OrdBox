@@ -46,7 +46,7 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
 
             var typeDocumemt = type switch
             {
-                ETypeReceipt.C => "TiqueFacturaC",
+                ETypeReceipt.C => "TiqueFacturaB",
                 ETypeReceipt.A => "TiqueFacturaA",
                 ETypeReceipt.B => "TiqueFacturaB",
                 _ => throw new NotImplementedException()
@@ -85,7 +85,7 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
 
             var typeDocumemt = type switch
             {
-                ETypeReceipt.C => "TiqueNotaDebitoC",
+                ETypeReceipt.C => "TiqueNotaDebitoB",
                 ETypeReceipt.A => "TiqueNotaDebitoA",
                 ETypeReceipt.B => "TiqueNotaDebitoB",
                 _ => throw new NotImplementedException()
@@ -110,7 +110,7 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
 
             var typeDocumemt = type switch
             {
-                ETypeReceipt.C => "TiqueNotaCreditoC",
+                ETypeReceipt.C => "TiqueNotaCreditoB",
                 ETypeReceipt.A => "TiqueNotaCreditoA",
                 ETypeReceipt.B => "TiqueNotaCreditoB",
                 _ => throw new NotImplementedException()
