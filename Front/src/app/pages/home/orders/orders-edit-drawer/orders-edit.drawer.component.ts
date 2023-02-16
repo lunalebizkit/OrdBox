@@ -185,9 +185,9 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
 
   ngOnInit(): void {    
     
-    if (this.id) {
-      this.getOrder(this.id);        
-      this.newOrder = false;
+    if (this.id != null || this.id != undefined || this.id != 0) {
+      this.getOrder(this.id);      
+      
     }
   }
 
@@ -237,7 +237,8 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
   getOrder(id: number): void {
     if (id != 0)
       this.ordersService.getById(id).subscribe({
-        next: (r) => {        
+        next: (r) => {  
+          this.newOrder = false;      
           this.supplierName = r.supplierName;
           this.formSupplierSearch.controls['supplierId'].setValue(r.supplierId);
           this.dateTime = r.dateTime;
