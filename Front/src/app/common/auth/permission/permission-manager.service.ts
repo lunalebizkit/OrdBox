@@ -132,10 +132,17 @@ export class PermissionService {
     }, {
       url: new RegExp('/notes/credit'),
       permissions: [
-        Permission.GetMemo,
+        Permission.CreateMemo,
       ],
     },
     //#endregion
+    //permission rol
+    {
+      url: new RegExp('/home/permission'),
+      permissions: [
+        Permission.RolControl,
+      ],
+    },
   ];
 
   public hasPermission(url: string) {    
