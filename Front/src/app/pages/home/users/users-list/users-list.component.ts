@@ -7,7 +7,6 @@ import { eRol } from '../model/rol.enum';
 import { NzDrawerService } from 'ng-zorro-antd/drawer';
 import { UsersEditDrawerComponent } from '../users-edit-drawer/users-edit.drawer.component';
 import { Permission } from 'src/app/common/auth/models/permissions.enum';
-import { PermissionRolDrawerComponent } from 'src/app/pages/auth/permission-rol/permission-rol.drawer.component';
 
 @Component({
   selector: 'app-users-list',
@@ -129,7 +128,7 @@ export class UsersListComponent implements OnInit {
       },
     });
   }
-  openComponentRolControl():void{
+/*   openComponentRolControl():void{
     const drawerRefCustomer = this.drawerService.create<
     PermissionRolDrawerComponent,
     { filter: number },
@@ -141,7 +140,7 @@ export class UsersListComponent implements OnInit {
       filter: this.id > 0 ? this.id : 0,
     },
     nzClosable: false,
-  });
+  }); */
   /*drawerRefCustomer.afterClose.subscribe({
     next: (data) => {
       this.id = 0;
@@ -165,7 +164,7 @@ export class UsersListComponent implements OnInit {
     },
   });
   */
-  }
+/*   } */
   onDoubleClicked(datos: any) {
     this.id = datos.id;
     this.openComponentUserEdit();

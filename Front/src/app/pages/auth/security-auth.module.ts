@@ -18,9 +18,9 @@ import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { AppCommonModule } from 'src/app/common/app.common.module';
-import { PermissionRolDrawerComponent } from './permission-rol/permission-rol.drawer.component';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { NzTransferModule } from 'ng-zorro-antd/transfer';
+
 @NgModule({
   imports: [
     CommonServicesModule,
@@ -44,7 +44,7 @@ import { NzTransferModule } from 'ng-zorro-antd/transfer';
     NzTransferModule
   ],
 
-  declarations: [LoginComponent, PermissionRolDrawerComponent],
+  declarations: [LoginComponent],
   providers: [
     SecurityAuthService
   ]
