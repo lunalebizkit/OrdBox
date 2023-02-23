@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ApiService } from 'src/app/common/services/api.base.service';
 import { Observable } from 'rxjs';
-import { AddOrUpdatePermission } from './permission-rol/model/permission-rol.model';
 
 @Injectable({
   providedIn: 'root',
@@ -23,14 +22,5 @@ export class SecurityAuthService {
   public getUser(): Observable<any> {
     return this.api.get(`access/userAccount`);
   }
-  public permissionList(): Observable<any> {
-    return this.api.post(`Rol/ListPermissions`,  false);
-  }
-  public permissionRolList(): Observable<any> {
-    return this.api.post(`Rol/ListRolPermissions`,  false);
-  };
-
-  public addOrUpdatePermissions(model: AddOrUpdatePermission): Observable<any> {
-    return this.api.post(`Rol/addorupdatepermission`, model,  false);
-  }
+ 
 }

@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from 'src/app/common/auth/interceptors/auth.service';
 import { RolesConst } from 'src/app/common/auth/models/permission-rol.enum';
-import { Permission } from '../auth/permission-rol/model/permission-rol.model';
 
 @Component({
   selector: 'app-home',
