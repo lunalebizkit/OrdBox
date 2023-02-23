@@ -81,13 +81,13 @@ const routes: Routes = [
           import('./notes/notes.module').then((m) => m.NotesModule ),
       },
       {
-       /*  canActivate: [AuthGuard], */
+        canActivate: [AuthGuard],
         path: 'report',
         loadChildren:()=>
           import('./report/report.module').then((m)=> m.ReportModule)
       },
       {
-    /*     canActivate: [AuthGuard], */
+        canActivate: [AuthGuard],
         path: 'permission',
         loadChildren:()=>
           import('./permission-rol/permission-rol.module').then((m)=> m.PermissionModule)
