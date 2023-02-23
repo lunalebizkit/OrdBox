@@ -117,14 +117,10 @@ export class PermissionRolComponent extends BaseComponent implements OnInit {
         this.form.controls['permissions'].setValue(this.permissionIdList);          
     };
 
-    /* close(id: number | void): void {
-        this.drawerRef.close(id);
-    }; */
-
     msjConfirmOk() {
         try {
          if (this.isValidForm(this.form)){
-            this.save();        
+            this.popupComponent.showConfirmation()      
          }
          } catch (error) {
            console.log(error);
@@ -146,12 +142,12 @@ export class PermissionRolComponent extends BaseComponent implements OnInit {
                         `Se guardo correctamente el Cambio`
                     );
                     this.isSaving= false;
-                   /*  this.close(); */
+                    this.router.navigate(['/home/products/list']);
                 },
                 error: ()=>{
                     this.isSaving = false;
                     this.showMessageError('No se pudo Guardar el Cambio');
-                   /*  this.close(); */
+                    this.router.navigate(['/home/products/list']);
                 }
             })        
         
