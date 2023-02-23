@@ -85,6 +85,12 @@ const routes: Routes = [
         path: 'report',
         loadChildren:()=>
           import('./report/report.module').then((m)=> m.ReportModule)
+      },
+      {
+        canActivate: [AuthGuard],
+        path: 'permission',
+        loadChildren:()=>
+          import('./permission-rol/permission-rol.module').then((m)=> m.PermissionModule)
       }
     ],
   },

@@ -1,8 +1,8 @@
 <nz-page-header>
   <nz-page-header-extra style=" margin-top: 1rem;">
-    <img style=" margin-right:15px;" nz-image width="40px" nzSrc="../../../assets/img/dantesLogo1.png" alt="ordbox" 
+    <img class="img" style=" margin-right:5px;" nz-image width="60px" nzSrc="../../../assets/img/dantesLogo1.png" alt="ordbox" 
     />
-    <img nz-image width="150px" style="margin-right: 5px;" nzSrc="../../../assets/img/ordbox.png" alt="logoDantes" 
+    <img class="img1" nz-image width="65px" style=" margin-right:5px; margin-top: 10px;" nzSrc="../../../assets/img/ordbox.png" alt="logoDantes" 
     />
    
   </nz-page-header-extra>
@@ -68,18 +68,16 @@
               <a routerLink="/home/invoices/receipt" style="padding-left: 5%;">Comp de Compra</a>
             </li>
           </ul>
-          <li nz-menu-group nzTitle="">
             <ul>
-              <li nz-menu-item nzMatchRouter style="padding-left: 5%;">
+              <li nz-menu-item nzMatchRouter style="padding-left:5%;">
                 <span nz-icon [nzType]="'file-text'" [nzTheme]="'twotone'"> </span>
-                <a routerLink="/home/notes/creditList" style="padding-left: 5%;">Notas de Crédito</a>
+                <a routerLink="/home/notes/creditList" style="padding-left:5%;">Notas de Crédito</a>
               </li>
               <li nz-menu-item nzMatchRouter style="padding-left: 5%;">
                 <span nz-icon [nzType]="'file-text'" [nzTheme]="'twotone'"> </span>
                 <a routerLink="/home/notes/debitList" style="padding-left: 5%;">Notas de Débito</a>
               </li>
             </ul>
-          </li>
         </ul>
       </li>
 
@@ -98,6 +96,10 @@
 
       <li nz-submenu nzTitle="Sistema" nzIcon="setting">
         <ul>
+          <li nz-menu-item nzMatchRouter style="padding-left: 5%;">
+            <span nz-icon [nzType]="'setting'" [nzTheme]="'twotone'"> </span>
+            <a routerLink="/home/permission" style="padding-left: 8%;">Configuración</a>
+          </li>
           <li nz-menu-item (click)="logOut()" style="padding-left: 5%;">
             <span nz-icon [nzType]="'api'" [nzTheme]="'twotone'" [nzTwotoneColor]="'#eb2f96'"> </span>
             Salir del Sistema
@@ -107,8 +109,8 @@
 
     </ul>
   </nz-page-header-extra>
-  <nz-page-header-extra style="margin-top: 1rem;">
-    <nz-avatar [nzGap]="3" [ngStyle]="{ 'background-color': color }" [nzText]="usuario" nzSize="large"
+  <nz-page-header-extra class="avatar" style="margin-top: 1rem;">
+    <nz-avatar [nzGap]="2" [ngStyle]="{ 'background-color': color }" [nzText]="usuario" nzSize="large"
       style="vertical-align: middle;">
     </nz-avatar>
   </nz-page-header-extra>

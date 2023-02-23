@@ -34,7 +34,7 @@
                       placeholder="Ingrese CUIT/CUIL o DNI"
                       nz-input
                       (keydown.enter)="search()"
-                      [(ngModel)]="specificFilter.filter.cuit"
+                      [(ngModel)]="SpecificFilter.filter.cuit"
                     />
                   </nz-input-group>
 
@@ -44,7 +44,7 @@
                       class="ant-input-clear-icon"
                       nzTheme="fill"
                       nzType="close-circle"
-                      *ngIf="specificFilter.filter.cuit" (click)="specificFilter.filter.cuit = ''; search()"
+                      *ngIf="SpecificFilter.filter.cuit" (click)="SpecificFilter.filter.cuit = ''; search()"
                     ></i>
                   </ng-template>
                 </nz-form-control>
@@ -61,7 +61,7 @@
                       placeholder="Ingrese número de comprobante"
                       nz-input
                       (keydown.enter)="search()"
-                      [(ngModel)]="specificFilter.filter.number"
+                      [(ngModel)]="SpecificFilter.filter.number"
                       min="0"
                     />
                   </nz-input-group>
@@ -72,7 +72,7 @@
                       class="ant-input-clear-icon"
                       nzTheme="fill"
                       nzType="close-circle"
-                      *ngIf="specificFilter.filter.number" (click)="specificFilter.filter.number = 0; search()"
+                      *ngIf="SpecificFilter.filter.number" (click)="SpecificFilter.filter.number = 0; search()"
                     ></i>
                   </ng-template>
                 </nz-form-control>

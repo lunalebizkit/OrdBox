@@ -30,7 +30,7 @@ export class ReceiptListComponent implements OnInit {
     page: 0,
     pageSize: 10,
   };
-  specificFilter = {
+  SpecificFilter = {
     filter: {
       supplier: "",
       category: "",
@@ -55,7 +55,7 @@ export class ReceiptListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.getData(this.specificFilter); 
+    this.getData(this.SpecificFilter); 
   }
 
   /*
@@ -68,9 +68,9 @@ export class ReceiptListComponent implements OnInit {
    ** Evento al presionar buscar o presionar enter
    */
   search(): void {
-    this.getData(this.specificFilter);
-    this.specificFilter.page = 0;
-    this.specificFilter.pageSize = 20;
+    this.getData(this.SpecificFilter);
+    this.SpecificFilter.page = 0;
+    this.SpecificFilter.pageSize = 20;
   }
 
   /*
@@ -174,15 +174,15 @@ export class ReceiptListComponent implements OnInit {
     );
     if (
       ScrollPosition <= 5 &&
-      this.totalItems / this.specificFilter.page > this.specificFilter.page
+      this.totalItems / this.SpecificFilter.page > this.SpecificFilter.page
     ) {
-      let page = this.specificFilter.page;
-      this.specificFilter .page = this.specificFilter.page + 1;
+      let page = this.SpecificFilter.page;
+      this.SpecificFilter .page = this.SpecificFilter.page + 1;
       if (
         this.totalItems === undefined ||
-        this.specificFilter.page * this.specificFilter.pageSize <= this.totalItems
+        this.SpecificFilter.page * this.SpecificFilter.pageSize <= this.totalItems
       ) {
-        this.service.getReceipt(this.specificFilter).subscribe({
+        this.service.getReceipt(this.SpecificFilter).subscribe({
           next: (r) => {
             r.data.map((data: receiptModel) =>
               this.receiptList.push(data)
@@ -195,7 +195,7 @@ export class ReceiptListComponent implements OnInit {
           },
         });
       } else {
-        this.specificFilter.page = page;
+        this.SpecificFilter.page = page;
       }
     }
   }
