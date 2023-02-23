@@ -15,8 +15,9 @@ INSERT INTO [dbo].[permission]
 		   ('ViewProduct','ViewProduct',19),('CreateProduct','CreateProduct',20),('EditProduct','EditProduct',21),
 		   ('ViewSupplier','ViewSupplier',22),('EditSupplier','EditSupplier',23),('CreateSupplier','CreateSupplier',24),
 		   ('ViewOrderSupplier','ViewOrderSupplier',25),('CreateOrderSupplier','CreateOrderSupplier',26),('EditOrderSupplier','EditOrderSupplier',27),
-		   ('ListUpdatePrice','ListUpdatePrice',28),('EditUpdatePrice','EditUpdatePrice',29), ('EditUpdatePrice','EditUpdatePrice',30), ('EditUpdatePrice','EditUpdatePrice',31),
+		   ('ListUpdatePrice','ListUpdatePrice',28),('EditUpdatePrice','EditUpdatePrice',29),
+		   ('GetReceipt','GetReceipt',30), ('CreateReceipt','CreateReceipt',31),
 		   ('ListIva','ListIva',32),
 		   ('GetPeriod','GetPeriod',33),('CreatePeriod','CreatePeriod',34),('EditPeriod','EditPeriod',35),('DeletePeriod','DeletePeriod',36),
-		   ('GetMemo','GetMemo', 37),('CreateMemo','CreateMemo',38),('RolControl','RolControl',39)
+		   ('GetMemo','GetMemo', 37),('CreateMemo','CreateMemo',38),('RolControl','RolControl',39),('ReportZ','ReportZ', 40)
 GO

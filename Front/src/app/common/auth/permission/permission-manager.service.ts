@@ -112,6 +112,7 @@ export class PermissionService {
       ],
     },
     //#endregion  
+
     //#region Notes
     {
       url: new RegExp('/home/notes/creditList'),
@@ -143,9 +144,32 @@ export class PermissionService {
         Permission.RolControl,
       ],
     },
+
+    //#regionIva
+    {
+      url: new RegExp('/home/iva/ivaCompra'),
+      permissions: [
+        Permission.ListIva,
+      ],
+    }, {
+      url: new RegExp('/home/iva/ivaVenta'),
+      permissions: [
+        Permission.ListIva,
+      ],
+    },
+    //#endrregion
+
+      //#regionReporteZ
+      {
+        url: new RegExp('/home/report'),
+        permissions: [
+          Permission.ReportZ,
+        ],
+      }
+      //#endrregion
   ];
 
-  public hasPermission(url: string) {    
+  public hasPermission(url: string) {
     if (!this.auth.currentUser) {
       return this.router.navigate(['auth/login']);
     }

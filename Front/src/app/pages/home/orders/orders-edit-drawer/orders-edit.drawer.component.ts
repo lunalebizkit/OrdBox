@@ -87,6 +87,7 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
   product!: string;
   dateFormat = 'dd/MM/yyyy';
   today = new Date();
+  newOrder=true;
 
   paymentSelected: any;
   supplierName!: string;
@@ -182,10 +183,10 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {
+  ngOnInit(): void {    
+    
     if (this.id != null || this.id != undefined || this.id != 0) {
-      this.getOrder(this.id);
-      console.log(this.viewOrder);
+      this.getOrder(this.id);      
       
     }
   }
@@ -236,7 +237,8 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
   getOrder(id: number): void {
     if (id != 0)
       this.ordersService.getById(id).subscribe({
-        next: (r) => {        
+        next: (r) => {  
+          this.newOrder = false;      
           this.supplierName = r.supplierName;
           this.formSupplierSearch.controls['supplierId'].setValue(r.supplierId);
           this.dateTime = r.dateTime;
@@ -266,12 +268,11 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
             this.editOrder = false;
             this.disabled = true;
             this.disableMail = false;
-          }
-          console.log(this.viewOrder);
-          console.log(this.editOrder);
+          }     
           
           this.totalCalculate();
           this.loading = false;
+          this.newOrder= false;   
         },
         error: () => {
           this.loading = false;
@@ -500,7 +501,6 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
             } else {
               /* Parseo dato Producto a la grilla de Tabla */
               const model: OrderDetailGrid = orderGridProductParser(data);
-              console.log(model);
               
               this.orderListGridTest.push(model);
               this.orderDetailGrid = this.orderListGridTest;
