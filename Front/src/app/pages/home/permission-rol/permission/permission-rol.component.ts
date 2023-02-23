@@ -120,7 +120,7 @@ export class PermissionRolComponent extends BaseComponent implements OnInit {
     msjConfirmOk() {
         try {
          if (this.isValidForm(this.form)){
-            this.popupComponent.showConfirmation()      
+            this.popupComponent.showConfirmation()
          }
          } catch (error) {
            console.log(error);
@@ -142,12 +142,12 @@ export class PermissionRolComponent extends BaseComponent implements OnInit {
                         `Se guardo correctamente el Cambio`
                     );
                     this.isSaving= false;
-                    this.router.navigate(['/home/products/list']);
+                    this.router.navigate(['/home/users']);
                 },
                 error: ()=>{
                     this.isSaving = false;
                     this.showMessageError('No se pudo Guardar el Cambio');
-                    this.router.navigate(['/home/products/list']);
+                    this.router.navigate(['/home/users']);
                 }
             })        
         
