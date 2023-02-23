@@ -16,6 +16,12 @@ namespace Kiltex.SistemaGestion.Api.Controllers.UpdatePriceProduct
         {
             _service = service;
         }
+
+        /// <summary>
+        /// Devuelve un Producto filtrando por Nombre del Producto, Marca, Categoria, Estado y Proveedor.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
         [HttpPost]
         [AllowAccess(Permission = new EPermission[] { EPermission.ListUpdatePrice })]
         [Route("[action]")]
@@ -23,6 +29,12 @@ namespace Kiltex.SistemaGestion.Api.Controllers.UpdatePriceProduct
         {
             return Return(await _service.ListProduct(filter).ConfigureAwait(false));
         }
+
+        /// <summary>
+        /// Selecciona un tipo de precio y le agrega al total el valor que se quiera colocar.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPut]
         [AllowAccess(Permission = new EPermission[] { EPermission.EditUpdatePrice })]
         [Route("[action]")]

@@ -18,6 +18,11 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Receipt
             _service = service;
         }
 
+        /// <summary>
+        /// Devuelve un Orden de Compra buscando en la BASE DE DATOS por ID.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet]
         [AllowAccess(Permission = new EPermission[] { EPermission.GetReceipt })]
         public async Task<IActionResult> GetById([FromQuery] long id)
@@ -25,6 +30,11 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Receipt
             return Return(await _service.GetById(id).ConfigureAwait(false));
         }
 
+        /// <summary>
+        /// Agrega una nueva Orden de Compra a la BASE DE DATOS.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         [AllowAccess(Permission = new EPermission[] { EPermission.CreateReceipt })]
         public async Task<IActionResult> New([FromBody] DtoRequestReceipt model )
@@ -32,7 +42,11 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Receipt
             return Return(await _service.NewReceipt(model).ConfigureAwait(false));
         }
 
-
+        /// <summary>
+        /// Devuelve un listado de Ordenes de Compra creadas, con paginado.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("[action]")]
         [AllowAccess(Permission = new EPermission[] { EPermission.GetReceipt })]

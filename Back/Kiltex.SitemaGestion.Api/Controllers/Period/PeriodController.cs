@@ -18,12 +18,23 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Product
             _service = service;
         }
 
+        /// <summary>
+        /// Devuelve un Periodo buscando en la BASE DE DATOS por ID.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet]
         [AllowAccess(Permission = new EPermission[] { EPermission.GetPeriod })]
         public async Task<IActionResult> Get([FromQuery] long id)
         {
             return Return(await _service.GetById(id).ConfigureAwait(false));
         }
+
+        /// <summary>
+        /// Devuelve solo los periodos activos buscando en la BASE DE DATOS por fecha.
+        /// </summary>
+        /// <param name="date"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("[action]")]
         [AllowAccess(Permission = new EPermission[] { EPermission.GetPeriod })]
@@ -32,6 +43,11 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Product
             return Return(await _service.ActivePeriod(date).ConfigureAwait(false));
         }
 
+        /// <summary>
+        /// Agrega un nuevo Periodo a la BASE DE DATOS.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         [AllowAccess(Permission = new EPermission[] { EPermission.CreatePeriod })]
         public async Task<IActionResult> New([FromBody] DtoRequestPeriod model)
@@ -39,6 +55,11 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Product
             return Return(await _service.Add(model).ConfigureAwait(false));
         }
 
+        /// <summary>
+        /// Devuelve un listado de Periodos creados en la BASE DE DATOS, con paginado.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("[action]")]
         [AllowAccess(Permission = new EPermission[] { EPermission.GetPeriod })]
@@ -46,12 +67,24 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Product
         {
             return Return(await _service.ListPeriods(filter).ConfigureAwait(false));
         }
+
+        /// <summary>
+        /// Edita un periodo ya creado y lo guarda modificado en la BASE DE DATOS.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPut]
         [AllowAccess(Permission = new EPermission[] { EPermission.EditPeriod })]
         public async Task<IActionResult> Edit([FromBody] DtoRequestPeriod model)
         {
             return Return(await _service.Update(model).ConfigureAwait(false));
         }
+
+        /// <summary>
+        /// Cambia el estado de un periodo a inactivo.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete]
         [Route("{id}")]
         [AllowAccess(Permission = new EPermission[] { EPermission.DeletePeriod })]
