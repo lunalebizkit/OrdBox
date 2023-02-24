@@ -125,7 +125,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             try
             {
                 model.Id = 0;
-                if (String.IsNullOrEmpty(model.Address) || String.IsNullOrEmpty(model.Cuit) || String.IsNullOrEmpty(model.Name))
+                if (String.IsNullOrEmpty(model.Address) || model.Dni == 0 || String.IsNullOrEmpty(model.Name))
                 {
                     _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
                     return Error<IdResponse<long>>(new OperationExceptions("000", "Datos incompletos"));
@@ -148,7 +148,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                     _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
                     return Error<IdResponse<long>>(new OperationExceptions("000", "El proveedor no tiene ID"));
                 }
-                if (String.IsNullOrEmpty(model.Address) || String.IsNullOrEmpty(model.Cuit) || String.IsNullOrEmpty(model.Name))
+                if (String.IsNullOrEmpty(model.Address) || model.Dni == 0 || String.IsNullOrEmpty(model.Name))
                 {
                     _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_S001_TOKEN_INVALIDO));
                     return Error<IdResponse<long>>(new OperationExceptions("001", "Datos incompletos"));
@@ -349,7 +349,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             try
             {
                 model.Id = 0;
-                if (String.IsNullOrEmpty(model.Address) || String.IsNullOrEmpty(model.Cuit) || String.IsNullOrEmpty(model.Name))
+                if (String.IsNullOrEmpty(model.Address) || model.Dni == 0 || String.IsNullOrEmpty(model.Name))
                 {
                     _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
                     return Error<IdResponse<long>>(new OperationExceptions("000", "Datos incompletos"));
@@ -519,7 +519,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                     _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
                     return Error<IdResponse<long>>(new OperationExceptions("000", "El cliente no tiene ID"));
                 }
-                if ( String.IsNullOrEmpty(model.Address) || String.IsNullOrEmpty(model.Cuit) || String.IsNullOrEmpty(model.Name))
+                if ( String.IsNullOrEmpty(model.Address) || model.Dni == 0 || String.IsNullOrEmpty(model.Name))
                 {
                     _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_S001_TOKEN_INVALIDO));
                     return Error<IdResponse<long>>(new OperationExceptions("001", "Datos incompletos"));
