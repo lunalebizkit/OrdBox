@@ -14,7 +14,11 @@ namespace Kiltex.SistemaGestion.Api.Controllers.ReporteZ
         {
             _service = service;
         }
-        // GET: ReporteZController
+
+        /// <summary>
+        /// Genera un Cierre de Jornada Fiscal(Reporte Z) en la Impresora Fiscal.
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         [AllowAccess(Permission = new EPermission[] { EPermission.GetInvoice })]
         public async Task<IActionResult> CerrarJornadaFiscal()

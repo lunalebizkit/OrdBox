@@ -16,6 +16,12 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Product
         {
             _service = service;
         }
+
+        /// <summary>
+        /// Devuelve un Producto buscando en la BASE DE DATOS por ID.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet]
         [AllowAccess(Permission = new EPermission[] { EPermission.ViewProduct })]
         public async Task<IActionResult> GetById(long id)
@@ -23,12 +29,23 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Product
             return Return(await _service.GetById(id));
         }
 
+        /// <summary>
+        /// Agrega un nuevo producto a la BASE DE DATOS.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         [AllowAccess(Permission = new EPermission[] { EPermission.CreateProduct })]
         public async Task<IActionResult> New([FromBody] DtoRequestAddProduct model)
         {
             return Return(await _service.Add(model).ConfigureAwait(false));
         }
+
+        /// <summary>
+        /// Devuelve un listado de Productos creados, con paginado.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
         [HttpPost]
         [AllowAccess(Permission = new EPermission[] { EPermission.ViewProduct })]
         [Route("[action]")]
@@ -36,6 +53,12 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Product
         {
             return Return(await _service.List(filter).ConfigureAwait(false));
         }
+
+        /// <summary>
+        /// Edita un Producto y lo guarda modificado en la BASE DE DATOS.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPut]
         [AllowAccess(Permission = new EPermission[] { EPermission.EditProduct })]
         public async Task<IActionResult> Edit([FromBody] DtoRequestAddProduct model)
