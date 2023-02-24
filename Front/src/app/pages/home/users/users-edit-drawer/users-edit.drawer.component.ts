@@ -9,7 +9,9 @@ import { PopupConfirmationComponent } from "src/app/common/components/popup-conf
 import { eRol, rolList } from "../model/rol.enum";
 import { UserModel } from "../model/user.model";
 import { UserService } from "../users.services";
-
+import { TransferItem } from "ng-zorro-antd/transfer";
+import { PermissionRol } from "../../permission-rol/permission/model/permission-rol.model";
+import { PermissionRolService } from "../../permission-rol/permission-rol.service"
 @Component({
     selector: 'app-users.edit-drawer',
     templateUrl: './users-edit.drawer.component.html',
@@ -59,11 +61,17 @@ export class UsersEditDrawerComponent extends BaseComponent implements OnInit {
     ** Listado de todos los roles
     */
    allRols = rolList;
-   rolSelected!: number;
+   rolSelected: any;
+   permissionIdList: number[] = [];
+   list: TransferItem[] = [];
+   listComplete: TransferItem[] = [];
+   permissionRol = [];
+   permissionRolList: PermissionRol[] = [];
 
 
     constructor(
         private service: UserService,
+        private servicePermission: PermissionRolService,
         notificacionService: NzNotificationService,
         el: ElementRef,
         message: NzMessageService,
@@ -77,7 +85,7 @@ export class UsersEditDrawerComponent extends BaseComponent implements OnInit {
             userName: ['', [Validators.required]],
             password: ['', [Validators.required]],
             email: ['', [Validators.email]],
-            roleId: [2, [Validators.required]],
+            roleId: ['', [Validators.required]],
 
         })
     }
@@ -86,11 +94,75 @@ export class UsersEditDrawerComponent extends BaseComponent implements OnInit {
         if (this.id != null || this.id != undefined || this.id != 0) {
             this.getUser(this.id)
         }
+        this.getPermission();
+        this.getPermissionRol();
     };
     getRolName(id: number) {
         return eRol[id];
     }
+    getPermission(): void {
+        this.servicePermission.permissionList().subscribe({
+            next: (r) => {
+                r.forEach((element: any) => {
+                    this.list.push({
+                        key: element.id, title: element.name, disabled: false
+                        , direction: 'left'
+                    })
+                });
+                this.listComplete = this.list;
 
+            },
+            error: () => { }
+        })
+    }
+    getPermissionRol(): void {
+        this.servicePermission.permissionRolList().subscribe({
+            next: (r) => {
+                this.permissionRol = r.map((rol: { id: number, rol: string }) => { return { value: rol.id, label: rol.rol } });
+                this.permissionRolList = r;
+            },
+            error: () => {
+                this.permissionRol = [];
+            }
+        })
+    };
+    rolSelectedChange(id: any): void {
+        this.rolSelected = id;
+        this.renderOwnPermissions();
+    };
+
+    renderOwnPermissions(): void {  
+        this.permissionIdList= [];   
+        let newListOfPermissions: TransferItem[] = [];
+        let newListOfPermissionsRight: TransferItem[] = [];
+        let permission = this.permissionRolList.filter((item: any) => item.id == this.rolSelected)[0];
+
+        if (permission.permissions.length > 0){
+
+            permission.permissions.forEach(element => {
+                newListOfPermissionsRight.push({ key: element.id, title: element.name, direction: 'right', disabled: false })
+            });
+            
+            this.list.forEach((item, index) => {  
+                if (newListOfPermissionsRight.find( (element) => element.title == item.title && element.direction === 'right')){
+                    let newEditPermission: TransferItem = newListOfPermissionsRight.filter(p => p.title == item.title && p.direction != item.direction)[0];
+                    newEditPermission.direction= 'right';
+
+                    this.permissionIdList.push(newEditPermission['key']);
+
+                  newListOfPermissions.push(newEditPermission);
+                }
+                else{
+                    newListOfPermissions.push(item);
+                }               
+                })                   
+            ;
+            this.listComplete = newListOfPermissions
+        }  else{
+            this.listComplete= this.list;
+        };
+        this.form.controls['permissions'].setValue(this.permissionIdList);          
+    };
     getUser(id: number): void {
         if (id != 0)
         this.service.getById(id).subscribe({
@@ -99,9 +171,7 @@ export class UsersEditDrawerComponent extends BaseComponent implements OnInit {
                     this.form.controls['lastName'].setValue(r.lastName),
                     this.form.controls['userName'].setValue(r.userName),
                     this.form.controls['email'].setValue(r.email),
-                    this.form.controls['roleId'].setValue(this.allRols
-                        .filter((v: { value: any, label: string}) =>  v.value == r.roleId)
-                        .map((v: any) => v.value)[0]);
+                    this.form.controls['roleId'].setValue(r.roleId),
                 this.isLoading = false;
             },
             error: () => {
@@ -120,7 +190,7 @@ export class UsersEditDrawerComponent extends BaseComponent implements OnInit {
                 userName: this.form.controls['userName'].value,
                 password: this.form.controls['password'].value,
                 email: this.form.controls['email'].value,
-                roleId: this.form.controls['roleId'].value
+                roleId: this.form.controls['roleId'].value,
             };
             this.isSaving = true;
             this.service.saveUser(model)
