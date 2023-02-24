@@ -16,7 +16,7 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Iva
         }
 
         /// <summary>
-        /// Devuelve un listado del IVA en la compras realizadas en un periodo.
+        /// Devuelve un listado del IVA de la compras realizadas en un periodo.
         /// </summary>
         /// <param name="from"></param>
         /// <param name="to"></param>
@@ -30,7 +30,7 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Iva
         }
 
         /// <summary>
-        /// Devuelve un listado del IVA en la ventas realizadas en un periodo.
+        /// Devuelve un listado del IVA de la ventas realizadas en un periodo.
         /// </summary>
         /// <param name="from"></param>
         /// <param name="to"></param>
