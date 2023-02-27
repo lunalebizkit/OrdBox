@@ -74,7 +74,7 @@ export class SuppliersEditDrawerComponent extends BaseComponent implements OnIni
             cuit: ['', []],
             name: ['', [Validators.required]],
             address: ['', [Validators.required]],
-            observation: ['', [Validators.required]],
+            observation: [''],
             phoneEntity: new FormArray([]),
             emailEntity: new FormArray([])
 
