@@ -16,18 +16,36 @@ namespace Kiltex.SistemaGestion.Api.Controllers.SupplierOrder
         {
             _service = service;
         }
+
+        /// <summary>
+        /// Devuelve una Orden de Pedido buscando en la BASE DE DATOS por ID.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet]
         [AllowAccess(Permission = new EPermission[] { EPermission.ViewOrderSupplier })]
         public async Task<IActionResult> GetById(long id)
         {
             return Return(await _service.GetById(id));
         }
+
+        /// <summary>
+        /// Agrega una nueva Orden de Pedido a la BASE DE DATOS.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         [AllowAccess(Permission = new EPermission[] { EPermission.CreateOrderSupplier })]
         public async Task<IActionResult> New([FromBody] DtoRequestSupplierOrder model)
         {
             return Return(await _service.AddOrUpdate(model).ConfigureAwait(false));
         }
+
+        /// <summary>
+        /// Crea una Orden de Pedido y en conjunto envia el email de pedido al proveedor.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         [AllowAccess(Permission = new EPermission[] { EPermission.CreateOrderSupplier })]
         [Route("orderAndEmail")]
@@ -36,12 +54,23 @@ namespace Kiltex.SistemaGestion.Api.Controllers.SupplierOrder
             return Return(await _service.AddOrUpdateEmail(model).ConfigureAwait(false));
         }
 
+        /// <summary>
+        /// Edita una Orden de Pedido y la guarda modificada en la BASE DE DATOS, en conjunto con "email."
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPut]
         [AllowAccess(Permission = new EPermission[] { EPermission.EditOrderSupplier })]
         public async Task<IActionResult> Edit([FromBody] DtoRequestSupplierOrder model)
         {
             return Return(await _service.AddOrUpdate(model).ConfigureAwait(false));
         }
+
+        /// <summary>
+        /// Devuelve el listado de Ordenes de Pedidos creadas, con paginado.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
         [HttpPost]
         [AllowAccess(Permission = new EPermission[] { EPermission.ViewOrderSupplier })]
         [Route("[action]")]
@@ -49,6 +78,12 @@ namespace Kiltex.SistemaGestion.Api.Controllers.SupplierOrder
         {
             return Return(await _service.List(filter).ConfigureAwait(false));
         }
+
+        /// <summary>
+        /// Envia el email de Orden de Pedido.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         [AllowAccess(Permission = new EPermission[] { EPermission.CreateOrderSupplier })]
         [Route("email")]

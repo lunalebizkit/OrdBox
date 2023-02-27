@@ -70,7 +70,7 @@ export class CustomersEditDrawerComponent extends BaseComponent implements OnIni
         super(notificacionService, el, message);
         this.form = this.fb.group({
             dni: ['', [Validators.required, Validators.pattern, Validators.maxLength]],
-            cuit: ['', [Validators.required, Validators.maxLength, Validators.pattern]],
+            cuit: ['', [Validators.maxLength, Validators.pattern]],
             name: ['', [Validators.required]],
             address: ['', [Validators.required]],
             observation: ['', ],

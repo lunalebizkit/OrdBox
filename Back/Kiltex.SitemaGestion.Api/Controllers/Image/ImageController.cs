@@ -29,6 +29,12 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Image
             return NotFound();
         }
 
+        /// <summary>
+        /// POr el momento nada por que esta comentado el codigo
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="service"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("/images/badge/{key}")]
         [AllowAnonymous]

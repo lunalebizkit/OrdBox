@@ -76,11 +76,11 @@
                 <nz-form-item>
                     <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="roleId">Rol</nz-form-label>
                     <nz-form-control [nzSm]="14" [nzXs]="24">
-                        <nz-spin [nzSpinning]="!isLoadingRoles">
-                            <nz-select formControlName="roleId" id="roleId"
-                            [nzOptions]="allRols">
-                        </nz-select>                           
-                        </nz-spin>
+                 
+                            <nz-select  formControlName="roleId" id="roleId"
+                    (ngModelChange)="rolSelectedChange($event)" [nzOptions]="permissionRol">
+                    </nz-select>                      
+
                     </nz-form-control>
                 </nz-form-item>
             </form>

@@ -16,12 +16,8 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Rol
             _service = service;
         }
 
-        //public async Task<IActionResult> New([FromBody] RequestAddPermission model)
-        //{
-        //    return Return(await _service.AddPermission(model).ConfigureAwait(false));
-        //}
         /// <summary>
-        /// 
+        /// Agrega un nuevo Rol a la BASE DE DATOS.
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
@@ -32,8 +28,9 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Rol
         {
             return Return(await _service.Add(model).ConfigureAwait(false));
         }
+
         /// <summary>
-        /// 
+        /// Devuelve un Rol buscando en la BASE DE DATOS por ID.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -45,8 +42,9 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Rol
         {
             return Return(await _service.GetById(id).ConfigureAwait(false));
         }
+
         /// <summary>
-        /// 
+        ///  Edita un Rol y lo guarda modificado en la BASE DE DATOS.
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
@@ -56,8 +54,9 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Rol
         {
             return Return(await _service.Update(model).ConfigureAwait(false));
         }
+
         /// <summary>
-        /// 
+        /// Devuelve un listado de Permisos creados, con paginado. 
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
@@ -69,17 +68,20 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Rol
             return Return(await _service.ListPermissions().ConfigureAwait(false));
         }
 
-
+        /// <summary>
+        /// Agrega Permisos a un usuario.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("[action]")]
         [AllowAccess(Permission = new EPermission[] { EPermission.RolControl })]
-
         public async Task<IActionResult> AddOrUpdatePermission([FromBody] DtoRequestAddPermissionXRol model)
         {
             return Return(await _service.AddOrUpdatePermission(model).ConfigureAwait(false));
         }
         /// <summary>
-        /// 
+        /// Devuelve un listado de los Roles y los permisos que contiene cada Rol, con paginado.
         /// </summary>
         /// <returns></returns>
         [HttpPost]

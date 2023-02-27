@@ -15,8 +15,9 @@ namespace Kiltex.SistemaGestion.Api.Controllers.User
         {
             _service = service;
         }
+
         /// <summary>
-        /// 
+        /// Agrega un nuevo Usuario a la BASE DE DATOS. 
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
@@ -27,7 +28,7 @@ namespace Kiltex.SistemaGestion.Api.Controllers.User
             return Return(await _service.Add(model).ConfigureAwait(false));
         }
         /// <summary>
-        /// 
+        /// Devuelve un Usuario buscando en la BASE DE DATOS por ID.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -37,12 +38,24 @@ namespace Kiltex.SistemaGestion.Api.Controllers.User
         {
             return Return(await _service.GetById(id).ConfigureAwait(false));
         }
+
+        /// <summary>
+        /// Edita un Usuario ya creado y lo guarda modificado en la BASE DE DATOS.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPut]
         [AllowAccess(Permission = new EPermission[] { EPermission.EditUser })]
         public async Task<IActionResult> Edit([FromBody] RequestAddUser model)
         {
             return Return(await _service.Update(model).ConfigureAwait(false));
         }
+
+        /// <summary>
+        /// Borra un Usuario buscandolos por el ID.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete]
         [Route("{id}")]
         [AllowAccess(Permission = new EPermission[] { EPermission.DeleteUser })]
@@ -50,6 +63,12 @@ namespace Kiltex.SistemaGestion.Api.Controllers.User
         {
             return Return(await _service.Delete(id).ConfigureAwait(false));
         }
+
+        /// <summary>
+        /// Devuelve un listado de Usuario creados, con paginado.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("[action]")]
         [AllowAccess(Permission = new EPermission[] { EPermission.ViewUser })]

@@ -15,14 +15,22 @@ namespace Kiltex.SistemaGestion.Api.Controllers.CreditMemoController
         {
             _service = service;
         }
-
+        /// <summary>
+        /// Devuelve una NC buscando en la BASE DE DATOS por ID.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet]
         [AllowAccess(Permission = new EPermission[] { EPermission.GetMemo })]
         public async Task<IActionResult> GetById([FromQuery] long id)
         {
             return Return(await _service.GetById(id).ConfigureAwait(false));
         }
-
+        /// <summary>
+        /// Devuelve un listado de NC creadas, con paginado y filtrado por CUIT.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
         [HttpPost]
         [AllowAccess(Permission = new EPermission[] { EPermission.GetMemo })]
         [Route("[action]")]
@@ -30,14 +38,22 @@ namespace Kiltex.SistemaGestion.Api.Controllers.CreditMemoController
         {
             return Return(await _service.List(filter).ConfigureAwait(false));
         }
-
+        /// <summary>
+        /// Agrega una nueva NC a la BASE DE DATOS.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         [AllowAccess(Permission = new EPermission[] { EPermission.CreateMemo })]
         public async Task<IActionResult> Post([FromBody] DtoRequestCreditMemo model)
         {
             return Return(await _service.NewMemo(model).ConfigureAwait(false));
         }
-
+        /// <summary>
+        /// Edita una NC ya creada y la guarda modificada en la BASE DE DATOS.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPut]
         [AllowAccess(Permission = new EPermission[] { EPermission.CreateMemo })]
         public async Task<IActionResult> Edit([FromBody] DtoRequestCreditMemo model)

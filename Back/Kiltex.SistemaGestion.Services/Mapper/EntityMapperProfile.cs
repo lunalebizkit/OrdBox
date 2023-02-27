@@ -14,13 +14,11 @@ namespace Kiltex.SistemaGestion.Services.Mapper
             CreateMap<DtoEntity, Customer>()
                 .AfterMap((o, d, c) =>
                 {
-                    d.Cuit = o.Cuit == String.Empty ? null : o.Cuit.Trim();
                     d.Dni = o.Dni == 0 ? null : o.Dni;
                 });
             CreateMap<DtoEntity, Supplier>()
                 .AfterMap((o, d, c) =>
                 {
-                    d.Cuit = o.Cuit == String.Empty ? null : o.Cuit.Trim();
                     d.Dni = o.Dni == 0 ? null : o.Dni;
                 }).ReverseMap();
             CreateMap<Supplier,DtoEntityList>()

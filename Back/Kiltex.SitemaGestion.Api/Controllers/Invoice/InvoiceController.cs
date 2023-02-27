@@ -17,12 +17,24 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Invoice
         {
             _service = service;
         }
+
+        /// <summary>
+        /// Devuelve una Factura buscando en la BASE DE DATOS por ID.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet]
         [AllowAccess(Permission = new EPermission[] { EPermission.GetInvoice })]
         public async Task<IActionResult> Get(long id)
         {
             return Return(await _service.GetById(id).ConfigureAwait(false));
         }
+
+        /// <summary>
+        /// Devuelve un listado de Facturas creadas, con paginado.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("[action]")]
         [AllowAccess(Permission = new EPermission[] { EPermission.GetInvoice })]
@@ -30,6 +42,12 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Invoice
         {
             return Return(await _service.ListInvoices(filter).ConfigureAwait(false));
         }
+
+        /// <summary>
+        /// Agrega una nueva Factura a la BASE DE DATOS.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         [AllowAccess(Permission = new EPermission[] { EPermission.CreateInvoice })]
         public async Task<IActionResult> New([FromBody] DtoRequestInvoice model)
