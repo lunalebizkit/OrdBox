@@ -111,7 +111,7 @@ constructor(@Inject(LOCALE_ID) public locale: string,
     address: ['', Validators.required],
     type: [ 1 , Validators.required],
     invoiceNumber: [ '' , Validators.required],
-    customerCuit: ['', [Validators.required, Validators.pattern('[0-9]{11}'),]],
+    customerCuit: ['', [Validators.required, Validators.pattern('[0-9]{8,11}'), Validators.minLength]],
     customerDni:[''],
     customerName: ['', Validators.required],    
     observation: ['']
