@@ -3,7 +3,7 @@
       <nz-page-header-title>Reporte Iva Compra</nz-page-header-title>
       <nz-page-header-extra>
         <button nz-button routerLink="/home/periods" type="submit" nzSize="default" 
-        ><i nz-icon nzType="arrow-left" nzTheme="outline"></i>volver</button>
+        ><i nz-icon nzType="arrow-left" nzTheme="outline"></i>Volver</button>
       </nz-page-header-extra>
      
     </nz-page-header>
@@ -193,7 +193,7 @@
               <td style="text-align: right;">{{data.receiptNumber}}</td>
               <td style="text-align: right;">{{this.getReceiptType(data.type)}}</td>
               <td style="text-align: right;">{{data.supplierName}}</td>
-              <td style="text-align: right;">{{data.supplierCuit}}</td>          
+              <td style="text-align: right;">{{data.supplierCuit | cuit }}</td>          
               <td style="text-align: right;">{{this.currencyFormat(data.importeNeto)}}</td>          
               <td style="text-align: right;">{{this.currencyFormat(data.iva10)}}</td>          
               <td style="text-align: right;">{{this.currencyFormat(data.iva21)}}</td>          
@@ -280,7 +280,7 @@
                 <td style="text-align: right;">{{data.receiptNumber}}</td>
                 <td style="text-align: right;">{{this.getReceiptType(data.type)}}</td>
                 <td style="text-align: right;">{{data.supplierName}}</td>
-                <td style="text-align: right;">{{data.supplierCuit}}</td>          
+                <td style="text-align: right;">{{data.supplierCuit | cuit }}</td>          
                 <td style="text-align: right;">{{this.currencyFormat(data.importeNeto)}}</td>          
                 <td style="text-align: right;">{{this.currencyFormat(data.iva10)}}</td>          
                 <td style="text-align: right;">{{this.currencyFormat(data.iva21)}}</td>          
