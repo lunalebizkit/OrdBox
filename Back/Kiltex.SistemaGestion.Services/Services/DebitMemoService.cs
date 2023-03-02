@@ -5,6 +5,7 @@ using Kiltex.SistemaGestion.Domain.Model;
 using Kiltex.SistemaGestion.SDK.Error;
 using Kiltex.SistemaGestion.Services.Common;
 using Kiltex.SistemaGestion.Services.ImpresoraFiscal;
+using Kiltex.SistemaGestion.Services.ImpresoraFiscal.Printer250F;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
@@ -15,9 +16,11 @@ namespace Kiltex.SistemaGestion.Services.Services
     public class DebitMemoService : BaseService
     {
         private readonly IPrinter _printer;
-        public DebitMemoService(ErrorManager logger, DBContext context, IMapper maper, IPrinter printer) :
+        private readonly PrinterStatus _config;
+        public DebitMemoService(ErrorManager logger, DBContext context, IMapper maper, IPrinter printer, PrinterStatus config) :
             base(logger, context, maper)
-        { 
+        {
+            _config = config;
             _printer = printer;
         }
         public async Task<OperationResponse<DtoRequestDebitMemo>> GetById(long id)
@@ -102,34 +105,36 @@ namespace Kiltex.SistemaGestion.Services.Services
                         _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
                         return Error<IdResponse<long>>(new OperationExceptions("000", "Error al cargar cliente, no puede cargar un DNI con Factura tipo C"));
                     }
-
-                    var error = await PrintDebitMemo(model, ct);
-
-                    if (error == "ErrorCliente")
+                    if (_config.Status) 
                     {
-                        _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
-                        return Error<IdResponse<long>>(new OperationExceptions("000", "Error al cargar cliente, compruebe el CUIT/DNI"));
-                    }
+                        var error = await PrintDebitMemo(model, ct);
 
-                    if (error == "ErrorAbrir")
-                    {
-                        _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
-                        return Error<IdResponse<long>>(new OperationExceptions("000", "Error al abrir documento , intente nuevamente"));
-                    }
+                        if (error == "ErrorCliente")
+                        {
+                            _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
+                            return Error<IdResponse<long>>(new OperationExceptions("000", "Error al cargar cliente, compruebe el CUIT/DNI"));
+                        }
 
-                    if (error == "ErrorImprimir")
-                    {
-                        _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
-                        return Error<IdResponse<long>>(new OperationExceptions("000", "Error al imprimir item, intente con un cierre Z"));
-                    }
+                        if (error == "ErrorAbrir")
+                        {
+                            _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
+                            return Error<IdResponse<long>>(new OperationExceptions("000", "Error al abrir documento , intente nuevamente"));
+                        }
 
-                    if (error == "ErrorCerrar")
-                    {
-                        _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
-                        return Error<IdResponse<long>>(new OperationExceptions("000", "Error al cerrar documento, intente con un cierre Z"));
-                    }
+                        if (error == "ErrorImprimir")
+                        {
+                            _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
+                            return Error<IdResponse<long>>(new OperationExceptions("000", "Error al imprimir item, intente con un cierre Z"));
+                        }
 
-                    debitMemoModel.DebitMemoNumber = long.Parse(error);
+                        if (error == "ErrorCerrar")
+                        {
+                            _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
+                            return Error<IdResponse<long>>(new OperationExceptions("000", "Error al cerrar documento, intente con un cierre Z"));
+                        }
+
+                        debitMemoModel.DebitMemoNumber = long.Parse(error);
+                    }
                     await _contextSql.DebitMemos.AddAsync(debitMemoModel, ct).ConfigureAwait(false);
 
                 }
