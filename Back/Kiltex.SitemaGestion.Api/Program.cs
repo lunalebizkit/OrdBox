@@ -57,6 +57,7 @@ builder.Services.AddSwaggerGen(c =>
                 });
 });
 builder.Services.AddSingleton<IPrinter, PrinterF250F>();
+builder.Services.AddSingleton<PrinterStatus>(p => builder.Configuration.GetSection("PrinterStatus").Get<PrinterStatus>());
 builder.Services.AddSingleton<PrinterConfig>(p => builder.Configuration.GetSection("PrinterConfig").Get<PrinterConfig>());
 builder.Services.AddAutoMapper(typeof(UserMapperProfile));
 builder.Services.AddScoped<UserService>();
