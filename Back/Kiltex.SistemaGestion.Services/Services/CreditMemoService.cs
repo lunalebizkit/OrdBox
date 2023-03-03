@@ -5,6 +5,7 @@ using Kiltex.SistemaGestion.Domain.Model;
 using Kiltex.SistemaGestion.SDK.Error;
 using Kiltex.SistemaGestion.Services.Common;
 using Kiltex.SistemaGestion.Services.ImpresoraFiscal;
+using Kiltex.SistemaGestion.Services.ImpresoraFiscal.Printer250F;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
 using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
@@ -13,11 +14,12 @@ namespace Kiltex.SistemaGestion.Services.Services
 {
     public class CreditMemoService : BaseService
     {
-
+        private readonly PrinterStatus _config;
         private readonly IPrinter _printer;
-        public CreditMemoService(ErrorManager logger, DBContext context, IMapper mapper, IPrinter printer) :
+        public CreditMemoService(ErrorManager logger, DBContext context, IMapper mapper, IPrinter printer, PrinterStatus config) :
           base(logger, context, mapper)
         {
+            _config = config;
             _printer = printer;
         }
 
@@ -143,33 +145,36 @@ namespace Kiltex.SistemaGestion.Services.Services
                         return Error<IdResponse<long>>(new OperationExceptions("000", "Error al cargar cliente, verifique DNI"));
                     }
 
-                    var error = await PrintCreditMemo(model, ct);
-
-                    if (error == "ErrorCliente")
+                    if (_config.Status)
                     {
-                        _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
-                        return Error<IdResponse<long>>(new OperationExceptions("000", "Error al cargar cliente, compruebe el CUIT/DNI"));
-                    }
+                        var error = await PrintCreditMemo(model, ct);
 
-                    if (error == "ErrorAbrir")
-                    {
-                        _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
-                        return Error<IdResponse<long>>(new OperationExceptions("000", "Error al abrir documento , intente con un cierre Z"));
-                    }
+                        if (error == "ErrorCliente")
+                        {
+                            _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
+                            return Error<IdResponse<long>>(new OperationExceptions("000", "Error al cargar cliente, compruebe el CUIT/DNI"));
+                        }
 
-                    if (error == "ErrorImprimir")
-                    {
-                        _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
-                        return Error<IdResponse<long>>(new OperationExceptions("000", "Error al imprimir item, intente con un cierre Z"));
-                    }
+                        if (error == "ErrorAbrir")
+                        {
+                            _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
+                            return Error<IdResponse<long>>(new OperationExceptions("000", "Error al abrir documento , intente con un cierre Z"));
+                        }
 
-                    if (error == "ErrorCerrar")
-                    {
-                        _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
-                        return Error<IdResponse<long>>(new OperationExceptions("000", "Error al cerrar documento, intente con un cierre Z"));
-                    }
+                        if (error == "ErrorImprimir")
+                        {
+                            _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
+                            return Error<IdResponse<long>>(new OperationExceptions("000", "Error al imprimir item, intente con un cierre Z"));
+                        }
 
-                    creditModel.CreditMemoNumber = long.Parse(error);
+                        if (error == "ErrorCerrar")
+                        {
+                            _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
+                            return Error<IdResponse<long>>(new OperationExceptions("000", "Error al cerrar documento, intente con un cierre Z"));
+                        }
+
+                        creditModel.CreditMemoNumber = long.Parse(error);
+                    }
                     await _contextSql.CreditMemo.AddAsync(creditModel, ct).ConfigureAwait(false);
                 }
                 

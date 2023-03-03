@@ -95,7 +95,7 @@
           <nz-form-label [nzSm]="6" [nzXs]="14" nzRequired
             >Cuit - Cuil
           </nz-form-label>
-          <nz-form-control [nzSm]="14" [nzXs]="14" [nzErrorTip]="cuit">
+          <nz-form-control [nzSm]="14" [nzXs]="14" [nzErrorTip]="cuit" minlength="8">
             <input
               nz-input
               nzSize="small"
@@ -107,7 +107,7 @@
             <ng-container *ngIf="control.hasError('required')"> 
               Debe ingresar un cuit valido.
             </ng-container>
-            <ng-container *ngIf="!control.hasError('required') && control.hasError('pattern')"> 
+            <ng-container *ngIf="!control.hasError('required') && control.hasError('pattern') && control.hasError('minlength')"> 
               El cuit ingresado debe tener 11 caracteres numericos.
             </ng-container>
           </ng-template>
