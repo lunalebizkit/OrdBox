@@ -40,8 +40,8 @@ export class ReportComponent extends BaseComponent implements OnInit {
         this.popComponent.handleCance()
         this.router.navigate(['/home/products/list']);
       },
-      error: () =>{
-        this.showMessageError("No se pudo Realizar Reporte Z, verifique la conexion a la impresora")
+      error: (e) =>{
+        this.showMessageError(e.error.descripcion)      
       }
    })
   }
