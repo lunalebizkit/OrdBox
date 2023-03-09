@@ -35,6 +35,14 @@ export class PeriodsListComponent extends BaseComponent implements OnInit {
     page: 0,
     pageSize: 10,
   };
+  PeriodFilter = {
+    filter: {
+      date: undefined,
+    },
+    page: 0,
+    pageSize: 20
+  }
+
   selectedIndex!: number;
   selectedPeriod: any;
   totalItems = 0;
@@ -63,8 +71,7 @@ export class PeriodsListComponent extends BaseComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.getPeriod(this.queryData);
-    
+    this.getPeriod(this.PeriodFilter);
   }
 
   getPeriod(params: any): void {
@@ -76,7 +83,7 @@ export class PeriodsListComponent extends BaseComponent implements OnInit {
         this.selectedIndex = 0;
         this.selectedPeriod = this.periodList[this.selectedIndex];
         document.getElementById(this.selectedIndex.toString())?.focus();
-
+       
       },
       error: () => {
         this.loading = false;
@@ -85,14 +92,21 @@ export class PeriodsListComponent extends BaseComponent implements OnInit {
     });
   }
   search(): void {
-    this.queryData.page = 0;
-    this.getPeriod(this.queryData);
+    this.PeriodFilter.page = 0;
+    this.getPeriod(this.PeriodFilter);
   }
 
   formaterDate(date: string | number | Date): string {
-    return formatDate(date, 'yyyy/MM/dd', this.locale);
+    return formatDate(date, 'yyyy-MM-dd', this.locale);
   }
-
+  dateChange(date:any):void{
+    console.log(date)
+    if(date){
+      this.PeriodFilter.filter.date = date
+    }else{
+      this.PeriodFilter.filter.date = undefined
+    }
+  }
   onDoubleClicked(datos: any) {
     this.id = datos.id;
     if (datos.status === true) {

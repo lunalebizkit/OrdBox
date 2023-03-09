@@ -14,9 +14,10 @@ import { Permission } from 'src/app/common/auth/models/permissions.enum';
 })
 export class InvoicesListComponent implements OnInit {
   permissions = Permission;
-
+  dia:any;
   index!: number;
   id!: number;
+  dato!: any
   /*
    ** Catidad total de entidades
    */
@@ -38,13 +39,15 @@ export class InvoicesListComponent implements OnInit {
     page: 0,
     pageSize: 20,
   };
+
   SpecificFilter = {
     filter: {
       supplier: "",
       category: "",
       statusid: 0,
       number: 0,
-      cuit: ""
+      cuit: "",
+      date:"",
     },
     page: 0,
     pageSize: 20
@@ -66,7 +69,6 @@ export class InvoicesListComponent implements OnInit {
    ** Evento de inicio de angular
    */
   ngOnInit(): void {
-
     this.getData(this.SpecificFilter);
   }
   /*
@@ -75,7 +77,8 @@ export class InvoicesListComponent implements OnInit {
   search(): void {
     this.getData(this.SpecificFilter);
     this.SpecificFilter.page = 0;
-    this.SpecificFilter.pageSize = 20;
+    this.SpecificFilter.pageSize = 20; 
+
   }
   /*
    ** Evento de busqueda datos en el server
@@ -105,6 +108,15 @@ export class InvoicesListComponent implements OnInit {
 
   formaterDate(date: string | number | Date): string {
     return formatDate(date, 'YYYY-MM-dd', this.locale);
+  }
+ 
+  dateChange(date:any):void{
+    if(date){
+      this.dia = date
+      this.SpecificFilter.filter.date =this.formaterDate(date)
+    }else{
+      this.SpecificFilter.filter.date = ''
+    }
   }
 
   currencyFormat(data: any): string {

@@ -10,7 +10,7 @@
   <nz-collapse>
     <nz-collapse-panel nzSize="small" nzHeader="Filtros">
       <div nz-row style="margin-left: 13px;">
-        <div nz-col nzSpan="14">
+      <!--   <div nz-col nzSpan="14"> -->
           <nz-form-item style="margin-left: 15px;">
             <nz-form-label>CUIT</nz-form-label>
             <nz-form-control>
@@ -24,8 +24,8 @@
               </ng-template>
             </nz-form-control>
           </nz-form-item>
-        </div>
-          <div nz-col nzSpan="8">
+       <!--  </div>
+          <div nz-col nzSpan="8"> -->
           <nz-form-item style="margin-left: 25px;">
             <nz-form-label>Nro de comprobante</nz-form-label>
             <nz-form-control>
@@ -39,8 +39,26 @@
               </ng-template>
             </nz-form-control>
           </nz-form-item>
+          <nz-form-item style="margin-left: 55px;">
+            <nz-form-label>Fecha</nz-form-label>
+            <nz-form-control >
+              <nz-date-picker
+              nzFormat="dd/MM/yyyy"
+                [(ngModel)]="SpecificFilter.filter.date"
+                name="date"
+                [nzPlaceHolder]="'Fecha'"       
+                (ngModelChange)="dateChange($event)"
+              ></nz-date-picker>
+            </nz-form-control>
+          </nz-form-item>
+      <!-- </div>
+      <div style="margin-left: 15px;"> -->
+        <button nz-button nzType="primary" nzSpam="18" style="margin-left: 90px;" (click)="search()">
+          <i nz-icon nzType="search"></i>
+          Buscar
+        </button>
         </div>
-      </div>
+     <!--  </div> -->
     </nz-collapse-panel>
   </nz-collapse>
 

@@ -30,6 +30,12 @@ namespace Kiltex.SistemaGestion.Services.Common
         public int? StatusId { get; set; }
         public long? Number { get; set; }
         public string? Cuit { get; set; }
+        public string? Date { get; set; }
+
     }
-  
+    public class PeriodFilter
+    {
+        public DateTime Date { get; set; }
+    }
+
 }

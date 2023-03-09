@@ -126,7 +126,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             }
         }
 
-        public async Task<OperationResponse<DtoPagination<DtoResponsePeriod>>> ListPeriods(RequestPaginatedData<string> request)
+        public async Task<OperationResponse<DtoPagination<DtoResponsePeriod>>> ListPeriods(RequestPaginatedData<string> request, DateTime? date)
         {
 
             try
@@ -134,8 +134,11 @@ namespace Kiltex.SistemaGestion.Services.Services
                 var query = _contextSql
                                     .Periods
                                     .AsNoTracking()
-                                    .Where(p => p.InitPeriod.ToString().Contains(request.Filter ?? "") ||
-                                     p.EndPeriod.ToString().Contains(request.Filter ?? ""));
+                                    .Where(p => (!request.Filter.Contains("") || request.Filter != null) ? p.InitPeriod.Date.ToString().Contains(request.Filter) : true &&
+                                    (!request.Filter.Contains("") || request.Filter != null) ? p.EndPeriod.Date.ToString().Contains(request.Filter) : true ||
+                                    ((p.InitPeriod.Date <= date) && (p.EndPeriod.Date >= date)));
+
+                                 
 
 
                 var count = await query.CountAsync().ConfigureAwait(false);

@@ -36,7 +36,8 @@ export class ReceiptListComponent implements OnInit {
       category: "",
       statusid: 0,
       number: 0,
-      cuit: ""
+      cuit: "",
+      date: ""
     },
     page: 0,
     pageSize: 20
@@ -93,6 +94,13 @@ export class ReceiptListComponent implements OnInit {
         this.receiptList = [];
       },
     });
+  }
+  dateChange(date:any):void{
+    if(date){
+      this.SpecificFilter.filter.date = this.formaterDate(date)
+    }else{
+      this.SpecificFilter.filter.date = ''
+    }
   }
 
   formaterDate(date: string | number | Date): string {

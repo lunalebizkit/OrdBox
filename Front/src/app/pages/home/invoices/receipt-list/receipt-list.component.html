@@ -22,9 +22,9 @@
     <nz-collapse>
       <nz-collapse-panel nzSize="small" nzHeader="Filtros">
         <form nz-form style="margin-left: 13px;">
-          <div nz-row>
-            <div nz-col nzSpan="14">
-              <nz-form-item style="margin-left: 15px;">
+          <div nz-row >
+           <!--  <div nz-col nzSpan="14"> -->
+              <nz-form-item style="margin-left: 15px;" nzSpan="14">
                 <nz-form-label>CUIT</nz-form-label>
                 <nz-form-control>
                   <nz-input-group [nzSuffix]="clearQuery">
@@ -49,9 +49,9 @@
                   </ng-template>
                 </nz-form-control>
               </nz-form-item>
-            </div>
-              <div nz-col nzSpan="8">
-              <nz-form-item style="margin-left: 25px;">
+           <!--  </div>
+              <div nz-col nzSpan="8"> -->
+              <nz-form-item style="margin-left: 35px;">
                 <nz-form-label>Nro de comprobante</nz-form-label>
                 <nz-form-control>
                   <nz-input-group [nzSuffix]="clearQuery">
@@ -77,9 +77,29 @@
                   </ng-template>
                 </nz-form-control>
               </nz-form-item>
-              <div style="color: red;font-size: 12px; margin-left: 20px;">* Debe ingresar el número de comprobante completo</div>
-            </div>
+             <!--  <div style="color: red;font-size: 12px; margin-left: 20px;">* Debe ingresar el número de comprobante completo</div> -->
+            <!-- </div>
+            <div nz-col class="gutter-row" [nzSpan]="8"> -->
+              <nz-form-item style="margin-left: 55px;">
+                <nz-form-label>Fecha</nz-form-label>
+                <nz-form-control >
+                  <nz-date-picker
+                  nzFormat="dd/MM/yyyy"
+                    [(ngModel)]="SpecificFilter.filter.date"
+                    name="date"
+                    [nzPlaceHolder]="'Fecha'"       
+                    (ngModelChange)="dateChange($event)"
+                  ></nz-date-picker>
+                </nz-form-control>
+              </nz-form-item>
+          <!-- </div>
+          <div style="margin-left: 15px;"> -->
+            <button nz-button nzType="primary" nzSpam="18" style="margin-left: 90px;" (click)="search()">
+              <i nz-icon nzType="search"></i>
+              Buscar
+            </button>
           </div>
+        <!--   </div> -->
         </form>
       </nz-collapse-panel>
     </nz-collapse>

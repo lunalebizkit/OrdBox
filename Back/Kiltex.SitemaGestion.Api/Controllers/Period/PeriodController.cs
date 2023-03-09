@@ -63,9 +63,9 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Product
         [HttpPost]
         [Route("[action]")]
         [AllowAccess(Permission = new EPermission[] { EPermission.GetPeriod })]
-        public async Task<IActionResult> List([FromBody] RequestPaginatedData<string> filter)
+        public async Task<IActionResult> List([FromBody] RequestPaginatedData<string> filter, DateTime? date)
         {
-            return Return(await _service.ListPeriods(filter).ConfigureAwait(false));
+            return Return(await _service.ListPeriods(filter, date).ConfigureAwait(false));
         }
 
         /// <summary>
