@@ -18,6 +18,7 @@ import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { PopupConfirmationComponent } from 'src/app/common/components/popup-confirmation/popup-confirmation.component';
 
+
 @Component({
   selector: 'app-periods-list',
   templateUrl: './periods-list.component.html',
@@ -27,7 +28,7 @@ export class PeriodsListComponent extends BaseComponent implements OnInit {
   @ViewChild('drawer') drawerComponent!: periodsDrawerComponent;
   @ViewChild('popup') popupComponent!: PopupConfirmationComponent;
   periodList: PeriodsModel[] = [];
-  period:any;
+  period: any;
   permissions = Permission;
 
   queryData = {
@@ -37,7 +38,7 @@ export class PeriodsListComponent extends BaseComponent implements OnInit {
   };
   PeriodFilter = {
     filter: {
-      date: undefined,
+      date: Date,
     },
     page: 0,
     pageSize: 20
@@ -71,7 +72,7 @@ export class PeriodsListComponent extends BaseComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.getPeriod(this.PeriodFilter);
+    this.getPeriod(this.queryData);
   }
 
   getPeriod(params: any): void {
@@ -83,7 +84,22 @@ export class PeriodsListComponent extends BaseComponent implements OnInit {
         this.selectedIndex = 0;
         this.selectedPeriod = this.periodList[this.selectedIndex];
         document.getElementById(this.selectedIndex.toString())?.focus();
-       
+      },
+      error: () => {
+        this.loading = false;
+        this.periodList = [];
+      },
+    });
+  }
+  getPeriodSelected(params: any): void {
+    this.service.selectedPeriod(params).subscribe({
+      next: (r) => {
+        this.periodList = r.data;
+        this.totalItems = r.totalCount;
+        this.loading = false;
+        this.selectedIndex = 0;
+        this.selectedPeriod = this.periodList[this.selectedIndex];
+        document.getElementById(this.selectedIndex.toString())?.focus();
       },
       error: () => {
         this.loading = false;
@@ -93,18 +109,17 @@ export class PeriodsListComponent extends BaseComponent implements OnInit {
   }
   search(): void {
     this.PeriodFilter.page = 0;
-    this.getPeriod(this.PeriodFilter);
+    this.getPeriodSelected(this.PeriodFilter);
   }
 
   formaterDate(date: string | number | Date): string {
     return formatDate(date, 'yyyy-MM-dd', this.locale);
   }
-  dateChange(date:any):void{
-    console.log(date)
-    if(date){
+  dateChange(date: any): void {
+    if (date) {
       this.PeriodFilter.filter.date = date
-    }else{
-      this.PeriodFilter.filter.date = undefined
+    } else {
+      this.getPeriod(this.queryData);
     }
   }
   onDoubleClicked(datos: any) {

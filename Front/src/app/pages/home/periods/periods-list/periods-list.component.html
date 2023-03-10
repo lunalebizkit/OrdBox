@@ -17,11 +17,11 @@
   </nz-page-header>
   <nz-collapse>
     <nz-collapse-panel nzSize="small" nzHeader="Filtros">
-      <div nz-row [nzGutter]="[8, 1]">
-        <div nz-col class="gutter-row" [nzSpan]="8">
+      <div nz-row>
+        
           <nz-form-item>
-            <nz-form-label [nzSm]="4" [nzXs]="24">Fecha</nz-form-label>
-            <nz-form-control [nzSm]="14" [nzXs]="24">
+            <nz-form-label >Fecha</nz-form-label>
+            <nz-form-control >
               <nz-date-picker
               nzFormat="dd/MM/yyyy"
               [(ngModel)]="PeriodFilter.filter.date"
@@ -31,7 +31,11 @@
               ></nz-date-picker>
             </nz-form-control>
           </nz-form-item>
-      </div>
+          <button nz-button nzType="primary" style="margin-left: 90px; font-size: 14px;" (click)="search()">
+            <i nz-icon nzType="search"></i>
+            Buscar
+          </button>
+
       </div>
     </nz-collapse-panel>
   </nz-collapse>

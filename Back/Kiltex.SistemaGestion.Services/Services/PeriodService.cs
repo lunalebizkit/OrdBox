@@ -126,7 +126,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             }
         }
 
-        public async Task<OperationResponse<DtoPagination<DtoResponsePeriod>>> ListPeriods(RequestPaginatedData<string> request, DateTime? date)
+        public async Task<OperationResponse<DtoPagination<DtoResponsePeriod>>> ListPeriods(RequestPaginatedData<string> request)
         {
 
             try
@@ -135,11 +135,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                                     .Periods
                                     .AsNoTracking()
                                     .Where(p => (!request.Filter.Contains("") || request.Filter != null) ? p.InitPeriod.Date.ToString().Contains(request.Filter) : true &&
-                                    (!request.Filter.Contains("") || request.Filter != null) ? p.EndPeriod.Date.ToString().Contains(request.Filter) : true ||
-                                    ((p.InitPeriod.Date <= date) && (p.EndPeriod.Date >= date)));
-
-                                 
-
+                                    (!request.Filter.Contains("") || request.Filter != null) ? p.EndPeriod.Date.ToString().Contains(request.Filter) : true);
 
                 var count = await query.CountAsync().ConfigureAwait(false);
 
@@ -222,6 +218,38 @@ namespace Kiltex.SistemaGestion.Services.Services
                 throw;
             }
         }
+        public async Task<OperationResponse<DtoPagination<DtoResponsePeriod>>> SelectedPeriod(RequestPaginatedData<PeriodFilter> request)
+        {
+            try
+            {
+                var selectedPeriod = _contextSql
+                                 .Periods
+                                 .AsNoTracking()
+                                 .Where(p => (p.InitPeriod.Date <= request.Filter.Date) && (p.EndPeriod.Date >= request.Filter.Date))
+                                 ;
+                var count = await selectedPeriod.CountAsync().ConfigureAwait(false);
 
+                var list = await selectedPeriod.OrderByDescending(p => p.InitPeriod)
+                                      .Skip(request.Page * request.PageSize)
+                                      .Take(request.PageSize)
+                                      .ToListAsync()
+                                      .ConfigureAwait(false);
+
+                var dto = _mapper.Map<List<DtoResponsePeriod>>(selectedPeriod);
+
+                    return new OperationResponse<DtoPagination<DtoResponsePeriod>>(new DtoPagination<DtoResponsePeriod>
+                    {
+                        Data = dto,
+                        PageSize = request.PageSize,
+                        TotalCount = 1
+                    });
+                
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
+                throw;
+            }
+        }
     }
 }

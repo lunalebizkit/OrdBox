@@ -21,6 +21,7 @@ namespace Kiltex.SistemaGestion.Services.Common
         public long? Brand { get; set; }
         public long? Category { get; set; }
         public long? Status { get; set; }
+        public string? Date { get; set; }
         public List<long> Supplier { get; set; }
     }
     public class SpecificFilter
