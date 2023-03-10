@@ -21,6 +21,7 @@ export class debitMemoListComponent implements OnInit {
   debitMemoList: DebitMemoModel[] = [];
   selectedIndex!: number;
   selectedDebitMemo: any;
+  dia:any;
   permissions = Permission;
 
   queryParams = {
@@ -97,6 +98,7 @@ export class debitMemoListComponent implements OnInit {
     }
     dateChange(date:any):void{
       if(date){
+        this.dia = date
         this.SpecificFilter.filter.date = this.formaterDate(date)
       }else{
         this.SpecificFilter.filter.date = ''

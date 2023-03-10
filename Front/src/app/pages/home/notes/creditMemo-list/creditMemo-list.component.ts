@@ -23,6 +23,7 @@ export class creditMemoListComponent implements OnInit {
   selectedIndex!: number;
   selectedCreditMemo: any;
   permissions = Permission;
+  dia:any;
   queryParams = {
     filter: '',
     page: 0,
@@ -75,6 +76,7 @@ export class creditMemoListComponent implements OnInit {
     }
     dateChange(date:any):void{
       if(date){
+        this.dia = date
         this.SpecificFilter.filter.date = this.formaterDate(date)
       }else{
         this.SpecificFilter.filter.date = ''

@@ -14,7 +14,7 @@ import { ReceiptViewDrawerComponent } from '../receipt-view-drawer/receipt-view-
 })
 export class ReceiptListComponent implements OnInit {
   permissions = Permission;
-
+  dia:any;
   id!: number;
 
   /*
@@ -97,6 +97,7 @@ export class ReceiptListComponent implements OnInit {
   }
   dateChange(date:any):void{
     if(date){
+      this.dia = date
       this.SpecificFilter.filter.date = this.formaterDate(date)
     }else{
       this.SpecificFilter.filter.date = ''

@@ -30,6 +30,7 @@ export class PeriodsListComponent extends BaseComponent implements OnInit {
   periodList: PeriodsModel[] = [];
   period: any;
   permissions = Permission;
+  dia:any;
 
   queryData = {
     filter: '',
@@ -117,6 +118,7 @@ export class PeriodsListComponent extends BaseComponent implements OnInit {
   }
   dateChange(date: any): void {
     if (date) {
+      this.dia = date
       this.PeriodFilter.filter.date = date
     } else {
       this.getPeriod(this.queryData);
