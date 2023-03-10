@@ -237,6 +237,8 @@ namespace Kiltex.SistemaGestion.Services.Services
                                 &&
 
                                  ((request.Filter.Supplier.Count > 0 && !request.Filter.Supplier.Contains(0)) ? request.Filter.Supplier.Contains(p.SupplierId) : true)
+                                 &&
+                                 ((!request.Filter.Date.Contains("") || request.Filter.Date != null) ? p.DateTime.Date.ToString().Contains(request.Filter.Date) : true)
                                  );
 
                 var count = await query.CountAsync().ConfigureAwait(false);

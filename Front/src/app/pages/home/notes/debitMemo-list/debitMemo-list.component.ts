@@ -21,6 +21,7 @@ export class debitMemoListComponent implements OnInit {
   debitMemoList: DebitMemoModel[] = [];
   selectedIndex!: number;
   selectedDebitMemo: any;
+  dia:any;
   permissions = Permission;
 
   queryParams = {
@@ -30,11 +31,12 @@ export class debitMemoListComponent implements OnInit {
   };
   SpecificFilter = {
     filter: {
-     /*  supplier: "",
+      supplier: "",
       category: "",
-      statusid: 0, */
+      statusid: 0,
       number: 0,
-      cuit: ""
+      cuit: "",
+      date:""
     },
     page: 0,
     pageSize: 20
@@ -93,6 +95,14 @@ export class debitMemoListComponent implements OnInit {
       this.index = index;
       this.selectedIndex = index;
       this.selectedDebitMemo = datos;
+    }
+    dateChange(date:any):void{
+      if(date){
+        this.dia = date
+        this.SpecificFilter.filter.date = this.formaterDate(date)
+      }else{
+        this.SpecificFilter.filter.date = ''
+      }
     }
 
     onDoubleClicked(datos: DebitMemoModel) {

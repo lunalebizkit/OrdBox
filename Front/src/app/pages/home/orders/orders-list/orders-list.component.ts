@@ -5,8 +5,9 @@ import {
   Inject,
   LOCALE_ID,
   OnInit,
+
 } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NzDrawerService } from 'ng-zorro-antd/drawer';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
@@ -22,6 +23,7 @@ import {
 import { OrdersEditDrawerComponent } from '../orders-edit-drawer/orders-edit.drawer.component';
 import { OrdersService } from '../orders.service';
 import { Permission } from 'src/app/common/auth/models/permissions.enum';
+import { CustomerModel } from '../../customers/model/customer.model';
 
 @Component({
   selector: 'app-orders-list',
@@ -31,6 +33,7 @@ import { Permission } from 'src/app/common/auth/models/permissions.enum';
 export class OrdersListComponent extends BaseComponent implements OnInit {
   permissions = Permission;
   formSearch!: FormGroup;
+  formSupplierSearch!: FormGroup;
   isLoading = false;
   timeout!: any;
   allCategories = [];
@@ -42,6 +45,7 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
    ** id del usuario a editar, si es nuevo...
    */
   id!: number;
+  loading!: boolean;
 
   /*
    ** Parametros de busqueda Filtrada
@@ -52,6 +56,7 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
       brand: 0,
       category: 0,
       status: 0,
+      date: '',
       supplier: [0],
     },
     page: 0,
@@ -65,7 +70,7 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
     page: 0,
     pageSize: 20,
   };
-
+  entityList: CustomerModel[] = [];
   totalItems = 0;
   selectedIndex!: number;
   selectedOrders!: NewOrder;
@@ -87,11 +92,14 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
       status: [0],
       supplier: [[]],
       category: [0],
+      date: ['']
+    })
+    this.formSupplierSearch = this.fb.group({
+      supplierId: ['', [Validators.required]],
     });
   }
   ngOnInit(): void {
     this.getAllCategories();
-    this.getAllSupplier();
     this.getAllOrders();
   }
   /*
@@ -158,15 +166,26 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
   /*
    ** Evento de busqueda datos en el server
    */
-  onSearch(value: string): void {
-    clearTimeout(this.timeout);
-    this.timeout = setTimeout(() => {
-      if (value.length > 2) {
-        this.allSuppliers = [];
-        this.queryData.filter = value;
-        this.getAllSupplier();
-      }
-    }, 1000);
+  onSearch(data: string): void {
+    if (data.length > 2) {
+      this.queryData.page = 0;
+      this.queryData.filter = data;
+      this.getSupplier(this.queryData);
+    }
+  }
+  getSupplier(params: any): void {
+    this.loading = true;
+    this.serviceEntity.getSuppliers(params).subscribe({
+      next: (r) => {
+        this.entityList = r.data;
+        this.totalItems = r.totalCount;
+        this.loading = false;
+      },
+      error: () => {
+        this.loading = false;
+        this.entityList = [];
+      },
+    });
   }
   onSelect(id: number): void {
     this.orderDetailList = this.allOrders.filter(
@@ -175,16 +194,16 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
   }
 
   supplierSelectedChange(id: any): void {
-    this.queryParams.filter.supplier = [];
-    if (id == 0 || id == null) {
-      this.queryParams.filter.supplier = [0];
-    } else {
-      this.queryParams.filter.supplier.push(
-        this.formSearch.controls['supplier'].value
-      );
-    }
-  }
 
+      if (id == 0 || id == null) {
+        this.queryParams.filter.supplier = [0];
+      } else {
+        this.queryParams.filter.supplier = [id];
+      }
+  }
+  dateSelectedChange(id: any): void {
+    this.queryParams.filter.date = id == null ? '' : this.formaterDate(id) ;  
+  }
   categorySelectedChange(id: number): void {
     this.queryParams.filter.category = id;
   }
@@ -316,7 +335,7 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
          * ALe
          */
 
-        
+
         //   this.serviceOrders.getById(data).subscribe({
         //     next: (r: NewOrder) => {
         //       let order =

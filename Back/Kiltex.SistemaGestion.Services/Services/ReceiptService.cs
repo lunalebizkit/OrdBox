@@ -79,7 +79,9 @@ namespace Kiltex.SistemaGestion.Services.Services
                                     .AsNoTracking()
                                     .Include(x => x.ReceiptDetails)
                                      .Where(p => (!string.IsNullOrEmpty(request.Filter.Cuit) ? p.SupplierCuit.ToLower().Contains(request.Filter.Cuit) : true)
-                                     && ((request.Filter.Number.HasValue && request.Filter.Number != 0) ? p.ReceiptNumber == request.Filter.Number : true));
+                                     && ((request.Filter.Number.HasValue && request.Filter.Number != 0) ? p.ReceiptNumber == request.Filter.Number : true)
+                                      &&
+                                     ((!request.Filter.Date.Contains("") || request.Filter.Date != null) ? p.DateTime.Date.ToString().Contains(request.Filter.Date) : true));
 
                 var count = await query.CountAsync().ConfigureAwait(false);
 

@@ -17,34 +17,25 @@
   </nz-page-header>
   <nz-collapse>
     <nz-collapse-panel nzSize="small" nzHeader="Filtros">
-      <div nz-row [nzGutter]="[8, 1]">
-        <div nz-col nzSpan="24">
+      <div nz-row>
+        
           <nz-form-item>
-            <nz-form-label>Búsqueda</nz-form-label>
-            <nz-form-control>
-              <nz-input-group [nzSuffix]="clearQuery">
-                <input
-                  [ngModelOptions]="{ standalone: true }"
-                  type="int"
-                  placeholder="Ingrese inicio o fin de periodo"
-                  nz-input
-                  (keydown.enter)="search()"
-                  [(ngModel)]="queryData.filter"
-                />
-              </nz-input-group>
-              <ng-template #clearQuery>
-                <i
-                  nz-icon
-                  class="ant-input-clear-icon"
-                  nzTheme="fill"
-                  nzType="close-circle"
-                  *ngIf="queryData.filter"
-                  (click)="queryData.filter = ''; search()"
-                ></i>
-              </ng-template>
+            <nz-form-label >Fecha</nz-form-label>
+            <nz-form-control >
+              <nz-date-picker
+              nzFormat="dd/MM/yyyy"
+              [(ngModel)]="dia"
+              name="date"
+              [nzPlaceHolder]="'Fecha'"       
+              (ngModelChange)="dateChange($event)"
+              ></nz-date-picker>
             </nz-form-control>
           </nz-form-item>
-        </div>
+          <button nz-button nzType="primary" style="margin-left: 90px; font-size: 14px;" (click)="search()">
+            <i nz-icon nzType="search"></i>
+            Buscar
+          </button>
+
       </div>
     </nz-collapse-panel>
   </nz-collapse>
