@@ -38,7 +38,7 @@ export class PeriodsListComponent extends BaseComponent implements OnInit {
   };
   PeriodFilter = {
     filter: {
-      date: Date,
+      date: new Date,
     },
     page: 0,
     pageSize: 20
