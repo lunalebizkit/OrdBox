@@ -52,4 +52,7 @@ export class PeriodsService {
        public periodActive(startDate:any): Observable<any>{
         return this.api.post(`Period/ActivePeriod?date=${startDate}`, false)
       }
+      public selectedPeriod(date:any): Observable<any>{
+        return this.api.post(`Period/SelectedPeriod`, date, false)
+      }
 }

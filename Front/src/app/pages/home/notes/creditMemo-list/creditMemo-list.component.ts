@@ -23,6 +23,7 @@ export class creditMemoListComponent implements OnInit {
   selectedIndex!: number;
   selectedCreditMemo: any;
   permissions = Permission;
+  dia:any;
   queryParams = {
     filter: '',
     page: 0,
@@ -34,7 +35,8 @@ export class creditMemoListComponent implements OnInit {
       category: "",
       statusid: 0,
       number: 0,
-      cuit: ""
+      cuit: "",
+      date: ""
     },
     page: 0,
     pageSize: 20
@@ -71,6 +73,14 @@ export class creditMemoListComponent implements OnInit {
     }
     formaterDate(date: string | number | Date): string {
       return formatDate(date, 'YYYY-MM-dd', this.locale);
+    }
+    dateChange(date:any):void{
+      if(date){
+        this.dia = date
+        this.SpecificFilter.filter.date = this.formaterDate(date)
+      }else{
+        this.SpecificFilter.filter.date = ''
+      }
     }
     search(): void {
       this.getData(this.SpecificFilter);

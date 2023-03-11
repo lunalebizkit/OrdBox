@@ -42,6 +42,18 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Product
         {
             return Return(await _service.ActivePeriod(date).ConfigureAwait(false));
         }
+        /// <summary>
+        /// Devuelve un solo periodo buscandolo por fecha en la base de datos.
+        /// </summary>
+        /// <param name="date"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("[action]")]
+        [AllowAccess(Permission = new EPermission[] { EPermission.GetPeriod })]
+        public async Task<IActionResult> SelectedPeriod([FromBody] RequestPaginatedData<PeriodFilter> filter)
+        {
+            return Return(await _service.SelectedPeriod(filter).ConfigureAwait(false));
+        }
 
         /// <summary>
         /// Agrega un nuevo Periodo a la BASE DE DATOS.

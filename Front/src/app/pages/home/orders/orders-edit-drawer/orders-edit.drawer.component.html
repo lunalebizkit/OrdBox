@@ -33,7 +33,7 @@
                   <div>
                     
                   </div>
-                  <nz-select *ngIf="newOrder; else elseBlock" nzPlaceHolder="Seleccione Proveedor" nzAllowClear
+                  <nz-select *ngIf="newOrder; else elseBlock" nzPlaceHolder="Ingrese un proveedor" nzAllowClear
                     nzShowSearch nzServerSearch (nzOnSearch)="onSearch($event)" formControlName="supplierId"
                     style="width: 400px" (ngModelChange)="onChange($event)">
                     <ng-container *ngFor="let o of entityList">
