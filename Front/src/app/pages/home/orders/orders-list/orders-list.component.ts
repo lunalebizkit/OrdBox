@@ -60,7 +60,7 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
       supplier: [0],
     },
     page: 0,
-    pageSize: 20,
+    pageSize: 70,
   };
   /*
    ** Parametros de busqueda
@@ -68,7 +68,7 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
   queryData = {
     filter: '',
     page: 0,
-    pageSize: 20,
+    pageSize: 70,
   };
   entityList: CustomerModel[] = [];
   totalItems = 0;
@@ -371,6 +371,7 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
       },
       error: () => {
         this.orderDetailList = [];
+        this.allOrders = []
         this.id = 0;
       },
     });

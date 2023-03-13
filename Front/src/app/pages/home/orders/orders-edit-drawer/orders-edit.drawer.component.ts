@@ -313,9 +313,9 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
               `Se guardo correctamente el pedido`
             );
             this.isSaving = false;
-             this.entityList = [];
             this.close(r.id);
-
+             this.entityList = [];
+           
           },
           error: () => {
             this.isSaving = false;
