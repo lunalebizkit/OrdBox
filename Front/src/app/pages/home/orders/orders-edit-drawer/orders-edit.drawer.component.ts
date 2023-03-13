@@ -147,12 +147,12 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
   queryParams = {
     filter: '',
     page: 0,
-    pageSize: 5,
+    pageSize: 20,
   };
   queryData = {
     filter: '',
     page: 0,
-    pageSize: 5,
+    pageSize: 20,
   };
 
   constructor(
@@ -313,7 +313,9 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
               `Se guardo correctamente el pedido`
             );
             this.isSaving = false;
+             this.entityList = [];
             this.close(r.id);
+
           },
           error: () => {
             this.isSaving = false;

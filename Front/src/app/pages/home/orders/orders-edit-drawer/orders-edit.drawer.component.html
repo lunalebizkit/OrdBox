@@ -61,7 +61,7 @@
                 <nz-form-label [nzSm]="6" [nzXs]="28" nzRequired nzFor="supplierId">Estado
                 </nz-form-label>
                 <nz-select nzShowSearch style="width: 190px" nzAllowClear nzPlaceHolder="Estado" id="statusId"
-                  formControlName="statusId" [nzOptions]="allStatus" [nzDisabled]="id == 0 ? true : viewOrder">
+                  formControlName="statusId" [nzOptions]="allStatus" (nzBlur)="stopEdit()" [nzDisabled]="id == 0 ? true : viewOrder">
                 </nz-select>
               </nz-form-item>
             </div>
