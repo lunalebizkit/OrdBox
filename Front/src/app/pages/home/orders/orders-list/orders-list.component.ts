@@ -75,6 +75,7 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
   selectedIndex!: number;
   selectedOrders!: NewOrder;
   index!: number;
+  editId!: number;
 
   constructor(
     private serviceOrders: OrdersService,
@@ -101,6 +102,7 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
   ngOnInit(): void {
     this.getAllCategories();
     this.getAllOrders();
+    this.getStatusName(this.id)
   }
   /*
    ** Indicador de carga de marcas y lineas
@@ -211,7 +213,6 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
   statusSelectedChange(id: number): void {
     this.queryParams.filter.status = id;
   }
-
   formaterDate(date: string | number | Date): string {
     return formatDate(date, 'YYYY-MM-dd', this.locale);
   }
