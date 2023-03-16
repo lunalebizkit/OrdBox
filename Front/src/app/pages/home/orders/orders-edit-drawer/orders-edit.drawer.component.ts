@@ -314,7 +314,7 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
             );
             this.isSaving = false;
             this.close(r.id);
-             this.entityList = [];
+            this.ngOnInit()
            
           },
           error: () => {
