@@ -66,7 +66,7 @@ export class PeriodsListComponent extends BaseComponent implements OnInit {
     notificacionService: NzNotificationService,
     el: ElementRef,
     message: NzMessageService,
-    private  router: Router,
+    private router: Router,
     @Inject(LOCALE_ID) public locale: string
   ) {
     super(notificacionService, el, message);
@@ -127,7 +127,7 @@ export class PeriodsListComponent extends BaseComponent implements OnInit {
      /*  this.refresh() */
     /*   this.ngOnInit() */
   /*   this.periodList=[] */
-      this.reloadComponent(true)
+  this.reloadComponent(true)
     }
   }
   onDoubleClicked(datos: any) {
