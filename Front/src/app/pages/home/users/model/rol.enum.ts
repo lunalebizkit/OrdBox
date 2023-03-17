@@ -1,8 +1,10 @@
 export enum eRol {
   Administrador = 1,
-  Proveedor = 2, 
-  Cliente = 3
+  Vendedor = 2, 
+  Contador = 3,
+  Supervisor = 4
 }
 export const rolList= [ {value:1 , label:'Administrador'},
-{value:2 , label:'Proveedor'}, 
-{value:3 , label:'Cliente'}];
+{value:2 , label:'Vendedor'}, 
+{value:3 , label:'Contador'},
+{value:3 , label:'Supervisor'}];
