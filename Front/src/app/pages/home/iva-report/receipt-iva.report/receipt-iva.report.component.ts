@@ -210,13 +210,9 @@ import { ReceiptIvaReportDetailsModel, ReceiptIvaReportModel } from '../model/re
     }
     changeDate( fecha: any):void {
       this.newInitDate = this.formaterDate(fecha)
-
-      console.log(this.newInitDate);
     }
     changeEndDate( fecha: any):void {
-      this.newEndDate = this.formaterDate(fecha)  
-      console.log(fecha); 
-            
+      this.newEndDate = this.formaterDate(fecha)          
     }
 
   getNewIvaCompra(){

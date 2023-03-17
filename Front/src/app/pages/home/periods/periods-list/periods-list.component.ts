@@ -66,14 +66,14 @@ export class PeriodsListComponent extends BaseComponent implements OnInit {
     notificacionService: NzNotificationService,
     el: ElementRef,
     message: NzMessageService,
-    private  router: Router,
+    private router: Router,
     @Inject(LOCALE_ID) public locale: string
   ) {
     super(notificacionService, el, message);
   }
  
   ngOnInit() {
-    this.getPeriod(this.queryData);
+    this.getPeriod(this.queryData); 
   }
 
   getPeriod(params: any): void {
@@ -115,7 +115,7 @@ export class PeriodsListComponent extends BaseComponent implements OnInit {
   }
 
   formaterDate(date: string | number | Date): string {
-    return formatDate(date, 'yyyy-MM-dd', this.locale);
+    return formatDate(date, 'yyyy/MM/dd', this.locale);
   }
 
   dateChange(date: any): void {
@@ -123,11 +123,9 @@ export class PeriodsListComponent extends BaseComponent implements OnInit {
       this.dia = date
       this.PeriodFilter.filter.date = date
     } else {
-     /*  this.getPeriod(this.queryData); */
-     /*  this.refresh() */
-    /*   this.ngOnInit() */
-  /*   this.periodList=[] */
-      this.reloadComponent(true)
+    this.queryData.page= 0
+     this.getPeriod(this.queryData); 
+  
     }
   }
   onDoubleClicked(datos: any) {
@@ -202,8 +200,7 @@ export class PeriodsListComponent extends BaseComponent implements OnInit {
           let newPeriod =
             this.periodList[this.periodList.findIndex((r) => r.id == data)];
           if (newPeriod === undefined) {
-          /*   this.getPeriod(this.queryData); */
-          this.ngOnInit()
+         this.queryData.page =0
           } else {
             this.service.getById(data).subscribe({
               next: (r: PeriodsModel) => {
@@ -245,7 +242,7 @@ export class PeriodsListComponent extends BaseComponent implements OnInit {
           this.showNotificationSuccess(
             'Guardado correcto',
             `Se ha cerrado correctamente el Período `
-          );
+          );        
           this.id = 0;
           this.isSaving = false;
           this.refresh()
@@ -323,11 +320,4 @@ export class PeriodsListComponent extends BaseComponent implements OnInit {
       console.log(error);
     }
   }
-  reloadComponent(self:boolean,urlToNavigateTo ?:string){
-   const url=self ? this.router.url :urlToNavigateTo;
-   this.router.navigateByUrl('/',{skipLocationChange:true}).then(()=>{
-     this.router.navigate([`/${url}`]).then(()=>{
-     })
-   })
- }
 }
