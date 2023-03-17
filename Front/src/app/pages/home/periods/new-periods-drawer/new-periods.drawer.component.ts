@@ -7,7 +7,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PeriodsService } from '../periods.service';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NzDrawerRef } from 'ng-zorro-antd/drawer';
 import { DatePipe, formatDate } from '@angular/common';
 import { DisabledTimeFn, DisabledTimePartial } from 'ng-zorro-antd/date-picker';
@@ -34,7 +34,7 @@ export class periodsDrawerComponent  extends BaseComponent implements OnInit {
   queryData = {
     filter: '',
     page: 0,
-    pageSize: 10,
+    pageSize: 20,
   }; 
 
   isLoading!: boolean;
@@ -49,7 +49,7 @@ export class periodsDrawerComponent  extends BaseComponent implements OnInit {
     notificacionService: NzNotificationService,
     el: ElementRef,
     message: NzMessageService,
-    private route: ActivatedRoute,
+    private router: Router,
     private fb: FormBuilder,
     private drawerRef: NzDrawerRef<string>,
     @Inject(LOCALE_ID) public locale: string,
@@ -105,7 +105,12 @@ sumarDias(fecha:any, dias: any){
   
   return fecha;
 } 
-
+refresh(){
+  let currentUrl = this.router.url;
+  this.router.routeReuseStrategy.shouldReuseRoute = () => false;
+  this.router.onSameUrlNavigation = 'reload';
+  this.router.navigate([currentUrl]);
+}
 save(): void {
   if (this.isValidForm(this.form)) {
     const model: PeriodsModel = {
@@ -124,6 +129,9 @@ save(): void {
 
         this.isSaving = false;
          this.close(r.id); 
+        /*  location.reload() */
+       /*  this.ngOnInit() */
+       this.refresh()
       },
       error: () => {
         this.isSaving = false;
