@@ -1,0 +1,21 @@
+﻿using Kiltex.SistemaGestion.Services.ImpresoraFiscal.Printer250F.Dto;
+using Newtonsoft.Json;
+
+namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse
+{
+    public partial class DtoResponseReimprimirDoc
+    {
+
+        [JsonProperty("CopiarComprobante")]
+        public DtoResponseReimprimirDoc? Body { get; set; }
+    }
+
+    public partial class DtoResponseReimprimirDoc : Estado
+    {
+        [JsonProperty("Zeta")]
+        public string? Zeta { get; set; }
+
+        [JsonProperty("Indice")]
+        public int Indice { get; set; }
+    }
+}
