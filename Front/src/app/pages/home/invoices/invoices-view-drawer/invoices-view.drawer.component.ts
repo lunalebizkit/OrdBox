@@ -6,6 +6,7 @@ import { NzMessageService } from "ng-zorro-antd/message";
 import { NzNotificationService } from "ng-zorro-antd/notification";
 import { BaseComponent } from "src/app/common/components/base/base.component";
 import { HeaderOperationsButtonsComponent } from "src/app/common/components/headers/buttons.oparations.header.component";
+import { PopupConfirmationComponent } from "src/app/common/components/popup-confirmation/popup-confirmation.component";
 import { InvoiceService } from "../invoices.service";
 import { eInvoiceType } from "../model/invoice-type.Enum";
 import { InvoiceDetails, InvoiceModel } from "../model/invoice.model";
@@ -19,9 +20,11 @@ import { InvoiceDetails, InvoiceModel } from "../model/invoice.model";
 export class InvoicesViewDrawerComponent extends BaseComponent implements OnInit {
   @Input() set filter(value: number) {
     this.id = value;
-};
+}
+
 
 @ViewChild('header') headerComponent!: HeaderOperationsButtonsComponent;
+@ViewChild('popupReimprimir') popupComponent!: PopupConfirmationComponent;
 
   // variables Generales
   isLoading=true;
@@ -47,6 +50,9 @@ export class InvoicesViewDrawerComponent extends BaseComponent implements OnInit
   percIngBrutos!: number;
   percIva!: number;
   concNoGravado!: number;
+
+   
+
   constructor(
     notificacionService: NzNotificationService,
     private service: InvoiceService,
@@ -110,6 +116,41 @@ export class InvoicesViewDrawerComponent extends BaseComponent implements OnInit
   close(): void {
     this.drawerRef.close();
   };
+
+  
+/*Evento Reimprimir una factura */ 
+reimprimir(): void{
+  console.log(this.type);
+ console.log(this.invoiceNumber);
+ this.service.Reprint(this.type, this.invoiceNumber).subscribe({
+  next: (r:any)=>
+  {
+    this.showMessageSuccess('Reimpresion de la factura satisfactoria');
+    this.popupComponent.isConfirmationvisible = false;
+  }, 
+  error: (e) =>{
+    this.showMessageError(e.error.descripcion);
+  }
+ });
+}
+
+hideReprint() {
+  if(this.invoiceNumber == 0){
+    this.showMessageError('El numero de factura no puede estar en 0');
+    this.popupComponent.isConfirmationvisible = false;
+
+  }else{
+  
+  try{
+    this.reimprimir();
+  }catch(error){
+
+  console.log(error);
+  this.popupComponent.isConfirmationvisible = false;
+  }
+  }
+
+}
 
 }
 

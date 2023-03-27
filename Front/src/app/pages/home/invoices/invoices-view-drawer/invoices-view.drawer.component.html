@@ -1,13 +1,19 @@
 <app-header-op-buttons
   #header
   (onCloseClick)="close()"
+  [btnReprintText]="'Reimprimir'"
+  [hideReprint]="false"
   [hideClose]="true"
   [hideUpdate]="true"
   [hideSave]="true"
   [hideBack]="true"
+  [disabled]="invoiceNumber == 0? true:false"
   [title]="'Comprobantes de Ventas'"
+  [iconReprint]="'file-excel'"
   [iconBack]="'rollback'"
   [iconTitle]="'container'"
+  (onReprintClick)="popupReimprimir.showConfirmation()"
+ 
 >
 </app-header-op-buttons>
 <nz-collapse class="{{this.tipo}}">
@@ -103,3 +109,11 @@
     </nz-content>
   </nz-collapse-panel>
 </nz-collapse>
+
+<app-popup-confirmation
+  #popupReimprimir
+  [title]="'Confirmar Reimpresion'"
+  [header]="'¿Está seguro de que desea reimprimir esta factura?'"
+  (handleOk)="hideReprint()"
+>
+</app-popup-confirmation>
