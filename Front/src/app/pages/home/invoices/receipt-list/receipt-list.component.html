@@ -144,7 +144,7 @@
             (click)="onClick(data, i)"
             (dblclick)="onDoubleClick(data)"
           >
-            <td>{{ data.id }}</td>
+            <td>{{ data.id | number: '8.0-0' | noComma}}</td>
             <td>{{ this.formaterDate(data.dateTime) }}</td>
             <td>{{ data.supplierCuit | cuit}}</td>
             <td>{{ data.supplierName }}</td>
