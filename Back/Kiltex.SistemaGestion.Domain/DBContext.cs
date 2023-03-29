@@ -89,7 +89,8 @@ namespace Kiltex.SistemaGestion.Domain
         public virtual DbSet<Period> Periods { get; set; }
         public virtual DbSet<DebitMemo> DebitMemos { get; set; }
         public virtual DbSet<DebitMemoDetails> DebitMemoDetails { get; set; }
-
+        public virtual DbSet<Budget>Budgets { get; set; }
+        public virtual DbSet<BudgetDetail> BudgetDetails { get; set; }
         
         //private static void InitialRoles(ModelBuilder modelBuilder)
         //{

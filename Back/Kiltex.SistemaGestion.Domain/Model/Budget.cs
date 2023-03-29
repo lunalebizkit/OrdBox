@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kiltex.SistemaGestion.Domain.Model
 {
     [Table("budget")]
-    internal class Budget : BaseModel
+    public class Budget : BaseModel
     {
         [Column("user_id")]
         public long UserId { get; set; }
@@ -39,10 +34,7 @@ namespace Kiltex.SistemaGestion.Domain.Model
         [Column("total")]
         public decimal Total { get; set; }
 
-        [Column("iva_total")]
-        public decimal IvaTotal { get; set; }
 
-        [Column("type")]
-        public int Type { get; set; }
+        public ICollection<BudgetDetail> BudgetDetails { get; set; } = new HashSet<BudgetDetail>();
     }
 }
