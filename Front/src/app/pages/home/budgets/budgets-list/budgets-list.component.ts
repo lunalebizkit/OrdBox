@@ -1,0 +1,152 @@
+import { Component, Inject, LOCALE_ID, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
+import { NzDrawerRef, NzDrawerService } from 'ng-zorro-antd/drawer';
+import { Permission } from 'src/app/common/auth/models/permissions.enum';
+import { BudgetsService } from '../budgets.services'; 
+import { BudgetsModel } from '../model/budgets.model'; 
+import { formatCurrency, formatDate } from '@angular/common';
+
+@Component({
+    selector: 'app-budgets-list',
+    templateUrl: './budgets-list.component.html',
+    styleUrls: ['./budgets-list.component.css'],
+  })
+
+export class BudgetsListComponent  implements OnInit{
+   
+  permissions = Permission;
+  budgetsList: BudgetsModel[] = [];
+  totalItems!: number;
+  loading!: boolean;
+  selectedIndex: number = 0;
+  selectedBudget: any;
+  id!: number;
+  index!: number;
+
+  queryData = {
+    filter: '',
+    page: 0,
+    pageSize: 50,
+  };
+
+  constructor(
+    private service: BudgetsService, 
+     @Inject(LOCALE_ID) public locale: string,
+  ) {}
+
+  search(): void {
+    this.queryData.page = 0;
+    this.getBudget(this.queryData);
+  }
+
+  ngOnInit(): void {
+    this.getBudget(this.queryData);
+  }
+
+getBudget(params: any): void {
+    this.service.getByFilter(params).subscribe({
+        next: (r) => {
+          this.budgetsList = r.data;
+          this.totalItems = r.totalCount;
+          this.loading = false;
+          this.selectedIndex = 0;
+          this.selectedBudget = this.budgetsList[this.selectedIndex];
+          document.getElementById(this.selectedIndex.toString())?.focus();
+        } ,
+        error: () => {
+          this.loading = false;
+          this.budgetsList = [];
+        },
+    });
+  }
+openComponentBudgetEdit(): void {
+ ({
+    nzContent: BudgetsListComponent,
+    nzSize: 'large',
+    nzWidth: '90%',
+    nzContentParams: {
+      filter: this.id > 0 ? this.id : 0,
+    },
+    nzClosable: false,
+  });
+}
+
+
+onScroll(event: any): void {
+  let scrollHeight = event.target.scrollHeight;
+  let scrolltop = event.target.scrollTop;
+  let client = event.target.clientHeight;
+  let ScrollPosition = Math.abs(
+    Math.round(scrollHeight - (scrolltop + client))
+  );
+  if (
+    ScrollPosition <= 5 &&
+    this.totalItems / this.queryData.page > this.queryData.page
+  ) {
+    this.queryData.page++;
+    if (
+      this.totalItems === undefined ||
+      this.queryData.page * this.queryData.pageSize <= this.totalItems
+    ) {
+      this.service.getByFilter(this.queryData).subscribe({
+        next: (r) => {
+          r.data.map((brand: BudgetsModel) => this.budgetsList.push(brand));
+          this.loading = false;
+        },
+        error: () => {
+          this.loading = false;
+          this.budgetsList = [];
+        },
+      });
+    }
+  }
+}
+
+
+onEnter(e: any) {
+  this.selectedBudget = this.budgetsList[this.index];
+  this.id = this.budgetsList[this.index].id;
+  this.openComponentBudgetEdit();
+}
+
+onDoubleClicked(datos: any) {
+  this.id = datos.id;
+  this.openComponentBudgetEdit();
+}
+
+onClick(datos: any, index: number): void {
+  this.index = index;
+  this.selectedIndex = index;
+  this.selectedBudget = datos;
+}
+
+myNavegation(event: any) {
+  switch (event.key) {
+    case 'ArrowDown':
+      let nextCell =
+        this.budgetsList.length > this.selectedIndex
+          ? ++this.selectedIndex
+          : this.budgetsList.length;
+      if (this.budgetsList[nextCell] !== undefined) {
+        this.selectedBudget = this.budgetsList[nextCell];
+        this.index = nextCell;
+        document.getElementById(nextCell.toString())?.focus();
+      }
+      break;
+    case 'ArrowUp':
+      let previousCell = this.selectedIndex > 0 ? --this.selectedIndex : 0;
+      if (this.budgetsList[previousCell] !== undefined) {
+        this.selectedBudget = this.budgetsList[previousCell];
+        this.index = previousCell;
+        document.getElementById(previousCell.toString())?.focus();
+      }
+      break;
+  }
+}
+
+formaterDate(date: string | number | Date): string {
+  return formatDate(date, 'YYYY-MM-dd', this.locale);
+}
+
+
+}
