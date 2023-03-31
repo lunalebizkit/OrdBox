@@ -140,7 +140,7 @@ namespace Kiltex.SistemaGestion.Services.Services
 
                 var count = await query.CountAsync().ConfigureAwait(false);
 
-                var list = await query.OrderBy(p => p.Id)
+                var list = await query.OrderBy(p => p.DateTime).ThenBy(p => p.BudgetNumber)
                                       .Skip(request.Page * request.PageSize)
                                       .Take(request.PageSize)
                                       .ToListAsync()
