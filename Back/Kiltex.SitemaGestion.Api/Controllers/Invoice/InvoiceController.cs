@@ -34,9 +34,9 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Invoice
         [HttpPost]
         [Route("[action]")]
         [AllowAccess(Permission = new EPermission[] { EPermission.GetInvoice })]
-        public async Task<IActionResult> ArchivoTxt([FromBody] ArchivosTxt model, [FromBody] RequestPaginatedData<SpecificFilter> filter)
+        public async Task<IActionResult> ArchivoTxt([FromBody] ArchivosTxt model)
         {
-            return Return(await _service.ArchivoTxt(model,filter).ConfigureAwait(false));
+            return Return(await _service.ArchivoTxt(model).ConfigureAwait(false));
         }
 
         /// <summary>
