@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Kiltex.SistemaGestion.Api.Filter;
 using Kiltex.SistemaGestion.Domain.Enum;
 using Kiltex.SistemaGestion.Domain.Model;
+using Kiltex.SistemaGestion.Services.LibroIvaDigital;
 
 namespace Kiltex.SistemaGestion.Api.Controllers.Invoice
 {
@@ -28,6 +29,14 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Invoice
         public async Task<IActionResult> Get(long id)
         {
             return Return(await _service.GetById(id).ConfigureAwait(false));
+        }
+
+        [HttpPost]
+        [Route("[action]")]
+        [AllowAccess(Permission = new EPermission[] { EPermission.GetInvoice })]
+        public async Task<IActionResult> ArchivoTxt([FromBody] ArchivosTxt model, [FromBody] RequestPaginatedData<SpecificFilter> filter)
+        {
+            return Return(await _service.ArchivoTxt(model,filter).ConfigureAwait(false));
         }
 
         /// <summary>
