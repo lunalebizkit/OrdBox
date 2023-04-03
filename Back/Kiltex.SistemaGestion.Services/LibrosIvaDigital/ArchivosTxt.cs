@@ -6,7 +6,12 @@ using System.Threading.Tasks;
 
 namespace Kiltex.SistemaGestion.Services.LibroIvaDigital
 {
-    public class ArchivoTxtRequest
+
+    public class ArchivosTxt
+    {
+        public List<ArchivoTxtDto> ArchivoTxtDto { get; set; }
+    }
+    public class ArchivoTxtDto
     {
         #region Fecha De Comprobante
 

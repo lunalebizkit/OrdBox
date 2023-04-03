@@ -9,6 +9,7 @@ using Kiltex.SistemaGestion.Services.ImpresoraFiscal.Printer250F;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
 using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
+using Kiltex.SistemaGestion.Services.LibroIvaDigital;
 
 namespace Kiltex.SistemaGestion.Services.Services
 {
@@ -106,6 +107,61 @@ namespace Kiltex.SistemaGestion.Services.Services
                 throw;
             }
         }
+
+        public async Task<OperationResponse<bool>> ArchivoTxt(ArchivosTxt model)
+        {
+            var Name = $"IVA_DIGITAL_{DateTime.Now.Ticks}.TXT";
+
+            using (StreamWriter OutPutFile = new($"C:\\Users\\Kiltex\\Desktop\\GESTION DE STOCK{Name}"))
+            {
+
+                try
+                {
+                    foreach (var r in model.ArchivoTxtDto)
+                    {
+                        await OutPutFile.WriteAsync
+                        (
+                            r.FechaDeComprobante.ToUpper() +
+                            r.TipoDeComprobante.ToUpper() +
+                            r.PuntoDeVenta.ToUpper() +
+                            r.NumeroDeComprobante.ToUpper() +
+                            r.NumeroDeComprobanteHasta.ToUpper() +
+                            r.Cuit.ToUpper() +
+                            r.NumeroDeIdentificacionComprador.ToUpper() +
+                            r.NombreCompletoComprador.ToUpper() +
+                            r.ImporteTotal.ToUpper() +
+                            r.NetoGravado.ToUpper() +
+                            r.NoCategorizados.ToUpper() +
+                            r.OperacionesExentas.ToUpper() +
+                            r.ImpuestosNacionales.ToUpper() +
+                            r.IngresosBrutos.ToUpper() +
+                            r.ImpuestosMunicipales.ToUpper() +
+                            r.ImpuestosInternos.ToUpper() +
+                            r.CodigoDeMoneda.ToUpper() +
+                            r.TipoDeCambio.ToUpper() +
+                            r.AlicuotaIva.ToUpper() +
+                            r.CodigoDeOperacion.ToUpper() +
+                            r.OtrosTributos.ToUpper() +
+                            r.FechaDePago.ToUpper()
+                        );
+                    }
+
+                    return new OperationResponse<bool>(true);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    throw;
+                }
+                finally
+                { 
+                    OutPutFile.Close();
+                    OutPutFile.Dispose();
+                }
+            }
+        }
+
+
         public async Task<OperationResponse<IdResponse<long>>> AddOrUpdate(DtoRequestInvoice model, CancellationToken ct = default)
         {
             var transaction = _contextSql.Database.BeginTransaction();
