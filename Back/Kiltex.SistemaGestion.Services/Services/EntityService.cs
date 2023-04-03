@@ -484,7 +484,9 @@ namespace Kiltex.SistemaGestion.Services.Services
                                     .AsNoTracking()
                                     .Include(p =>p.EmailEntities)
                                     .Include(p =>p.PhoneEntities)
-                                    .Where(p => p.Name.ToLower().Contains(request.Filter ?? "") || p.Dni.ToString().Contains( request.Filter ?? "") || p.Cuit.ToLower().Contains(request.Filter ?? ""));          
+                                    .Where(p => p.Name.ToLower().Contains(request.Filter ?? "") 
+                                    || p.Dni.ToString().Contains( request.Filter ?? "") 
+                                    || p.Cuit.ToLower().Contains(request.Filter ?? ""));          
 
                 var count = await query.CountAsync().ConfigureAwait(false);
             
