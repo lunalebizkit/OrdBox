@@ -6,7 +6,7 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { Permission } from 'src/app/common/auth/models/permissions.enum';
 import { PeriodsService } from '../periods.service';
 import { PeriodsModel } from '../model/periods.model';
@@ -39,12 +39,12 @@ export class PeriodsListComponent extends BaseComponent implements OnInit {
   };
   PeriodFilter = {
     filter: {
-      date: new Date,
+      date: '',
     },
     page: 0,
     pageSize: 20
   }
-
+  mySubscription: any;
   selectedIndex!: number;
   selectedPeriod: any;
   totalItems = 0;
@@ -71,9 +71,9 @@ export class PeriodsListComponent extends BaseComponent implements OnInit {
   ) {
     super(notificacionService, el, message);
   }
-
+ 
   ngOnInit() {
-    this.getPeriod(this.queryData);
+    this.getPeriod(this.queryData); 
   }
 
   getPeriod(params: any): void {
@@ -95,12 +95,13 @@ export class PeriodsListComponent extends BaseComponent implements OnInit {
   getPeriodSelected(params: any): void {
     this.service.selectedPeriod(params).subscribe({
       next: (r) => {
-        this.periodList = r.data;
-        this.totalItems = r.totalCount;
-        this.loading = false;
-        this.selectedIndex = 0;
-        this.selectedPeriod = this.periodList[this.selectedIndex];
-        document.getElementById(this.selectedIndex.toString())?.focus();
+          this.periodList = r.data;
+          this.totalItems = r.totalCount;
+          this.loading = false;
+          this.selectedIndex = 0;
+          this.selectedPeriod = this.periodList[this.selectedIndex];
+          document.getElementById(this.selectedIndex.toString())?.focus();
+       
       },
       error: () => {
         this.loading = false;
@@ -109,19 +110,22 @@ export class PeriodsListComponent extends BaseComponent implements OnInit {
     });
   }
   search(): void {
-    this.PeriodFilter.page = 0;
-    this.getPeriodSelected(this.PeriodFilter);
+      this.PeriodFilter.page = 0;
+      this.getPeriodSelected(this.PeriodFilter);
   }
 
   formaterDate(date: string | number | Date): string {
-    return formatDate(date, 'yyyy-MM-dd', this.locale);
+    return formatDate(date, 'yyyy/MM/dd', this.locale);
   }
+
   dateChange(date: any): void {
     if (date) {
       this.dia = date
       this.PeriodFilter.filter.date = date
     } else {
-      this.getPeriod(this.queryData);
+    this.queryData.page= 0
+     this.getPeriod(this.queryData); 
+  
     }
   }
   onDoubleClicked(datos: any) {
@@ -196,7 +200,7 @@ export class PeriodsListComponent extends BaseComponent implements OnInit {
           let newPeriod =
             this.periodList[this.periodList.findIndex((r) => r.id == data)];
           if (newPeriod === undefined) {
-            this.getPeriod(this.queryData);
+         this.queryData.page =0
           } else {
             this.service.getById(data).subscribe({
               next: (r: PeriodsModel) => {
@@ -216,6 +220,12 @@ export class PeriodsListComponent extends BaseComponent implements OnInit {
       },
     });
   }
+  refresh(){
+    let currentUrl = this.router.url;
+    this.router.routeReuseStrategy.shouldReuseRoute = () => false;
+    this.router.onSameUrlNavigation = 'reload';
+    this.router.navigate([currentUrl]);
+  }
 
   status(datos: any) {
     if (this.id != 0) {
@@ -232,10 +242,10 @@ export class PeriodsListComponent extends BaseComponent implements OnInit {
           this.showNotificationSuccess(
             'Guardado correcto',
             `Se ha cerrado correctamente el Período `
-          );
+          );        
           this.id = 0;
           this.isSaving = false;
-          this.getPeriod(this.queryData);
+          this.refresh()
         },
         error: () => {
           this.id = 0;
@@ -294,7 +304,8 @@ export class PeriodsListComponent extends BaseComponent implements OnInit {
             );
             this.id = 0;
             this.isSaving = false;
-            this.getPeriod(this.queryData);
+            this.refresh()
+         
           },
           error: () => {
             this.popupComponent.isDeleteConfirmationVisible = false;

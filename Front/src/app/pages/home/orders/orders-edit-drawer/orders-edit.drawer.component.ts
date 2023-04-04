@@ -147,12 +147,12 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
   queryParams = {
     filter: '',
     page: 0,
-    pageSize: 5,
+    pageSize: 20,
   };
   queryData = {
     filter: '',
     page: 0,
-    pageSize: 5,
+    pageSize: 20,
   };
 
   constructor(
@@ -314,6 +314,8 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
             );
             this.isSaving = false;
             this.close(r.id);
+            this.ngOnInit()
+           
           },
           error: () => {
             this.isSaving = false;

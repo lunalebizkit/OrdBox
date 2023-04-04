@@ -75,6 +75,8 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
   selectedIndex!: number;
   selectedOrders!: NewOrder;
   index!: number;
+  editId!: number;
+  router: any;
 
   constructor(
     private serviceOrders: OrdersService,
@@ -101,6 +103,8 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
   ngOnInit(): void {
     this.getAllCategories();
     this.getAllOrders();
+    this.getStatusName(this.id)
+    this.search()
   }
   /*
    ** Indicador de carga de marcas y lineas
@@ -211,7 +215,6 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
   statusSelectedChange(id: number): void {
     this.queryParams.filter.status = id;
   }
-
   formaterDate(date: string | number | Date): string {
     return formatDate(date, 'YYYY-MM-dd', this.locale);
   }
@@ -273,7 +276,10 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
         break;
     }
   }
-
+  async reload(url: string): Promise<boolean> {
+    await this.router.navigateByUrl('.', { skipLocationChange: true });
+    return this.router.navigateByUrl(url);
+  }
   /*
    ** Evento de scroll infinito
    */
@@ -327,8 +333,9 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
       next: (data) => {
         this.orderDetailList = [];
         this.id = 0;
+        this.ngOnInit()
         if (data != undefined && data != 0) {
-          this.getAllOrders();
+          this.ngOnInit(); 
         }
         /**Comento estas Lineas para que actualice la grilla de listados de ordenes ya que, de la siguiente manera
          * actualizaba la lista pero no el Estado (nombre de estado) 
@@ -370,6 +377,7 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
       },
       error: () => {
         this.orderDetailList = [];
+        this.allOrders = []
         this.id = 0;
       },
     });
