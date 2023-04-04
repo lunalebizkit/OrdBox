@@ -191,11 +191,6 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
             return result.Body.NumeroComprobante;
         }
 
-        public Task<string> ImprimirDocumento(string url)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<string> CargarDatosCliente(string customerName, string customerCuit, string customerAddress, ETypeReceipt tipoDocumento )
         {
             await SetHeader(_config.Line1, _config.Line2, _config.Line3);
@@ -236,6 +231,28 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
 
             return "Cliente Generado Correctamente";
 
+        }
+
+        public async Task<string> ReimprimirDocumento(ETypeReceipt tipoDocumento, string numeroComprobante)
+        {
+            var result = await RunCommand<DtoResponseReimprimirDoc>(new Reimprimir
+            {
+                CopiarComprobanteBody = new CopiarComprobanteBody
+                {
+                    CodigoComprobante = tipoDocumento,
+                    NumeroComprobante = numeroComprobante
+                }
+            });
+
+            foreach (var Item in result.Body.EstadoBody.Fiscal)
+            {
+                if (Item.ToString().Contains("Error"))
+                {
+                    await CloseFactura(1, "");
+                    return null;
+                }
+            }
+            return "Comprobante Reimpreso Correctamente";
         }
     }
 }

@@ -218,6 +218,7 @@ export class ProductsListComponent implements OnInit {
                     this.productList.findIndex((r) => r.id == data)
                   ] = r)
                 : this.productList.push(r);
+                this.onClick(r,this.index);
             },
             error: () => {
               this.id = 0;

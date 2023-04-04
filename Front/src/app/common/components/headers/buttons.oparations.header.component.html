@@ -31,6 +31,10 @@
     >
       <i nz-icon [nzType]="iconBack"></i>{{ btnCancelText }}
     </button>
+
+
+ 
+
     <button
       style="margin: 2px"
       *ngIf="hideClose"
@@ -86,6 +90,20 @@
     >
       <i nz-icon [nzType]="iconUpdate"></i>{{ btnUpdateText }}
     </button>
+
+    <!--Prueba-->
+    <button
+    style="margin: 2px"
+    *ngIf="!hideReprint"
+    nz-button
+    class="btnGreen"
+    [disabled]="disabled"
+    [nzLoading]="showSpinner"
+    (click)="onReprintClick?.emit($event)"
+  >
+    <i nz-icon [nzType]="iconReprint"></i>{{ btnReprintText }}
+  </button>
+   
   </nz-page-header-extra>
 </nz-page-header>
 <!-- </div> -->

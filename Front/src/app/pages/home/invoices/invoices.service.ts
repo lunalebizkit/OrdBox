@@ -3,6 +3,7 @@ import { ApiService } from '../../../common/services/api.base.service';
 import { Observable } from 'rxjs';
 import { InvoiceModel } from './model/invoice.model';
 import { receiptModel } from './model/receipt.model';
+import { Type } from '@angular/compiler';
 
 @Injectable({
   providedIn: 'root',
@@ -64,5 +65,9 @@ export class InvoiceService {
     return this.api.post(`receipt`, model, false);
   }
 
- 
+ /*Reimprimir resivo
+ Reimprimir?tipoDocumento=1&numeroComprobante=0*/
+ public Reprint(type: number, number: number) : Observable<any>{
+  return this.api.get(`Reimprimir?tipoDocumento=${type}&numeroComprobante=${number}`,false);
+ }
 }
