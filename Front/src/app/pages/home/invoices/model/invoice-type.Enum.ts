@@ -1,9 +1,7 @@
 export const InvoiceType = [{ value: 1, label: 'A' },
-{ value: 2, label: 'B' },
-{ value: 3, label: 'C' }];
+{ value: 2, label: 'B' }];
 
 export enum eInvoiceType {
     A = 1,
-    B = 2, 
-    C = 3
+    B = 2,
   }
