@@ -78,6 +78,7 @@ builder.Services.AddScoped<EmailService>();
 builder.Services.AddScoped<ReporteZService>();
 builder.Services.AddScoped<BudgetService>();
 builder.Services.AddDbContext<DBContext>(x => x.UseSqlServer(connectionString));
+builder.Services.AddScoped<ReimprimirDocService>();
 builder.Services.AddCors(options =>
    {
        options.AddPolicy("AllowAll", builder =>

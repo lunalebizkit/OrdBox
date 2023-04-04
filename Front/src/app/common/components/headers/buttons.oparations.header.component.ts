@@ -15,6 +15,7 @@ export class HeaderOperationsButtonsComponent implements OnInit {
   @Input('btnCloseText') btnCloseText: string = 'Volver';
   @Input('btnDeleteText') btnDeleteText: string = 'Eliminar';
   @Input('btnUpdateText') btnUpdateText: string = 'Actualizar';
+  @Input('btnReprintText') btnReprintText: string = 'Reimprimir';
   @Input('tagText') tagText: string = '';
   @Input('title') title!: string;
   @Input('color') color!: string;
@@ -24,6 +25,9 @@ export class HeaderOperationsButtonsComponent implements OnInit {
   @Input('iconBack') iconBack!: string;
   @Input('iconSend') iconSend!: string;
   @Input('iconUpdate') iconUpdate!: string;
+
+  @Input('iconReprint') iconReprint!: string;
+
   @Input('showSpinner') showSpinner!: boolean;
   @Input('hideTag') hideTag: boolean = true;
   @Input('hideUpdate') hideUpdate: boolean = true;
@@ -32,8 +36,12 @@ export class HeaderOperationsButtonsComponent implements OnInit {
   @Input('hideClose') hideClose: boolean = false;
   @Input('hideDelete') hideDelete: boolean = true;
   @Input('hideSend') hideSend: boolean = true;
+
+  @Input('hideReprint') hideReprint: boolean = true;
+
   @Input('hideEmail') hideEmail: boolean = true;
   @Input('disabled') disabled: boolean = false;
+
   @Output('onSaveClick') onSaveClick: EventEmitter<any> =
     new EventEmitter<any>();
   @Output('onSendClick') onSendClick: EventEmitter<any> =
@@ -48,6 +56,8 @@ export class HeaderOperationsButtonsComponent implements OnInit {
     new EventEmitter<any>();
   @Output('onUpdateClick') onUpdateClick: EventEmitter<any> =
     new EventEmitter<any>();
+  @Output('onReprintClick') onReprintClick: EventEmitter<any> =
+    new EventEmitter<any>();  
 
   constructor(private route: ActivatedRoute, private router: Router) { }
 

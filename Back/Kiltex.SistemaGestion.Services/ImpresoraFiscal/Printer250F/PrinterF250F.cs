@@ -46,7 +46,6 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
 
             var typeDocumemt = type switch
             {
-                ETypeReceipt.C => "TiqueFacturaB",
                 ETypeReceipt.A => "TiqueFacturaA",
                 ETypeReceipt.B => "TiqueFacturaB",
                 _ => throw new NotImplementedException()
@@ -85,7 +84,6 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
 
             var typeDocumemt = type switch
             {
-                ETypeReceipt.C => "TiqueNotaDebitoB",
                 ETypeReceipt.A => "TiqueNotaDebitoA",
                 ETypeReceipt.B => "TiqueNotaDebitoB",
                 _ => throw new NotImplementedException()
@@ -110,7 +108,6 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
 
             var typeDocumemt = type switch
             {
-                ETypeReceipt.C => "TiqueNotaCreditoB",
                 ETypeReceipt.A => "TiqueNotaCreditoA",
                 ETypeReceipt.B => "TiqueNotaCreditoB",
                 _ => throw new NotImplementedException()
@@ -191,18 +188,12 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
             return result.Body.NumeroComprobante;
         }
 
-        public Task<string> ImprimirDocumento(string url)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<string> CargarDatosCliente(string customerName, string customerCuit, string customerAddress, ETypeReceipt tipoDocumento )
         {
             await SetHeader(_config.Line1, _config.Line2, _config.Line3);
 
             var typeDocumemt = tipoDocumento switch
             {
-                ETypeReceipt.C => "ConsumidorFinal",
                 ETypeReceipt.A => "ResponsableInscripto",
                 ETypeReceipt.B => "ConsumidorFinal",
                 _ => throw new NotImplementedException()
@@ -236,6 +227,28 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
 
             return "Cliente Generado Correctamente";
 
+        }
+
+        public async Task<string> ReimprimirDocumento(ETypeReceipt tipoDocumento, string numeroComprobante)
+        {
+            var result = await RunCommand<DtoResponseReimprimirDoc>(new Reimprimir
+            {
+                CopiarComprobanteBody = new CopiarComprobanteBody
+                {
+                    CodigoComprobante = tipoDocumento,
+                    NumeroComprobante = numeroComprobante
+                }
+            });
+
+            foreach (var Item in result.Body.EstadoBody.Fiscal)
+            {
+                if (Item.ToString().Contains("Error"))
+                {
+                    await CloseFactura(1, "");
+                    return null;
+                }
+            }
+            return "Comprobante Reimpreso Correctamente";
         }
     }
 }

@@ -84,7 +84,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                 
                 var count = await query.CountAsync().ConfigureAwait(false);
 
-                var list = await query.OrderByDescending(p => p.DateTime).ThenBy(p => p.InvoiceNumber)
+                var list = await query.OrderByDescending(p => p.DateTime)
                                       .Skip(request.Page * request.PageSize)
                                       .Take(request.PageSize)
                                       .ToListAsync()
