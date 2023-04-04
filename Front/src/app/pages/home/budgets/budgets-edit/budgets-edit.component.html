@@ -48,21 +48,29 @@
             </ng-template>
           </nz-form-item>
           
-          <!--Forma de pago-->
-          <div nz-col class="gutter-row" [nzSpan]="8">
-            <nz-form-item>
-              <nz-form-label>Forma de Pago</nz-form-label>
-              <nz-form-control>
-                <nz-select
-                  id="payment"
-                  formControlName="payment"
-                  [nzOptions]="payment"
-                  (ngModelChange)="paymentSelectedChange($event)"
-                >
-                </nz-select>
-              </nz-form-control>
-            </nz-form-item>
+          <!--Forma de pago
+          *ngIf="invoiceA; else elseBlock
+          -->
+          
+          <div nz-col class="gutter-row" [nzSpan]="8" *ngIf="view ; else elseView">
+        
+              <nz-form-item>
+                <nz-form-label nzRequired>Forma de Pago</nz-form-label>
+                <nz-form-control>
+                  <nz-select
+                    id="payment"
+                    formControlName="payment"
+                    [nzOptions]="payment"
+                    (ngModelChange)="paymentSelectedChange($event)"
+                  >
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+             
           </div>
+          <ng-template #elseView>
+            <div></div>
+          </ng-template> 
         </div>
         
         <nz-divider

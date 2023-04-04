@@ -14,11 +14,11 @@ export class BudgetsService {
      * @returns
      */
     public getById(id: number): Observable<any> {
-      return this.api.get(`budget?id=${id}`, false)
+      return this.api.get(`budget/Get?id=${id}`, false)
     }
 
     /**
-    * Obtiene las Categorias por filtro
+    * Obtiene los presupuestos por filtro
     * @param data
     * @returns
     */
@@ -27,7 +27,7 @@ export class BudgetsService {
     }
     
     /**
-     * Guarda una Categoria
+     * Guarda un presupuesto
      * @param id
      * @returns
      */

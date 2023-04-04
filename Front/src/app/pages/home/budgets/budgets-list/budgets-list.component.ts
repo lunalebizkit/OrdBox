@@ -1,6 +1,5 @@
 import { Component, Inject, LOCALE_ID, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
-import { NzDrawerRef, NzDrawerService } from 'ng-zorro-antd/drawer';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Permission } from 'src/app/common/auth/models/permissions.enum';
 import { BudgetsService } from '../budgets.services'; 
 import { BudgetsModel } from '../model/budgets.model'; 
@@ -31,12 +30,15 @@ export class BudgetsListComponent  implements OnInit{
 
   constructor(
     private service: BudgetsService, 
+    private route: ActivatedRoute,
+    private router: Router,
      @Inject(LOCALE_ID) public locale: string,
   ) {}
 
   search(): void {
-    this.queryData.page = 0;
     this.getBudget(this.queryData);
+    this.queryData.page = 0;
+    this.queryData.pageSize = 20; 
   }
 
   ngOnInit(): void {
@@ -44,6 +46,7 @@ export class BudgetsListComponent  implements OnInit{
   }
 
 getBudget(params: any): void {
+  this.loading = true;
     this.service.getByFilter(params).subscribe({
         next: (r) => {
           this.budgetsList = r.data;
@@ -59,17 +62,6 @@ getBudget(params: any): void {
         },
     });
   }
-openComponentBudgetEdit(): void {
- ({
-    nzContent: BudgetsListComponent,
-    nzSize: 'large',
-    nzWidth: '90%',
-    nzContentParams: {
-      filter: this.id > 0 ? this.id : 0,
-    },
-    nzClosable: false,
-  });
-}
 
 
 onScroll(event: any): void {
@@ -106,12 +98,12 @@ onScroll(event: any): void {
 onEnter(e: any) {
   this.selectedBudget = this.budgetsList[this.index];
   this.id = this.budgetsList[this.index].id;
-  this.openComponentBudgetEdit();
+  this.router.navigate(['home/budgets/edit/',this.id]);
 }
 
-onDoubleClicked(datos: any) {
-  this.id = datos.id;
-  this.openComponentBudgetEdit();
+onDoubleClicked(id: Number) {
+  window.open('home/budgets/edit/'+id);
+  //this.router.navigate(['home/budgets/edit/',id]);
 }
 
 onClick(datos: any, index: number): void {
@@ -148,5 +140,9 @@ formaterDate(date: string | number | Date): string {
   return formatDate(date, 'YYYY-MM-dd', this.locale);
 }
 
+currencyFormat(data: any): string {
+  if (!this.locale) return '';
+  return formatCurrency(data, this.locale!, '$', 'ARS', '1.1-2');
+}
 
 }

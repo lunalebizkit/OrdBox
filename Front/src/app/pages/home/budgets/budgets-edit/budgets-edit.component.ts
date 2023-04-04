@@ -46,7 +46,9 @@ export class BudgetsEditComponent extends BaseComponent implements OnInit {
   startDate = this.formaterDate(Date.now());
   today = new Date();
   subtotal: number=0;
-  
+
+  view!:boolean;
+
   product!: string;
   cuit!: string;
   customerId!: number;
@@ -108,24 +110,40 @@ export class BudgetsEditComponent extends BaseComponent implements OnInit {
   userId: number = this.serviceUser.currentUser.id
 
   ngOnInit(): void {
-    if (this.id != null || this.id != undefined || this.id != 0) {
-      this.getBudget(this.id);
-    }
+    this.route.params.subscribe({
+      next: (p) => {
+          if (p['id']) {
+              this.isLoading = true;
+              this.getBudget(p['id']);
+              this.id = p['id'];
+              this.view = false;
+
+          }else{
+            this.view = true;
+          }
+      },
+      error: () => { }
+  })
   }
 
   getBudget(id: number): void {
-    // this.service.getById(id).subscribe({
-    //   next: (r) => {
-    //       this.form.controls['budgetNumber'].setValue(r.budgetNumber);
-
-    //       this.form.controls['dateTime'].setValue(r.dateTime);
-    //       this.form.controls['customerName'].setValue(r.customerName);
-    //       this.form.controls['customerCuit'].setValue(r.customerCuit);
-    //       this.form.controls['total'].setValue(r.total);
-    //       this.isLoading = false
-    //   },
-    //   error: () => { this.isLoading = false; }
-
+   
+    this.service.getById(id).subscribe({
+      next: (r) => {
+        console.log(r);
+        this.paymentSelectedChange(r.payment);
+        this.form.controls['payment'].setValue(r.payment);
+        this.form.controls['budgetNumber'].setValue(r.budgetNumber);
+          this.form.controls['customerCuit'].setValue(r.customerCuit);
+          this.form.controls['customerName'].setValue(r.customerName);
+          this.form.controls['customerAddress'].setValue(r.customerAddress);
+          this.form.controls['observation'].setValue(r.observation);
+         this.form.controls['budgetDetails'].setValue(r.budgetDetails);
+      
+          this.isLoading = false
+      },
+      error: () => { this.isLoading = false; }
+    })
 
   }
 
@@ -142,10 +160,6 @@ export class BudgetsEditComponent extends BaseComponent implements OnInit {
   //Guardar
   save(): void {
     if (this.isValidForm(this.form)) {
-
-      // if (this.selectedDni && this.form.controls['customerCuit'].value.length < 8) {
-      //   return this.showMessageError('DNI Invalido');
-      // };
 
 
       if (this.budgetDetails.length == 0) {
@@ -207,7 +221,7 @@ export class BudgetsEditComponent extends BaseComponent implements OnInit {
       )[0].subTotal= quantity * product.price;
 
     this.totalCalculate();
-    this.budgetDetailsList.filter(
+    this.budgetDetails.filter(
       detail => detail.productId == this.editId
       )[0].quantity= quantity;
       

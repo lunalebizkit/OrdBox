@@ -1,0 +1,101 @@
+import { Component, ElementRef, Inject, Input, LOCALE_ID, OnInit, ViewChild }  from '@angular/core';
+import { BaseComponent } from 'src/app/common/components/base/base.component';
+import { HeaderOperationsButtonsComponent } from 'src/app/common/components/headers/buttons.oparations.header.component';
+import { BudgetDetails, BudgetsModel } from '../model/budgets.model';
+import { NzNotificationService } from 'ng-zorro-antd/notification';
+import { BudgetsService } from '../budgets.services';
+import { NzMessageService } from 'ng-zorro-antd/message';
+import { environment } from '../../../../../environments/environment';
+import { formatCurrency, formatDate } from '@angular/common';
+import { ActivatedRoute, Router } from '@angular/router';
+
+
+@Component({
+    selector: 'app-budgets-view',
+    templateUrl: './budgets-view.component.html',
+    styleUrls: ['./budgets-view.component.css'],
+  })
+
+  export class BudgetsViewComponent extends BaseComponent implements OnInit{
+    
+    
+
+
+    @ViewChild('header') headerComponent!: HeaderOperationsButtonsComponent;
+    // variables Generales
+    isLoading=true;
+        id!: number;
+        tipo!: string;
+
+Mydate = new Date();
+    //variables del presupuesto
+    budgetDetail: BudgetDetails [] = [];
+    customerName!: string;
+    customerCuit!: string;
+    total!: number;
+    dateTime!: Date;
+    budgetNumber!: number;
+    customerAddress!: string;
+   
+    name: string = environment.name;
+
+    constructor(
+    
+    notificacionService: NzNotificationService,
+    private route: ActivatedRoute,
+    private router: Router,
+    private service: BudgetsService,
+    el: ElementRef,
+    message: NzMessageService,
+
+    @Inject(LOCALE_ID) public locale: string
+     ) {
+    super(notificacionService, el, message);
+    
+    }
+
+    ngOnInit(): void {
+        this.route.params.subscribe({
+            next:(p) => {
+                if(p['id']){
+                    this.isLoading = true;
+                    this.getBudget(p['id']);
+                    this.id = p['id'];
+                    
+                }
+            }
+        })
+       
+        if (this.id != null || this.id != undefined || this.id != 0) {
+          this.getBudget(this.id)
+        }
+
+    }
+    
+
+    getBudget(id: number): void {
+        if(id != 0)
+        this.service.getById(id).subscribe({
+            next: (r: BudgetsModel) => {
+                this.customerName = r.customerName,
+                this.budgetDetail = r.budgetDetails,
+                this.customerCuit = r.customerCuit,
+                this.total = r.total,
+                this.dateTime = r.dateTime,
+                this.budgetNumber = r.budgetNumber,
+                this.customerAddress = r.customerAddress
+            },
+            error:() => {this.isLoading = false;}
+        })
+    }
+    close(): void {
+        //this.drawerRef.close();
+    };
+
+    currencyFormat(data: any):string  { 
+        if(!this.locale) return '';
+        return formatCurrency(data, this.locale!, '$', 'ARS', '1.1-2')
+      }
+}
+
+  

@@ -7,9 +7,13 @@ namespace Kiltex.SistemaGestion.Services.Mapper
 {
     public class BudgetMapperProfile : Profile 
     {
-        public BudgetMapperProfile() 
+        public BudgetMapperProfile()
         {
-            CreateMap<DtoRequestBudget, Budget>();
+            CreateMap<DtoRequestBudget, Budget>()
+                .AfterMap((o,d,c) =>
+                {
+                    d.Total = d.BudgetDetails.Sum(p => (p.Price * p.Quantity));
+                });
             CreateMap<DtoRequestBudgetDetail, BudgetDetail>().ReverseMap(); 
             //response
             CreateMap<Budget, DtoResponseBudget >().ForMember(o => o.UserId, c => c.MapFrom(i => i.User.UserName)); 

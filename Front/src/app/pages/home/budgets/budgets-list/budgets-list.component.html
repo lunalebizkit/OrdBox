@@ -46,6 +46,8 @@
             <th nzEllipsis nzWidth="100px">Nombre</th>
             <th nzEllipsis nzWidth="100px">DNI</th>
             <th nzEllipsis nzWidth="100px">Total</th>
+            <th [nzAlign]="'center'" nzEllipsis nzWidth="70px">Acción</th>
+            
           </tr>
         </thead>
         
@@ -53,15 +55,23 @@
           <tr id="{{ i }}" *ngFor="let budget of budgetsList; let i = index" class="small-text" tabindex="-1"
             (click)="onClick(budget, i)" (keydown)="myNavegation($event)" [style.background-color]="
               budget === selectedBudget ? 'lightblue' : ''
-              " (dblclick)="onDoubleClicked(budget)" (keydown.enter)="onEnter($event)">
+              " (dblclick)="onDoubleClicked(budget.id)" (keydown.enter)="onEnter($event)">
 
 
             <td nzEllipsis>{{ budget.budgetNumber }}</td>
             <td nzEllipsis>{{ this.formaterDate(budget.dateTime)}}</td>
             <td nzEllipsis>{{ budget.customerName }}</td>
             <td nzEllipsis>{{ budget.customerCuit }}</td>
-            <td nzEllipsis>{{ budget.total }}</td>
+            <td nzEllipsis><b>{{ this.currencyFormat(budget.total) }}</b></td>
+            <td style="text-align: center">
+             <a target="_blank">
+              <i nz-icon nzType="eye" nzTheme="outline" style="font-size: 16px" (click)="onDoubleClicked(budget.id)"></i>
+            </a>
+            </td>
           </tr>
+          
+          
+         
         </tbody>
       </nz-table>
     </div>

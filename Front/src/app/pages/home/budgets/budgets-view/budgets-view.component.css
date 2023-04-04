@@ -1,0 +1,37 @@
+#contenedor{
+    overflow: hidden;
+}
+
+#izquierdo{
+    float: left;
+    padding: 10px;
+    width: 300px;
+    margin: 40px;
+    text-align: center;
+   border: 3px black;
+}
+
+#derecho{
+    float: right;
+    padding: 10px;
+    width: 300px;
+    margin: 40px;
+    text-align: center;
+}
+
+#firma{
+    float: left;
+  
+    width: 200px;
+    margin: 40px;
+    text-align: center;
+  
+}
+
+#medio{
+    float: left;
+    padding: 5px;
+    width: 300px;
+    margin: 10px;
+}
+

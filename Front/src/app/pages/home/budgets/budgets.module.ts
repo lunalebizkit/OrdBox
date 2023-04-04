@@ -22,6 +22,7 @@ import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { BudgetsEditComponent } from './budgets-edit/budgets-edit.component';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
+import { BudgetsViewComponent } from './budgets-view/budgets-view.component';
 
 @NgModule({
   imports: [ CommonModule,
@@ -46,7 +47,8 @@ import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
   ],
   declarations: [
     BudgetsListComponent,
-    BudgetsEditComponent
+    BudgetsEditComponent,
+    BudgetsViewComponent
   ]
 })
 export class BudgetModule { }
