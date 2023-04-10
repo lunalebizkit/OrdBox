@@ -279,9 +279,9 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
   };
 
   searchProduct():void {
-    console.log(this.formInvoice)
     this.product= this.formProductSearch.controls['productSearchFilter'].value;
-    this.queryParams.filter= this.product;   
+    this.queryParams.filter= this.product; 
+    if (this.isValidForm(this.formInvoice)){ 
     if (this.product.length > 0) {
       this.serviceProduct.getProducts(this.queryParams).subscribe({
         next: (r) => { 
@@ -318,7 +318,6 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
             
           }else{
             this.isLoading= false;
-            this.openComponentProduct();
           }
           
         },
@@ -328,9 +327,8 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
       })
     }else{
       this.isLoading= false;
-      this.queryParams.filter= '';
-      this.openComponentProduct();
     }
+  } 
   };
 
   formatter = (data: number = 0) =>
