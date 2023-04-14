@@ -33,5 +33,6 @@ namespace Kiltex.SistemaGestion.Domain.Model
 
         [Column("price")]
         public decimal Price { get; set; }
+      
     }
 }

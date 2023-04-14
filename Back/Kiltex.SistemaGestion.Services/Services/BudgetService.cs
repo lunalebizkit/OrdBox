@@ -1,13 +1,19 @@
-﻿using AutoMapper;
+﻿
+using AutoMapper;
+
 using Kiltex.SistemaGestion.Domain;
 using Kiltex.SistemaGestion.Domain.Model;
 using Kiltex.SistemaGestion.SDK.Error;
 using Kiltex.SistemaGestion.Services.Common;
+using Kiltex.SistemaGestion.Services.ImpresoraFiscal.Printer250F;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
+
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -18,8 +24,10 @@ namespace Kiltex.SistemaGestion.Services.Services
 {
     public class BudgetService : BaseService
     {
-        public BudgetService(ErrorManager logger, DBContext context, IMapper mapper) : base(logger, context, mapper)
+        private IConfiguration _configuration;
+        public BudgetService(ErrorManager logger, DBContext context, IMapper mapper, IConfiguration config) : base(logger, context, mapper)
         {
+            _configuration = config;
         }
 
         public async Task<OperationResponse<DtoResponseBudget>> GetById(long id)
@@ -161,7 +169,11 @@ namespace Kiltex.SistemaGestion.Services.Services
                 throw;
             }
         }
-    }
+
+       
+
 
     }
+
+}
 

@@ -18,8 +18,6 @@ namespace Kiltex.SistemaGestion.Domain.Model
         [Column("customer_name")]
         public string? CustomerName { get; set; }
 
-        [Column("customer_cuit")]
-        public string? CustomerCuit { get; set; }
 
         [Column("customer_address")]
         public string? CustomerAddress { get; set; }
@@ -34,6 +32,8 @@ namespace Kiltex.SistemaGestion.Domain.Model
         [Column("total")]
         public decimal Total { get; set; }
 
+        [Column("payment")]
+        public string? Payment { get; set; }
 
         public ICollection<BudgetDetail> BudgetDetails { get; set; } = new HashSet<BudgetDetail>();
     }

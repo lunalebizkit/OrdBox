@@ -58,10 +58,6 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("customer_address");
 
-                    b.Property<string>("CustomerCuit")
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("customer_cuit");
-
                     b.Property<string>("CustomerName")
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("customer_name");
@@ -73,6 +69,11 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                     b.Property<string>("Observation")
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("observation");
+
+                    b.Property<string>("Payment")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("payment");
 
                     b.Property<decimal>("Total")
                         .HasColumnType("decimal(18,2)")
@@ -1033,7 +1034,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                             FirstName = "admin",
                             IsDeleted = false,
                             LastName = "admin",
-                            Password = "$MYHASH$V1$100$pqzSfkK+rsNKNj87p+1TkrxcAwI/4IgIXnp/mV4lxpTfFagf",
+                            Password = "$MYHASH$V1$100$Wgi8is+beJ6cgNAJjav20XLhoq5NuUqIJ1agZOHb1jiVKn2G",
                             RoleId = 1L,
                             UserName = "admin"
                         });
@@ -1085,7 +1086,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.BudgetDetail", b =>
                 {
                     b.HasOne("Kiltex.SistemaGestion.Domain.Model.Budget", "Budget")
-                        .WithMany("BudgetDetail")
+                        .WithMany("BudgetDetails")
                         .HasForeignKey("BudgetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1394,7 +1395,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
 
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.Budget", b =>
                 {
-                    b.Navigation("BudgetDetail");
+                    b.Navigation("BudgetDetails");
                 });
 
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.CreditMemo", b =>

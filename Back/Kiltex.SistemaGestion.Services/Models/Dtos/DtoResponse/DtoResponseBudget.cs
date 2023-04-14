@@ -16,7 +16,7 @@ namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse
         public long BudgetNumber { get; set; }
         public string? CustomerName { get; set; }
 
-        public string? CustomerCuit { get; set; }
+        public string? Payment { get; set; }
 
         public string? CustomerAddress { get; set; }
 
@@ -27,6 +27,7 @@ namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse
         public decimal Total { get; set; }
 
         public List<DtoResponseBudgetDetail> BudgetDetails { get; set; }
+        
     }
 
     public class DtoResponseBudgetDetail
@@ -36,8 +37,11 @@ namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse
         public long ProductId { get; set; }
         public string? ProductName { get; set; }
         public string? ProductCode { get; set; }
-        public int Quantity { get; set; }
+        public int Quantity{ get; set; }
         public decimal Price { get; set; }
+       
 
     }
+
+
 }
