@@ -1,0 +1,96 @@
+<app-header-op-buttons 
+#header 
+[btnCerrarText]="'Cerrar'" 
+[btnPrintText]="'Imprimir'" 
+[hideSave]="true"
+[hideBack]="true" 
+[hideCerrar]="false" 
+[hideFacturaPro]="true"
+[hidePrint]="false" 
+[iconPrint]="'file-excel'" 
+[hideTag]="false"
+[title]="'Factura Proforma'" 
+(onCerrarClick)="closeWindow()" 
+(click)="imprimir()">
+</app-header-op-buttons>
+
+<div #pdftable id="pdf">
+ 
+  <nz-row id="contenedor">
+    <nz-col>
+    
+      <div id="izquierdo">
+        <h2>FACTURA PROFORMA</h2>
+        <h3>Cliente:  {{this.customerName}}</h3>
+        <p>CUIT: {{this.customerCuit}}</p>
+        <p> Dirección: {{this.customerAddress}}</p>
+        <h4><strong>Fecha {{this.dateTime | date: 'dd/MM/yyyy'}}</strong></h4>
+      </div>
+
+      <div id="derecho">
+        <p>imagen</p>
+        <h2>REFRIGERACION DANTE</h2>
+        <p>20-08159465-8</p>
+        <p>Dante Cesar Quercetti</p>
+        <p>Pirovano 375 San Martin - Mza</p>
+        <p>dantecomercialsanmartin@gmail.com</p>
+
+      </div>
+    </nz-col>
+    <br>  
+
+  </nz-row>
+   <!--TABLA-->
+   <nz-content id="tabla">
+    <nz-table [nzBordered]="true" nzTemplateMode [nzSize]="'small'" >
+      <thead>
+        <tr>
+         
+          <th>Producto</th>
+          <th [nzAlign]="'center'">Cantidad</th>
+          <th [nzAlign]="'center'">Precio Unidad</th>
+          <th [nzAlign]="'center'">SubTotal</th>
+          <th>Iva</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let data of invoiceDetail">
+        
+          <td>{{ data.productName }}</td>
+          <td [nzAlign]="'right'">{{ data.quantity }}</td>
+          <td [nzAlign]="'right'">{{ this.currencyFormat(data.price) }}</td>
+          <td [nzAlign]="'right'">
+            {{ this.currencyFormat(data.quantity * data.price) }}
+          </td>
+          <td>{{ data.iva }}</td>
+        </tr>
+      </tbody>
+      <tfoot class="{{this.tipo}}">
+        <tr>
+          <td [colSpan]="1"></td>
+          <td [colSpan]="1" *ngIf="type == 1; else elseBlock">
+            <b>Iva </b>
+            <span style="color: blue"
+              >{{ this.currencyFormat(ivaTotal) }}
+            </span>
+          </td>
+          <td *ngIf="type == 1; else elseBlock" [colSpan]="1">
+            <b>SubTotal </b>
+            <span style="color: blue"
+              >{{ this.currencyFormat(subTotal) }}
+            </span>
+          </td>
+          <td [colSpan]="2" >
+            <b>Total </b
+            ><span style="color: blue"
+              >{{ this.currencyFormat(total) }}
+            </span>
+          </td>
+          <ng-template #elseBlock>
+            <td [colSpan]="1"></td>
+          </ng-template>
+        </tr>
+      </tfoot>
+    </nz-table>
+  </nz-content>
+</div>
