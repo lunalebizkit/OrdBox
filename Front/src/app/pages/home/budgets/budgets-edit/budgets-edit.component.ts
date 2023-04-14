@@ -343,9 +343,7 @@ export class BudgetsEditComponent extends BaseComponent implements OnInit {
 
   msjConfirmOk(){
       try {
-        console.log(this.form);
-       console.log(this.budgetDetailsList = this.budgetDetailsList.
-        filter(element => element.productId != this.popupComponent.elementSelected));
+    
 
         this.budgetDetailsList = this.budgetDetailsList.
         filter(element => element.productId != this.popupComponent.elementSelected);
@@ -423,7 +421,7 @@ export class BudgetsEditComponent extends BaseComponent implements OnInit {
   };
 
   searchProduct(): void {
-      console.log(this.form)
+     
       this.product= this.formProductSearch.controls['productSearchFilter'].value;
       this.queryParams.filter= this.product;   
       if (this.product.length > 0) {
