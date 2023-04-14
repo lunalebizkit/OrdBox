@@ -8,7 +8,7 @@ import { BaseComponent } from 'src/app/common/components/base/base.component';
 import { HeaderOperationsButtonsComponent } from 'src/app/common/components/headers/buttons.oparations.header.component';
 import { PopupConfirmationComponent } from 'src/app/common/components/popup-confirmation/popup-confirmation.component';
 import { BudgetsService } from '../budgets.services';
-import { BudgetDetailList, BudgetDetailParser, BudgetDetails, BudgetGridParser, BudgetsModel } from '../model/budgets.model';
+import { BudgetDetailList, BudgetDetailParser, BudgetDetails, BudgetGridParser, BudgetsModel, budgetsGridFromParser } from '../model/budgets.model';
 import { formatCurrency, formatDate } from '@angular/common';
 import { differenceInCalendarDays, setHours } from 'date-fns';
 import { AuthService } from "src/app/common/auth/interceptors/auth.service";
@@ -94,7 +94,7 @@ export class BudgetsEditComponent extends BaseComponent implements OnInit {
       budgetNumber: [0, Validators.required],
       customerName: ['', Validators.required],
       payment :['',Validators.required],
-      customerCuit: ['', Validators.required],
+     
       customerAddress: ['', Validators.required],
       dateTime: [new Date(this.startDate), Validators.required],
       total: [0, Validators.required],
@@ -130,17 +130,44 @@ export class BudgetsEditComponent extends BaseComponent implements OnInit {
    
     this.service.getById(id).subscribe({
       next: (r) => {
-        console.log(r);
+        
         this.paymentSelectedChange(r.payment);
+        this.id = r.id;
         this.form.controls['payment'].setValue(r.payment);
         this.form.controls['budgetNumber'].setValue(r.budgetNumber);
-          this.form.controls['customerCuit'].setValue(r.customerCuit);
+         
           this.form.controls['customerName'].setValue(r.customerName);
           this.form.controls['customerAddress'].setValue(r.customerAddress);
-          this.form.controls['observation'].setValue(r.observation);
-         this.form.controls['budgetDetails'].setValue(r.budgetDetails);
+          this.form.controls['observation'].setValue(r.observation);        
+         
+        
+        this.budgetDetails = r.budgetDetails;
+         this.subtotal = r.subtotal;
+         this.total = r.total;
+
+      //  this.budgetDetailsList= r.budgetDetails;
+        //this.budgetDetailsTest = this.budgetDetailsList; 
+         
+       //  console.log(this.budgetDetailsList) ;
+        
+          this.isLoading = false;
       
-          this.isLoading = false
+          r.budgetDetails.forEach((modelDetail: BudgetDetailList) =>{
+            const model = budgetsGridFromParser(modelDetail)
+         
+            this.budgetDetailsTest.push(model)
+          
+          })
+        
+
+        this.budgetDetailsList = this.budgetDetailsTest;
+      
+        
+
+
+          this.totalCalculate();
+
+
       },
       error: () => { this.isLoading = false; }
     })
@@ -154,22 +181,65 @@ export class BudgetsEditComponent extends BaseComponent implements OnInit {
 
   paymentSelectedChange(id: any): void {
     this.paymentSelected = id;
-    console.log(this.paymentSelected);
   }
+
+
+//editar
+
+
+// edit(){
+//   if (this.isValidForm(this.form)) {
+
+
+//     if (this.budgetDetails.length == 0) {
+//       this.showMessageError('No selecciono el presupuesto');
+
+//     } else {
+//       const model: BudgetsModel = {
+//         id: this.id !== undefined ? this.id : 0,
+//         customerName: this.form.controls['customerName'].value,
+//         payment: this.form.controls['payment'].value,
+//         budgetNumber: this.form.controls['budgetNumber'].value,
+//         customerAddress: this.form.controls['customerAddress'].value,
+//         observation: this.form.controls['observation'].value,
+//         userId: this.userId,
+//         total: this.totalItems,
+//         dateTime: this.form.controls['dateTime'].value,
+//         budgetDetails: this.budgetDetails
+//       };
+//       console.log(model);
+      
+//       this.isSaving = true;
+//       this.serviceBudget.editBudget(model)
+//         .subscribe({
+//           next: (r) => {
+//             this.showNotificationSuccess(
+//               'Guardado correcto',
+//               `Comprobante creado correctamente`
+//             );
+//             this.isSaving = false;
+//             this.router.navigate(['/home/budgets']);
+//           },
+//           error: (r) => {
+//             this.isSaving = false;
+//             this.showMessageError(r.error)
+//           }
+//         });
+
+     
+//     }
+
+//   }
+// }
 
   //Guardar
   save(): void {
     if (this.isValidForm(this.form)) {
-
-
-      if (this.budgetDetails.length == 0) {
-        this.showMessageError('No selecciono el presupuesto');
-
-      } else {
+      if(this.id > 0){
         const model: BudgetsModel = {
-          id: 0,
+          id: this.id > 0  ? this.id : 0,
           customerName: this.form.controls['customerName'].value,
-          customerCuit: this.selectedDni ? this.dni.toString() : this.form.controls['customerCuit'].value,
+          payment: this.form.controls['payment'].value,
           budgetNumber: this.form.controls['budgetNumber'].value,
           customerAddress: this.form.controls['customerAddress'].value,
           observation: this.form.controls['observation'].value,
@@ -178,14 +248,15 @@ export class BudgetsEditComponent extends BaseComponent implements OnInit {
           dateTime: this.form.controls['dateTime'].value,
           budgetDetails: this.budgetDetails
         };
-        console.log(model);
+    
+        
         this.isSaving = true;
-        this.serviceBudget.saveBudget(model)
+        this.serviceBudget.editBudget(model)
           .subscribe({
             next: (r) => {
               this.showNotificationSuccess(
                 'Guardado correcto',
-                `Comprobante creado correctamente`
+                `Presupuesto editado correctamente`
               );
               this.isSaving = false;
               this.router.navigate(['/home/budgets']);
@@ -195,10 +266,47 @@ export class BudgetsEditComponent extends BaseComponent implements OnInit {
               this.showMessageError(r.error)
             }
           });
-
-      }
-
+      
+      }else{
+      const model: BudgetsModel = {
+        id:  0,
+        customerName: this.form.controls['customerName'].value,
+        payment: this.form.controls['payment'].value,
+        budgetNumber: this.form.controls['budgetNumber'].value,
+        customerAddress: this.form.controls['customerAddress'].value,
+        observation: this.form.controls['observation'].value,
+        userId: this.userId,
+        total: this.totalItems,
+        dateTime: this.form.controls['dateTime'].value,
+        budgetDetails: this.budgetDetails
+      };
+   
+    
+    this.isSaving = true;
+    this.service.saveBudget(model)
+      .subscribe({
+        next: (r) => {
+          this.showNotificationSuccess(
+            'Guardado correcto',
+            `Presupuesto creado correctamente`
+          );
+          this.isSaving = false;
+          this.router.navigate(['/home/budgets']);
+        },
+        error: (r) => {
+          this.isSaving = false;
+          this.showMessageError(r.error)
+        }
+      });
+  }
+        
+     
+      
+    
+       
     }
+       
+      
   };
 
   startEdit(id: number): void {
@@ -221,11 +329,9 @@ export class BudgetsEditComponent extends BaseComponent implements OnInit {
       )[0].subTotal= quantity * product.price;
 
     this.totalCalculate();
-    this.budgetDetails.filter(
-      detail => detail.productId == this.editId
-      )[0].quantity= quantity;
-      
-  };
+     this.budgetDetails.filter(detail => detail.id == this.editId
+      )[0].quantity = quantity;
+    };
 
   typeSelectedChange(id: any): void {
     this.typeSelectedId = id;
@@ -238,10 +344,14 @@ export class BudgetsEditComponent extends BaseComponent implements OnInit {
   msjConfirmOk(){
       try {
         console.log(this.form);
-        // this.budgetDetailsList = this.budgetDetailsList.
-        //  filter(element => element.ownCode != this.popupComponent.elementSelected);
+       console.log(this.budgetDetailsList = this.budgetDetailsList.
+        filter(element => element.productId != this.popupComponent.elementSelected));
+
+        this.budgetDetailsList = this.budgetDetailsList.
+        filter(element => element.productId != this.popupComponent.elementSelected);
        this.popupComponent.isConfirmationvisible = false; 
-       if (this.isValidForm(this.form) && (this.budgetDetailsList.length != 0 )){
+       if (this.isValidForm(this.form) && (this.budgetDetailsList.length != 0 )&&
+        this.isValidForm(this.formProductSearch)){
         this.popComponent.showConfirmation() 
        } else{
          this.showMessageError('No ha seleccionado producto')
@@ -258,21 +368,13 @@ export class BudgetsEditComponent extends BaseComponent implements OnInit {
     return formatDate(date, 'MM/dd/YYYY', this.locale);
   }
 
-  select() {
-    this.selectedDni = !this.selectedDni;
-    if (this.selectedDni) {
-      this.dni = this.form.controls['customerDni'].value
-    } else {
-      this.dni = null;
-    }
-  }
+
 
   searchCustomer(): void {
-    this.cuit =
-      this.form.controls['customerCuit'].value;
+    
     if (this.cuit === '00') {
       this.form.controls['customerAddress'].setValue('S/D');
-      this.form.controls['customerCuit'].setValue('00');
+    
       this.form.controls['customerName'].setValue('Admin');
       this.customerId = 0;
       return;
@@ -281,7 +383,7 @@ export class BudgetsEditComponent extends BaseComponent implements OnInit {
         this.serviceBudget.getByCuit(this.cuit).subscribe({
           next: (data) => {
             this.form.controls['customerAddress'].setValue(data.address);
-            this.form.controls['customerCuit'].setValue(data.cuit);
+          
             this.form.controls['customerName'].setValue(data.name);
 
           },
@@ -313,7 +415,7 @@ export class BudgetsEditComponent extends BaseComponent implements OnInit {
     try {
       this.budgetDetailsTest.forEach(detail => {
             /**Caluclo subtotal = precio y multiplico por cantidad*/
-            this.subtotal += detail.quantity * detail.price;
+            this.subtotal += detail.quantity   * detail.price;
             this.total += detail.quantity * detail.price;
       });
       
@@ -393,7 +495,7 @@ export class BudgetsEditComponent extends BaseComponent implements OnInit {
       });  
       drawerRefProduct.afterClose.subscribe({
       next: (data: ProductsModel) => {
-    console.log(data);
+   
       if(data != undefined){
         if(this.budgetDetails.find(item => item.productId == data.id)){
           /*Actualizo la lista que envio al back*/
@@ -410,6 +512,7 @@ export class BudgetsEditComponent extends BaseComponent implements OnInit {
 
 
         }else{
+          
           /*Parseo dato a la grilla de tabla */
           const model : BudgetDetailList = BudgetGridParser(data, this.bindPrice(data));
           this.budgetDetailsTest.push(model);
@@ -418,10 +521,11 @@ export class BudgetsEditComponent extends BaseComponent implements OnInit {
           /*Parseo dato a DTO  */
           const modelDetail : BudgetDetails = BudgetDetailParser(data,this.bindPrice(data));
           this.budgetDetails.push(modelDetail);
+                   
           this.totalCalculate();
           this.isLoading = false;
           this.formProductSearch.controls['productSearchFilter'].setValue('');
-          console.log(this.budgetDetailsList);
+          
         }
       }
     }, error:()=>{

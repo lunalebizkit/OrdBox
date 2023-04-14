@@ -1,7 +1,16 @@
-#contenedor{
-    overflow: hidden;
+.todo{
+    padding-bottom: 20%;
+    
+    left: 10%;
 }
 
+#contenedor{
+    border: 1px solid black;
+    position: relative;
+    top: 15px;
+    left: 26px;
+    width: 70%;
+}
 #izquierdo{
     float: left;
     padding: 10px;
@@ -14,7 +23,7 @@
 #derecho{
     float: right;
     padding: 10px;
-    width: 300px;
+    width: 400px;
     margin: 40px;
     text-align: center;
 }
@@ -24,14 +33,35 @@
   
     width: 200px;
     margin: 40px;
-    text-align: center;
+    text-align: left;
   
 }
 
 #medio{
+    width: 50%;
+    border: 1px solid black;
+    position: relative;
+    top: 15px;
+    left: 26px;
+    width: 70%;
     float: left;
     padding: 5px;
-    width: 300px;
-    margin: 10px;
+}
+
+.tabla{
+    border: 1px solid black;
+    position: relative;
+    top: 15px;
+    left: 26px;
+    width: 70%;
+    
+    padding: 5px;
+}
+
+#total{
+    position: relative;
+    top: 55px;
+    left: 390%;
+    
 }
 

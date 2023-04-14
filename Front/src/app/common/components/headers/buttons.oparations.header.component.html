@@ -103,7 +103,51 @@
   >
     <i nz-icon [nzType]="iconReprint"></i>{{ btnReprintText }}
   </button>
+
+  <!--Factura Proforma-->
+
+
+<!--CERRAR-->
+  <button
+  style="margin: 2px"
+  *ngIf="!hideCerrar"
+  nz-button
+  [disabled]="disabled"
+  
+   (click)="onCerrarClick?.emit($event)"
+  
+  >
+  <i nz-icon [nzType]="iconReprint"></i>{{ btnCerrarText }}
+  </button>
+  <!--Imprimir-->
+   <button
+   style="margin: 2px"
+   *ngIf="!hidePrint"
+   nz-button
+  class="btnGreen"
+   [disabled]="disabled"
+    [nzLoading]="showSpinner"
+    (click)="onReprintClick?.emit($event)"
    
+   >
+   <i nz-icon [nzType]="iconReprint"></i>{{ btnPrintText }}
+   </button>
+
+
+   <button
+   style="margin: 2px"
+   *ngIf="!hideFacturaPro"
+   nz-button
+   [disabled]="disabled"
+   
+   (click)="onFacturaProClick?.emit($event)"
+   
+   >
+   <i nz-icon [nzType]="iconFacturaPro"></i>{{ btnFacturaProText }}
+   </button> 
+
+   
+
   </nz-page-header-extra>
 </nz-page-header>
 <!-- </div> -->

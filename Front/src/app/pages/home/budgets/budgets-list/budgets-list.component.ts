@@ -101,9 +101,20 @@ onEnter(e: any) {
   this.router.navigate(['home/budgets/edit/',this.id]);
 }
 
+Clicked(id: Number){
+  this.selectedBudget = this.budgetsList[this.index];
+  this.id = this.budgetsList[this.index].id;
+  this.router.navigate(['home/budgets/edit/'+this.id]);
+}
+
 onDoubleClicked(id: Number) {
-  window.open('home/budgets/edit/'+id);
-  //this.router.navigate(['home/budgets/edit/',id]);
+  this.selectedBudget = this.budgetsList[this.index];
+  this.id = this.budgetsList[this.index].id;
+ this.router.navigate(['home/budgets/edit/',this.id]);
+}
+
+print(id: Number){
+  window.open('_/'+id,"_blank");
 }
 
 onClick(datos: any, index: number): void {

@@ -44,7 +44,7 @@
             <th nzEllipsis nzWidth="100px">Numero</th>
             <th nzEllipsis nzWidth="160px">Fecha</th>
             <th nzEllipsis nzWidth="100px">Nombre</th>
-            <th nzEllipsis nzWidth="100px">DNI</th>
+            <th nzEllipsis nzWidth="100px">Dirección</th>
             <th nzEllipsis nzWidth="100px">Total</th>
             <th [nzAlign]="'center'" nzEllipsis nzWidth="70px">Acción</th>
             
@@ -61,15 +61,25 @@
             <td nzEllipsis>{{ budget.budgetNumber }}</td>
             <td nzEllipsis>{{ this.formaterDate(budget.dateTime)}}</td>
             <td nzEllipsis>{{ budget.customerName }}</td>
-            <td nzEllipsis>{{ budget.customerCuit }}</td>
+            <td nzEllipsis>{{ budget.customerAddress }}</td>
             <td nzEllipsis><b>{{ this.currencyFormat(budget.total) }}</b></td>
+            
+            <!-- <a *nzSpaceItem routerLink="/home/users/edit/{{user.id}}">
+              <i nz-tooltip nzTooltipTitle="Editar" nz-icon nzType="edit"></i>
+            </a> -->
+
             <td style="text-align: center">
+              <a  routerLink="/home/budgets/edit/{{budget.id}}">
+                <i  nz-icon nzType="edit" nzTheme="outline"  style="margin-right: 20px; color: green;"></i>
+              </a>
+            
              <a target="_blank">
-              <i nz-icon nzType="eye" nzTheme="outline" style="font-size: 16px" (click)="onDoubleClicked(budget.id)"></i>
+              <i nz-icon nzType="printer" nzTheme="outline" style="font-size: 16px" (click)="print(budget.id)"></i>
             </a>
+           
             </td>
+
           </tr>
-          
           
          
         </tbody>

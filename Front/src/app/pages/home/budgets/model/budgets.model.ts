@@ -3,7 +3,7 @@ export interface BudgetsModel {
     userId: number;
     budgetNumber:number;
     customerName:string;
-    customerCuit:string;
+    payment:string;
     customerAddress: string;
     observation: string;
     dateTime: Date;
@@ -11,6 +11,7 @@ export interface BudgetsModel {
     budgetDetails: BudgetDetails[]
 }
 
+//BACK
 export interface BudgetDetails {
     id: number;
     budgetId: number;
@@ -19,9 +20,12 @@ export interface BudgetDetails {
     productCode: string;
     quantity: number;
     price:number;
+    
+    
 }
+//FRONT
 export interface BudgetDetailList {
-    productCode: string,
+    productCode: string;
     productId :number;
     ownCode : number;
     productName: string;
@@ -41,6 +45,16 @@ export function BudgetGridParser(value: any, price: number) {
       subTotal: price
     
     }}
+    export function budgetsGridFromParser(value: any) {
+        return {
+            productId: value.productId,
+            productCode: value.productCode,
+            ownCode: value.id,
+            productName: value.productName,
+            price: value.price,
+            quantity: 1,
+            subTotal: value.price * value.quantity
+        }}
     export function BudgetDetailParser(value: any, price: number) {
         return {
             id: 0,

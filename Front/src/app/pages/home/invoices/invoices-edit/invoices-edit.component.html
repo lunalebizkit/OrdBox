@@ -3,6 +3,7 @@
   [btnCancelText]="'Volver'"
   [hideSave]="true"
   [hideTag]="false"
+  
   [tagText]="'Comprobante'"
   [title]="'Refrigeraciones Dante'"
   [iconBack]="'rollback'"
@@ -169,7 +170,7 @@
                   formControlName="productSearchFilter"
                   placeholder="Ingrese Marca, Código, Categoría o Producto"
                   nzSize="small"
-                  (keydown.enter)="searchProduct()"
+                  (keydown.enter)="searchProduct(); $event.preventDefault()"
                 />
               </nz-input-group>
 

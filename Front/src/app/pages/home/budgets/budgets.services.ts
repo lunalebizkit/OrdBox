@@ -7,6 +7,7 @@ import { BudgetsModel } from "./model/budgets.model";
     providedIn: 'root',
 })
 export class BudgetsService {
+  
     constructor(private api: ApiService) { }
      /**
      * Obtiene una Categoria por Id
@@ -34,6 +35,17 @@ export class BudgetsService {
      public saveBudget(model: BudgetsModel): Observable<any> {
       return this.api.post(`budget/new`, model, false);    
     }
+
+    /**
+     * editar un presupuesto
+     * @param id
+     * @returns
+     */
+    public editBudget(model: BudgetsModel): Observable<any> {
+      return this.api.put(`budget/edit`, model, false);    
+    }
+
+
 
     /**
    * Obtiene un Cliente por Cuit

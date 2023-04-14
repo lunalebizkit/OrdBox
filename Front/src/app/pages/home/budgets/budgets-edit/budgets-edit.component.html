@@ -4,6 +4,9 @@
 [btnSaveText]="'Guardar'" 
 [hideSave]="true" 
 [hideTag]="false"
+[hideClose]="false"
+[hideFacturaPro]="true"
+[hideCerrar]="true" 
 [title]="'Presupuesto'" 
 [showSpinner]="isSaving" 
 [iconBack]="'rollback'" 
@@ -52,7 +55,7 @@
           *ngIf="invoiceA; else elseBlock
           -->
           
-          <div nz-col class="gutter-row" [nzSpan]="8" *ngIf="view ; else elseView">
+          <div nz-col class="gutter-row" [nzSpan]="8" >
         
               <nz-form-item>
                 <nz-form-label nzRequired>Forma de Pago</nz-form-label>
@@ -68,9 +71,7 @@
               </nz-form-item>
              
           </div>
-          <ng-template #elseView>
-            <div></div>
-          </ng-template> 
+          
         </div>
         
         <nz-divider
@@ -79,15 +80,7 @@
         style="margin-top: 0"
       ></nz-divider>
 
-        <!--DNI-->
-        <nz-form-item>
-          <nz-form-label [nzSm]="6" [nzXs]="14" nzRequired nzFor="customerCuit">CUIT - CUIL
-          </nz-form-label>
-          <nz-form-control [nzSm]="14" [nzXs]="14" [nzErrorTip]="cuit">
-            <input nz-input nzSize="small" formControlName="customerCuit" />
-          </nz-form-control>
-          
-        </nz-form-item>
+   
 
         <!--Nombre-->
         <nz-form-item>
@@ -240,7 +233,7 @@
             <td colspan="5" [nzAlign]="'right'">
               <button id="actualizarbutton" nz-button nzSize="large" style="background-color: #24ce41"
                 (click)="msjConfirmOk()">
-                <i nz-icon nzType="save" nzTheme="outline"></i>Grabar
+                <i nz-icon nzType="save"  nzTheme="outline" ></i>Grabar
               </button>
             </td>
             <ng-template #elseBlock>

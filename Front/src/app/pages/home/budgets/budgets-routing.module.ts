@@ -7,7 +7,7 @@ const routes: Routes= [
     
     {path: '', component: BudgetsListComponent},
     {path: 'new', component: BudgetsEditComponent},
-    {path: 'edit/:id',component: BudgetsViewComponent}
+    {path: 'edit/:id',component: BudgetsEditComponent}
     
 ];
 
