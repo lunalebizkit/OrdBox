@@ -113,19 +113,18 @@
                     Crédito
                   </button>
                 </a>
-                <button nz-button nzSize="small" nzType="primary" routerLink="/home/notes/debit" [queryParams]="{
-                    id: data.id
-                  }">
+                <button nz-button nzSize="small" nzType="primary" routerLink="/home/notes/debit" [queryParams]=
+                "{ id: data.id}">
                   Débito
                 </button>
               </td>
             </ng-container>
             <td style="text-align: center">
               <a>
-                <i nz-icon nzType="eye" nzTheme="outline" style="font-size: 16px ;margin-right: 20px;" (click)="onDoubleClicked(data)"></i>
+                <i nz-icon nzType="eye" nzTheme="outline" style="font-size: 17px ;margin-right: 20px;" (click)="onDoubleClicked(data)"></i>
               </a>
               <a  (click) ="proforma(data.id)" >
-                <i nz-icon nzType="file-text" nzTheme="outline" style="font-size: 16px ;margin-right: 20px;"></i>
+                <i nz-icon nzType="file-text" nzTheme="outline" style="font-size: 16px ;margin-right: 2px;"></i>
               </a>
              
             </td>

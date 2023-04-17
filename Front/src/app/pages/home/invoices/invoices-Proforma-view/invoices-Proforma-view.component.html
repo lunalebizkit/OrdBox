@@ -8,7 +8,7 @@
 [hideFacturaPro]="true"
 [hidePrint]="false" 
 [iconPrint]="'file-excel'" 
-[hideTag]="false"
+[hideTag]="true"
 [title]="'Factura Proforma'" 
 (onCerrarClick)="closeWindow()" 
 (click)="imprimir()">
@@ -17,12 +17,13 @@
 <div #pdftable id="pdf">
  
   <nz-row id="contenedor">
+    
     <nz-col>
-     
+      
       <div id="izquierdo">
-        <h1>FACTURA PROFORMA</h1>
+        <h1 >FACTURA PROFORMA</h1> 
         <h3>Cliente:  {{this.customerName}}</h3>
-        <p>CUIT: {{this.customerCuit}}</p>
+        <p>CUIT: {{this.customerCuit | cuit}}</p>
         <p> Dirección: {{this.customerAddress}}</p>
         <h4><strong>Fecha {{this.dateTime | date: 'dd/MM/yyyy'}}</strong></h4>
       </div>
@@ -41,6 +42,7 @@
     <br>  
 
   </nz-row>
+
    <!--TABLA-->
    <nz-content id="tabla">
     <nz-table [nzBordered]="true" nzTemplateMode [nzSize]="'small'" >
@@ -59,7 +61,7 @@
         
           <td>{{ data.productName }}</td>
           <td [nzAlign]="'right'">{{ data.quantity }}</td>
-          <td [nzAlign]="'right'">{{ this.currencyFormat(data.price) }}</td>
+          <td [nzAlign]="'right'">{{ this.currencyFormat(data.price)}}</td>
          
           <td [nzAlign]="'center'">{{ data.iva }}%</td>
         </tr>
@@ -72,11 +74,10 @@
           <td></td>
          
           <td [colSpan]="1" [nzAlign]="'center'">
-            <b >Total </b
-            >
+            <b >Total </b>
           </td>
           <td style="text-align: center;">
-            <span style="color: blue">{{ this.currencyFormat(total) }} </span>
+            <span style="color: blue">{{ this.currencyFormat(this.total) }} </span>
           </td>
         </tr>
       </tfoot>
