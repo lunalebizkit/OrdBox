@@ -18,9 +18,9 @@
  
   <nz-row id="contenedor">
     <nz-col>
-    
+     
       <div id="izquierdo">
-        <h2>FACTURA PROFORMA</h2>
+        <h1>FACTURA PROFORMA</h1>
         <h3>Cliente:  {{this.customerName}}</h3>
         <p>CUIT: {{this.customerCuit}}</p>
         <p> Dirección: {{this.customerAddress}}</p>
@@ -28,7 +28,8 @@
       </div>
 
       <div id="derecho">
-        <p>imagen</p>
+        <img class="img" style=" margin-right:5px;" nz-image width="60px" src="../../../../../assets/img/dantesLogo1.png"  alt="ordbox"/>
+   
         <h2>REFRIGERACION DANTE</h2>
         <p>20-08159465-8</p>
         <p>Dante Cesar Quercetti</p>
@@ -49,8 +50,8 @@
           <th>Producto</th>
           <th [nzAlign]="'center'">Cantidad</th>
           <th [nzAlign]="'center'">Precio Unidad</th>
-          <th [nzAlign]="'center'">SubTotal</th>
-          <th>Iva</th>
+          
+          <th [nzAlign]="'center'">Iva</th>
         </tr>
       </thead>
       <tbody>
@@ -59,38 +60,65 @@
           <td>{{ data.productName }}</td>
           <td [nzAlign]="'right'">{{ data.quantity }}</td>
           <td [nzAlign]="'right'">{{ this.currencyFormat(data.price) }}</td>
-          <td [nzAlign]="'right'">
-            {{ this.currencyFormat(data.quantity * data.price) }}
-          </td>
-          <td>{{ data.iva }}</td>
+         
+          <td [nzAlign]="'center'">{{ data.iva }}%</td>
         </tr>
       </tbody>
+
+
       <tfoot class="{{this.tipo}}">
         <tr>
-          <td [colSpan]="1"></td>
-          <td [colSpan]="1" *ngIf="type == 1; else elseBlock">
+          <td></td>
+          <td></td>
+         
+          <td [colSpan]="1" [nzAlign]="'center'">
+            <b >Total </b
+            >
+          </td>
+          <td style="text-align: center;">
+            <span style="color: blue">{{ this.currencyFormat(total) }} </span>
+          </td>
+        </tr>
+      </tfoot>
+
+      <tfoot >
+        <tr>
+          <td></td>
+          <td></td>
+
+          <td [colSpan]="1" *ngIf="type == 1; else elseBlock" [nzAlign]="'center'">
             <b>Iva </b>
-            <span style="color: blue"
-              >{{ this.currencyFormat(ivaTotal) }}
-            </span>
+            
           </td>
-          <td *ngIf="type == 1; else elseBlock" [colSpan]="1">
-            <b>SubTotal </b>
-            <span style="color: blue"
-              >{{ this.currencyFormat(subTotal) }}
-            </span>
-          </td>
-          <td [colSpan]="2" >
-            <b>Total </b
-            ><span style="color: blue"
-              >{{ this.currencyFormat(total) }}
-            </span>
-          </td>
+          <td style="text-align: center;" >
+            <span style="color: blue">
+            {{ this.currencyFormat(ivaTotal) }}
+          </span></td>
+          
+         
           <ng-template #elseBlock>
             <td [colSpan]="1"></td>
           </ng-template>
         </tr>
       </tfoot>
+      
+      <tfoot>
+        <tr>
+          <td >
+            <p><strong>Metodo de Pago: </strong> Efectivo - Transferencia Bancaria - Cheque al dia - E check al dia </p></td>
+          <td></td>
+          <td *ngIf="type == 1; else elseBlock" [colSpan]="1" [nzAlign]="'center'" >
+            <b>SubTotal </b>
+           
+          </td>
+          <td style="text-align: center;"> <span style="color: blue"
+            >{{ this.currencyFormat(subTotal) }}
+          </span></td>
+        </tr>
+      </tfoot>
+
+      
+
     </nz-table>
   </nz-content>
 </div>

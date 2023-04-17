@@ -42,17 +42,19 @@ export function BudgetGridParser(value: any, price: number) {
       productName: value.description,
       price: price,
       quantity: 1,
-      subTotal: price
+      subTotal: price,
+     
     
     }}
     export function budgetsGridFromParser(value: any) {
         return {
+          
             productId: value.productId,
             productCode: value.productCode,
             ownCode: value.id,
             productName: value.productName,
             price: value.price,
-            quantity: 1,
+            quantity: value.quantity,
             subTotal: value.price * value.quantity
         }}
     export function BudgetDetailParser(value: any, price: number) {

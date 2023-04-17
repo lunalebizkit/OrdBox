@@ -51,10 +51,6 @@
             </ng-template>
           </nz-form-item>
           
-          <!--Forma de pago
-          *ngIf="invoiceA; else elseBlock
-          -->
-          
           <div nz-col class="gutter-row" [nzSpan]="8" >
         
               <nz-form-item>
@@ -149,8 +145,6 @@
   </nz-collapse>
 </form>
 
-<!--Tabla de detalle
- [nzData]="BudgetDetailsList"-->
 
 <nz-collapse>
   <nz-collapse-panel nzHeader="Detalle" [nzActive]="true" [nzShowArrow]="true">
@@ -159,6 +153,7 @@
       [nzBordered]="true" 
       nzShowPagination="false"
        style="overflow: auto" 
+       [nzData]="budgetDetailsList"
        [nzLoading]="isLoading"
       
        >
@@ -218,13 +213,6 @@
         <tfoot style="background-color: #fafafa">
           <tr>
             <td></td>
-
-            <!-- <td colspan="2" *ngIf="invoiceA; else elseBlock">
-              <b>SubTotal </b
-              ><b style="color: red">{{
-                this.currencyFormat(this.subtotal)
-              }}</b>
-            </td> -->
             <td colspan="1">
               <b>Total </b>
               <b style="color: red">{{ this.currencyFormat(this.total) }}</b>

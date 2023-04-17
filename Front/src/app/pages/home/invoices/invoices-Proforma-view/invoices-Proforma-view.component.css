@@ -7,9 +7,16 @@
   .factC{
     background-color: var(--backg-C);
   }
+
+.todo{
+  padding-bottom: 20%;
+    
+  left: 10%;
+}
+
 #contenedor{
-  
-    position: relative;
+ 
+  height: 300px;
     top: 15px;
     left: 16%;
    width: 70%;
@@ -27,15 +34,15 @@
 
 #derecho{
     float: right;
-    padding: 10px;
-    width: 300px;
-    margin: 40px;
+    padding: 20px;
+    width: 450px;
+    margin: 8px;
     text-align: left;
 }
 
 #tabla{
   position:relative;
   padding: 10px;
-bottom:-15px; 
-border: 1px black;
+  bottom:-15px; 
+  border: 1px black;
 }
