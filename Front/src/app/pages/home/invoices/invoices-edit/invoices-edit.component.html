@@ -152,7 +152,7 @@
 
         <!-- Buscador de Productos -->
         <nz-divider nzText="Producto" nzOrientation="left"></nz-divider>
-
+        
         <form nz-form [formGroup]="formProductSearch">
           <nz-form-item>
             <nz-form-label
@@ -169,7 +169,7 @@
                   formControlName="productSearchFilter"
                   placeholder="Ingrese Marca, Código, Categoría o Producto"
                   nzSize="small"
-                  (keydown.enter)="searchProduct()"
+                  (keydown.enter)="searchProduct(); $event.preventDefault()"
                 />
               </nz-input-group>
 

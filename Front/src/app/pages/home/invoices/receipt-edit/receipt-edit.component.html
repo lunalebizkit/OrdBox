@@ -172,8 +172,10 @@
               <nz-input-group [nzSuffix]="clearQuery">
                 <input
                   nz-input
+                  formControlName="productSearchFilter"
                   placeholder="Ingrese Marca, Código, Categoría o Producto"
                   nzSize="small"
+                  (keydown.enter)="searchProduct(); $event.preventDefault()"
                 />
               </nz-input-group>
 
@@ -184,9 +186,8 @@
                   nzTheme="fill"
                   nzType="close-circle"
                   *ngIf="
-                    this.formProductSearch.controls['productSearchFilter']
-                      .value !== ''
-                  "
+                    this.formProductSearch.controls['productSearchFilter'].value !== ''
+                    "
                   (click)="
                     this.formProductSearch.controls[
                       'productSearchFilter'
@@ -199,7 +200,6 @@
               <button
                 nz-button
                 nzSize="small"
-                nzType="primary"
                 nzType="primary"
                 (click)="openComponentProduct()"
                 class="ml-5"
