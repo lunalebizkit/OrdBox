@@ -111,8 +111,6 @@ export class ReceiptViewDrawerComponent
         return this.tipo = 'factA'
       case  eInvoiceType.B :
        return this.tipo = 'factB'
-      case  eInvoiceType.C :
-       return this.tipo = 'factC'
     }
   }
   subTotalCalculate(concNoGravado: number, percIngBrutos: number, percIva:number, ivaTotal: number): number {

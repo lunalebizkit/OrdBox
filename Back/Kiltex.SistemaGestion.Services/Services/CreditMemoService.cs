@@ -65,7 +65,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             {
                 var query = _contextSql
                                     .CreditMemo
-                                    .OrderByDescending(p => p.DateTime)
+                                 
                                     .AsNoTracking()
                                     .Include(p => p.CreditMemoDetail)
                                     .Where(p => (!string.IsNullOrEmpty(request.Filter.Cuit) ? p.CustomerCuit.ToLower().Contains(request.Filter.Cuit) : true)
@@ -74,7 +74,7 @@ namespace Kiltex.SistemaGestion.Services.Services
 
                 var count = await query.CountAsync().ConfigureAwait(false);
 
-                var list = await query.OrderByDescending(p => p.Id)
+                var list = await query.OrderByDescending(p => p.DateTime)
                                       .Skip(request.Page * request.PageSize)
                                       .Take(request.PageSize)
                                       .ToListAsync()

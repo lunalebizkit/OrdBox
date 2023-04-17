@@ -29,7 +29,8 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal
         Task<string> PrintItem(string articulo, double cantidad, decimal monto, decimal iva = 21, string codigo = "9999999");
         Task<string> CloseFactura( int copias = 1, string email = "");
 
-        Task<string> ImprimirDocumento(string url);
         Task<string> CargarDatosCliente(string customerName, string customerCuit, string customerAddress, ETypeReceipt tipoDocumento );
+
+        Task<string> ReimprimirDocumento( ETypeReceipt tipoDocumento,string numeroComprobante );
     }
 }
