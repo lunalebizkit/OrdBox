@@ -18,6 +18,7 @@ import { InvoiceDetails, InvoiceModel } from "../model/invoice.model";
   styleUrls: ['./invoices-view.drawer.component.css'],
 })
 export class InvoicesViewDrawerComponent extends BaseComponent implements OnInit {
+  router: any;
   @Input() set filter(value: number) {
     this.id = value;
 }
@@ -147,6 +148,7 @@ hideReprint() {
   }
 
 }
+
 
 }
 

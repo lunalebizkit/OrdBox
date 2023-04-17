@@ -13,6 +13,7 @@ import { Permission } from 'src/app/common/auth/models/permissions.enum';
   styleUrls: ['./invoices-list.component.css'],
 })
 export class InvoicesListComponent implements OnInit {
+  router: any;
   permissions = Permission;
   dia:any;
   index!: number;
@@ -220,5 +221,11 @@ export class InvoicesListComponent implements OnInit {
       },
       nzClosable: false,
     });
+  }
+
+
+  proforma(id:Number){
+  window.open('home/invoices/invoicespro/'+id);
+   
   }
 }
