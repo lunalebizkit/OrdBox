@@ -9,6 +9,8 @@ using Kiltex.SistemaGestion.Services.ImpresoraFiscal.Printer250F;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
 using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
+using Kiltex.SistemaGestion.Services.LibroIvaDigital;
+using Kiltex.SistemaGestion.Services.LibrosIvaDigital;
 
 namespace Kiltex.SistemaGestion.Services.Services
 {
@@ -16,6 +18,7 @@ namespace Kiltex.SistemaGestion.Services.Services
     {
         private readonly PrinterStatus _config;
         private readonly IPrinter _printer;
+        private readonly ArchivosTxt _archivosTxt;
         public InvoiceService(ErrorManager logger, DBContext context, IMapper maper, IPrinter printer, PrinterStatus config) :
             base(logger, context, maper)
         {
@@ -106,6 +109,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                 throw;
             }
         }
+
         public async Task<OperationResponse<IdResponse<long>>> AddOrUpdate(DtoRequestInvoice model, CancellationToken ct = default)
         {
             var transaction = _contextSql.Database.BeginTransaction();
@@ -202,6 +206,183 @@ namespace Kiltex.SistemaGestion.Services.Services
             }
         }
 
+
+        #region Alicuota Digital
+
+        public async Task<OperationResponse<byte[]>> AlicuotaTxt(DateTime from, DateTime to, CancellationToken ct = default)
+        {
+            var query = await _contextSql
+                           .Invoices
+                           .Include(s => s.InvoiceDetails)
+                           .AsNoTracking()
+                           .Where(x => x.DateTime.Date >= from && x.DateTime.Date <= to).ToArrayAsync();
+
+            var newDtoDetalleResumen = new List<AlicuotaIvaDto>();
+
+
+            var tipo = 0;
+            var iva = 0;
+            var resumen = new AlicuotaIva();
+
+            StringWriter OutPutFile = new StringWriter();
+
+            try
+            {
+
+                MemoryStream ms = new MemoryStream();
+                TextWriter tw = new StreamWriter(ms);
+
+                foreach(var item in query)
+                {
+                    string sinComa = item.Total.ToString().Replace(",", "");
+                    string ivaSinComa = item.IvaTotal.ToString("F2").Replace(",", "");
+                    var newItem = _mapper.Map<AlicuotaIvaDto>(item);
+
+                    #region Condicionales Tipo
+                        if (item.Type == 2)
+                        {
+                            tipo= 6;
+                        }
+                        if (item.Type == 1)
+                        {
+                            tipo= 1;
+                        }
+
+                    #endregion
+                    
+
+                    foreach (var item2 in item.InvoiceDetails)
+                    {
+                        #region Condicionales Iva
+                            if (item2.Iva == 10.50m)
+                            {
+                                iva = 4;
+                            }
+                             if (item2.Iva == 21.00m)
+                            {
+                                iva = 5;
+                            }
+                            if (item2.Iva == 27.00m)
+                            {
+                                iva = 6;
+                            }
+                        #endregion
+                        await tw.WriteAsync
+                            (
+                                tipo.ToString().PadLeft(3, '0') +
+                                newItem.PuntoDeVenta.ToString().PadLeft(5, '0') +
+                                item.InvoiceNumber.ToString().PadLeft(20, '0') +
+                                sinComa.ToString().PadLeft(15, '0') + 
+                                iva.ToString().PadLeft(4, '0') +
+                                ivaSinComa.PadLeft(15, '0') + 
+                                "\n"
+                            );
+                    }
+                    newDtoDetalleResumen.Add(newItem);
+                }
+                tw.Flush();
+
+                byte[] bytes = ms.ToArray();
+
+                ms.Close();
+
+                return new OperationResponse<byte[]>(bytes);
+
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex);
+                throw;
+            }
+            finally
+            {
+                OutPutFile.Close();
+                OutPutFile.Dispose();
+            }
+        }
+
+        #endregion  
+
+
+        #region IvaDigital
+        public async Task<OperationResponse<byte[]>> ArchivoTxt(DateTime from, DateTime to, CancellationToken ct = default)
+        {
+            var query = await _contextSql
+                            .Invoices
+                            .Include(s => s.InvoiceDetails)
+                            .AsNoTracking()
+                            .Where(x => x.DateTime.Date >= from && x.DateTime.Date <= to).ToArrayAsync();
+
+            var newDtoDetalleResumem = new List<ArchivoTxtDto>();
+
+            var resumen = new ArchivosTxt();
+
+            StringWriter OutPutFile = new StringWriter();
+
+            {
+                try
+                {
+                    MemoryStream ms = new MemoryStream();
+                    TextWriter tw = new StreamWriter(ms);
+
+                    foreach (var item in query)
+                    {
+                        string sinComa = item.Total.ToString().Replace(",", "");
+                        var newItem = _mapper.Map<ArchivoTxtDto>(item);
+
+                            await tw.WriteAsync
+                                (
+                                    item.DateTime.ToString("yyyyMMdd") +
+                                    item.Type.ToString().PadLeft(3, '0') +
+                                    newItem.PuntoDeVenta.PadLeft(5, '0') +
+                                    item.InvoiceNumber.ToString().PadLeft(20, '0') +
+                                    item.InvoiceNumber.ToString().PadLeft(20, '0') +
+                                    "80" +
+                                    item.CustomerCuit.ToString().PadLeft(20, '0') +
+                                    item.CustomerName.PadRight(30, ' ') +
+                                    sinComa.PadLeft(15, '0') +
+                                    newItem.NetoGravado +
+                                    newItem.NoCategorizados +
+                                    newItem.OperacionesExentas +
+                                    newItem.ImpuestosNacionales +
+                                    newItem.IngresosBrutos +
+                                    newItem.ImpuestosMunicipales +
+                                    newItem.ImpuestosInternos +
+                                    newItem.CodigoDeMoneda +
+                                    newItem.TipoDeCambio +
+                                    newItem.AlicuotaIva +
+                                    newItem.CodigoDeOperacion + 
+                                    newItem.OtrosTributos +
+                                    item.DateTime.ToString("yyyyMMdd") +
+                                    '\n'
+
+                               );
+                        newDtoDetalleResumem.Add(newItem);
+                    }
+                    tw.Flush();
+
+                    byte[] bytes = ms.ToArray();
+
+                    ms.Close();
+
+                    return new OperationResponse<byte[]>(bytes);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    throw;
+                }
+                finally
+                { 
+                    OutPutFile.Close();
+                    OutPutFile.Dispose();
+                }
+            }
+        }
+        #endregion 
+
+
+        #region Imprimir Factura En impresora Fiscal
         public async Task<string> PrintInvoice(Invoice model, CancellationToken ct = default)
         {
 
@@ -244,5 +425,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             return closeFactura;
 
         }
+
+        #endregion
     }
 }

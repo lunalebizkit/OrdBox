@@ -190,7 +190,7 @@
                   formControlName="productSearchFilter"
                   placeholder="Ingrese Marca, Código, Categoría o Producto"
                   nzSize="small"
-                  (keydown.enter)="searchProduct()"
+                  (keydown.enter)="searchProduct(); $event.preventDefault() "
                 />
               </nz-input-group>
 

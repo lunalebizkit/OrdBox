@@ -391,12 +391,13 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
   searchProduct(): void {
     this.product = this.formProductSearch.controls['productSearchFilter'].value;
     this.queryParams.filter = this.product;
+    if (this.isValidForm(this.formReceipt)){
     if (this.product.length > 0) {
       this.serviceProduct.getProducts(this.queryParams).subscribe({
         next: (r) => {
-          this.loading = true;
+          this.loading = true;         
           if (r.data.length == 1) {
-            const model: ProductsModel = r.data[0];
+            const model: ProductsModel = r.data[0];          
             if (
               this.receiptDetailsGrid.find((item) => item.productId == model.id)
             ) {
@@ -418,9 +419,7 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
 
               this.loading = false;
 
-              this.formProductSearch.controls['productSearchFilter'].setValue(
-                ''
-              );
+              this.formProductSearch.controls['productSearchFilter'].setValue('');
             } else {
 
               const product: ProductsModel = r.data[0];
@@ -441,13 +440,10 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
 
               this.totalCalculate();
               this.loading = false;
-              this.formProductSearch.controls['productSearchFilter'].setValue(
-                ''
-              );
+              this.formProductSearch.controls['productSearchFilter'].setValue('');
             }
           } else {
             this.loading = false;
-            this.openComponentProduct();
           }
         },
         error: () => {
@@ -457,13 +453,11 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
       });
     } else {
       this.loading = false;
-      this.queryParams.filter = '';
-      this.openComponentProduct();
     }
+  }
   }
 
   openComponentProduct(): void {
- 
       const drawerRefProduct = this.drawerService.create<
         InvoiceProductSearchComponent,
         { filter: string },

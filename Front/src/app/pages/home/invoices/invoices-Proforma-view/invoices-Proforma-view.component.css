@@ -1,0 +1,53 @@
+.factA{
+    background-color: var(--backg-A);
+  }
+  .factB{
+    background-color: var(--backg-B);
+  }
+  .factC{
+    background-color: var(--backg-C);
+  }
+
+.todo{
+  padding-bottom: 20%;
+    
+  left: 10%;
+}
+
+#contenedor{
+  position: relative;
+    top: 15px;
+   
+  height: 300px;
+    top: 15px;
+    left: 16%;
+   width: 70%;
+   
+}
+#izquierdo{
+  
+    float: left;
+    padding: 10px;
+    width: 300px;
+    margin: 40px;
+   
+   border: 3px black;
+   text-align: left;
+}
+
+#derecho{
+  position: absolute;
+  left: 150%;
+  float: right;
+  padding: 10px;
+  width: 350px;
+  margin: 8px;
+  text-align: left;
+}
+
+#tabla{
+  position:relative;
+  padding: 10px;
+  bottom:-15px; 
+  border: 1px black;
+}

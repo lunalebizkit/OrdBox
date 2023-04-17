@@ -267,9 +267,6 @@ constructor(@Inject(LOCALE_ID) public locale: string,
           this.invoiceA= false;
           
         }  
-        console.log(this.typeSelectedId);
-        
-          
       } 
       startEdit(id: number): void {
         this.editId = id;
@@ -342,7 +339,6 @@ constructor(@Inject(LOCALE_ID) public locale: string,
       drawerRefProduct.afterClose.subscribe({
 
         next: (data: ProductsModel) => {
-          
           if (data != undefined) {
             if (this.debitMemoDetails.find(item => item.productId == data.id)) {
                 /*Actualizo la lista que envio al back */
@@ -387,7 +383,8 @@ constructor(@Inject(LOCALE_ID) public locale: string,
 
   searchProduct():void {
     this.product= this.formProductSearch.controls['productSearchFilter'].value;
-    this.queryParams.filter= this.product;   
+    this.queryParams.filter= this.product;
+    if (this.isValidForm(this.formDebitMemo)) {   
     if (this.product.length > 0) {
       this.serviceProduct.getProducts(this.queryParams).subscribe({
         next: (r) => { 
@@ -418,14 +415,13 @@ constructor(@Inject(LOCALE_ID) public locale: string,
                     /* Parseo dato a Dto Factura Detalle */
              const modelDetail : DebitMemoDetails = debitMemoDetailParser(product, this.iva);
              this.debitMemoDetails.push(modelDetail);           
-          this.totalCalculate();
-          this.isLoading= false;
-          this.formProductSearch.controls['productSearchFilter'].setValue('');
+            this.totalCalculate();
+            this.isLoading= false;
+            this.formProductSearch.controls['productSearchFilter'].setValue('');
           }
             
           }else{
             this.isLoading= false;
-            this.openComponentProduct();
           }
           
         },
@@ -435,18 +431,17 @@ constructor(@Inject(LOCALE_ID) public locale: string,
       })
     }else{
       this.isLoading= false;
-      this.queryParams.filter= '';
-      this.openComponentProduct();
     }
+  }
   };
 
   searchCustomer(): void {
     this.cuit =
       this.formDebitMemo.controls['customerCuit'].value;
-    if (this.cuit !== ' '){
-      this.formDebitMemo.controls['address'].setValue('customerAddress');
-      this.formDebitMemo.controls['customerCuit'].setValue('customerCuit');
-      this.formDebitMemo.controls['customerName'].setValue('customerName');
+    if (this.cuit == '00'){
+      this.formDebitMemo.controls['address'].setValue('S/D');
+      this.formDebitMemo.controls['customerCuit'].setValue('00');
+      this.formDebitMemo.controls['customerName'].setValue('Admin');  
       this.customerId= 0;
       return;
     }else{

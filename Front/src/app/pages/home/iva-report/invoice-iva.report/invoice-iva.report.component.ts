@@ -30,6 +30,7 @@ export class InvoiceIvaReportComponent extends BaseComponent implements OnInit {
     newInitDate: any;
     newEndDate: any;
     formReport!: FormGroup;
+    invoiceNumber: InvoiceIvaReportDetailsModel[]=[]
    
     today = new Date();
     TotalIva!: number;
@@ -122,6 +123,8 @@ export class InvoiceIvaReportComponent extends BaseComponent implements OnInit {
           },
         });
       }
+
+      
       exportExcel(){
         const fileName = `Reporte_Venta_${this.initPeriod}-${this.endPeriod}`
         this.service.getInvoiceIvaReport(this.initPeriod, this.endPeriod).subscribe({
@@ -129,14 +132,41 @@ export class InvoiceIvaReportComponent extends BaseComponent implements OnInit {
             this.downloadFile(r, fileName);
           },
           error: (e) => {
-          this.loading = false;           
-          
+            this.loading = false;           
           },
         });
       }
-    
+      
+      getAlicuotaIva(){
+        const fileName = `Alicuota_Iva_${this.initPeriod}-${this.endPeriod}`
+        this.service.getAlicuotaIva(this.initPeriod,this.endPeriod).subscribe({
+          next: (r) => {
+            this.downloadFile(r, fileName);
+          },
+          error: (e) => {
+            this.loading = false;           
+            },
+        })
+      }
+      getIvaVentasTxt(){
+       const fileName = `Iva_Ventas_${this.initPeriod}-${this.endPeriod}`
+        this.service.getIvaVentasTxt(this.initPeriod,this.endPeriod).subscribe({
+          next: (r) => {
+            this.downloadFile(r, fileName);
+          },
+          error: (e) => {
+            this.loading = false;           
+            },
+        })
+      }
+      
+
+      downloadTxt(){
+        this.getAlicuotaIva();
+        this.getIvaVentasTxt();
+      }
+
       downloadFile(response: any, fileName: string){
-    
         const dataType= response.type;
         const binaryData = [];
     
@@ -149,6 +179,8 @@ export class InvoiceIvaReportComponent extends BaseComponent implements OnInit {
         document.body.appendChild(downloadLink);
         downloadLink.click();
       }
+
+
       getInvoiceType(id: number) {
         return eInvoiceType[id];
       }

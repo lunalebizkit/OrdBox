@@ -1,0 +1,90 @@
+<nz-layout>
+  <nz-page-header class="list-header">
+    <nz-page-header-title>Listado de Presupuestos</nz-page-header-title>
+    <nz-page-header-extra>
+      <button nz-tooltip nzTooltipTitle="Nuevo" nz-button nzType="primary" nzShape="circle"
+        routerLink="/home/budgets/new">
+        <i nz-icon nzType="plus" nzTheme="outline"></i>
+      </button>
+    </nz-page-header-extra>
+  </nz-page-header>
+  <nz-content>
+    <!-- Busqueda -->
+    <nz-collapse>
+      <nz-collapse-panel nzSize="small" nzHeader="Filtros">
+        <div nz-row [nzGutter]="[8, 1]">
+          <div nz-col nzSpan="24">
+            <nz-form-item>
+              <nz-form-label>Búsqueda</nz-form-label>
+              <nz-form-control>
+                <nz-input-group [nzSuffix]="clearQuery">
+                  <input [ngModelOptions]="{ standalone: true }" type="text" placeholder="Ingrese Presupuesto" nz-input
+                    (keydown.enter)="search()" [(ngModel)]="queryData.filter" />
+                </nz-input-group>
+
+                <ng-template #clearQuery>
+                  <i nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle" *ngIf="queryData.filter"
+                    (click)="queryData.filter = ''; search()"></i>
+                </ng-template>
+
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+      </nz-collapse-panel>
+    </nz-collapse>
+
+    <!-- Tabla -->
+
+    <div class="table" (scroll)="onScroll($event)">
+      <nz-table class="tabla" [nzData]="budgetsList" nzBordered="true" [nzLoading]="loading" [nzSize]="'small'"
+        nzShowPagination="false" nzTableLayout="fixed">
+        <thead>
+          <tr>
+            <th nzEllipsis nzWidth="100px">Numero</th>
+            <th nzEllipsis nzWidth="160px">Fecha</th>
+            <th nzEllipsis nzWidth="100px">Nombre</th>
+            <th nzEllipsis nzWidth="100px">Dirección</th>
+            <th nzEllipsis nzWidth="100px">Total</th>
+            <th [nzAlign]="'center'" nzEllipsis nzWidth="70px">Acción</th>
+            
+          </tr>
+        </thead>
+        
+        <tbody>
+          <tr id="{{ i }}" *ngFor="let budget of budgetsList; let i = index" class="small-text" tabindex="-1"
+            (click)="onClick(budget, i)" (keydown)="myNavegation($event)" [style.background-color]="
+              budget === selectedBudget ? 'lightblue' : ''
+              " (dblclick)="onDoubleClicked(budget.id)" (keydown.enter)="onEnter($event)">
+
+
+            <td nzEllipsis>{{ budget.budgetNumber }}</td>
+            <td nzEllipsis>{{ this.formaterDate(budget.dateTime)}}</td>
+            <td nzEllipsis>{{ budget.customerName }}</td>
+            <td nzEllipsis>{{ budget.customerAddress }}</td>
+            <td nzEllipsis><b>{{ this.currencyFormat(budget.total) }}</b></td>
+            
+            <!-- <a *nzSpaceItem routerLink="/home/users/edit/{{user.id}}">
+              <i nz-tooltip nzTooltipTitle="Editar" nz-icon nzType="edit"></i>
+            </a> -->
+
+            <td style="text-align: center">
+              <a  routerLink="/home/budgets/edit/{{budget.id}}">
+                <i  nz-icon nzType="edit" nzTheme="outline"  style="margin-right: 20px; color: green;"></i>
+              </a>
+            
+             <a target="_blank">
+              <i nz-icon nzType="printer" nzTheme="outline" style="font-size: 16px" (click)="print(budget.id)"></i>
+            </a>
+           
+            </td>
+
+          </tr>
+          
+         
+        </tbody>
+      </nz-table>
+    </div>
+
+  </nz-content>
+</nz-layout>

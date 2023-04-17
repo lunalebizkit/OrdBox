@@ -36,10 +36,7 @@ export class PopupConfirmationComponent implements OnInit {
   }
   showConfirmation(){
     this.isConfirmationvisible= true;
-    /* if(id != 0 ){
-      this.elementSelected = id 
-    } */
-   
+
   }
   handleCance() {
     this.isConfirmationvisible = false;
