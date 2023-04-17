@@ -29,7 +29,7 @@ namespace Kiltex.SistemaGestion.Services.LibroIvaDigital
 
         #region Punto De Ventas
 
-        public string? PuntoDeVenta { get; set; }
+        public string? PuntoDeVenta { get; set; } = "0003";
 
         #endregion
 
@@ -75,83 +75,83 @@ namespace Kiltex.SistemaGestion.Services.LibroIvaDigital
         #region Importe Total de Conceptos que no integran el precio neto gravado
         //13 enteros 2 decimales sin punto decimal
 
-        public string? NetoGravado { get; set; }
+        public string? NetoGravado { get; set; } = "000000000000000";
 
         #endregion
 
         #region Percepcion a no categorizados
         //13 enteros 2 decimales sin punto decimal
 
-        public string? NoCategorizados { get; set; }
+        public string? NoCategorizados { get; set; } = "000000000000000";
 
         #endregion
 
         #region Importe de operaciones exentas
         //13 enteros 2 decimales sin punto decimal
 
-        public string? OperacionesExentas { get; set; }
+        public string? OperacionesExentas { get; set; } = "000000000000000";
 
         #endregion
 
         #region Importe de percepciones o pagos a cuenta de Impuesto Nacionales
         //13 enteros 2 decimales sin punto decimal
 
-        public string? ImpuestosNacionales { get; set; }
+        public string? ImpuestosNacionales { get; set; } = "000000000000000"; 
 
         #endregion
 
         #region Importe de percepcion de Ingresos Brutos
         //13 enteros 2 decimales sin punto decimal
 
-        public string? IngresosBrutos { get; set; }
+        public string? IngresosBrutos { get; set; } = "000000000000000";
 
         #endregion
 
         #region Importe de percepciones de Impuestos Municipales
         //13 enteros 2 decimales sin punto decimal
 
-        public string? ImpuestosMunicipales { get; set; }
+        public string? ImpuestosMunicipales { get; set; } = "000000000000000";
 
         #endregion
 
         #region Importe de Impuestos Internos
         //13 enteros 2 decimales sin punto decimal
 
-        public string? ImpuestosInternos { get; set; }
+        public string? ImpuestosInternos { get; set; } = "000000000000000";
 
         #endregion
 
         #region Codigo de Moneda
         //Segun tabla tipo de Monedad PES   
 
-        public string? CodigoDeMoneda { get; set; }
+        public string? CodigoDeMoneda { get; set; } = "PES";
 
         #endregion
 
         #region Tipo de Cambio
         //4 enteros 6 decimales sin punto decimal
 
-        public string? TipoDeCambio { get; set; }
+        public string? TipoDeCambio { get; set; } = "0001000000";
 
         #endregion
 
         #region Cantidad De Alicuotas de IVA
 
-        public string? AlicuotaIva { get; set; }
+        public string? AlicuotaIva { get; set; } = "1";
 
         #endregion
 
         #region Codigo de Operacion
         //Segun tabla de Codigo de Operacion
 
-        public string? CodigoDeOperacion { get; set; }
+        public string? CodigoDeOperacion { get; set; } = "0";
 
         #endregion
 
         #region OtrosTributos
         //13 enteros 2 decimales sin punto de decimal
 
-        public string? OtrosTributos { get; set; }
+        public string? OtrosTributos { get; set; } = "000000000000000";
 
         #endregion
 

@@ -7,6 +7,7 @@ using Kiltex.SistemaGestion.Api.Filter;
 using Kiltex.SistemaGestion.Domain.Enum;
 using Kiltex.SistemaGestion.Domain.Model;
 using Kiltex.SistemaGestion.Services.LibroIvaDigital;
+using System.Text;
 
 namespace Kiltex.SistemaGestion.Api.Controllers.Invoice
 {
@@ -31,12 +32,26 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Invoice
             return Return(await _service.GetById(id).ConfigureAwait(false));
         }
 
-        [HttpPost]
+        /// <summary>
+        /// Genera un archivo TXT con todas los datos de las facturas necesarios para realizar un libro IVA Digital
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
         [Route("[action]")]
         [AllowAccess(Permission = new EPermission[] { EPermission.GetInvoice })]
-        public async Task<IActionResult> ArchivoTxt([FromBody] ArchivosTxt model)
+        public async Task<IActionResult> ArchivoTxt([FromQuery] DateTime from, DateTime to)
         {
-            return Return(await _service.ArchivoTxt(model).ConfigureAwait(false));
+            var content = await _service.ArchivoTxt(from, to).ConfigureAwait(false);
+            return File(content.Data,"text/plain", $"ListaReporteLibroIvaVentas{DateTime.Now:dd-MM-yyyy-hh:mm:ss}.txt");
+        }
+
+        [HttpGet]
+        [Route("[action]")]
+        [AllowAccess(Permission = new EPermission[] {EPermission.GetInvoice})]
+        public async Task<IActionResult> AlicuotaIvaTxt([FromQuery] DateTime from, DateTime to)
+        {
+            var content = await _service.AlicuotaTxt(from, to).ConfigureAwait(false);
+            return File(content.Data, "text/plain", $"ListaReporteAlicuotaIva{DateTime.Now:dd-MM-yyyy-hh:mm:ss}.txt");
         }
 
         /// <summary>
