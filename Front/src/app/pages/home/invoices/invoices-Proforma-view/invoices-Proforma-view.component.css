@@ -15,7 +15,9 @@
 }
 
 #contenedor{
- 
+  position: relative;
+    top: 15px;
+   
   height: 300px;
     top: 15px;
     left: 16%;
@@ -23,6 +25,7 @@
    
 }
 #izquierdo{
+  
     float: left;
     padding: 10px;
     width: 300px;
@@ -33,11 +36,13 @@
 }
 
 #derecho{
-    float: right;
-    padding: 20px;
-    width: 450px;
-    margin: 8px;
-    text-align: left;
+  position: absolute;
+  left: 150%;
+  float: right;
+  padding: 10px;
+  width: 350px;
+  margin: 8px;
+  text-align: left;
 }
 
 #tabla{

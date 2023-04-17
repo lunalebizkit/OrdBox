@@ -21,11 +21,15 @@
 }
 
 #derecho{
+    position: absolute;
+    left: 150%;
     float: right;
     padding: 10px;
-    width: 400px;
+    width: 350px;
     margin: 40px;
     text-align: center;
+
+    
 }
 
 #firma{

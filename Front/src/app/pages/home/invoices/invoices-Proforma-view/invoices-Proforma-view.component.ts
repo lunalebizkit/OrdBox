@@ -135,7 +135,6 @@ invoiceType(id: any):string{
 
 imprimir():void{
 
-
   let DATA: any = document.getElementById('pdf');
   html2canvas(DATA).then((canvas) => {
     let fileWidth = 210;
