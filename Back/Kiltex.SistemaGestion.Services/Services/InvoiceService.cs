@@ -49,9 +49,9 @@ namespace Kiltex.SistemaGestion.Services.Services
                 result.Iva27 = 0;
                 foreach (var item in result.InvoiceDetails)
                 {
-                    result.Iva10 += ((decimal)item.Iva == (decimal)10.5) ? (item.Quantity * item.Price * 10.5m) / 100.0m : 0;
-                    result.Iva21 += ((decimal)item.Iva == (decimal)21) ? (item.Quantity * item.Price * 21.0m) / 100.0m : 0;
-                    result.Iva27 += ((decimal)item.Iva == (decimal)27) ? (item.Quantity * item.Price * 27.0m) / 100.0m : 0;
+                    result.Iva10 += ((decimal)item.Iva == (decimal)10.5) ? (item.Quantity * item.Price) - (item.Quantity * item.Price) / 1.10m : 0;
+                    result.Iva21 += ((decimal)item.Iva == (decimal)21) ? (item.Quantity * item.Price) - (item.Quantity * item.Price) / 1.21m : 0;
+                    result.Iva27 += ((decimal)item.Iva == (decimal)27) ? (item.Quantity * item.Price) - (item.Quantity * item.Price) / 1.27m : 0;
                 }
                 return new OperationResponse<DtoRequestInvoice>(result);
             }
