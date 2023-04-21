@@ -49,7 +49,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                 }
 
                 var result = _mapper.Map<DtoResponseBudget>(model);
-
+              
 
                 return new OperationResponse<DtoResponseBudget>(result);
             }
