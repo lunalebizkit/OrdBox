@@ -16,6 +16,11 @@ export class HeaderOperationsButtonsComponent implements OnInit {
   @Input('btnDeleteText') btnDeleteText: string = 'Eliminar';
   @Input('btnUpdateText') btnUpdateText: string = 'Actualizar';
   @Input('btnReprintText') btnReprintText: string = 'Reimprimir';
+  @Input('btnPrintText') btnPrintText: string = 'Imprimir';
+  @Input('btnCerrarText') btnCerrarText: string = 'Cerrar';
+  @Input('btnFacturaProText') btnFacturaProText: string = 'Factura Proforma';
+
+
   @Input('tagText') tagText: string = '';
   @Input('title') title!: string;
   @Input('color') color!: string;
@@ -27,6 +32,9 @@ export class HeaderOperationsButtonsComponent implements OnInit {
   @Input('iconUpdate') iconUpdate!: string;
 
   @Input('iconReprint') iconReprint!: string;
+  @Input('iconPrint') iconPrint!: string;
+  @Input('iconFacturaPro') iconFacturaPro!: string;
+
 
   @Input('showSpinner') showSpinner!: boolean;
   @Input('hideTag') hideTag: boolean = true;
@@ -38,6 +46,10 @@ export class HeaderOperationsButtonsComponent implements OnInit {
   @Input('hideSend') hideSend: boolean = true;
 
   @Input('hideReprint') hideReprint: boolean = true;
+  @Input('hidePrint') hidePrint: boolean = true;
+  @Input('hideCerrar') hideCerrar: boolean = false;
+  @Input('hideFacturaPro') hideFacturaPro: boolean = false;
+
 
   @Input('hideEmail') hideEmail: boolean = true;
   @Input('disabled') disabled: boolean = false;
@@ -58,6 +70,14 @@ export class HeaderOperationsButtonsComponent implements OnInit {
     new EventEmitter<any>();
   @Output('onReprintClick') onReprintClick: EventEmitter<any> =
     new EventEmitter<any>();  
+
+    @Output('onPrintClick') onPrintClick: EventEmitter<any> =
+    new EventEmitter<any>();  
+    @Output('onCerrarClick') onCerrarClick: EventEmitter<any> =
+    new EventEmitter<any>();  
+    @Output('onFacturaProClick') onFacturaProClick: EventEmitter<any> =
+    new EventEmitter<any>();  
+  
 
   constructor(private route: ActivatedRoute, private router: Router) { }
 
