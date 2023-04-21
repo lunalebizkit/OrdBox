@@ -18,7 +18,7 @@ namespace Kiltex.SistemaGestion.Services.Services
     {
         private readonly PrinterStatus _config;
         private readonly IPrinter _printer;
-        private readonly ArchivosTxt _archivosTxt;
+
         public InvoiceService(ErrorManager logger, DBContext context, IMapper maper, IPrinter printer, PrinterStatus config) :
             base(logger, context, maper)
         {
