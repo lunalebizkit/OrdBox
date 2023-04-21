@@ -1,0 +1,352 @@
+<nz-page-header class="list-header">
+  <nz-page-header-title > <i nz-icon nzType="container" nzTheme="outline"></i>Remitos</nz-page-header-title>
+  <nz-page-header-extra >
+    <button nz-button (click)="direction()" type="submit" nzSize="default" 
+    ><i nz-icon nzType="rollback" nzTheme="outline"></i>Volver</button>
+  </nz-page-header-extra>
+</nz-page-header>
+
+<!-- Encabezado de la Factura -->
+<form nz-form [formGroup]="formDeliveryNotes">
+  <nz-collapse>
+    <nz-collapse-panel
+      nzHeader="Encabezado"
+      [nzActive]="true"
+      [nzShowArrow]="true"
+    >
+      <nz-content> 
+        <div nz-row nzJustify="center" style="margin: 20px;">
+          <div nz-col class="gutter-row" [nzSpan]="4" style="margin-right: 5px; margin-left: 5px;">
+            <nz-form-item>
+              <nz-form-label >Fecha</nz-form-label>
+              <nz-form-control>
+                <b>
+                  {{ startDate ? (startDate | date : "YYYY-MM-dd") : "N/A" }}
+                </b>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        
+          <div nz-col class="gutter-row" style="margin-right: 14px">
+          <nz-form-item>
+            <nz-form-label nzRequired>Estado</nz-form-label>
+            <nz-form-control>
+              <nz-select
+                id="type"
+                formControlName="statusId"
+                [nzOptions]="type"
+                (ngModelChange)="typeSelectedChange($event)"
+                nzWidth="50px"
+              >
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col class="gutter-row" style="margin-right: 24px; margin-left: 30px; width: 150px;">
+          <nz-form-item>
+            <nz-form-label nzRequired>Pagado</nz-form-label>
+            <nz-form-control>
+              <nz-select
+                formControlName="paid"
+                (ngModelChange)="selectPaid($event)"
+              >
+              <nz-option nzValue="SI" nzLabel=" SI "></nz-option>
+              <nz-option nzValue="NO" nzLabel=" NO "></nz-option>
+              </nz-select>
+
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+
+        <!-- Datos del Cliente -->
+        <nz-divider
+          nzText="Cliente"
+          nzOrientation="left"
+          style="margin-top: 0"
+        ></nz-divider>
+
+        <nz-form-item>
+          <nz-form-label [nzSm]="6" [nzXs]="14" nzRequired nzFor="supplierName"
+            >Razón Social-Nombre
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="14" [nzErrorTip]="cuit">
+            <input
+              nz-input
+              nzSize="small"
+              formControlName="supplierName"
+            />
+          </nz-form-control>
+          <!-- Boton que abre el buscador de CLiente en drawer -->
+          <form nz-form [formGroup]="formSupplierSearch">
+            <div style="margin: 3px">
+              <button
+                nz-button
+                nzSize="small"
+                nzType="primary"
+                (click)="openComponentSupplier()"
+                class="ml-5"
+              >
+                <i nz-icon nzType="search" nzTheme="outline"></i>Buscar
+              </button>
+            </div>
+          </form>
+        </nz-form-item>
+
+         <nz-form-item >
+           <nz-form-label [nzSm]="6" [nzXs]="14" nzFor="supplierDni" 
+              >Dni
+            </nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="14">
+            <input
+              nz-input
+              maxlength="8"
+              nzSize="small"
+              formControlName="supplierDni"
+              />
+            </nz-form-control>
+              <nz-switch style="margin-left: 5px;"
+               nzCheckedChildren="seleccionado" nzUnCheckedChildren="No seleccionado" 
+            ></nz-switch>
+      </nz-form-item>
+        <nz-form-item>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="supplierCuit"
+            >Cuit - Cuil
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <input
+              nz-input
+              maxlength="250"
+              nzSize="small"
+              formControlName="supplierCuit"
+            />
+          </nz-form-control>
+        </nz-form-item>
+        <ng-template #cuit let-control>
+          <ng-container *ngIf="control.hasError('required')"> 
+            Debe ingresar un cuit valido.
+          </ng-container>
+          <ng-container *ngIf="!control.hasError('required') && control.hasError('pattern')"> 
+            El cuit ingresado debe tener 11 caracteres numericos.
+          </ng-container>
+        </ng-template>
+
+        <nz-form-item>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="supplierAddress"
+            >Domicilio
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <input
+              nz-input
+              nzSize="small"
+              maxlength="250"
+              formControlName="supplierAddress"
+            />
+          </nz-form-control>
+        </nz-form-item>
+
+        <!-- Buscador de Productos -->
+        <nz-divider nzText="Producto" nzOrientation="left"></nz-divider>
+        
+        <form nz-form [formGroup]="formProductSearch">
+          <nz-form-item>
+            <nz-form-label
+              [nzSm]="6"
+              [nzXs]="14"
+              nzRequired
+              nzFor="productSearchFilter"
+              >Búsqueda de Producto
+            </nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="14">
+              <nz-input-group [nzSuffix]="clearQuery">
+                <input
+                  nz-input
+                  formControlName="productSearchFilter"
+                  placeholder="Ingrese Marca, Código, Categoría o Producto"
+                  nzSize="small"
+                  (keydown.enter)="searchProduct(); $event.preventDefault()"
+                />
+              </nz-input-group>
+
+              <ng-template #clearQuery>
+                <i
+                  nz-icon
+                  class="ant-input-clear-icon"
+                  nzTheme="fill"
+                  nzType="close-circle"
+                  *ngIf="
+                    this.formProductSearch.controls['productSearchFilter'].value !== ''
+                    "
+                  (click)="
+                    this.formProductSearch.controls[
+                      'productSearchFilter'
+                    ].setValue('')
+                  "
+                ></i>
+              </ng-template>
+            </nz-form-control>
+            <div nz-col style="margin: 3px">
+              <button
+                nz-button
+                nzSize="small"
+                nzType="primary"
+                (click)="openComponentProduct()"
+                class="ml-5"
+              >
+                <i nz-icon nzType="search" nzTheme="outline"></i> Buscar
+              </button>
+            </div>
+          </nz-form-item>
+        
+        </form>
+        <br />
+         <!-- Observaciones-->
+         <nz-divider
+         nzText="Observaciones"
+         nzOrientation="left"
+         style="margin-top: 0"
+       ></nz-divider>
+        <nz-form-item>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="observation"
+            >Observación
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <input
+              formControlName="observation"
+              nz-input
+              id="observation"
+              maxlength="250"
+            />
+          </nz-form-control>
+        </nz-form-item>
+      </nz-content>
+    </nz-collapse-panel>
+  </nz-collapse>
+</form>
+
+<!-- Tabla Detalle -->
+<nz-collapse>
+  <nz-collapse-panel nzHeader="Detalle" [nzActive]="true" [nzShowArrow]="true">
+    <nz-content>
+      <nz-table
+        [nzBordered]="true"
+        nzShowPagination="false"
+        style="overflow: auto"
+        [nzData]="deliveryNotesDetailsGrid"
+        [nzLoading]="loading"
+        nzSize= "small" 
+      >
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th>Cantidad</th>
+            <th>Precio Unidad</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of deliveryNotesDetailsGrid"  class="small-text">
+            <td nzBreakWord>{{data.productName}}</td>
+            <td *ngIf="edit == false">
+              <div
+                class="editable-cell"
+                [hidden]="editId === data.productId"
+                (click)="startEdit(data.productId)"
+              >
+                {{ data.quantity }}
+              </div>
+              <nz-input-number
+                [hidden]="editId !== data.productId"
+                [nzMin]="1"
+                [nzMax]="10000"
+                [(ngModel)]="data.quantity"
+                (nzBlur)="stopEdit()"
+                (ngModelChange)="changeQuantity($event)"
+              ></nz-input-number>
+            </td>
+          <td *ngIf="edit == true">
+            <div
+            class="editable-cell"
+            [hidden]="editId === data.productId"
+            (click)="startEdit(data.productId)"
+          >
+            {{ data.quantity }}
+          </div>
+          <nz-input-number
+            [hidden]="editId !== data.productId"
+            [nzMin]="1"
+            [nzMax]="10000"
+            [(ngModel)]="data.quantity"
+            (nzBlur)="stopEdit()"
+            (ngModelChange)="changeQuantityrecievedQuantity($event)"
+          ></nz-input-number>
+        </td>
+
+            <td [nzAlign]="'right'">{{  this.currencyFormat(data.price) }}</td>
+            <td style="text-align: center">
+              <nz-space [nzSplit]="spaceSplit">
+                <ng-template #spaceSplit>
+                  <nz-divider nzType="vertical"></nz-divider>
+                </ng-template>
+                <a
+                  *nzSpaceItem
+                >
+                  <i
+                  nz-tooltip
+                  nzTooltipTitle="Eliminar"
+                  nz-icon
+                  nzType="delete"
+                  [nzTheme]="'twotone'"
+                  [nzTwotoneColor]="'#FF0000'"
+                  (click)="popup.showDeleteConfirmation(data.productId)"
+                  ></i>
+                </a>
+              </nz-space>
+            </td> 
+          </tr>
+        </tbody>
+        <tfoot style="background-color: #fafafa">
+          <tr>
+            <td colspan="1">
+              <b>Total </b
+              ><b style="color: red">{{ this.currencyFormat(this.subtotal) }}</b>
+            </td>
+            <td></td>
+            <td colspan="2" [nzAlign]="'right'">
+              <button
+                id="actualizarbutton"
+                nz-button
+                nzSize="large"
+                style="background-color: #24ce41"
+                (click)="msjConfirmOk()"
+              >
+                <i nz-icon nzType="save" nzTheme="outline"></i>Grabar
+              </button>
+            </td>
+            <ng-template #elseBlock>
+              <td colspan="1"></td>
+            </ng-template>
+          </tr>
+        </tfoot>
+      </nz-table>
+    </nz-content>
+  </nz-collapse-panel>
+</nz-collapse>
+
+<app-popup-confirmation
+  #popup
+  [title]="'Confirmar eliminación'"
+  [header]="'¿Está seguro que desea eliminar el producto seleccionado?'"
+  [message]="'Esta acción no se puede revertir'"
+  (handleOk)="handleOk()"
+>
+</app-popup-confirmation>
+<app-popup-confirmation
+  #pop
+  [title]="'Confirmar Guardado de comprobante'"
+  [header]="'¿Está seguro que desea guardar el comprobante?'"
+  [message]="'Esta acción no se puede revertir'"
+  (handleOk)="save()"
+ 
+>
+</app-popup-confirmation>

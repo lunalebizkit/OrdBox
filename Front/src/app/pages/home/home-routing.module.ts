@@ -91,6 +91,12 @@ const routes: Routes = [
         path: 'permission',
         loadChildren:()=>
           import('./permission-rol/permission-rol.module').then((m)=> m.PermissionModule)
+      },
+      {
+       /*  canActivate: [AuthGuard], */
+        path: 'deliveryNotes',
+        loadChildren:()=>
+          import('./deliveryNotes/deliveryNotes.module').then((m)=> m.DeliveryNotesModule)
       }
     ],
   },

@@ -1,0 +1,137 @@
+﻿using AutoMapper;
+using Kiltex.SistemaGestion.Domain;
+using Kiltex.SistemaGestion.Domain.Enum;
+using Kiltex.SistemaGestion.Domain.Model;
+using Kiltex.SistemaGestion.SDK.Error;
+using Kiltex.SistemaGestion.Services.Common;
+using Kiltex.SistemaGestion.Services.ImpresoraFiscal;
+using Kiltex.SistemaGestion.Services.ImpresoraFiscal.Printer250F;
+using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
+using Microsoft.EntityFrameworkCore;
+using System.Text.RegularExpressions;
+
+namespace Kiltex.SistemaGestion.Services.Services
+{
+    public class DeliveryNotesService : BaseService
+    {
+        public DeliveryNotesService(ErrorManager logger, DBContext context, IMapper maper) :
+            base(logger, context, maper)
+        { }
+        public async Task<OperationResponse<DtoRequestDeliveryNotes>> GetById(long id)
+        {
+            try
+            {
+                var remitos = await _contextSql
+                                   .DeliveryNotes
+                                   .Include(x => x.DeliveryNotesDetails)
+                                   .AsNoTracking()
+                                   .FirstOrDefaultAsync(p => p.Id == id)
+                                   .ConfigureAwait(false);
+                if ( remitos == null)
+                {
+                    _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
+                    return Error<DtoRequestDeliveryNotes>(new OperationExceptions("000", $"Remito no encontrado {id}"));
+                }
+
+                var result = _mapper.Map<DtoRequestDeliveryNotes>(remitos);
+
+
+                return new OperationResponse<DtoRequestDeliveryNotes>(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
+                throw;
+            }
+        }
+
+        public async Task<OperationResponse<IdResponse<long>>> NewDeliveryNotes(DtoRequestDeliveryNotes model, CancellationToken ct = default)
+        {
+            model.Id = 0;
+            return await AddOrUpdate(model, ct).ConfigureAwait(false);
+        }
+
+        public async Task<OperationResponse<DtoPagination<DtoRequestDeliveryNotes>>> ListDeliveryNotes(RequestPaginatedData<SpecificFilter> request)
+        {
+            try
+            {
+                var query = _contextSql
+                                    .DeliveryNotes
+                                    .AsNoTracking()
+                                    .Include(p => p.DeliveryNotesDetails)
+                                    .Where(p => ((request.Filter.Number.HasValue && request.Filter.Number != 0) ? p.DeliveryNote_number == request.Filter.Number : true)
+                                     && ((!request.Filter.Date.Contains("") || request.Filter.Date != null) ? p.DateTime.Date.ToString().Contains(request.Filter.Date) : true));
+
+                var count = await query.CountAsync().ConfigureAwait(false);
+
+                var list = await query.OrderByDescending(p => p.Id)
+                                      .Skip(request.Page * request.PageSize)
+                                      .Take(request.PageSize)
+                                      .ToListAsync()
+                                      .ConfigureAwait(false);
+
+                var result = _mapper.Map<List<DtoRequestDeliveryNotes>>(list);
+
+
+                return new OperationResponse<DtoPagination<DtoRequestDeliveryNotes>>(new DtoPagination<DtoRequestDeliveryNotes>
+                {
+                    Data = result,
+                    PageSize = request.PageSize,
+                    TotalCount = count
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
+                throw;
+            } 
+        }
+        public async Task<OperationResponse<IdResponse<long>>> AddOrUpdate(DtoRequestDeliveryNotes model, CancellationToken ct = default)
+        {
+            var transaction = _contextSql.Database.BeginTransaction();
+            var deliveryNotesModel = _mapper.Map<DeliveryNotes>(model);
+            var productId = new Product();
+            try
+            {
+                if (deliveryNotesModel.Id == 0)
+                {
+                    if (deliveryNotesModel.SupplierId == 0)
+                    {
+                        var user = await _contextSql.Customers.AsNoTracking().FirstOrDefaultAsync(p => p.Name.ToLower() == "admin");
+                        deliveryNotesModel.SupplierId = user.Id;
+                    }
+
+                    await _contextSql.DeliveryNotes.AddAsync(deliveryNotesModel, ct).ConfigureAwait(false);
+                }
+
+                await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
+                transaction.Commit();
+                return Ok(new IdResponse<long>(deliveryNotesModel.Id));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
+                return Error<IdResponse<long>>(new OperationExceptions(ErrorsCodes.C_999_ERROR_GENERICO, ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO)));
+            }
+        }
+        public async Task<OperationResponse<IdResponse<long>>> Update(DtoRequestDeliveryNotes model, CancellationToken ct = default)
+        {
+            try
+            {
+                if (model.Id == 0)
+                {
+                    _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
+                    return Error<IdResponse<long>>(new OperationExceptions("000", "El remito no tiene ID"));
+                }
+                return await AddOrUpdate(model, ct).ConfigureAwait(false);
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
+                throw;
+            }
+        }
+
+    }
+}

@@ -1,0 +1,107 @@
+<nz-layout>
+    <nz-page-header class="list-header">
+      <nz-page-header-title> Listado de Remitos </nz-page-header-title>
+      <nz-page-header-extra>
+        <button
+          nz-tooltip
+          nzTooltipTitle="Nuevo"
+          nz-button
+          nzType="primary"
+          nzShape="circle"
+          routerLink="/home/deliveryNotes/new"
+        >
+          <i
+            nz-icon
+            nzType="plus"
+            nzTheme="outline"
+          ></i>
+        </button>
+      </nz-page-header-extra>
+    </nz-page-header>
+    <nz-content>
+      <!-- Busqueda -->
+      <nz-collapse>
+        <nz-collapse-panel nzSize="small" nzHeader="Filtros">
+          <div nz-row [nzGutter]="[8, 1]">
+            <div nz-col nzSpan="24">
+              <nz-form-item>
+                <nz-form-label>Búsqueda</nz-form-label>
+                <nz-form-control>
+                  <nz-input-group >
+                    <input
+                      type="text"
+                      placeholder="Ingrese Remitos"
+                      nz-input
+                    />
+                  </nz-input-group>
+  
+                  <ng-template #clearQuery>
+                    <i
+                      nz-icon
+                      class="ant-input-clear-icon"
+                      nzTheme="fill"
+                      nzType="close-circle"
+                    ></i>
+                  </ng-template>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+        </nz-collapse-panel>
+      </nz-collapse>
+  
+      <!-- Tabla -->
+      <div class="table" (scroll)="onScroll($event)">
+        <nz-table
+          class="tabla"
+          nzShowSizeChanger
+          [nzData]="deliveryNotesList"
+          nzBordered="true"
+          [nzSize]="'small'"
+          nzShowPagination="false"
+          nzTableLayout="fixed"
+          [nzLoading]="loading"
+        >
+          <thead>
+            <tr>
+              <th nzEllipsis >N° Remito</th>
+              <th nzEllipsis >Fecha</th>
+              <th nzEllipsis >Estado</th>
+              <th nzEllipsis >Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              class="small-text"
+              tabindex="-1"
+              id="{{ i }}"
+              *ngFor="let data of deliveryNotesList; let i = index"
+              (click)="onClick(data, i)" 
+              (keydown)="myNavegation($event)"
+               [style.background-color]="
+              data === selectedDeliveryNotes ? 'lightblue' : ''
+            " (keydown.enter)="onEnter(id)" 
+              (dblclick)="onDoubleClicked(data)"
+            >
+              <td nzEllipsis>{{data.id}}</td>
+              <td nzEllipsis>{{this.formaterDate(data.dateTime)}}</td>
+              <td>{{ this.getStatusName(data.statusId) }}</td>
+              <td style="text-align: center">
+                <a>
+                  <i nz-icon nzType="eye" nzTheme="outline" style="font-size: 16px" (click)="onDoubleClicked(data)"></i>
+                </a>
+              </td>
+            </tr>
+          </tbody>
+        </nz-table>
+      </div>
+    </nz-content>
+  </nz-layout>
+  
+  <app-popup-confirmation
+    #popup
+    [title]="'Confirmar eliminación'"
+    [header]="'¿Está seguro de que desea eliminar el usuario seleccionado?'"
+    [message]="'Esta acción no se puede revertir'"
+  >
+  </app-popup-confirmation>

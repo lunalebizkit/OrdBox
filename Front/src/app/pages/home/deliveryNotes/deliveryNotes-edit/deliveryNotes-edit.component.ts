@@ -1,0 +1,544 @@
+import { Component, ElementRef, Input, OnInit, TemplateRef, ViewChild } from "@angular/core";
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { NzMessageService } from "ng-zorro-antd/message";
+import { NzNotificationService } from "ng-zorro-antd/notification";
+import { BaseComponent } from "src/app/common/components/base/base.component";
+import { HeaderOperationsButtonsComponent } from "src/app/common/components/headers/buttons.oparations.header.component";
+import { environment } from '../../../../../environments/environment';
+import { NzDrawerRef, NzDrawerService } from 'ng-zorro-antd/drawer';
+import { CustomerModel } from "../../customers/model/customer.model";
+import { EntityService } from "../../customers/customer.service";
+import { ProductsModel } from "../../products/model/product.model";
+import { PopupConfirmationComponent } from "src/app/common/components/popup-confirmation/popup-confirmation.component";
+import { ActivatedRoute, Router } from "@angular/router";
+import { formatCurrency, formatDate } from '@angular/common';
+import { Inject, LOCALE_ID } from '@angular/core';
+import { ProductService } from "../../products/product.service";
+import { InvoiceProductSearchComponent } from "../../invoices/invoice-product-search/invoice-product-search.component";
+import { DeliveryNotesDetails, DeliveryNotesModel, deliveryNotesDetailParser, deliveryNotesDetailsGrid, deliveryNotesDetailsGridParser, deliveryNotesGridParser, deliveryNotesProductParser } from "../model/deliveryNotes.model";
+import { ReceiptSupplierSearchComponent } from "../../invoices/receipt-supplier-search/receipt-supplier-search.component";
+import { CustomerAddModel } from "../../customers/model/customer.add.model";
+import { deliveryNotesService } from "../deliveryNotes.service";
+import { pStatusType, statusType } from "../model/status.model";
+
+
+
+
+@Component({
+  selector: 'app-deliveryNotes-edit',
+  templateUrl: './deliveryNotes-edit.component.html',
+  styleUrls: ['./deliveryNotes-edit.component.css']
+})
+export class DeliveryNotesEditComponent extends BaseComponent implements OnInit {
+  @ViewChild('popup') popupComponent!: PopupConfirmationComponent;
+  @ViewChild('header') headerComponent!: HeaderOperationsButtonsComponent;
+  @ViewChild('pop') popComponent!: PopupConfirmationComponent;
+
+  @ViewChild('drawerTemplate', { static: false }) drawerTemplate?: TemplateRef<{
+    $implicit: { filter: string },
+    drawerRef: NzDrawerRef<string>;
+  }>;
+  edit: boolean= false;
+  tipo!: string;
+  @Input() set filter(value: number) {
+    this.id = value;
+  }
+
+
+  type = statusType;
+  loading = false;
+  startDate = this.formaterDate(Date.now());
+  formDeliveryNotes!: FormGroup;
+  formProductSearch!: FormGroup;
+  formProduct!: FormGroup;
+  formSupplierSearch!: FormGroup;
+  formDeliveryNotesModel!: FormGroup;
+  deliveryNotesDetailsGrid: deliveryNotesDetailsGrid[] = [];
+  deliveryNotesDetailsGridTest: deliveryNotesDetailsGrid[] = [];
+  deliveryNotesDetails: DeliveryNotesDetails[] = [];
+  deliveryNotesDetailsTest: DeliveryNotesDetails[] = [];
+  isLoading: boolean= false;
+  id!: number;
+  cuit!: string;
+  supplierId!: number;
+  product!: string;
+  editId: number | null = null;
+  isSaving!: boolean;
+  pagado: boolean = true;
+  typeSelectedId: number = 1;
+  statusPaid!: string ;
+  totalItems: number=0;
+  total!: number;
+  userId!: number;
+  
+  name!: string;
+  address!:string;
+   editIdrecievedQuantity: number | null = null;
+  importTotal!: number;
+  productId!: number;
+  deliveryNotesNumber!:number;
+  observation!: string;
+  dateTime!: Date;
+  paid!: string;
+  statusId!:number;
+  subTotal!: number;
+
+  ivaTotal!: number;
+  
+
+  queryParams = {
+    filter: '',
+    page: 0,
+    pageSize: 10,
+  };
+  subtotal: number=0;
+  idDeliveryNotes = this.route.snapshot.paramMap.get("id");
+
+
+    constructor( notificacionService: NzNotificationService,
+    private serviceEntity: EntityService,
+    private serviceProduct: ProductService,
+    private service: deliveryNotesService,
+    private router: Router,
+    private route: ActivatedRoute, 
+     el: ElementRef,
+     message: NzMessageService,
+     private drawerService: NzDrawerService,
+     private fb: FormBuilder,
+    @Inject(LOCALE_ID) public locale: string)
+    {super(notificacionService, el, message)
+      this.formDeliveryNotes = this.fb.group({
+        dateTime: [new Date(this.startDate), Validators.required],
+        statusId: [1, Validators.required],
+        deliveryNotesNumber: ['', Validators.required],
+        supplierAddress: ['', Validators.required],
+        supplierCuit: ['', [Validators.required, Validators.pattern('[0-9]{11}'),]],
+        supplierDni:['',],
+        paid:['', Validators.required],
+        supplierName: ['', Validators.required],
+        observation: [''],
+      });
+      this.formSupplierSearch = this.fb.group({});
+      this.formProductSearch = this.fb.group({
+        productSearchFilter: [''],
+      });}
+    
+    ngOnInit(){
+      this.route.params.subscribe(params => {this.id = params['id'] })  
+      if ( this.id != undefined){
+      this.getDeliveryNotes(this.id) 
+    }
+    }
+   
+
+  getDeliveryNotes(id: number): void {   
+    if (this.id != 0 || this.id !== undefined)
+      this.service.getDeliveryNotesById(this.id).subscribe({
+        next: (r: DeliveryNotesModel) => {
+          this.edit= true
+           this.id = this.id
+           this.formDeliveryNotes.controls['deliveryNotesNumber'].setValue(r.deliveryNotes_number)
+            this.statusId= r.statusId
+            this.formDeliveryNotes.controls['paid'].setValue(r.paid,)
+            this.supplierId= r.supplierId
+            this.formDeliveryNotes.controls['supplierAddress'].setValue(r.supplierAddress),
+            this.formDeliveryNotes.controls['supplierCuit'].setValue(r.supplierCuit),
+            this.formDeliveryNotes.controls['supplierName'].setValue(r.supplierName),
+            this.dateTime= r.dateTime
+            this.formDeliveryNotes.controls['observation'].setValue(r.observation),
+            this.isLoading = false;
+            this.deliveryNotesDetails= r.deliveryNotesDetails;
+            /* this.formDeliveryNotes.controls['importTotal'].setValue(r.importTotal) */
+            this.getTipo(r.statusId);   
+             /*Bindeo detalles*/
+          r.deliveryNotesDetails.forEach((data: DeliveryNotesDetails) => {
+            /**Parseo viejo Producto a Grid */
+            this.deliveryNotesDetailsGridTest.push(deliveryNotesDetailsGridParser(data, data.price));
+            this.deliveryNotesDetailsGrid.push(deliveryNotesDetailsGridParser(data, data.price));
+            /* Parseo viejo Producto a Detalle*/
+            /* this.deliveryNotesDetails.push(deliveryNotesDetailParser(deliveryNotesDetails, deliveryNotesDetails.price)
+            ); */
+          });
+        },
+        error: () => {
+          this.isLoading = false;
+        },
+      });
+  }
+
+  getTipo(tipo : number):any {
+    switch (tipo){
+      case  pStatusType.Entregado:
+        return this.tipo = 'Entregado'
+      case  pStatusType.Rechazado :
+       return this.tipo = 'Rechazado'
+      case  pStatusType.Pendiente :
+       return this.tipo = 'Pendiente'
+    }
+}
+getStatusName(id: number) {
+  return pStatusType [id];
+}
+
+
+
+    searchSupplier(): void {
+      this.cuit = this.formDeliveryNotes.controls['supplierCuit'].value;
+      if (this.cuit === '00') {
+        this.formDeliveryNotes.controls['supplierAddress'].setValue('S/D');
+        this.formDeliveryNotes.controls['supplierCuit'].setValue('00');
+        this.formDeliveryNotes.controls['supplierName'].setValue('Admin');
+        this.supplierId = 0;
+        return;
+      } else {
+        if (this.cuit.length >= 6) {
+          this.serviceEntity.getByCuit(this.cuit).subscribe({
+            next: (data: any) => {
+              this.formDeliveryNotes.controls['supplierAddress'].setValue(data.address);
+              this.formDeliveryNotes.controls['supplierCuit'].setValue(data.cuit);
+              this.formDeliveryNotes.controls['supplierName'].setValue(data.name);
+            },
+            error: () => {
+              this.showMessageError('No se encontro Proveedor');
+            },
+          });
+        }
+      }
+    }
+
+    openComponentProduct(): void {
+      const drawerRefProduct = this.drawerService.create<
+        InvoiceProductSearchComponent,
+        { filter: string },
+        ProductsModel
+      >({
+        nzTitle: 'Productos',
+        nzContent: InvoiceProductSearchComponent,
+        nzSize: 'large',
+        nzWidth:'90%',
+        nzContentParams: {
+          filter: this.formProductSearch.controls['productSearchFilter'].value,
+        },
+        nzClosable: false,
+      });
+      drawerRefProduct.afterClose.subscribe({
+
+        next: (data: ProductsModel) => {
+          if (data != undefined) {
+
+            if (this.deliveryNotesDetails.find((item) => item.productId == data.id)) {
+
+              /*Actualizo la lista que envio al back */
+              this.deliveryNotesDetails.filter(
+                (item) => item.productId == data.id
+              )[0].quantity += 1;
+
+              /*Actualizo la lista de la tabla */
+              let newListElement = this.deliveryNotesDetailsGrid.filter(
+                (item) => item.productId == data.id
+              )[0];
+
+              newListElement.quantity += 1;
+             /*   newListElement.subtotal +=
+              data.purchasePrice * newListElement.quantity;  */
+
+              this.totalCalculate();
+              this.loading = false;
+              this.formProductSearch.controls['productSearchFilter'].setValue(
+                ''
+              );
+            } else {
+              /* Parseo dato a la grilla de Tabla */
+              const model: deliveryNotesDetailsGrid = deliveryNotesGridParser(
+                data, data.purchasePrice
+              );
+              this.subtotal= data.purchasePrice * data.quantity
+              this.deliveryNotesDetailsGridTest.push(model);
+              this.deliveryNotesDetailsGrid = this.deliveryNotesDetailsGridTest;
+
+              /* Parseo dato a Dto Factura Detalle */
+              const modelDetail: DeliveryNotesDetails = deliveryNotesDetailParser(
+                data, data.purchasePrice
+              );
+              this.deliveryNotesDetails.push(modelDetail);
+              this.totalCalculate();
+              this.loading = false;
+              this.formProductSearch.controls['productSearchFilter'].setValue(
+                ''
+              );
+            }
+          }
+        },
+        error: () => {
+          this.loading = false;
+          this.deliveryNotesDetailsGrid = [];
+          this.formProductSearch.controls['productSearchFilter'].setValue('');
+        },
+      });
+  
+  }
+  totalCalculate(): void {  
+    this.subtotal= 0  
+    this.total = 0;
+   try {  this.deliveryNotesDetailsGridTest.forEach(data => { 
+      /**Caluclo subtotal = precio y multiplico por cantidad*/
+    this.subtotal += data.quantity *  data.price ;   
+ }); 
+      this.deliveryNotesDetailsGrid.forEach( (dato) => {
+        /**Calculo iva restandolo al precio y multiplico por cantidad*/
+       this.total +=  dato.price  * dato.quantity ;
+       console.log(this.total);
+            
+      });
+   
+    } catch (error) {}   
+  };
+
+  searchProduct(): void {
+    this.product = this.formProductSearch.controls['productSearchFilter'].value;
+    this.queryParams.filter = this.product;
+    /* if (this.isValidForm(this.formDeliveryNotes)){ */
+    if (this.product.length > 0) {
+      this.serviceProduct.getProducts(this.queryParams).subscribe({
+        next: (r) => {
+          this.loading = true;        
+          if (r.data.length == 1) {
+            const model: ProductsModel = r.data[0]; 
+           
+                     
+            if (
+              this.deliveryNotesDetailsGrid.find((item) => item.productId == model.id)
+            ) {
+              /*Actualizo la lista que envio al back */
+              this.deliveryNotesDetailsGrid.filter(
+                (item) => item.productId == model.id
+              )[0].quantity += 1;
+
+              /*Actualizo la lista de la tabla */
+              this.deliveryNotesDetailsGrid.filter(
+                (item) => item.productId == model.id
+              )[0].quantity += 1;
+           
+              this.totalCalculate();
+              this.loading = false;
+
+              this.formProductSearch.controls['productSearchFilter'].setValue('');
+            } else {
+
+              const product: ProductsModel = r.data[0];
+              /* Parseo el Producto a la grilla de Tabla */
+              const model: deliveryNotesDetailsGrid= deliveryNotesGridParser(
+                product, product.purchasePrice
+              );
+              this.deliveryNotesDetailsGridTest.push(model);
+              this.deliveryNotesDetailsGrid = this.deliveryNotesDetailsGridTest;
+
+              /* Parseo dato a Dto Factura Detalle */
+              const modelDetail: DeliveryNotesDetails = deliveryNotesDetailParser(
+                product, product.purchasePrice
+              );
+              this.deliveryNotesDetails.push(modelDetail);
+              this.totalCalculate();
+              this.loading = false;
+              this.formProductSearch.controls['productSearchFilter'].setValue('');
+            }
+          } else {
+            this.loading = false;
+          }
+        },
+        error: () => {
+          this.loading = false;
+          this.formProductSearch.controls['productSearchFilter'].setValue('');
+        },
+      });
+    } else {
+      this.loading = false;
+    }
+  }
+/*   } */
+  startEdit(id: number): void {
+    this.editId = id;
+  }
+  stopEdit(): void {
+    this.editId = null;
+  }
+  currencyFormat(data: any): string {
+    return formatCurrency(data, this.locale, '$', 'ARS', '1.1-2');
+  }
+  changeQuantity(quantity: number): void {
+    if (quantity == 0 || quantity == null) {
+      quantity = 1;
+    }
+    let product = this.deliveryNotesDetailsGrid.filter(
+      (detail) => detail.productId == this.editId
+    )[0];
+
+    this.deliveryNotesDetailsGrid.filter(
+      (detail) => detail.productId == this.editId
+    )[0].subtotal = quantity * product.price;
+    this.totalCalculate();
+
+    this.deliveryNotesDetails.filter(
+      detail => detail.productId == this.editId
+      )[0].quantity= quantity;
+   
+  }
+  changeQuantityrecievedQuantity(quantity: number): void {
+    if (quantity==0 ||quantity == null ) {
+      quantity = 0;
+    }
+    let product = this.deliveryNotesDetailsGrid.filter(
+      (detail) => detail.productId == this.editId
+    )[0];
+
+    this.deliveryNotesDetailsGrid.filter(
+      (detail) => detail.productId == this.editId
+    )[0].subtotal = quantity * product.price;
+    this.totalCalculate();
+    
+    this.deliveryNotesDetailsGrid.filter(
+      (detail) => detail.productId == this.editId
+    )[0].recievedQuantity = quantity;
+  }
+  startEditrecievedQuantity(id: number): void {
+    this.editId = id;
+  }
+
+  stopEditrecievedQuantity(): void {
+    this.editId = null;
+  }
+  
+
+  openComponentSupplier(): void {
+    const drawerRefSupplier = this.drawerService.create<
+      ReceiptSupplierSearchComponent,
+      {},
+      CustomerAddModel
+    >({
+      nzTitle: 'Proveedor',
+      nzContent: ReceiptSupplierSearchComponent,
+      nzSize: 'large',
+      nzWidth: '90%',
+      nzClosable: false,
+    });
+    drawerRefSupplier.afterClose.subscribe({
+      next: (data) => {
+        if (data != undefined) {
+          this.supplierId = data.id;
+          this.formDeliveryNotes.controls['supplierAddress'].setValue(data.address);
+          this.formDeliveryNotes.controls['supplierCuit'].setValue(data.cuit);
+          this.formDeliveryNotes.controls['supplierName'].setValue(data.name);
+          this.formDeliveryNotes.controls['supplierDni'].setValue(data.dni)
+        }
+      },
+      error: () => {},
+    });
+  }
+
+formaterDate(date: string | number | Date): string {
+  return formatDate(date, 'MM/dd/YYYY', this.locale);
+}
+typeSelectedChange(id: any): void {
+  this.typeSelectedId = id;
+  if (id == 1) {
+    this.pagado = true;
+  } else {
+    this.pagado = false;
+  }
+}
+direction(){
+  this.router.navigate(['/home/deliveryNotes']);
+}
+
+save(): void {
+ /*  if (this.isValidForm(this.formDeliveryNotes)) { */
+    if (this.deliveryNotesDetailsGrid.length == 0) {
+      console.log(this.deliveryNotesDetailsGrid.length);
+      
+      this.showMessageError('No hay Productos Seleccionados');
+    } else {
+      const model: DeliveryNotesModel = {
+        id: this.id !== undefined ? this.id : 0,
+        supplierId: this.supplierId,
+        supplierName: this.formDeliveryNotes.controls['supplierName'].value,
+        supplierCuit :this.formDeliveryNotes.controls['supplierCuit'].value,
+        supplierAddress :this.formDeliveryNotes.controls['supplierAddress'].value,
+        deliveryNotes_number: 0,
+        observation: this.formDeliveryNotes.controls['observation'].value,
+        dateTime: this.formDeliveryNotes.controls['dateTime'].value,
+        paid: this.formDeliveryNotes.controls['paid'].value,
+        statusId:this.formDeliveryNotes.controls['statusId'].value,
+        cancelled:'',
+        importTotal:this.subtotal,
+        deliveryNotesDetails: this.deliveryNotesDetails,
+  
+      };
+      this.isSaving = true;
+      this.service.saveDeliveryNotes(model).subscribe({
+        next: () => {
+          this.showNotificationSuccess(
+            'Guardado correcto',
+            `Comprobante creado correctamente`
+          );
+          this.isSaving = false;
+          this.router.navigate(['/home/deliveryNotes']);
+        },
+        error: () => {
+          this.isSaving = false;
+          this.showMessageError('No se pudo crear el Comprobante');
+        },
+      });
+    }
+  }
+/* } */
+
+handleOk() {
+  try {
+    let newReceiptDetailsGrid = this.deliveryNotesDetailsGrid.filter(
+      (element) =>
+        element.productId != this.popupComponent.elementSelectedToDelete
+    );
+    this.deliveryNotesDetails = this.deliveryNotesDetails.filter(
+      (element) =>
+        element.productId != this.popupComponent.elementSelectedToDelete
+    );      
+      
+    if (this.deliveryNotesDetailsGrid.length == 0) {
+      this.deliveryNotesDetailsGrid = [];
+      this.deliveryNotesDetailsGridTest= [];
+    } else {
+      this.deliveryNotesDetailsGrid = newReceiptDetailsGrid;
+      this.deliveryNotesDetailsGridTest = newReceiptDetailsGrid;
+    }
+
+    this.popupComponent.isDeleteConfirmationVisible = false;
+  } catch (error) {
+    console.log(error);
+  }
+}  
+
+msjConfirmOk() {
+  try {
+    this.deliveryNotesDetailsGrid = this.deliveryNotesDetailsGrid.filter(
+      (element) => element.productId != this.popupComponent.elementSelected
+    );
+    this.popupComponent.isConfirmationvisible = false;
+    if ((this.deliveryNotesDetailsGrid.length != 0)
+    && this.isValidForm(this.formSupplierSearch) && this.isValidForm(this.formProductSearch)){
+      this.popComponent.showConfirmation() 
+    } else {
+      this.showMessageError('No ha seleccionado producto');
+    }
+  } catch (error) {}
+}
+
+selectPaid(value:string){
+  this.statusPaid = value;
+  if(value == 'si'){
+    this.formDeliveryNotes.controls['paid'].setValue('Si')
+  }if(value== 'no'){
+    this.formDeliveryNotes.controls['paid'].setValue('No')
+  }
+
+}
+}
