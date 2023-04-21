@@ -437,6 +437,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
           dateTime: this.formInvoice.controls['dateTime'].value,
           total: this.totalItems,
           ivaTotal: this.ivaTotal,
+        
           type: this.formInvoice.controls['type'].value,
           invoiceDetails: this.invoiceDetails,
         };
