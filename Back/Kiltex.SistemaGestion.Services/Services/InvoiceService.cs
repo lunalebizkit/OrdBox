@@ -234,7 +234,8 @@ namespace Kiltex.SistemaGestion.Services.Services
 
                 foreach(var item in query)
                 {
-                    string sinComa = item.Total.ToString().Replace(",", "");
+                    var subtotal = item.Total - item.IvaTotal;
+                    string sinComa = subtotal.ToString().Replace(",", "");
                     string ivaSinComa = item.IvaTotal.ToString("F2").Replace(",", "");
                     var newItem = _mapper.Map<AlicuotaIvaDto>(item);
 
