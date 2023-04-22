@@ -21,6 +21,7 @@
             {{ this.getStatusName(this.statusId) }}
         </nz-descriptions-item>
             <nz-descriptions-item nzTitle="* Nro Remito" >
+              {{ this.deliveryNotesNumber | number: '8.0-0' | noComma}}
           </nz-descriptions-item>  
         <nz-descriptions-item nzTitle="* Cliente" >
          {{this.supplierName}} </nz-descriptions-item

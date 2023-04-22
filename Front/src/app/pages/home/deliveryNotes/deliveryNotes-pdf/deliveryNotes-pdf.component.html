@@ -1,0 +1,99 @@
+<app-header-op-buttons 
+#header 
+[btnCerrarText]="'Cerrar'" 
+[btnPrintText]="'ImprimirPDF'" 
+[hideSave]="true"
+[hideBack]="true" 
+[hideFacturaPro]="true"
+[hideCerrar]="false" 
+[hidePrint]="false" 
+[iconPrint]="'file-excel'" 
+[hideTag]="true"
+[title]="'Remito'" 
+(onCerrarClick)="closeWindow()" 
+(click)="imprimir()">
+
+</app-header-op-buttons>
+
+<div #pdftable id="pdf" class="todo">
+ 
+    <nz-row id="contenedor">
+      <nz-col>
+        <div id="izquierdo">
+          <h1>Refrigeracion Dante</h1>
+          <p>Reparación de Heladeras Comerciales, Familiares y Camaras Frigorificas</p>
+          <h3>De : Dante Cesar Quercetti</h3>
+          <p><strong>Pirovano 375 - Gral. San Martin (Mza.)</strong></p>
+          <hr />
+          <p>IVA RESPONSABLE INSCRIPTO</p>
+          <p><strong>CUIT: 20-08159465-2</strong></p>
+        </div>
+      </nz-col>
+  
+      <nz-col>
+        <div id="derecho">
+          <h2>Remito</h2>
+          <h5>DOCUMENTO NO VÁLIDO COMO FACTURA</h5>
+          <h3>Numero: {{this.id| number: '8.0-0'|noComma}}</h3>
+          <h2><strong>{{this.dateTime | date: 'dd/MM/yyyy'}}</strong></h2>
+          <br>
+        </div>
+  
+      </nz-col>
+  
+  
+    </nz-row>
+    
+    <nz-col>
+      <div id="medio">
+        <h3>Cliente: {{this.supplierName}}</h3>
+        <h3>Domicilio: {{this.supplierAddress}}</h3>
+      </div>
+    </nz-col>
+  
+   
+  
+      <nz-table [nzBordered]="true" nzTemplateMode [nzSize]="'small'"  class="tabla">
+        <thead>
+          <tr>
+            <th style="background-color: rgb(194, 194, 194);">Detalle</th>
+  
+            <th [nzAlign]="'center'" style="background-color: rgb(194, 194, 194);">Cantidad</th>
+            <th [nzAlign]="'center'" style="background-color: rgb(194, 194, 194);">Total</th>
+  
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let notes of deliveryNotesDetail">
+            <td>{{ notes.productName }}</td>
+            <td style="text-align: right;">{{ notes.quantity }}</td>
+            <td style="text-align: right;"> {{ this.currencyFormat(notes.quantity * notes.price) }}</td>
+  
+  
+          </tr>
+        </tbody>
+        
+        
+        
+          <nz-row>
+            <nz-col><div id="firma">
+    
+              <p>━━━━━━━━━━━━━━━━━━━━━━━━━</p>
+              <b > <strong>Firma</strong></b>
+            </div>
+            </nz-col>
+          </nz-row>
+          
+         
+      
+      </nz-table>
+
+ 
+
+      
+    
+
+
+
+</div>
+

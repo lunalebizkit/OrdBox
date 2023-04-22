@@ -40,10 +40,9 @@ export class deliveryNotesService {
      * @returns
      */
      public saveDeliveryNotes(model: DeliveryNotesModel): Observable<any> {
-        if (model.id === 0) {
           return this.api.post(`deliveryNotes`, model, false);
-        } else {
-          return this.api.put(`deliveryNotes`, model, false);
-        }
+      }
+      public editDeliveryNotes(model: DeliveryNotesModel): Observable<any> {
+        return this.api.put(`deliveryNotes`, model, false);    
       }
 }

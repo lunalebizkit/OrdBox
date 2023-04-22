@@ -92,7 +92,7 @@ export class DeliveryNotesViewDrawerComponent
     if (id != 0)
       this.service.getDeliveryNotesById(id).subscribe({
         next: (r: DeliveryNotesModel) => {
-            this.deliveryNotesNumber= r.deliveryNotes_number
+            this.deliveryNotesNumber= this.id
             this.statusId= r.statusId
             this.paid = r.paid
             this.supplierId= r.supplierId
@@ -104,29 +104,13 @@ export class DeliveryNotesViewDrawerComponent
             this.isLoading = false;
             this.deliveryNotesDetails= r.deliveryNotesDetails;
             this.importTotal= r.importTotal;
-            this.observation = r.observation;
-            this.getTipo(r.statusId);   
+            this.observation = r.observation;  
         },
         error: () => {
           this.isLoading = false;
         },
       });
   }
-/*   getSupplier(id: number): void {
-    id = this.supplierId  
-    if (id != 0)
-      this.serviceSupplier.getSupplierById(id).subscribe({
-        next: (d) => {
-          this.name= d.name,
-          this.cuit= d.cuit,
-          this.address= d.address   
-        },
-        error: () => {
-          this.isLoading = false;
-        },
-      });
-  } */
-
   getTipo(tipo : number):any {
     switch (tipo){
       case  pStatusType.Entregado:

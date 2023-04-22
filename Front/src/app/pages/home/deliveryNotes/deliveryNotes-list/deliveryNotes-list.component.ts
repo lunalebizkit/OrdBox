@@ -39,7 +39,7 @@ export class DeliveryNotesListComponent implements OnInit {
   queryParams = {
     filter: '',
     page: 0,
-    pageSize: 20,
+    pageSize: 35,
   };
 
   SpecificFilter = {
@@ -52,7 +52,7 @@ export class DeliveryNotesListComponent implements OnInit {
       date:"",
     },
     page: 0,
-    pageSize: 20
+    pageSize: 26
   }
   constructor(
     private service: deliveryNotesService,
@@ -86,6 +86,7 @@ export class DeliveryNotesListComponent implements OnInit {
           this.totalItems = r.totalCount;
           this.loading = false;
           this.selectedIndex = 0;
+          console.log(this.totalItems);
           this.selectedDeliveryNotes = this.deliveryNotesList[this.selectedIndex];
           document.getElementById(this.selectedIndex.toString())?.focus();
         },
@@ -184,8 +185,8 @@ export class DeliveryNotesListComponent implements OnInit {
         ) {
           this.service.getDeliveryNotes(this.SpecificFilter).subscribe({
             next: (r) => {
-              r.data.map((invoice: DeliveryNotesModel) =>
-                this.deliveryNotesList.push(invoice)
+              r.data.map((deliveryNotes: DeliveryNotesModel) =>
+                this.deliveryNotesList.push(deliveryNotes)
               );
               this.loading = false;
             },
@@ -217,6 +218,10 @@ export class DeliveryNotesListComponent implements OnInit {
     } 
     getStatusName(id: number) {
       return pStatusType [id];
+    }
+
+    print(id: Number){
+      window.open('__/'+id,"_blank");
     }
 }
 

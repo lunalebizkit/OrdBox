@@ -20,13 +20,17 @@ import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { DeliveryNotesViewDrawerComponent } from './deliveryNotes-view-drawer/deliveryNotes-view-drawer.component';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
+import { DeliveryNotesPdfComponent } from './deliveryNotes-pdf/deliveryNotes-pdf.component';
+import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
+;
 
 
 @NgModule({
     declarations: [
         DeliveryNotesListComponent, 
         DeliveryNotesEditComponent,
-        DeliveryNotesViewDrawerComponent
+        DeliveryNotesViewDrawerComponent,
+        DeliveryNotesPdfComponent
     ],
     imports: [
         AppCommonModule,
@@ -48,6 +52,7 @@ import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
         NzSwitchModule,
         NzInputNumberModule,
         NzDescriptionsModule,
+        NzDatePickerModule,
 
     ]
 })

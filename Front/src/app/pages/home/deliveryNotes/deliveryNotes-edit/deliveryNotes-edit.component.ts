@@ -15,7 +15,7 @@ import { formatCurrency, formatDate } from '@angular/common';
 import { Inject, LOCALE_ID } from '@angular/core';
 import { ProductService } from "../../products/product.service";
 import { InvoiceProductSearchComponent } from "../../invoices/invoice-product-search/invoice-product-search.component";
-import { DeliveryNotesDetails, DeliveryNotesModel, deliveryNotesDetailParser, deliveryNotesDetailsGrid, deliveryNotesDetailsGridParser, deliveryNotesGridParser, deliveryNotesProductParser } from "../model/deliveryNotes.model";
+import { DeliveryNotesDetails, DeliveryNotesModel, deliveryNotesDetailParser, deliveryNotesDetailsList, deliveryNotesGridFromParser, deliveryNotesGridParser} from "../model/deliveryNotes.model";
 import { ReceiptSupplierSearchComponent } from "../../invoices/receipt-supplier-search/receipt-supplier-search.component";
 import { CustomerAddModel } from "../../customers/model/customer.add.model";
 import { deliveryNotesService } from "../deliveryNotes.service";
@@ -40,6 +40,7 @@ export class DeliveryNotesEditComponent extends BaseComponent implements OnInit 
   }>;
   edit: boolean= false;
   tipo!: string;
+  newStatusPaid!: number;
   @Input() set filter(value: number) {
     this.id = value;
   }
@@ -53,10 +54,9 @@ export class DeliveryNotesEditComponent extends BaseComponent implements OnInit 
   formProduct!: FormGroup;
   formSupplierSearch!: FormGroup;
   formDeliveryNotesModel!: FormGroup;
-  deliveryNotesDetailsGrid: deliveryNotesDetailsGrid[] = [];
-  deliveryNotesDetailsGridTest: deliveryNotesDetailsGrid[] = [];
   deliveryNotesDetails: DeliveryNotesDetails[] = [];
-  deliveryNotesDetailsTest: DeliveryNotesDetails[] = [];
+  deliveryNotesDetailsTest: deliveryNotesDetailsList[] = [];
+  deliveryNotesDetailsList: deliveryNotesDetailsList[] = [];
   isLoading: boolean= false;
   id!: number;
   cuit!: string;
@@ -82,7 +82,6 @@ export class DeliveryNotesEditComponent extends BaseComponent implements OnInit 
   paid!: string;
   statusId!:number;
   subTotal!: number;
-
   ivaTotal!: number;
   
 
@@ -117,6 +116,7 @@ export class DeliveryNotesEditComponent extends BaseComponent implements OnInit 
         paid:['', Validators.required],
         supplierName: ['', Validators.required],
         observation: [''],
+        importTotal:[0, Validators.required]
       });
       this.formSupplierSearch = this.fb.group({});
       this.formProductSearch = this.fb.group({
@@ -148,16 +148,12 @@ export class DeliveryNotesEditComponent extends BaseComponent implements OnInit 
             this.formDeliveryNotes.controls['observation'].setValue(r.observation),
             this.isLoading = false;
             this.deliveryNotesDetails= r.deliveryNotesDetails;
-            /* this.formDeliveryNotes.controls['importTotal'].setValue(r.importTotal) */
-            this.getTipo(r.statusId);   
+            this.formDeliveryNotes.controls['importTotal'].setValue(r.importTotal) 
              /*Bindeo detalles*/
-          r.deliveryNotesDetails.forEach((data: DeliveryNotesDetails) => {
-            /**Parseo viejo Producto a Grid */
-            this.deliveryNotesDetailsGridTest.push(deliveryNotesDetailsGridParser(data, data.price));
-            this.deliveryNotesDetailsGrid.push(deliveryNotesDetailsGridParser(data, data.price));
-            /* Parseo viejo Producto a Detalle*/
-            /* this.deliveryNotesDetails.push(deliveryNotesDetailParser(deliveryNotesDetails, deliveryNotesDetails.price)
-            ); */
+          r.deliveryNotesDetails.forEach((modelDetail: DeliveryNotesDetails) => {
+            const model = deliveryNotesGridFromParser(modelDetail)
+
+          this.deliveryNotesDetailsList.push(model)
           });
         },
         error: () => {
@@ -166,7 +162,7 @@ export class DeliveryNotesEditComponent extends BaseComponent implements OnInit 
       });
   }
 
-  getTipo(tipo : number):any {
+/*   getTipo(tipo : number):any {
     switch (tipo){
       case  pStatusType.Entregado:
         return this.tipo = 'Entregado'
@@ -175,7 +171,7 @@ export class DeliveryNotesEditComponent extends BaseComponent implements OnInit 
       case  pStatusType.Pendiente :
        return this.tipo = 'Pendiente'
     }
-}
+} */
 getStatusName(id: number) {
   return pStatusType [id];
 }
@@ -229,17 +225,17 @@ getStatusName(id: number) {
             if (this.deliveryNotesDetails.find((item) => item.productId == data.id)) {
 
               /*Actualizo la lista que envio al back */
-              this.deliveryNotesDetails.filter(
+              this.deliveryNotesDetailsList.filter(
                 (item) => item.productId == data.id
               )[0].quantity += 1;
 
               /*Actualizo la lista de la tabla */
-              let newListElement = this.deliveryNotesDetailsGrid.filter(
+              let newListElement = this.deliveryNotesDetailsList.filter(
                 (item) => item.productId == data.id
               )[0];
 
               newListElement.quantity += 1;
-             /*   newListElement.subtotal +=
+              /*  newListElement.subtotal +=
               data.purchasePrice * newListElement.quantity;  */
 
               this.totalCalculate();
@@ -249,12 +245,12 @@ getStatusName(id: number) {
               );
             } else {
               /* Parseo dato a la grilla de Tabla */
-              const model: deliveryNotesDetailsGrid = deliveryNotesGridParser(
+              const model: deliveryNotesDetailsList = deliveryNotesGridParser(
                 data, data.purchasePrice
               );
               this.subtotal= data.purchasePrice * data.quantity
-              this.deliveryNotesDetailsGridTest.push(model);
-              this.deliveryNotesDetailsGrid = this.deliveryNotesDetailsGridTest;
+              this.deliveryNotesDetailsList.push(model);
+              this.deliveryNotesDetailsList = this.deliveryNotesDetailsTest;
 
               /* Parseo dato a Dto Factura Detalle */
               const modelDetail: DeliveryNotesDetails = deliveryNotesDetailParser(
@@ -271,7 +267,7 @@ getStatusName(id: number) {
         },
         error: () => {
           this.loading = false;
-          this.deliveryNotesDetailsGrid = [];
+          this.deliveryNotesDetails = [];
           this.formProductSearch.controls['productSearchFilter'].setValue('');
         },
       });
@@ -280,11 +276,11 @@ getStatusName(id: number) {
   totalCalculate(): void {  
     this.subtotal= 0  
     this.total = 0;
-   try {  this.deliveryNotesDetailsGridTest.forEach(data => { 
+   try {  this.deliveryNotesDetailsList.forEach(data => { 
       /**Caluclo subtotal = precio y multiplico por cantidad*/
     this.subtotal += data.quantity *  data.price ;   
  }); 
-      this.deliveryNotesDetailsGrid.forEach( (dato) => {
+      this.deliveryNotesDetailsList.forEach( (dato) => {
         /**Calculo iva restandolo al precio y multiplico por cantidad*/
        this.total +=  dato.price  * dato.quantity ;
        console.log(this.total);
@@ -303,19 +299,17 @@ getStatusName(id: number) {
         next: (r) => {
           this.loading = true;        
           if (r.data.length == 1) {
-            const model: ProductsModel = r.data[0]; 
-           
-                     
+            const model: ProductsModel = r.data[0];        
             if (
-              this.deliveryNotesDetailsGrid.find((item) => item.productId == model.id)
+              this.deliveryNotesDetails.find((item) => item.productId == model.id)
             ) {
               /*Actualizo la lista que envio al back */
-              this.deliveryNotesDetailsGrid.filter(
+              this.deliveryNotesDetails.filter(
                 (item) => item.productId == model.id
               )[0].quantity += 1;
 
               /*Actualizo la lista de la tabla */
-              this.deliveryNotesDetailsGrid.filter(
+              this.deliveryNotesDetailsList.filter(
                 (item) => item.productId == model.id
               )[0].quantity += 1;
            
@@ -327,11 +321,11 @@ getStatusName(id: number) {
 
               const product: ProductsModel = r.data[0];
               /* Parseo el Producto a la grilla de Tabla */
-              const model: deliveryNotesDetailsGrid= deliveryNotesGridParser(
+              const model: deliveryNotesDetailsList= deliveryNotesGridParser(
                 product, product.purchasePrice
               );
-              this.deliveryNotesDetailsGridTest.push(model);
-              this.deliveryNotesDetailsGrid = this.deliveryNotesDetailsGridTest;
+              this.deliveryNotesDetailsList.push(model);
+              this.deliveryNotesDetailsList = this.deliveryNotesDetailsTest;
 
               /* Parseo dato a Dto Factura Detalle */
               const modelDetail: DeliveryNotesDetails = deliveryNotesDetailParser(
@@ -341,9 +335,11 @@ getStatusName(id: number) {
               this.totalCalculate();
               this.loading = false;
               this.formProductSearch.controls['productSearchFilter'].setValue('');
+              
             }
           } else {
             this.loading = false;
+            this.openComponentProduct();
           }
         },
         error: () => {
@@ -353,6 +349,8 @@ getStatusName(id: number) {
       });
     } else {
       this.loading = false;
+      this.queryParams.filter = '';
+      this.openComponentProduct();
     }
   }
 /*   } */
@@ -369,45 +367,19 @@ getStatusName(id: number) {
     if (quantity == 0 || quantity == null) {
       quantity = 1;
     }
-    let product = this.deliveryNotesDetailsGrid.filter(
+    let product = this.deliveryNotesDetailsList.filter(
       (detail) => detail.productId == this.editId
     )[0];
 
-    this.deliveryNotesDetailsGrid.filter(
+    this.deliveryNotesDetailsList.filter(
       (detail) => detail.productId == this.editId
-    )[0].subtotal = quantity * product.price;
-    this.totalCalculate();
+    )[0]
 
-    this.deliveryNotesDetails.filter(
+    this.deliveryNotesDetailsList.filter(
       detail => detail.productId == this.editId
-      )[0].quantity= quantity;
+      )[0].quantity = quantity;
    
   }
-  changeQuantityrecievedQuantity(quantity: number): void {
-    if (quantity==0 ||quantity == null ) {
-      quantity = 0;
-    }
-    let product = this.deliveryNotesDetailsGrid.filter(
-      (detail) => detail.productId == this.editId
-    )[0];
-
-    this.deliveryNotesDetailsGrid.filter(
-      (detail) => detail.productId == this.editId
-    )[0].subtotal = quantity * product.price;
-    this.totalCalculate();
-    
-    this.deliveryNotesDetailsGrid.filter(
-      (detail) => detail.productId == this.editId
-    )[0].recievedQuantity = quantity;
-  }
-  startEditrecievedQuantity(id: number): void {
-    this.editId = id;
-  }
-
-  stopEditrecievedQuantity(): void {
-    this.editId = null;
-  }
-  
 
   openComponentSupplier(): void {
     const drawerRefSupplier = this.drawerService.create<
@@ -451,50 +423,86 @@ direction(){
 }
 
 save(): void {
- /*  if (this.isValidForm(this.formDeliveryNotes)) { */
-    if (this.deliveryNotesDetailsGrid.length == 0) {
-      console.log(this.deliveryNotesDetailsGrid.length);
-      
-      this.showMessageError('No hay Productos Seleccionados');
+  {
+    //EDITAR
+    if (this.id > 0) {
+      const model: DeliveryNotesModel = {
+        id: this.id > 0 ? this.id : 0,
+        supplierName: this.formDeliveryNotes.controls['supplierName'].value,
+        supplierCuit: this.formDeliveryNotes.controls['supplierCuit'].value,
+        supplierAddress: this.formDeliveryNotes.controls['supplierAddress'].value,
+        observation: this.formDeliveryNotes.controls['observation'].value,
+        paid: this.formDeliveryNotes.controls['paid'].value,
+        statusId: this.formDeliveryNotes.controls['statusId'].value,
+        importTotal: this.totalItems,
+        dateTime: this.formDeliveryNotes.controls['dateTime'].value,
+        deliveryNotesDetails: this.deliveryNotesDetails,
+        deliveryNotes_number:this.id,
+        supplierId: this.supplierId,
+        cancelled: ""
+      };
+
+      this.isSaving = true;
+      this.service.editDeliveryNotes(model)
+        .subscribe({
+          next: (r) => {
+            this.showNotificationSuccess(
+              'Guardado correcto',
+              `Remito editado correctamente`
+            );
+            this.isSaving = false;
+            this.router.navigate(['/home/deliveryNotes']);
+          },
+          error: (r) => {
+            this.isSaving = false;
+            this.showMessageError(r.error)
+          }
+        });
+
+      //GUARDAR
     } else {
       const model: DeliveryNotesModel = {
-        id: this.id !== undefined ? this.id : 0,
-        supplierId: this.supplierId,
+        id: 0,
         supplierName: this.formDeliveryNotes.controls['supplierName'].value,
-        supplierCuit :this.formDeliveryNotes.controls['supplierCuit'].value,
-        supplierAddress :this.formDeliveryNotes.controls['supplierAddress'].value,
-        deliveryNotes_number: 0,
+        supplierCuit: this.formDeliveryNotes.controls['supplierCuit'].value,
+        supplierAddress: this.formDeliveryNotes.controls['supplierAddress'].value,
         observation: this.formDeliveryNotes.controls['observation'].value,
-        dateTime: this.formDeliveryNotes.controls['dateTime'].value,
         paid: this.formDeliveryNotes.controls['paid'].value,
-        statusId:this.formDeliveryNotes.controls['statusId'].value,
-        cancelled:'',
-        importTotal:this.subtotal,
+        statusId: this.formDeliveryNotes.controls['statusId'].value,
+        importTotal: this.totalItems,
+        dateTime: this.formDeliveryNotes.controls['dateTime'].value,
         deliveryNotesDetails: this.deliveryNotesDetails,
-  
+        deliveryNotes_number:this.id,
+        supplierId: this.supplierId,
+        cancelled: ""
       };
+
+
       this.isSaving = true;
-      this.service.saveDeliveryNotes(model).subscribe({
-        next: () => {
-          this.showNotificationSuccess(
-            'Guardado correcto',
-            `Comprobante creado correctamente`
-          );
-          this.isSaving = false;
-          this.router.navigate(['/home/deliveryNotes']);
-        },
-        error: () => {
-          this.isSaving = false;
-          this.showMessageError('No se pudo crear el Comprobante');
-        },
-      });
+      this.service.saveDeliveryNotes(model)
+        .subscribe({
+          next: (r) => {
+            this.showNotificationSuccess(
+              'Guardado correcto',
+              `emito creado correctamente`
+            );
+            this.isSaving = false;
+            this.router.navigate(['/home/budgets']);
+          },
+          error: (r) => {
+            this.isSaving = false;
+            this.showMessageError(r.error)
+          }
+        });
     }
   }
-/* } */
+
+};
+
 
 handleOk() {
   try {
-    let newReceiptDetailsGrid = this.deliveryNotesDetailsGrid.filter(
+    let newReceiptDetailsGrid = this.deliveryNotesDetailsList.filter(
       (element) =>
         element.productId != this.popupComponent.elementSelectedToDelete
     );
@@ -503,12 +511,12 @@ handleOk() {
         element.productId != this.popupComponent.elementSelectedToDelete
     );      
       
-    if (this.deliveryNotesDetailsGrid.length == 0) {
-      this.deliveryNotesDetailsGrid = [];
-      this.deliveryNotesDetailsGridTest= [];
+    if (this.deliveryNotesDetailsList.length == 0) {
+      this.deliveryNotesDetailsList = [];
+      this.deliveryNotesDetailsList= [];
     } else {
-      this.deliveryNotesDetailsGrid = newReceiptDetailsGrid;
-      this.deliveryNotesDetailsGridTest = newReceiptDetailsGrid;
+      this.deliveryNotesDetailsList = newReceiptDetailsGrid;
+      this.deliveryNotesDetailsList = newReceiptDetailsGrid;
     }
 
     this.popupComponent.isDeleteConfirmationVisible = false;
@@ -519,11 +527,11 @@ handleOk() {
 
 msjConfirmOk() {
   try {
-    this.deliveryNotesDetailsGrid = this.deliveryNotesDetailsGrid.filter(
+    this.deliveryNotesDetailsList = this.deliveryNotesDetailsList.filter(
       (element) => element.productId != this.popupComponent.elementSelected
     );
     this.popupComponent.isConfirmationvisible = false;
-    if ((this.deliveryNotesDetailsGrid.length != 0)
+    if ((this.deliveryNotesDetailsList.length != 0)
     && this.isValidForm(this.formSupplierSearch) && this.isValidForm(this.formProductSearch)){
       this.popComponent.showConfirmation() 
     } else {
@@ -533,11 +541,13 @@ msjConfirmOk() {
 }
 
 selectPaid(value:string){
+
   this.statusPaid = value;
+  this.statusId= this.newStatusPaid
   if(value == 'si'){
-    this.formDeliveryNotes.controls['paid'].setValue('Si')
+    this.formDeliveryNotes.controls['statusId'].value
   }if(value== 'no'){
-    this.formDeliveryNotes.controls['paid'].setValue('No')
+    this.formDeliveryNotes.controls['statusId'].value
   }
 
 }

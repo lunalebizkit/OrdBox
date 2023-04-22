@@ -88,25 +88,30 @@ namespace Kiltex.SistemaGestion.Services.Services
         }
         public async Task<OperationResponse<IdResponse<long>>> AddOrUpdate(DtoRequestDeliveryNotes model, CancellationToken ct = default)
         {
-            var transaction = _contextSql.Database.BeginTransaction();
-            var deliveryNotesModel = _mapper.Map<DeliveryNotes>(model);
-            var productId = new Product();
+
+
             try
             {
-                if (deliveryNotesModel.Id == 0)
-                {
-                    if (deliveryNotesModel.SupplierId == 0)
-                    {
-                        var user = await _contextSql.Customers.AsNoTracking().FirstOrDefaultAsync(p => p.Name.ToLower() == "admin");
-                        deliveryNotesModel.SupplierId = user.Id;
-                    }
 
-                    await _contextSql.DeliveryNotes.AddAsync(deliveryNotesModel, ct).ConfigureAwait(false);
+                var newModel = _mapper.Map<DeliveryNotes>(model);
+
+                if (newModel.Id == 0)
+                {
+                    await _contextSql.DeliveryNotes.AddAsync(newModel, ct).ConfigureAwait(false);
+                }
+                else
+                {
+                    var oldDeliveryNotes = await _contextSql
+                                    .DeliveryNotes
+                                    .AsNoTracking()
+                                    .FirstAsync(p => p.Id == model.Id)
+                                    .ConfigureAwait(false);
+                    _contextSql.DeliveryNotes.Update(newModel);
                 }
 
                 await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
-                transaction.Commit();
-                return Ok(new IdResponse<long>(deliveryNotesModel.Id));
+
+                return Ok(new IdResponse<long>(newModel.Id));
             }
             catch (Exception ex)
             {
@@ -114,11 +119,12 @@ namespace Kiltex.SistemaGestion.Services.Services
                 return Error<IdResponse<long>>(new OperationExceptions(ErrorsCodes.C_999_ERROR_GENERICO, ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO)));
             }
         }
+
         public async Task<OperationResponse<IdResponse<long>>> Update(DtoRequestDeliveryNotes model, CancellationToken ct = default)
         {
             try
             {
-                if (model.Id == 0)
+                if (model.Id <= 0)
                 {
                     _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
                     return Error<IdResponse<long>>(new OperationExceptions("000", "El remito no tiene ID"));

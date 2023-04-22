@@ -29,16 +29,31 @@
         
           <div nz-col class="gutter-row" style="margin-right: 14px">
           <nz-form-item>
-            <nz-form-label nzRequired>Estado</nz-form-label>
+            <nz-form-label nzRequired nzFor="statusId">Estado</nz-form-label>
             <nz-form-control>
               <nz-select
-                id="type"
+                id="statusId"
                 formControlName="statusId"
                 [nzOptions]="type"
-                (ngModelChange)="typeSelectedChange($event)"
                 nzWidth="50px"
               >
               </nz-select>
+              <ng-template #clearQuery>
+                <i
+                  nz-icon
+                  class="ant-input-clear-icon"
+                  nzTheme="fill"
+                  nzType="close-circle"
+                  *ngIf="
+                    this.formDeliveryNotes.controls['statusId'].value !== ''
+                    "
+                  (click)="
+                    this.formDeliveryNotes.controls[
+                      'statusId'
+                    ].setValue('')
+                  "
+                ></i>
+              </ng-template>
             </nz-form-control>
           </nz-form-item>
         </div>
@@ -93,7 +108,7 @@
           </form>
         </nz-form-item>
 
-         <nz-form-item >
+         <!-- <nz-form-item >
            <nz-form-label [nzSm]="6" [nzXs]="14" nzFor="supplierDni" 
               >Dni
             </nz-form-label>
@@ -108,7 +123,7 @@
               <nz-switch style="margin-left: 5px;"
                nzCheckedChildren="seleccionado" nzUnCheckedChildren="No seleccionado" 
             ></nz-switch>
-      </nz-form-item>
+      </nz-form-item> -->
         <nz-form-item>
           <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="supplierCuit"
             >Cuit - Cuil
@@ -232,7 +247,7 @@
         [nzBordered]="true"
         nzShowPagination="false"
         style="overflow: auto"
-        [nzData]="deliveryNotesDetailsGrid"
+        [nzData]="deliveryNotesDetails"
         [nzLoading]="loading"
         nzSize= "small" 
       >
@@ -245,9 +260,9 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let data of deliveryNotesDetailsGrid"  class="small-text">
+          <tr *ngFor="let data of deliveryNotesDetails"  class="small-text">
             <td nzBreakWord>{{data.productName}}</td>
-            <td *ngIf="edit == false">
+            <td >
               <div
                 class="editable-cell"
                 [hidden]="editId === data.productId"
@@ -264,24 +279,6 @@
                 (ngModelChange)="changeQuantity($event)"
               ></nz-input-number>
             </td>
-          <td *ngIf="edit == true">
-            <div
-            class="editable-cell"
-            [hidden]="editId === data.productId"
-            (click)="startEdit(data.productId)"
-          >
-            {{ data.quantity }}
-          </div>
-          <nz-input-number
-            [hidden]="editId !== data.productId"
-            [nzMin]="1"
-            [nzMax]="10000"
-            [(ngModel)]="data.quantity"
-            (nzBlur)="stopEdit()"
-            (ngModelChange)="changeQuantityrecievedQuantity($event)"
-          ></nz-input-number>
-        </td>
-
             <td [nzAlign]="'right'">{{  this.currencyFormat(data.price) }}</td>
             <td style="text-align: center">
               <nz-space [nzSplit]="spaceSplit">
@@ -307,11 +304,7 @@
         </tbody>
         <tfoot style="background-color: #fafafa">
           <tr>
-            <td colspan="1">
-              <b>Total </b
-              ><b style="color: red">{{ this.currencyFormat(this.subtotal) }}</b>
-            </td>
-            <td></td>
+
             <td colspan="2" [nzAlign]="'right'">
               <button
                 id="actualizarbutton"
@@ -323,9 +316,6 @@
                 <i nz-icon nzType="save" nzTheme="outline"></i>Grabar
               </button>
             </td>
-            <ng-template #elseBlock>
-              <td colspan="1"></td>
-            </ng-template>
           </tr>
         </tfoot>
       </nz-table>
