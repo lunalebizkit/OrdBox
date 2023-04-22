@@ -96,6 +96,12 @@ const routes: Routes = [
         path:'budgets',
         loadChildren:()=>
         import('./budgets/budgets.module').then((m) => m.BudgetModule)
+      },
+      {
+       /*  canActivate: [AuthGuard], */
+        path: 'deliveryNotes',
+        loadChildren:()=>
+          import('./deliveryNotes/deliveryNotes.module').then((m)=> m.DeliveryNotesModule)
       }
     ],
   },
