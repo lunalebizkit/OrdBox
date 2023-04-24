@@ -24,7 +24,7 @@
           </div>
         </div>
         <div nz-row>
-          <div nz-col class="gutter-row" [nzSpan]="8">          
+          <div nz-col class="gutter-row" [nzSpan]="5">          
             <nz-form-item>
               <nz-form-label nzRequired [nzSm]="10" [nzXs]="24" nzRequired nzFor="initPeriod">Desde</nz-form-label>
               <nz-form-control [nzSm]="14" [nzXs]="24">
@@ -53,12 +53,12 @@
                 </nz-form-control>
               </nz-form-item>
           </div>
-          <div nz-col class="gutter-row" [nzSpan]="8">
+          <div nz-col class="gutter-row" [nzSpan]="9">
             <button
             nz-button
             nzSize="small"
             nzType="primary"
-            style="margin-left: 40px; margin-top:5px "
+            style="margin-left: 30px; margin-top:5px "
             (click)="getNewIvaVenta()"
             >
             <i nz-icon nzType="search" nzTheme="outline"></i>Buscar
@@ -73,6 +73,16 @@
               >
               <span nz-icon nzType="download" nzTheme="outline"></span>Exportar Excel
             </button>
+            <button
+            nz-button
+            nzSize="small"
+            nzType="primary"
+            style="margin-left: 30px; margin-top:3px; background:rgb(0, 255, 98);"
+            (click)="downloadTxt()"
+            class="btn-export"
+            >
+            <span nz-icon nzType="download" nzTheme="outline"></span>Libro Iva Ventas
+          </button>
           </div>
         </div>
       </nz-collapse-panel>
@@ -182,7 +192,7 @@
           <tbody class="small-text" >
             <tr  *ngFor="let data of periodListaVentas;">
             <td>{{ this.formaterDate(data.dateTime)}}</td>
-            <td>{{data.id}}</td>
+            <td>{{data.invoiceNumber}}</td>
             <td>{{this.getInvoiceType(data.type)}}</td>
             <td>{{data.customerName}}</td>
             <td>{{data.customerCuit  | cuit }}</td>          

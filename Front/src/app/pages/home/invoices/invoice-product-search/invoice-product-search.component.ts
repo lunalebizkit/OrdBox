@@ -46,9 +46,7 @@ export class InvoiceProductSearchComponent implements OnInit {
     @Inject(LOCALE_ID) public locale: string,
     private fb: FormBuilder) { }
 
-  ngOnInit(): void {
-    this.getData(this.queryParams);
-    
+  ngOnInit(): void { 
   }
   close(): void {
     this.drawerRef.close(this.product);

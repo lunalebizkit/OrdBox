@@ -22,6 +22,7 @@ import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { NzListModule } from 'ng-zorro-antd/list';
 
 import { InvoicesRoutingMoudule } from './invoices-routing.module';
+import { InvoiceProformaViewComponent } from './invoices-Proforma-view/invoices-Proforma-view.component';
 import { InvoicesEditComponent } from './invoices-edit/invoices-edit.component';
 import { InvoiceCustomerSearchComponent } from './invoice-customer-search/invoice-customer-search.component';
 import { InvoiceProductSearchComponent } from './invoice-product-search/invoice-product-search.component';
@@ -53,6 +54,7 @@ import { ReceiptViewDrawerComponent } from './receipt-view-drawer/receipt-view-d
     NzDividerModule,
     NzCollapseModule,
     NzSpaceModule,
+    NzCollapseModule,
     NzDatePickerModule,
     NzDescriptionsModule,
   ],
@@ -66,6 +68,7 @@ import { ReceiptViewDrawerComponent } from './receipt-view-drawer/receipt-view-d
     ReceiptEditComponent,
     ReceiptSupplierSearchComponent,
     ReceiptViewDrawerComponent,
+    InvoiceProformaViewComponent,
   ],
 })
 export class InvoicesModule {}

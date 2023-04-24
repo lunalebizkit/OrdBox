@@ -31,4 +31,13 @@ export class InvoiceIvaReportService {
       return this.api.get(`Iva/InvoiceIvaReport?from=${initPeriod}&to=${endPeriod}`, false, {headers, responseType:'blob' as 'json'})
     }
 
+    public getIvaVentasTxt(initPeriod: any,endPeriod:any): Observable<any> {
+      const headers = new HttpHeaders().set('Content-Type', 'application/json');
+      return this.api.get(`Invoice/ArchivoTxt?from=${initPeriod}&to=${endPeriod}`, false, {headers, responseType:'blob' as 'json'})
+    }
+
+    public getAlicuotaIva(initPeriod: any,endPeriod:any): Observable<any> {
+      const headers = new HttpHeaders().set('Content-Type', 'application/json');
+      return this.api.get(`Invoice/AlicuotaIvaTxt?from=${initPeriod}&to=${endPeriod}`, false, {headers, responseType:'blob' as 'json'})
+    }
 }

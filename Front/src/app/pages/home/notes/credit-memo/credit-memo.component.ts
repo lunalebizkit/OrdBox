@@ -326,7 +326,7 @@ constructor(@Inject(LOCALE_ID) public locale: string,
           filter: this.formProductSearch.controls['productSearchFilter'].value
         },
         nzClosable: false
-      });      
+      });   
       drawerRefProduct.afterClose.subscribe({
 
         next: (data: ProductsModel) => {
@@ -346,7 +346,7 @@ constructor(@Inject(LOCALE_ID) public locale: string,
                   this.totalCalculate();
                   this.changePrice(data.cardSalePrice)  
                   this.isLoading= false;
-                  this.formProductSearch.controls['productSearchFilter'].setValue('');
+                  this.formProductSearch.controls['productSearchFilter'].setValue(''); 
                 }else {
 
                   /* Parseo dato a la grilla de Tabla */
@@ -359,7 +359,7 @@ constructor(@Inject(LOCALE_ID) public locale: string,
                        
             this.totalCalculate();
             this.isLoading= false;
-            this.formProductSearch.controls['productSearchFilter'].setValue('');
+            this.formProductSearch.controls['productSearchFilter'].setValue(''); 
              }
           }},
           error: () => {
@@ -374,13 +374,14 @@ constructor(@Inject(LOCALE_ID) public locale: string,
 
   searchProduct():void {
     this.product= this.formProductSearch.controls['productSearchFilter'].value;
-    this.queryParams.filter= this.product;   
+    this.queryParams.filter= this.product;
+    if (this.isValidForm(this.formCreditMemo)) {  
     if (this.product.length > 0) {
       this.serviceProduct.getProducts(this.queryParams).subscribe({
         next: (r) => { 
-          this.isLoading= true;      
-          if (r.data.length == 1) {
-            const model : ProductsModel= r.data[0];            
+          this.isLoading= true;
+          if (r.data.length == 1) {   
+            const model : ProductsModel= r.data[0];    
             if (this.creditMemoDetails.find(item => item.productId == model.id)) {
               /*Actualizo la lista que envio al back */
                  this.creditMemoDetails.filter(item => item.productId == model.id)[0]
@@ -405,15 +406,13 @@ constructor(@Inject(LOCALE_ID) public locale: string,
                     /* Parseo dato a Dto Factura Detalle */
              const modelDetail : CreditMemoDetails = creditMemoDetailParser(product, this.iva);
              this.creditMemoDetails.push(modelDetail);           
-          this.totalCalculate();
-          this.isLoading= false;
-          this.formProductSearch.controls['productSearchFilter'].setValue('');
+             this.totalCalculate();
+             this.isLoading= false;
+            this.formProductSearch.controls['productSearchFilter'].setValue('');
           }
-            
           }else{
-            this.isLoading= false;
-            this.openComponentProduct();
-          }
+            this.isLoading= false; 
+      }
           
         },
         error: () => {
@@ -422,17 +421,17 @@ constructor(@Inject(LOCALE_ID) public locale: string,
       })
     }else{
       this.isLoading= false;
-      this.queryParams.filter= '';
-      this.openComponentProduct();
     }
+  }
   };
+  
   searchCustomer(): void {
     this.cuit =
       this.formCreditMemo.controls['customerCuit'].value;
-    if (this.cuit !== ' '){
-      this.formCreditMemo.controls['address'].setValue('customerAddress');
-      this.formCreditMemo.controls['customerCuit'].setValue('customerCuit');
-      this.formCreditMemo.controls['customerName'].setValue('customerName');
+    if (this.cuit == '00'){
+      this.formCreditMemo.controls['address'].setValue('S/D');
+      this.formCreditMemo.controls['customerCuit'].setValue('00');
+      this.formCreditMemo.controls['customerName'].setValue('admin'); 
       this.customerId= 0;
       return;
     }else{

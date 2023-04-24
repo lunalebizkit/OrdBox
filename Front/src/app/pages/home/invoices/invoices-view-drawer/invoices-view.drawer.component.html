@@ -3,9 +3,12 @@
   (onCloseClick)="close()"
   [btnReprintText]="'Reimprimir'"
   [hideReprint]="false"
+  [hideFacturaPro]="false"
   [hideClose]="true"
   [hideUpdate]="true"
   [hideSave]="true"
+  [hideCerrar]="true" 
+  [hideFacturaPro]="true"
   [hideBack]="true"
   [disabled]="invoiceNumber == 0? true:false"
   [title]="'Comprobantes de Ventas'"
@@ -13,7 +16,7 @@
   [iconBack]="'rollback'"
   [iconTitle]="'container'"
   (onReprintClick)="popupReimprimir.showConfirmation()"
- 
+
 >
 </app-header-op-buttons>
 <nz-collapse class="{{this.tipo}}">

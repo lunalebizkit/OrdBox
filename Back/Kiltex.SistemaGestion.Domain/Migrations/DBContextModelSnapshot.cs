@@ -41,6 +41,97 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                     b.ToTable("brand");
                 });
 
+            modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.Budget", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
+                    b.Property<long>("BudgetNumber")
+                        .HasColumnType("bigint")
+                        .HasColumnName("budget_number");
+
+                    b.Property<string>("CustomerAddress")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("customer_address");
+
+                    b.Property<string>("CustomerName")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("customer_name");
+
+                    b.Property<DateTime>("DateTime")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("dateTime");
+
+                    b.Property<string>("Observation")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("observation");
+
+                    b.Property<string>("Payment")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("payment");
+
+                    b.Property<decimal>("Total")
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("total");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("budget");
+                });
+
+            modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.BudgetDetail", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
+                    b.Property<long>("BudgetId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("budget_id");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("price");
+
+                    b.Property<string>("ProductCode")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("product_code");
+
+                    b.Property<long>("ProductId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("product_id");
+
+                    b.Property<string>("ProductName")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("product_name");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int")
+                        .HasColumnName("quantity");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BudgetId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("budget_detail");
+                });
+
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.Category", b =>
                 {
                     b.Property<long>("Id")
@@ -296,6 +387,105 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                     b.HasIndex("ProductId");
 
                     b.ToTable("debit_memo_details");
+                });
+
+            modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.DeliveryNotes", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
+                    b.Property<string>("Cancelled")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("cancelled");
+
+                    b.Property<DateTime>("DateTime")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("dateTime");
+
+                    b.Property<long>("DeliveryNote_number")
+                        .HasColumnType("bigint")
+                        .HasColumnName("deliveryNotes_number");
+
+                    b.Property<decimal>("ImportTotal")
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("import_total");
+
+                    b.Property<string>("Observation")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("observation");
+
+                    b.Property<string>("Paid")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("paid");
+
+                    b.Property<long>("StatusId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("status_id");
+
+                    b.Property<string>("SupplierAddress")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("supplier_address");
+
+                    b.Property<string>("SupplierCuit")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("supplier_cuit");
+
+                    b.Property<long>("SupplierId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("supplier_id");
+
+                    b.Property<string>("SupplierName")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("supplier_name");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("delivery_notes");
+                });
+
+            modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.DeliveryNotesDetails", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
+                    b.Property<long>("DeliveryNotesNumber")
+                        .HasColumnType("bigint")
+                        .HasColumnName("deliveryNotes_number");
+
+                    b.Property<long>("DeliveryNotes_Id")
+                        .HasColumnType("bigint")
+                        .HasColumnName("deliveryNotes_id");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("price");
+
+                    b.Property<long>("ProductId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("product_id");
+
+                    b.Property<string>("ProductName")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("product_name");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int")
+                        .HasColumnName("quantity");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DeliveryNotes_Id");
+
+                    b.ToTable("deliveryNotes_details");
                 });
 
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.EmailEntity", b =>
@@ -943,7 +1133,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                             FirstName = "admin",
                             IsDeleted = false,
                             LastName = "admin",
-                            Password = "$MYHASH$V1$100$K5WjB1bC/tpy4LO9+m4c0XYQHizxn8rgEbKJA0IcduCo9EZS",
+                            Password = "$MYHASH$V1$100$iURZd9ts4+Be4eRDioAxdWdYG7rdbVTxMfS/75RFWtby4riI",
                             RoleId = 1L,
                             UserName = "admin"
                         });
@@ -979,6 +1169,36 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                         .HasColumnName("observation");
 
                     b.ToTable("supplier");
+                });
+
+            modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.Budget", b =>
+                {
+                    b.HasOne("Kiltex.SistemaGestion.Domain.Model.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.BudgetDetail", b =>
+                {
+                    b.HasOne("Kiltex.SistemaGestion.Domain.Model.Budget", "Budget")
+                        .WithMany("BudgetDetails")
+                        .HasForeignKey("BudgetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Kiltex.SistemaGestion.Domain.Model.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Budget");
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.CreditMemo", b =>
@@ -1067,6 +1287,17 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                     b.Navigation("DebitMemo");
 
                     b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.DeliveryNotesDetails", b =>
+                {
+                    b.HasOne("Kiltex.SistemaGestion.Domain.Model.DeliveryNotes", "DeliveryNotes")
+                        .WithMany("DeliveryNotesDetails")
+                        .HasForeignKey("DeliveryNotes_Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("DeliveryNotes");
                 });
 
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.EmailEntity", b =>
@@ -1272,6 +1503,11 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.Budget", b =>
+                {
+                    b.Navigation("BudgetDetails");
+                });
+
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.CreditMemo", b =>
                 {
                     b.Navigation("CreditMemoDetail");
@@ -1280,6 +1516,11 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.DebitMemo", b =>
                 {
                     b.Navigation("DebitMemoDetails");
+                });
+
+            modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.DeliveryNotes", b =>
+                {
+                    b.Navigation("DeliveryNotesDetails");
                 });
 
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.Entity", b =>

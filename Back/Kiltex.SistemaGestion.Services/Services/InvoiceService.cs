@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Kiltex.SistemaGestion.Domain;
 using Kiltex.SistemaGestion.Domain.Enum;
 using Kiltex.SistemaGestion.Domain.Model;
@@ -9,6 +10,8 @@ using Kiltex.SistemaGestion.Services.ImpresoraFiscal.Printer250F;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
 using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
+using Kiltex.SistemaGestion.Services.LibroIvaDigital;
+using Kiltex.SistemaGestion.Services.LibrosIvaDigital;
 
 namespace Kiltex.SistemaGestion.Services.Services
 {
@@ -16,6 +19,7 @@ namespace Kiltex.SistemaGestion.Services.Services
     {
         private readonly PrinterStatus _config;
         private readonly IPrinter _printer;
+        private readonly ArchivosTxt _archivosTxt;
         public InvoiceService(ErrorManager logger, DBContext context, IMapper maper, IPrinter printer, PrinterStatus config) :
             base(logger, context, maper)
         {
@@ -39,8 +43,16 @@ namespace Kiltex.SistemaGestion.Services.Services
                 }
 
                 var result = _mapper.Map<DtoRequestInvoice>(factura);
-           
 
+                result.Iva10 = 0;
+                result.Iva21 = 0;
+                result.Iva27 = 0;
+                foreach (var item in result.InvoiceDetails)
+                {
+                    result.Iva10 += ((decimal)item.Iva == (decimal)10.5) ? (item.Quantity * item.Price) - (item.Quantity * item.Price) / 1.10m : 0;
+                    result.Iva21 += ((decimal)item.Iva == (decimal)21) ? (item.Quantity * item.Price) - (item.Quantity * item.Price) / 1.21m : 0;
+                    result.Iva27 += ((decimal)item.Iva == (decimal)27) ? (item.Quantity * item.Price) - (item.Quantity * item.Price) / 1.27m : 0;
+                }
                 return new OperationResponse<DtoRequestInvoice>(result);
             }
             catch (Exception ex)
@@ -55,7 +67,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             try
             {
                 model.Id = 0;
-                if (String.IsNullOrEmpty(model.CustomerName) )
+                if (String.IsNullOrEmpty(model.CustomerName))
                 {
                     _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
                     return Error<IdResponse<long>>(new OperationExceptions("000", "Datos incompletos"));
@@ -80,8 +92,8 @@ namespace Kiltex.SistemaGestion.Services.Services
                                     .Where(p => (!string.IsNullOrEmpty(request.Filter.Cuit) ? p.CustomerCuit.ToLower().Contains(request.Filter.Cuit) : true)
                                      && ((request.Filter.Number.HasValue && request.Filter.Number != 0) ? p.InvoiceNumber == request.Filter.Number : true)
                                      &&
-                                     ((!request.Filter.Date.Contains("") || request.Filter.Date != null) ? p.DateTime.Date.ToString().Contains(request.Filter.Date): true));
-                
+                                     ((!request.Filter.Date.Contains("") || request.Filter.Date != null) ? p.DateTime.Date.ToString().Contains(request.Filter.Date) : true));
+
                 var count = await query.CountAsync().ConfigureAwait(false);
 
                 var list = await query.OrderByDescending(p => p.DateTime)
@@ -106,12 +118,13 @@ namespace Kiltex.SistemaGestion.Services.Services
                 throw;
             }
         }
+
         public async Task<OperationResponse<IdResponse<long>>> AddOrUpdate(DtoRequestInvoice model, CancellationToken ct = default)
         {
             var transaction = _contextSql.Database.BeginTransaction();
             var invoiceModel = _mapper.Map<Invoice>(model);
             var productDetail = new Product();
-           try
+            try
             {
                 if (invoiceModel.Id == 0)
                 {
@@ -153,27 +166,27 @@ namespace Kiltex.SistemaGestion.Services.Services
                     {
                         var oldProduct = await _contextSql.Products.AsNoTracking().FirstAsync(p => p.Id == detail.ProductId).ConfigureAwait(false);
 
-                        productDetail= oldProduct;
-                        productDetail.UpdateStock(- detail.Quantity);
+                        productDetail = oldProduct;
+                        productDetail.UpdateStock(-detail.Quantity);
                         _contextSql.Products.Update(productDetail);
                     }
                     if (_config.Status)
                     {
                         var error = await PrintInvoice(invoiceModel, ct);
 
-                        if(error == "ErrorCliente")
+                        if (error == "ErrorCliente")
                         {
                             _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
                             return Error<IdResponse<long>>(new OperationExceptions("000", "Error al cargar cliente, compruebe el CUIT/DNI"));
                         }
 
-                        if(error == "ErrorAbrir")
+                        if (error == "ErrorAbrir")
                         {
                             _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
                             return Error<IdResponse<long>>(new OperationExceptions("000", "Error al abrir documento , intente nuevamente"));
                         }
 
-                        if(error == "ErrorImprimir")
+                        if (error == "ErrorImprimir")
                         {
                             _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
                             return Error<IdResponse<long>>(new OperationExceptions("000", "Error al imprimir item, intente con un cierre Z"));
@@ -188,7 +201,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                         invoiceModel.InvoiceNumber = long.Parse(error);
                     }
 
-                    await _contextSql.Invoices.AddAsync(invoiceModel, ct).ConfigureAwait(false);  
+                    await _contextSql.Invoices.AddAsync(invoiceModel, ct).ConfigureAwait(false);
                 }
 
                 await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
@@ -202,31 +215,208 @@ namespace Kiltex.SistemaGestion.Services.Services
             }
         }
 
+
+        #region Alicuota Digital
+
+        public async Task<OperationResponse<byte[]>> AlicuotaTxt(DateTime from, DateTime to, CancellationToken ct = default)
+        {
+            var query = await _contextSql
+                           .Invoices
+                           .Include(s => s.InvoiceDetails)
+                           .AsNoTracking()
+                           .Where(x => x.DateTime.Date >= from && x.DateTime.Date <= to).ToArrayAsync();
+
+            var newDtoDetalleResumen = new List<AlicuotaIvaDto>();
+
+
+            var tipo = 0;
+            var iva = 0;
+            var resumen = new AlicuotaIva();
+
+            StringWriter OutPutFile = new StringWriter();
+
+            try
+            {
+
+                MemoryStream ms = new MemoryStream();
+                TextWriter tw = new StreamWriter(ms);
+
+                foreach(var item in query)
+                {
+                    string sinComa = item.Total.ToString().Replace(",", "");
+                    string ivaSinComa = item.IvaTotal.ToString("F2").Replace(",", "");
+                    var newItem = _mapper.Map<AlicuotaIvaDto>(item);
+
+                    #region Condicionales Tipo
+                        if (item.Type == 2)
+                        {
+                            tipo= 6;
+                        }
+                        if (item.Type == 1)
+                        {
+                            tipo= 1;
+                        }
+
+                    #endregion
+                    
+
+                    foreach (var item2 in item.InvoiceDetails)
+                    {
+                        #region Condicionales Iva
+                            if (item2.Iva == 10.50m)
+                            {
+                                iva = 4;
+                            }
+                             if (item2.Iva == 21.00m)
+                            {
+                                iva = 5;
+                            }
+                            if (item2.Iva == 27.00m)
+                            {
+                                iva = 6;
+                            }
+                        #endregion
+                        await tw.WriteAsync
+                            (
+                                tipo.ToString().PadLeft(3, '0') +
+                                newItem.PuntoDeVenta.ToString().PadLeft(5, '0') +
+                                item.InvoiceNumber.ToString().PadLeft(20, '0') +
+                                sinComa.ToString().PadLeft(15, '0') + 
+                                iva.ToString().PadLeft(4, '0') +
+                                ivaSinComa.PadLeft(15, '0') + 
+                                "\n"
+                            );
+                    }
+                    newDtoDetalleResumen.Add(newItem);
+                }
+                tw.Flush();
+
+                byte[] bytes = ms.ToArray();
+
+                ms.Close();
+
+                return new OperationResponse<byte[]>(bytes);
+
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex);
+                throw;
+            }
+            finally
+            {
+                OutPutFile.Close();
+                OutPutFile.Dispose();
+            }
+        }
+
+        #endregion  
+
+
+        #region IvaDigital
+        public async Task<OperationResponse<byte[]>> ArchivoTxt(DateTime from, DateTime to, CancellationToken ct = default)
+        {
+            var query = await _contextSql
+                            .Invoices
+                            .Include(s => s.InvoiceDetails)
+                            .AsNoTracking()
+                            .Where(x => x.DateTime.Date >= from && x.DateTime.Date <= to).ToArrayAsync();
+
+            var newDtoDetalleResumem = new List<ArchivoTxtDto>();
+
+            var resumen = new ArchivosTxt();
+
+            StringWriter OutPutFile = new StringWriter();
+
+            {
+                try
+                {
+                    MemoryStream ms = new MemoryStream();
+                    TextWriter tw = new StreamWriter(ms);
+
+                    foreach (var item in query)
+                    {
+                        string sinComa = item.Total.ToString().Replace(",", "");
+                        var newItem = _mapper.Map<ArchivoTxtDto>(item);
+
+                            await tw.WriteAsync
+                                (
+                                    item.DateTime.ToString("yyyyMMdd") +
+                                    item.Type.ToString().PadLeft(3, '0') +
+                                    newItem.PuntoDeVenta.PadLeft(5, '0') +
+                                    item.InvoiceNumber.ToString().PadLeft(20, '0') +
+                                    item.InvoiceNumber.ToString().PadLeft(20, '0') +
+                                    "80" +
+                                    item.CustomerCuit.ToString().PadLeft(20, '0') +
+                                    item.CustomerName.PadRight(30, ' ') +
+                                    sinComa.PadLeft(15, '0') +
+                                    newItem.NetoGravado +
+                                    newItem.NoCategorizados +
+                                    newItem.OperacionesExentas +
+                                    newItem.ImpuestosNacionales +
+                                    newItem.IngresosBrutos +
+                                    newItem.ImpuestosMunicipales +
+                                    newItem.ImpuestosInternos +
+                                    newItem.CodigoDeMoneda +
+                                    newItem.TipoDeCambio +
+                                    newItem.AlicuotaIva +
+                                    newItem.CodigoDeOperacion + 
+                                    newItem.OtrosTributos +
+                                    item.DateTime.ToString("yyyyMMdd") +
+                                    '\n'
+
+                               );
+                        newDtoDetalleResumem.Add(newItem);
+                    }
+                    tw.Flush();
+
+                    byte[] bytes = ms.ToArray();
+
+                    ms.Close();
+
+                    return new OperationResponse<byte[]>(bytes);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    throw;
+                }
+                finally
+                { 
+                    OutPutFile.Close();
+                    OutPutFile.Dispose();
+                }
+            }
+        }
+        #endregion 
+
+
+        #region Imprimir Factura En impresora Fiscal
         public async Task<string> PrintInvoice(Invoice model, CancellationToken ct = default)
         {
 
             //MANEJO DE ERRORES
-            var cargarCliente = await _printer.CargarDatosCliente(model.CustomerName, model.CustomerCuit,model.CustomerAddress, (ETypeReceipt)model.Type).ConfigureAwait(false);
+            var cargarCliente = await _printer.CargarDatosCliente(model.CustomerName, model.CustomerCuit, model.CustomerAddress, (ETypeReceipt)model.Type).ConfigureAwait(false);
 
-            if(cargarCliente == null)
+            if (cargarCliente == null)
             {
                 await _printer.CerrarJornadaFiscal();
                 return "ErrorCliente";
             }
 
-            var openDoc = await _printer.OpenInvoice((ETypeReceipt)model.Type, model.CustomerName,eTypeDocumentClient.Cuil, model.CustomerAddress).ConfigureAwait(false);
+            var openDoc = await _printer.OpenInvoice((ETypeReceipt)model.Type, model.CustomerName, eTypeDocumentClient.Cuil, model.CustomerAddress).ConfigureAwait(false);
 
-            if(openDoc == null)
+            if (openDoc == null)
             {
                 await _printer.CloseFactura(1, model.CustomerName).ConfigureAwait(false);
                 return "ErrorAbrir";
             }
             //TODO por cada item mandar a imprimir
-            foreach(var item in model.InvoiceDetails)
-            {               
-                var imprimir = await _printer.PrintItem(item.ProductName,item.Quantity,item.Price,item.Iva,item.ProductCode.ToString()).ConfigureAwait(false);
-                
-                if(imprimir == null)
+            foreach (var item in model.InvoiceDetails)
+            {
+                var imprimir = await _printer.PrintItem(item.ProductName, item.Quantity, item.Price, item.Iva, item.ProductCode.ToString()).ConfigureAwait(false);
+
+                if (imprimir == null)
                 {
                     await _printer.CloseFactura(1, model.CustomerName).ConfigureAwait(false);
                     return "ErrorImprimir";
@@ -234,8 +424,8 @@ namespace Kiltex.SistemaGestion.Services.Services
             }
 
             var closeFactura = await _printer.CloseFactura(1, model.CustomerName).ConfigureAwait(false);
-            
-            if(closeFactura == null)
+
+            if (closeFactura == null)
             {
                 await _printer.CerrarJornadaFiscal();
                 return "ErrorCerrar";
@@ -244,5 +434,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             return closeFactura;
 
         }
+
+        #endregion
     }
 }

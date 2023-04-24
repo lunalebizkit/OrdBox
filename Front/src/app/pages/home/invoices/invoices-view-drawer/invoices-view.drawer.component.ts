@@ -18,6 +18,7 @@ import { InvoiceDetails, InvoiceModel } from "../model/invoice.model";
   styleUrls: ['./invoices-view.drawer.component.css'],
 })
 export class InvoicesViewDrawerComponent extends BaseComponent implements OnInit {
+  router: any;
   @Input() set filter(value: number) {
     this.id = value;
 }
@@ -100,8 +101,6 @@ export class InvoicesViewDrawerComponent extends BaseComponent implements OnInit
         return this.tipo = 'factA'
       case  eInvoiceType.B :
        return this.tipo = 'factB'
-      case  eInvoiceType.C :
-       return this.tipo = 'factC'
     }
   }
 
@@ -120,8 +119,6 @@ export class InvoicesViewDrawerComponent extends BaseComponent implements OnInit
   
 /*Evento Reimprimir una factura */ 
 reimprimir(): void{
-  console.log(this.type);
- console.log(this.invoiceNumber);
  this.service.Reprint(this.type, this.invoiceNumber).subscribe({
   next: (r:any)=>
   {
@@ -151,6 +148,7 @@ hideReprint() {
   }
 
 }
+
 
 }
 

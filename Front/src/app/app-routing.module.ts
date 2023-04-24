@@ -1,5 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+import { BudgetsViewComponent } from './pages/home/budgets/budgets-view/budgets-view.component';
+import { DeliveryNotesPdfComponent } from './pages/home/deliveryNotes/deliveryNotes-pdf/deliveryNotes-pdf.component';
 
 const routes: Routes = [
   
@@ -7,7 +9,11 @@ const routes: Routes = [
  {
   path:'auth', loadChildren: ()=>import('./pages/auth/security-auth.routing').then(m => m.SecurityAuthRoutingModule)},
 
-  {path: 'home', loadChildren: ()=> import('./pages/home/home.module').then(m => m.HomeModule)}
+  {path: 'home', loadChildren: ()=> import('./pages/home/home.module').then(m => m.HomeModule)},
+
+  {path:'_/:id',component:BudgetsViewComponent},
+
+  {path:'__/:id',component:DeliveryNotesPdfComponent}
 
   
 ];
