@@ -127,6 +127,8 @@ namespace Kiltex.SistemaGestion.Services.Services
 
                     var regex = new Regex(@"^-?[0-9][0-9,\.]+$");
 
+
+                    #region VERIFICACIONES
                     //Verifico que el DNI O CUIT no tenga letras
                     if (!regex.IsMatch(model.CustomerCuit))
                     {
@@ -152,6 +154,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                         _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
                         return Error<IdResponse<long>>(new OperationExceptions("000", "Error al cargar cliente, verifique DNI"));
                     }
+                    #endregion
 
                     foreach (var detail in invoiceModel.InvoiceDetails)
                     {
@@ -165,7 +168,9 @@ namespace Kiltex.SistemaGestion.Services.Services
                     {
                         var error = await PrintInvoice(invoiceModel, ct);
 
-                        if(error == "ErrorCliente")
+                    #region ERRORES
+
+                        if (error == "ErrorCliente")
                         {
                             _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
                             return Error<IdResponse<long>>(new OperationExceptions("000", "Error al cargar cliente, compruebe el CUIT/DNI"));
@@ -188,6 +193,9 @@ namespace Kiltex.SistemaGestion.Services.Services
                             _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
                             return Error<IdResponse<long>>(new OperationExceptions("000", "Error al cerrar documento, intente con un cierre Z"));
                         }
+
+
+                        #endregion
 
                         invoiceModel.InvoiceNumber = long.Parse(error);
                     }
@@ -251,7 +259,6 @@ namespace Kiltex.SistemaGestion.Services.Services
 
                     #endregion
                     
-
                     foreach (var item2 in item.InvoiceDetails)
                     {
                         #region Condicionales Iva
@@ -268,6 +275,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                                 iva = 6;
                             }
                         #endregion
+
                         await tw.WriteAsync
                             (
                                 tipo.ToString().PadLeft(3, '0') +
@@ -323,22 +331,43 @@ namespace Kiltex.SistemaGestion.Services.Services
             {
                 try
                 {
+                    var tipoComprobante = 0;
+                    var tipoDocumento = "";
                     MemoryStream ms = new MemoryStream();
                     TextWriter tw = new StreamWriter(ms);
 
                     foreach (var item in query)
                     {
+                        if(item.Type == 2)
+                        {
+                            tipoComprobante = 6;
+                        }
+
+                        if (item.Type == 1)
+                        {
+                            tipoComprobante = 1;
+                        }
+
+                        if(item.CustomerCuit.Length == 8)
+                        {
+                            tipoDocumento = "96";
+                        }
+
+                        if (item.CustomerCuit.Length == 11)
+                        {
+                            tipoDocumento = "80";
+                        }
                         string sinComa = item.Total.ToString().Replace(",", "");
                         var newItem = _mapper.Map<ArchivoTxtDto>(item);
-
+                        
                             await tw.WriteAsync
                                 (
                                     item.DateTime.ToString("yyyyMMdd") +
-                                    item.Type.ToString().PadLeft(3, '0') +
+                                    tipoComprobante.ToString().PadLeft(3, '0') +
                                     newItem.PuntoDeVenta.PadLeft(5, '0') +
                                     item.InvoiceNumber.ToString().PadLeft(20, '0') +
                                     item.InvoiceNumber.ToString().PadLeft(20, '0') +
-                                    "80" +
+                                    tipoDocumento +
                                     item.CustomerCuit.ToString().PadLeft(20, '0') +
                                     item.CustomerName.PadRight(30, ' ') +
                                     sinComa.PadLeft(15, '0') +
