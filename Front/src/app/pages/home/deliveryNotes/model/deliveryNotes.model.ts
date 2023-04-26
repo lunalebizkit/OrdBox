@@ -28,7 +28,7 @@ export interface deliveryNotesDetailsList {
     productName: string;
     quantity: number;
     price: number;
- /*    subtotal:number */
+/*     subtotal:number */
   }
 export function deliveryNotesGridParser(value: any, price:number ) {
     return {
@@ -36,7 +36,7 @@ export function deliveryNotesGridParser(value: any, price:number ) {
       productName: value.description,
       price: value.purchasePrice,
       quantity:1,
-     /*  subtotal: price,  */
+      subtotal: price, 
     };
   } export function deliveryNotesGridFromParser(value: any) {
     return {

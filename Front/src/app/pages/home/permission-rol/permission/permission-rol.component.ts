@@ -45,7 +45,7 @@ export class PermissionRolComponent extends BaseComponent implements OnInit {
         super(notificacionService, el, message);
         this.form = this.fb.group({
             roleId: ['', Validators.required],
-            permissions: [[], Validators.required]
+            permissions: [[]]
         });
     }
 
@@ -111,10 +111,11 @@ export class PermissionRolComponent extends BaseComponent implements OnInit {
                 })                   
             ;
             this.listComplete = newListOfPermissions
-        }  else{
-            this.listComplete= this.list;
-        };
+        }else{
+
         this.form.controls['permissions'].setValue(this.permissionIdList);          
+        }
+      
     };
 
     msjConfirmOk() {

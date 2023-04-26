@@ -68,7 +68,6 @@ export class UsersEditDrawerComponent extends BaseComponent implements OnInit {
    permissionRol = [];
    permissionRolList: PermissionRol[] = [];
 
-
     constructor(
         private service: UserService,
         private servicePermission: PermissionRolService,
@@ -76,14 +75,15 @@ export class UsersEditDrawerComponent extends BaseComponent implements OnInit {
         el: ElementRef,
         message: NzMessageService,
         private fb: FormBuilder,
-        private drawerRef: NzDrawerRef<string>
+        private drawerRef: NzDrawerRef<string>,
     ) {
         super(notificacionService, el, message);
         this.form = this.fb.group({
             firstName: ['', [Validators.required]],
             lastName: ['', [Validators.required]],
             userName: ['', [Validators.required]],
-            password: ['', [Validators.required]],
+            password: [''],
+            checkpassword:[''],
             email: ['', [Validators.email]],
             roleId: ['', [Validators.required]],
 
@@ -128,41 +128,9 @@ export class UsersEditDrawerComponent extends BaseComponent implements OnInit {
     };
     rolSelectedChange(id: any): void {
         this.rolSelected = id;
-        this.renderOwnPermissions();
     };
 
-    renderOwnPermissions(): void {  
-        this.permissionIdList= [];   
-        let newListOfPermissions: TransferItem[] = [];
-        let newListOfPermissionsRight: TransferItem[] = [];
-        let permission = this.permissionRolList.filter((item: any) => item.id == this.rolSelected)[0];
 
-        if (permission.permissions.length > 0){
-
-            permission.permissions.forEach(element => {
-                newListOfPermissionsRight.push({ key: element.id, title: element.name, direction: 'right', disabled: false })
-            });
-            
-            this.list.forEach((item, index) => {  
-                if (newListOfPermissionsRight.find( (element) => element.title == item.title && element.direction === 'right')){
-                    let newEditPermission: TransferItem = newListOfPermissionsRight.filter(p => p.title == item.title && p.direction != item.direction)[0];
-                    newEditPermission.direction= 'right';
-
-                    this.permissionIdList.push(newEditPermission['key']);
-
-                  newListOfPermissions.push(newEditPermission);
-                }
-                else{
-                    newListOfPermissions.push(item);
-                }               
-                })                   
-            ;
-            this.listComplete = newListOfPermissions
-        }  else{
-            this.listComplete= this.list;
-        };
-        this.form.controls['permissions'].setValue(this.permissionIdList);          
-    };
     getUser(id: number): void {
         if (id != 0)
         this.service.getById(id).subscribe({
@@ -183,32 +151,35 @@ export class UsersEditDrawerComponent extends BaseComponent implements OnInit {
     save(): void {
         this.updateConfirmValidator(); 
         if (this.isValidForm(this.form)) {
-            const model: UserModel = {
-                id: this.id !== undefined ? this.id : 0,
-                firstName: this.form.controls['firstName'].value,
-                lastName: this.form.controls['lastName'].value,
-                userName: this.form.controls['userName'].value,
-                password: this.form.controls['password'].value,
-                email: this.form.controls['email'].value,
-                roleId: this.form.controls['roleId'].value,
-            };
-            this.isSaving = true;
-            this.service.saveUser(model)
-            .subscribe({
-                next: (r)=>{
-                    this.showNotificationSuccess(
-                        'Guardado correcto',
-                        `Se guardo correctamente el usuario ${model.userName}`
-                    );
-                    this.isSaving = false;
-                   this.close(r.id);
-                },
-                error: ()=>{
-                    this.isSaving = false;
-                    this.showMessageError('No se pudo Guardar el usuario');
-                    this.close();
-                }
-            })}   
+            if(this.id > 0){
+                const model: UserModel = {
+                    id: this.id !== undefined ? this.id : 0,
+                    firstName: this.form.controls['firstName'].value,
+                    lastName: this.form.controls['lastName'].value,
+                    userName: this.form.controls['userName'].value,
+                    password:this.form.controls['password'].value,
+                    email: this.form.controls['email'].value,
+                    roleId: this.form.controls['roleId'].value,
+                };
+                this.isSaving = true;
+                this.service.saveUser(model)
+                .subscribe({
+                    next: (r)=>{
+                        this.showNotificationSuccess(
+                            'Guardado correcto',
+                            `Se edito correctamente el usuario ${model.userName}`
+                        );
+                        this.isSaving = false;
+                       this.close(r.id);
+                    },
+                    error: ()=>{
+                        this.isSaving = false;
+                        this.showMessageError('No se pudo editar el usuario');
+                        this.close();
+                    }
+                })
+            }
+        }   
     };
     close(id: number | void): void {
         this.drawerRef.close(id);
@@ -218,11 +189,12 @@ export class UsersEditDrawerComponent extends BaseComponent implements OnInit {
      ** Muestra los inputs para cambiar la constraseña y los hace obligatorios
      */
      showPasswordChangeBox(): void {
+        this.showPasswordChange = false;
         this.form.controls['password'].setValidators([Validators.required]);
         this.form.get('password')!.updateValueAndValidity();
         this.form.controls['checkpassword'].setValidators([Validators.required, this.confirmationValidator]);
         this.form.get('checkpassword')!.updateValueAndValidity();
-        this.showPasswordChange = true;
+     
     }
 
     /*
@@ -230,7 +202,7 @@ export class UsersEditDrawerComponent extends BaseComponent implements OnInit {
      */
     updateConfirmValidator(): void {
         Promise.resolve().then(() => this.form.controls['password'].updateValueAndValidity());
-        //  Promise.resolve().then(() => this.form.controls.checkpassword.updateValueAndValidity());
+        Promise.resolve().then(() => this.form.controls["checkpassword"].updateValueAndValidity());
     }
 
     confirmationValidator = (control: FormControl): { [s: string]: boolean } => {

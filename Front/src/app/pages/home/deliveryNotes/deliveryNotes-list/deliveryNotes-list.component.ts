@@ -86,7 +86,6 @@ export class DeliveryNotesListComponent implements OnInit {
           this.totalItems = r.totalCount;
           this.loading = false;
           this.selectedIndex = 0;
-          console.log(this.totalItems);
           this.selectedDeliveryNotes = this.deliveryNotesList[this.selectedIndex];
           document.getElementById(this.selectedIndex.toString())?.focus();
         },
@@ -118,7 +117,7 @@ export class DeliveryNotesListComponent implements OnInit {
   
     onDoubleClicked(datos: DeliveryNotesModel) {
       this.id = datos.id;
-      this.openComponentDebitMemoView()
+      this.openComponentDeliveryNotesView()
       
     }
   
@@ -201,7 +200,7 @@ export class DeliveryNotesListComponent implements OnInit {
       }
     }
 
-    openComponentDebitMemoView(): void {
+    openComponentDeliveryNotesView(): void {
       const drawerRefCustomer = this.drawerService.create<
         DeliveryNotesViewDrawerComponent,
         { filter: number },
