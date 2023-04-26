@@ -1,0 +1,82 @@
+<app-header-op-buttons
+  #header
+  (onCloseClick)="close()"
+  [hideClose]="true"
+  [hideUpdate]="true"
+  [hideSave]="true"
+  [hideBack]="true"
+  [title]="'Remito'"
+  [iconBack]="'rollback'"
+  [iconTitle]="'container'"
+>
+</app-header-op-buttons>
+<nz-collapse >
+  <nz-collapse-panel nzHeader="Datos Remito" [nzActive]="true"  class="{{this.tipo}}">
+    
+        <nz-descriptions nzSize="middle" [nzColumn]="3" style="margin-left: 100px; padding: 5px;">
+          <nz-descriptions-item nzTitle=" * Fecha" >
+          <a>{{ dateTime ? (dateTime | date : "YYYY-MM-dd") : "N/A" }} </a>
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle=" * Estado" >
+            {{ this.getStatusName(this.statusId) }}
+        </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="* Nro Remito" >
+              {{ this.deliveryNotesNumber | number: '8.0-0' | noComma}}
+          </nz-descriptions-item>  
+        <nz-descriptions-item nzTitle="* Cliente" >
+         {{this.supplierName}} </nz-descriptions-item
+        > 
+          <nz-descriptions-item nzTitle=" * Cuit" >
+            {{this.supplierCuit}}</nz-descriptions-item
+          >
+          <nz-descriptions-item nzTitle=" * Pagado" >
+            {{this.paid}}</nz-descriptions-item
+          >
+          <nz-descriptions-item nzTitle=" * Dirección" >
+            {{this.supplierAddress}}
+          </nz-descriptions-item>
+        </nz-descriptions>
+      <nz-descriptions  nzSize="small" [nzColumn]="3" style="margin-left: 100px; padding: 5px;">
+        <nz-descriptions-item nzTitle=" * Observación" >
+          {{this.observation}}
+        </nz-descriptions-item>  
+      </nz-descriptions> 
+  </nz-collapse-panel>
+</nz-collapse>
+<nz-collapse   class="{{this.tipo}}">
+  <nz-collapse-panel
+    nzHeader="Detalle Remito"
+    [nzActive]="true"
+    [nzShowArrow]="true"
+  
+  >
+  <nz-content>
+    <nz-table [nzBordered]="true" nzTemplateMode [nzSize]="'small'">
+      <thead>
+        <tr>
+          <th>Producto</th>
+          <th [nzAlign]="'center'">Cantidad</th>
+          <th [nzAlign]="'center'">Precio Unidad</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let data of deliveryNotesDetails">
+          <td>{{ data.productName}}</td>
+          <td [nzAlign]="'right'">{{ data.quantity }}</td>
+          <td [nzAlign]="'right'">{{ this.currencyFormat(data.price) }}</td>
+        </tr>
+      </tbody>
+       <tfoot  class="{{this.tipo}}">
+        <tr> 
+          <td colspan="8" [nzAlign]="'right'" >
+            <b>Total </b
+            ><span style="color: blue"
+              > {{this.currencyFormat(this.importTotal)}}
+            </span>
+          </td>
+        </tr>
+      </tfoot>
+    </nz-table>
+  </nz-content>
+  </nz-collapse-panel>
+</nz-collapse>

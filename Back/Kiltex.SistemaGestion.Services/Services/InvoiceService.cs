@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Kiltex.SistemaGestion.Domain;
 using Kiltex.SistemaGestion.Domain.Enum;
 using Kiltex.SistemaGestion.Domain.Model;
@@ -42,8 +43,16 @@ namespace Kiltex.SistemaGestion.Services.Services
                 }
 
                 var result = _mapper.Map<DtoRequestInvoice>(factura);
-           
 
+                result.Iva10 = 0;
+                result.Iva21 = 0;
+                result.Iva27 = 0;
+                foreach (var item in result.InvoiceDetails)
+                {
+                    result.Iva10 += ((decimal)item.Iva == (decimal)10.5) ? (item.Quantity * item.Price) - (item.Quantity * item.Price) / 1.10m : 0;
+                    result.Iva21 += ((decimal)item.Iva == (decimal)21) ? (item.Quantity * item.Price) - (item.Quantity * item.Price) / 1.21m : 0;
+                    result.Iva27 += ((decimal)item.Iva == (decimal)27) ? (item.Quantity * item.Price) - (item.Quantity * item.Price) / 1.27m : 0;
+                }
                 return new OperationResponse<DtoRequestInvoice>(result);
             }
             catch (Exception ex)
@@ -58,7 +67,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             try
             {
                 model.Id = 0;
-                if (String.IsNullOrEmpty(model.CustomerName) )
+                if (String.IsNullOrEmpty(model.CustomerName))
                 {
                     _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
                     return Error<IdResponse<long>>(new OperationExceptions("000", "Datos incompletos"));
@@ -83,8 +92,8 @@ namespace Kiltex.SistemaGestion.Services.Services
                                     .Where(p => (!string.IsNullOrEmpty(request.Filter.Cuit) ? p.CustomerCuit.ToLower().Contains(request.Filter.Cuit) : true)
                                      && ((request.Filter.Number.HasValue && request.Filter.Number != 0) ? p.InvoiceNumber == request.Filter.Number : true)
                                      &&
-                                     ((!request.Filter.Date.Contains("") || request.Filter.Date != null) ? p.DateTime.Date.ToString().Contains(request.Filter.Date): true));
-                
+                                     ((!request.Filter.Date.Contains("") || request.Filter.Date != null) ? p.DateTime.Date.ToString().Contains(request.Filter.Date) : true));
+
                 var count = await query.CountAsync().ConfigureAwait(false);
 
                 var list = await query.OrderByDescending(p => p.DateTime)
@@ -115,7 +124,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             var transaction = _contextSql.Database.BeginTransaction();
             var invoiceModel = _mapper.Map<Invoice>(model);
             var productDetail = new Product();
-           try
+            try
             {
                 if (invoiceModel.Id == 0)
                 {
@@ -160,8 +169,8 @@ namespace Kiltex.SistemaGestion.Services.Services
                     {
                         var oldProduct = await _contextSql.Products.AsNoTracking().FirstAsync(p => p.Id == detail.ProductId).ConfigureAwait(false);
 
-                        productDetail= oldProduct;
-                        productDetail.UpdateStock(- detail.Quantity);
+                        productDetail = oldProduct;
+                        productDetail.UpdateStock(-detail.Quantity);
                         _contextSql.Products.Update(productDetail);
                     }
                     if (_config.Status)
@@ -176,13 +185,13 @@ namespace Kiltex.SistemaGestion.Services.Services
                             return Error<IdResponse<long>>(new OperationExceptions("000", "Error al cargar cliente, compruebe el CUIT/DNI"));
                         }
 
-                        if(error == "ErrorAbrir")
+                        if (error == "ErrorAbrir")
                         {
                             _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
                             return Error<IdResponse<long>>(new OperationExceptions("000", "Error al abrir documento , intente nuevamente"));
                         }
 
-                        if(error == "ErrorImprimir")
+                        if (error == "ErrorImprimir")
                         {
                             _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
                             return Error<IdResponse<long>>(new OperationExceptions("000", "Error al imprimir item, intente con un cierre Z"));
@@ -200,7 +209,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                         invoiceModel.InvoiceNumber = long.Parse(error);
                     }
 
-                    await _contextSql.Invoices.AddAsync(invoiceModel, ct).ConfigureAwait(false);  
+                    await _contextSql.Invoices.AddAsync(invoiceModel, ct).ConfigureAwait(false);
                 }
 
                 await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
@@ -417,27 +426,27 @@ namespace Kiltex.SistemaGestion.Services.Services
         {
 
             //MANEJO DE ERRORES
-            var cargarCliente = await _printer.CargarDatosCliente(model.CustomerName, model.CustomerCuit,model.CustomerAddress, (ETypeReceipt)model.Type).ConfigureAwait(false);
+            var cargarCliente = await _printer.CargarDatosCliente(model.CustomerName, model.CustomerCuit, model.CustomerAddress, (ETypeReceipt)model.Type).ConfigureAwait(false);
 
-            if(cargarCliente == null)
+            if (cargarCliente == null)
             {
                 await _printer.CerrarJornadaFiscal();
                 return "ErrorCliente";
             }
 
-            var openDoc = await _printer.OpenInvoice((ETypeReceipt)model.Type, model.CustomerName,eTypeDocumentClient.Cuil, model.CustomerAddress).ConfigureAwait(false);
+            var openDoc = await _printer.OpenInvoice((ETypeReceipt)model.Type, model.CustomerName, eTypeDocumentClient.Cuil, model.CustomerAddress).ConfigureAwait(false);
 
-            if(openDoc == null)
+            if (openDoc == null)
             {
                 await _printer.CloseFactura(1, model.CustomerName).ConfigureAwait(false);
                 return "ErrorAbrir";
             }
             //TODO por cada item mandar a imprimir
-            foreach(var item in model.InvoiceDetails)
-            {               
-                var imprimir = await _printer.PrintItem(item.ProductName,item.Quantity,item.Price,item.Iva,item.ProductCode.ToString()).ConfigureAwait(false);
-                
-                if(imprimir == null)
+            foreach (var item in model.InvoiceDetails)
+            {
+                var imprimir = await _printer.PrintItem(item.ProductName, item.Quantity, item.Price, item.Iva, item.ProductCode.ToString()).ConfigureAwait(false);
+
+                if (imprimir == null)
                 {
                     await _printer.CloseFactura(1, model.CustomerName).ConfigureAwait(false);
                     return "ErrorImprimir";
@@ -445,8 +454,8 @@ namespace Kiltex.SistemaGestion.Services.Services
             }
 
             var closeFactura = await _printer.CloseFactura(1, model.CustomerName).ConfigureAwait(false);
-            
-            if(closeFactura == null)
+
+            if (closeFactura == null)
             {
                 await _printer.CerrarJornadaFiscal();
                 return "ErrorCerrar";

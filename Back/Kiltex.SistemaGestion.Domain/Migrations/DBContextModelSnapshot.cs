@@ -389,6 +389,105 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                     b.ToTable("debit_memo_details");
                 });
 
+            modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.DeliveryNotes", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
+                    b.Property<string>("Cancelled")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("cancelled");
+
+                    b.Property<DateTime>("DateTime")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("dateTime");
+
+                    b.Property<long>("DeliveryNote_number")
+                        .HasColumnType("bigint")
+                        .HasColumnName("deliveryNotes_number");
+
+                    b.Property<decimal>("ImportTotal")
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("import_total");
+
+                    b.Property<string>("Observation")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("observation");
+
+                    b.Property<string>("Paid")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("paid");
+
+                    b.Property<long>("StatusId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("status_id");
+
+                    b.Property<string>("SupplierAddress")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("supplier_address");
+
+                    b.Property<string>("SupplierCuit")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("supplier_cuit");
+
+                    b.Property<long>("SupplierId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("supplier_id");
+
+                    b.Property<string>("SupplierName")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("supplier_name");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("delivery_notes");
+                });
+
+            modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.DeliveryNotesDetails", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
+                    b.Property<long>("DeliveryNotesNumber")
+                        .HasColumnType("bigint")
+                        .HasColumnName("deliveryNotes_number");
+
+                    b.Property<long>("DeliveryNotes_Id")
+                        .HasColumnType("bigint")
+                        .HasColumnName("deliveryNotes_id");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("price");
+
+                    b.Property<long>("ProductId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("product_id");
+
+                    b.Property<string>("ProductName")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("product_name");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int")
+                        .HasColumnName("quantity");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DeliveryNotes_Id");
+
+                    b.ToTable("deliveryNotes_details");
+                });
+
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.EmailEntity", b =>
                 {
                     b.Property<long>("Id")
@@ -1034,7 +1133,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                             FirstName = "admin",
                             IsDeleted = false,
                             LastName = "admin",
-                            Password = "$MYHASH$V1$100$Wgi8is+beJ6cgNAJjav20XLhoq5NuUqIJ1agZOHb1jiVKn2G",
+                            Password = "$MYHASH$V1$100$iURZd9ts4+Be4eRDioAxdWdYG7rdbVTxMfS/75RFWtby4riI",
                             RoleId = 1L,
                             UserName = "admin"
                         });
@@ -1188,6 +1287,17 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                     b.Navigation("DebitMemo");
 
                     b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.DeliveryNotesDetails", b =>
+                {
+                    b.HasOne("Kiltex.SistemaGestion.Domain.Model.DeliveryNotes", "DeliveryNotes")
+                        .WithMany("DeliveryNotesDetails")
+                        .HasForeignKey("DeliveryNotes_Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("DeliveryNotes");
                 });
 
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.EmailEntity", b =>
@@ -1406,6 +1516,11 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.DebitMemo", b =>
                 {
                     b.Navigation("DebitMemoDetails");
+                });
+
+            modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.DeliveryNotes", b =>
+                {
+                    b.Navigation("DeliveryNotesDetails");
                 });
 
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.Entity", b =>

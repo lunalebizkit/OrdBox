@@ -92,6 +92,10 @@ namespace Kiltex.SistemaGestion.Domain
         public virtual DbSet<Budget>Budgets { get; set; }
         public virtual DbSet<BudgetDetail> BudgetDetails { get; set; }
         
+        public virtual DbSet<DeliveryNotes> DeliveryNotes { get; set; }
+        public virtual DbSet<DeliveryNotesDetails> DeliveryNotesDetails { get; set; }
+
+
         //private static void InitialRoles(ModelBuilder modelBuilder)
         //{
         //    modelBuilder.Entity<Rol>().HasData(

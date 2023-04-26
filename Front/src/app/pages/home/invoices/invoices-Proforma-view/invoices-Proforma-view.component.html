@@ -1,69 +1,59 @@
-<app-header-op-buttons 
-#header 
-[btnCerrarText]="'Cerrar'" 
-[btnPrintText]="'Imprimir'" 
-[hideSave]="true"
-[hideBack]="true" 
-[hideCerrar]="false" 
-[hideFacturaPro]="true"
-[hidePrint]="false" 
-[iconPrint]="'file-excel'" 
-[hideTag]="true"
-[title]="'Factura Proforma'" 
-(onCerrarClick)="closeWindow()" 
-(click)="imprimir()">
+<app-header-op-buttons #header [btnCerrarText]="'Cerrar'" [btnPrintText]="'Imprimir'" [hideSave]="true"
+  [hideBack]="true" [hideCerrar]="false" [hideFacturaPro]="true" [hidePrint]="false" [iconPrint]="'file-excel'"
+  [hideTag]="true" [title]="'Factura Proforma'" (onCerrarClick)="closeWindow()" (click)="imprimir()">
 </app-header-op-buttons>
 
 <div #pdftable id="pdf">
- 
+
   <nz-row id="contenedor">
-    
+
     <nz-col>
-      
+
       <div id="izquierdo">
-        <h1 >FACTURA PROFORMA</h1> 
-        <h3>Cliente:  {{this.customerName}}</h3>
-        <p>CUIT: {{this.customerCuit | cuit}}</p>
-        <p> Dirección: {{this.customerAddress}}</p>
+        <h1>FACTURA PROFORMA</h1>
+        <p style="font-size: 18px;">Cliente: {{this.customerName}}</p>
+        <p style="font-size: 18px;">CUIT: {{this.customerCuit | cuit}}</p>
+        <p style="font-size: 18px;"> Dirección: {{this.customerAddress}}</p>
         <h4><strong>Fecha {{this.dateTime | date: 'dd/MM/yyyy'}}</strong></h4>
       </div>
 
       <div id="derecho">
-        <img class="img" style=" margin-right:5px;" nz-image width="60px" src="../../../../../assets/img/dantesLogo1.png"  alt="ordbox"/>
-   
+        <img class="img" style=" margin-right:5px;" nz-image width="70px"
+          src="../../../../../assets/img/dantesLogo1.png" alt="ordbox" />
+
         <h2>REFRIGERACION DANTE</h2>
-        <p>20-08159465-8</p>
-        <p>Dante Cesar Quercetti</p>
-        <p>Pirovano 375 San Martin - Mza</p>
-        <p>dantecomercialsanmartin@gmail.com</p>
+        <p style="font-size: 18px;">20-08159465-8</p>
+        <p style="font-size: 18px;">Pirovano 375 San Martin - Mza</p>
+        <p style="font-size: 18px;">Dante Cesar Quercetti</p>
+        <p style="font-size: 18px;">dantecomercialsanmartin@gmail.com</p>
 
       </div>
     </nz-col>
-    <br>  
+    <br>
 
   </nz-row>
 
-   <!--TABLA-->
-   <nz-content id="tabla">
-    <nz-table [nzBordered]="true" nzTemplateMode [nzSize]="'small'" >
+  <!--TABLA-->
+  <nz-content id="tabla"  >
+    <nz-table nzTemplateMode [nzSize]="'small'" >
       <thead>
         <tr>
-         
-          <th>Producto</th>
-          <th [nzAlign]="'center'">Cantidad</th>
-          <th [nzAlign]="'center'">Precio Unidad</th>
-          
-          <th [nzAlign]="'center'">Iva</th>
+
+          <th style=" font-size: 23px;">Detalle</th>
+          <th [nzAlign]="'center'" style=" font-size: 23px;">Cantidad</th>
+          <th [nzAlign]="'center'"style=" font-size: 23px;">Precio Unidad</th>
+
+          <th [nzAlign]="'center'" style=" font-size: 23px;">Iva</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let data of invoiceDetail">
-        
-          <td>{{ data.productName }}</td>
-          <td [nzAlign]="'right'">{{ data.quantity }}</td>
-          <td [nzAlign]="'right'">{{ this.currencyFormat(data.price)}}</td>
-         
-          <td [nzAlign]="'center'">{{ data.iva }}%</td>
+
+          <td style=" font-size: 18px;"> {{ data.productName }}</td>
+          <td [nzAlign]="'center'" style=" font-size: 18px;">{{ data.quantity }}</td>
+          <td [nzAlign]="'right'" style=" font-size: 18px;">{{ this.currencyFormat(data.price)}}</td>
+
+          <td [nzAlign]="'center'" style=" font-size: 18px;">{{ data.iva }}%</td>
         </tr>
       </tbody>
 
@@ -71,54 +61,56 @@
       <tfoot class="{{this.tipo}}">
         <tr>
           <td></td>
-          <td></td>
-         
-          <td [colSpan]="1" [nzAlign]="'center'">
-            <b >Total </b>
+          <td><strong>Iva(27%)</strong>{{this.currencyFormat(iva27)}}</td>
+
+          <td [colSpan]="1" [nzAlign]="'center'" style=" font-size: 20px;">
+            <p> <strong>Total</strong>  </p>
           </td>
           <td style="text-align: center;">
-            <span style="color: blue">{{ this.currencyFormat(this.total) }} </span>
+            <span style="color: blue; font-size: 18px;">{{ this.currencyFormat(this.total) }} </span>
           </td>
         </tr>
       </tfoot>
 
-      <tfoot >
-        <tr>
+      <tfoot>
+        <tr >
           <td></td>
-          <td></td>
+          <td><strong>Iva(10.5%)</strong>{{this.currencyFormat(iva10)}}</td>
 
-          <td [colSpan]="1" *ngIf="type == 1; else elseBlock" [nzAlign]="'center'">
-            <b>Iva </b>
-            
+          <td [colSpan]="1" *ngIf="type == 1; else elseBlock" [nzAlign]="'center'" style=" font-size: 20px;">
+            <p> <strong>Iva Total</strong> </p>
+
           </td>
-          <td style="text-align: center;" >
-            <span style="color: blue">
-            {{ this.currencyFormat(ivaTotal) }}
-          </span></td>
-          
-         
+          <td style="text-align: center;">
+            <span style="color: blue ; font-size: 18px;">
+              {{ this.currencyFormat(ivaTotal) }}
+            </span>
+          </td>
+
+
           <ng-template #elseBlock>
             <td [colSpan]="1"></td>
           </ng-template>
         </tr>
       </tfoot>
-      
+
       <tfoot>
         <tr>
-          <td >
-            <p><strong>Metodo de Pago: </strong> Efectivo - Transferencia Bancaria - Cheque al dia - E check al dia </p></td>
-          <td></td>
-          <td *ngIf="type == 1; else elseBlock" [colSpan]="1" [nzAlign]="'center'" >
-            <b>SubTotal </b>
-           
+          <td style=" font-size: 20px;">
+            <strong>Metodo de Pago: </strong>
+            <p style=" font-size: 18px;"> Efectivo - Transferencia Bancaria - Cheque al dia - E check al dia </p>
           </td>
-          <td style="text-align: center;"> <span style="color: blue"
-            >{{ this.currencyFormat(subTotal) }}
-          </span></td>
+          <td><strong>Iva(21%)</strong>{{this.currencyFormat(iva21)}}</td>
+          <td *ngIf="type == 1; " [colSpan]="1" [nzAlign]="'center'" style=" font-size: 20px;">
+            <p><strong>SubTotal</strong>  </p>
+
+          </td>
+          <td style="text-align: center;"> <span style="color: blue; font-size: 18px;">{{ this.currencyFormat(subTotal) }}
+            </span></td>
         </tr>
       </tfoot>
 
-      
+
 
     </nz-table>
   </nz-content>
