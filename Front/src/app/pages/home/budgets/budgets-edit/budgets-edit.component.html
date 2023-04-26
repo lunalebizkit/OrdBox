@@ -176,7 +176,9 @@
             <td nzBreakWord>{{ data.productName }}</td>
          
              <td>
-              <div class="editable-cell" [hidden]="editId === data.ownCode" (click)="startEdit(data.ownCode)">
+              <div class="editable-cell" 
+              [hidden]="editId === data.ownCode" 
+              (click)="startEdit(data.ownCode)">
                 
                 {{ data.quantity }}
               </div>
