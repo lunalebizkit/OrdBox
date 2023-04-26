@@ -20,7 +20,7 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Budget
 
         [HttpPost]
         [Route("[action]")]
-        //[AllowAccess(Permission = new EPermission[] { EPermission.CreateInvoice })]
+        [AllowAccess(Permission = new EPermission[] { EPermission.CreateBudget })]
         public async Task<IActionResult> New([FromBody] DtoRequestBudget model)
         {
             return Return(await _service.New(model).ConfigureAwait(false));
@@ -28,7 +28,7 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Budget
 
         [HttpGet]
         [Route("[action]")]
-        //[AllowAccess(Permission = new EPermission[] { EPermission.GetInvoice })]
+        [AllowAccess(Permission = new EPermission[] { EPermission.GetBudget })]
         public async Task<IActionResult> Get(long id)
         {
             return Return(await _service.GetById(id).ConfigureAwait(false));
@@ -36,7 +36,7 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Budget
 
         [HttpPut]
         [Route("[action]")]
-        //[AllowAccess(Permission = new EPermission[] { EPermission.EditBrand })]
+        [AllowAccess(Permission = new EPermission[] { EPermission.GetBudget })]
         public async Task<IActionResult> Edit([FromBody] DtoRequestBudget model)
         {
             return Return(await _service.Update(model).ConfigureAwait(false));
@@ -44,13 +44,11 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Budget
 
         [HttpPost]
         [Route("[action]")]
-        //[AllowAccess(Permission = new EPermission[] { EPermission.ViewBrand })]
+        [AllowAccess(Permission = new EPermission[] { EPermission.GetBudget })]
         public async Task<IActionResult> List([FromBody] RequestPaginatedData<string> filter)
         {
             return Return(await _service.ListBudget(filter).ConfigureAwait(false));
         }
-
-
-      
+     
     }
 }

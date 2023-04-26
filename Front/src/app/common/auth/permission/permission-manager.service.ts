@@ -64,6 +64,7 @@ export class PermissionService {
       permissions: [Permission.CreateInvoice],
     },
     //#endregion
+  
 
     //#region Product
     {
@@ -165,8 +166,23 @@ export class PermissionService {
         permissions: [
           Permission.ReportZ,
         ],
-      }
+      },
       //#endrregion
+
+      //#regionBudget
+      {
+        url: new RegExp('/home/budgets'),
+        permissions: [Permission.GetBudget, Permission.CreateBudget],
+      },
+      //#endrregion
+
+      //#regionDeliveryNote
+      {
+        url: new RegExp('/home/deliveryNotes'),
+        permissions: [Permission.GetRemito, Permission.CreateRemito],
+      },
+      //#endrregion
+
   ];
 
   public hasPermission(url: string) {

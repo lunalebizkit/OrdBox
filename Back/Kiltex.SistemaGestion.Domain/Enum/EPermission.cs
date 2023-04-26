@@ -57,6 +57,14 @@ namespace Kiltex.SistemaGestion.Domain.Enum
         //Memo
         GetMemo = 37,
         CreateMemo = 38,
-        RolControl= 39
+        RolControl= 39,
+
+        //Budget
+        GetBudget = 41,
+        CreateBudget = 42,
+
+        //DeliveryNote
+        GetRemito = 43,
+        CreateRemito = 44
     }
 }
