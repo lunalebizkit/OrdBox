@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { UserService } from '../users.services';
 import { ListUserModel } from '../model/list.user.model';
 import { PopupConfirmationComponent } from 'src/app/common/components/popup-confirmation/popup-confirmation.component';
@@ -7,36 +7,39 @@ import { eRol } from '../model/rol.enum';
 import { NzDrawerService } from 'ng-zorro-antd/drawer';
 import { UsersEditDrawerComponent } from '../users-edit-drawer/users-edit.drawer.component';
 import { Permission } from 'src/app/common/auth/models/permissions.enum';
+import { NzMessageService } from 'ng-zorro-antd/message';
+import { BaseComponent } from 'src/app/common/components/base/base.component';
+import { NzNotificationService } from 'ng-zorro-antd/notification';
 
 @Component({
   selector: 'app-users-list',
   templateUrl: './users-list.component.html',
   styleUrls: ['./users-list.component.css'],
 })
-export class UsersListComponent implements OnInit {
+export class UsersListComponent extends BaseComponent implements OnInit {
   id!: number;
   index!: number;
   permissions = Permission;
+  userRol!: string | null;
 
   constructor(
     private service: UserService,
-    private drawerService: NzDrawerService
-  ) {}
+    private drawerService: NzDrawerService,
+    notificacionService: NzNotificationService,
+    el: ElementRef,
+    message: NzMessageService,
+  ) { super( notificacionService, el, message)}
   selectedIndex: number = 0;
   selectedUser: any;
 
   ngOnInit(): void {
     this.getData(this.queryData);
+    this.userRol = localStorage.getItem('auth-user');
   }
   /*
    ** Listado de los usuarios
    */
   userList: ListUserModel[] = [];
-  allRols = [
-    { value: 1, text: 'Administrador' },
-    { value: 2, text: 'Comercial' },
-    { value: 3, text: 'Farmacia' },
-  ];
   /*
    ** Indicador de carga de la grilla
    */
@@ -128,47 +131,11 @@ export class UsersListComponent implements OnInit {
       },
     });
   }
-/*   openComponentRolControl():void{
-    const drawerRefCustomer = this.drawerService.create<
-    PermissionRolDrawerComponent,
-    { filter: number },
-    number
-  >({
-    nzContent: PermissionRolDrawerComponent,
-    nzSize: 'large',
-    nzContentParams: {
-      filter: this.id > 0 ? this.id : 0,
-    },
-    nzClosable: false,
-  }); */
-  /*drawerRefCustomer.afterClose.subscribe({
-    next: (data) => {
-      this.id = 0;
-      if (data != undefined && data != 0) {
-        this.service.getById(data).subscribe({
-          next: (r: ListUserModel) => {
-            this.userList[this.userList.findIndex((r) => r.id == data)] !=
-            undefined
-              ? (this.userList[this.userList.findIndex((r) => r.id == data)] =
-                  r)
-              : this.userList.push(r);
-          },
-          error: () => {
-            this.id = 0;
-          },
-        });
-      } 
-    },
-    error: () => {
-      this.id = 0;
-    },
-  });
-  */
-/*   } */
+
   onDoubleClicked(datos: any) {
-    this.id = datos.id;
-    this.openComponentUserEdit();
-  }
+           this.id = datos.id;
+      this.openComponentUserEdit()   
+  } 
 
   onClick(datos: any, index: number): void {
     this.index = index;

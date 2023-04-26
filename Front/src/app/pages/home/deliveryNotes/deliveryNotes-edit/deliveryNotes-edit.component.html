@@ -247,7 +247,7 @@
         [nzBordered]="true"
         nzShowPagination="false"
         style="overflow: auto"
-        [nzData]="deliveryNotesDetails"
+        [nzData]="deliveryNotesDetailsList"
         [nzLoading]="loading"
         nzSize= "small" 
       >
@@ -260,7 +260,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let data of deliveryNotesDetails"  class="small-text">
+          <tr *ngFor="let data of deliveryNotesDetailsList"  class="small-text">
             <td nzBreakWord>{{data.productName}}</td>
             <td >
               <div
