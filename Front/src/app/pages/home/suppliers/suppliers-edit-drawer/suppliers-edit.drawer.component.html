@@ -1,6 +1,6 @@
 <app-header-op-buttons #header [btnCancelText]="'Cancelar'" [btnSaveText]="'Guardar'" [title]="'Proveedor'"
     [showSpinner]="isSaving" [iconBack]="'rollback'" [iconSave]="'save'" [iconTitle]="'tags'" (onSaveClick)="msjConfirmOk()"
-    (onCloseClick)="close()" [hideClose]="true" [hideBack]="true">
+    (onCloseClick)="close()" [hideClose]="true" [hideBack]="true" [hideCerrar]="true" [hideFacturaPro]="true">
 </app-header-op-buttons>
 
 <nz-spin [nzSpinning]="isLoading" style="margin-top: 20px;">

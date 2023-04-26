@@ -2,7 +2,7 @@
   [btnSendEmail]="'Enviar'" [hideSend]="id != 0" [title]="'Pedidos'" [iconBack]="'rollback'" [iconSave]="'save'"
   [iconTitle]="'shopping-cart'" [iconSend]="'mail'" (onSaveClick)="  msjConfirmOk()"
   (onSendClick)="email.showConfirmation()" (onSendEmailClick)="onlyEmail.showConfirmation()" (onCloseClick)="close()"
-  [hideClose]="true" [hideEmail]="id == 0" [hideBack]="true" [disabled]="this.disabled">
+  [hideClose]="true" [hideEmail]="id == 0" [hideBack]="true" [disabled]="this.disabled" [hideCerrar]="true" [hideFacturaPro]="true">
 </app-header-op-buttons>
 
 <div class="site-page-header-ghost-wrapper">
