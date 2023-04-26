@@ -41,6 +41,7 @@ export class DeliveryNotesEditComponent extends BaseComponent implements OnInit 
   edit: boolean= false;
   tipo!: string;
   newStatusPaid!: number;
+  paymentSelected: any;
   @Input() set filter(value: number) {
     this.id = value;
   }
@@ -162,16 +163,6 @@ export class DeliveryNotesEditComponent extends BaseComponent implements OnInit 
       });
   }
 
-/*   getTipo(tipo : number):any {
-    switch (tipo){
-      case  pStatusType.Entregado:
-        return this.tipo = 'Entregado'
-      case  pStatusType.Rechazado :
-       return this.tipo = 'Rechazado'
-      case  pStatusType.Pendiente :
-       return this.tipo = 'Pendiente'
-    }
-} */
 getStatusName(id: number) {
   return pStatusType [id];
 }
@@ -203,76 +194,58 @@ getStatusName(id: number) {
     }
 
     openComponentProduct(): void {
-      const drawerRefProduct = this.drawerService.create<
-        InvoiceProductSearchComponent,
-        { filter: string },
-        ProductsModel
-      >({
-        nzTitle: 'Productos',
-        nzContent: InvoiceProductSearchComponent,
-        nzSize: 'large',
-        nzWidth:'90%',
-        nzContentParams: {
-          filter: this.formProductSearch.controls['productSearchFilter'].value,
-        },
-        nzClosable: false,
-      });
-      drawerRefProduct.afterClose.subscribe({
-
-        next: (data: ProductsModel) => {
-          if (data != undefined) {
-
-            if (this.deliveryNotesDetails.find((item) => item.productId == data.id)) {
-
-              /*Actualizo la lista que envio al back */
-              this.deliveryNotesDetailsList.filter(
-                (item) => item.productId == data.id
-              )[0].quantity += 1;
-
-              /*Actualizo la lista de la tabla */
-              let newListElement = this.deliveryNotesDetailsList.filter(
-                (item) => item.productId == data.id
-              )[0];
-
-              newListElement.quantity += 1;
-              /*  newListElement.subtotal +=
-              data.purchasePrice * newListElement.quantity;  */
-
-              this.totalCalculate();
-              this.loading = false;
-              this.formProductSearch.controls['productSearchFilter'].setValue(
-                ''
-              );
-            } else {
-              /* Parseo dato a la grilla de Tabla */
-              const model: deliveryNotesDetailsList = deliveryNotesGridParser(
-                data, data.purchasePrice
-              );
-              this.subtotal= data.purchasePrice * data.quantity
-              this.deliveryNotesDetailsList.push(model);
-              this.deliveryNotesDetailsList = this.deliveryNotesDetailsTest;
-
-              /* Parseo dato a Dto Factura Detalle */
-              const modelDetail: DeliveryNotesDetails = deliveryNotesDetailParser(
-                data, data.purchasePrice
-              );
-              this.deliveryNotesDetails.push(modelDetail);
-              this.totalCalculate();
-              this.loading = false;
-              this.formProductSearch.controls['productSearchFilter'].setValue(
-                ''
-              );
-            }
-          }
-        },
-        error: () => {
-          this.loading = false;
-          this.deliveryNotesDetails = [];
-          this.formProductSearch.controls['productSearchFilter'].setValue('');
-        },
-      });
+     /*  if (this.isValidForm(this.formDeliveryNotes)) { */
+        const drawerRefProduct = this.drawerService.create<InvoiceProductSearchComponent, { filter: string }, ProductsModel>({
+          nzTitle: 'Productos',
+          nzContent: InvoiceProductSearchComponent,
+          nzSize: 'large',
+          nzWidth: '90%',
+          nzContentParams: {
+            filter: this.formProductSearch.controls['productSearchFilter'].value
+          },
+          nzClosable: false
+        });      
+        drawerRefProduct.afterClose.subscribe({
   
-  }
+          next: (data: ProductsModel) => {
+            
+            if (data != undefined) {
+              if (this.deliveryNotesDetails.find(item => item.productId == data.id)) {
+                  /*Actualizo la lista que envio al back */
+                    this.deliveryNotesDetails.filter(item => item.productId == data.id)[0]
+                    .quantity += 1;                        
+  
+                     /*Actualizo la lista de la tabla */
+                    let newListElement = this.deliveryNotesDetailsList.filter(item => item.productId == data.id)[0];
+                    newListElement.quantity += 1;
+                   /*  newListElement.subTotal += this.bindPrice(data) * newListElement.quantity; */
+                  
+                    this.totalCalculate();
+                    this.isLoading= false;
+                    this.formProductSearch.controls['productSearchFilter'].setValue('');
+                  }else {
+  
+                    /* Parseo dato a la grilla de Tabla */
+                const model: deliveryNotesDetailsList = deliveryNotesGridParser(data, this.bindPrice(data));
+               this.deliveryNotesDetailsTest.push(model)
+               this.deliveryNotesDetailsList = this.deliveryNotesDetailsTest;
+               /* Parseo dato a Dto Factura Detalle */
+               const modelDetail : DeliveryNotesDetails = deliveryNotesDetailParser(data, this.bindPrice(data));
+               this.deliveryNotesDetails.push(modelDetail);                
+              this.totalCalculate();
+              this.isLoading= false;
+              this.formProductSearch.controls['productSearchFilter'].setValue('');
+               }
+            }},
+            error: () => {
+              this.isLoading= false;
+              this.deliveryNotesDetailsList = [];
+              this.formProductSearch.controls['productSearchFilter'].setValue('');
+            }
+  
+          })
+      /* } else { return; } */
+    };
   totalCalculate(): void {  
     this.subtotal= 0  
     this.total = 0;
@@ -282,78 +255,86 @@ getStatusName(id: number) {
  }); 
       this.deliveryNotesDetailsList.forEach( (dato) => {
         /**Calculo iva restandolo al precio y multiplico por cantidad*/
-       this.total +=  dato.price  * dato.quantity ;
-       console.log(this.total);
-            
+       this.total +=  dato.price  * dato.quantity ;       
       });
    
     } catch (error) {}   
   };
 
   searchProduct(): void {
+
     this.product = this.formProductSearch.controls['productSearchFilter'].value;
     this.queryParams.filter = this.product;
-    /* if (this.isValidForm(this.formDeliveryNotes)){ */
     if (this.product.length > 0) {
       this.serviceProduct.getProducts(this.queryParams).subscribe({
         next: (r) => {
-          this.loading = true;        
+          this.isLoading = true;
           if (r.data.length == 1) {
-            const model: ProductsModel = r.data[0];        
-            if (
-              this.deliveryNotesDetails.find((item) => item.productId == model.id)
-            ) {
+            const model: ProductsModel = r.data[0];
+            if (this.deliveryNotesDetails.find(item => item.productId == model.id)) {
               /*Actualizo la lista que envio al back */
-              this.deliveryNotesDetails.filter(
-                (item) => item.productId == model.id
-              )[0].quantity += 1;
+              this.deliveryNotesDetails.filter(item => item.productId == model.id)[0]
+                .quantity += 1;
 
               /*Actualizo la lista de la tabla */
-              this.deliveryNotesDetailsList.filter(
-                (item) => item.productId == model.id
-              )[0].quantity += 1;
-           
-              this.totalCalculate();
-              this.loading = false;
+              this.deliveryNotesDetailsList.filter(item => item.productId == model.id)[0]
+                .quantity += 1;
 
+           /*    this.deliveryNotesDetailsList.filter(item => item.productId == model.id)[0]
+                .subtotal += this.bindPrice(model) * model.quantity; */
+
+              this.totalCalculate();
+              this.isLoading = false;
               this.formProductSearch.controls['productSearchFilter'].setValue('');
             } else {
-
               const product: ProductsModel = r.data[0];
-              /* Parseo el Producto a la grilla de Tabla */
-              const model: deliveryNotesDetailsList= deliveryNotesGridParser(
-                product, product.purchasePrice
-              );
-              this.deliveryNotesDetailsList.push(model);
+              // /* Parseo el Producto a la grilla de Tabla */
+              const model: deliveryNotesDetailsList = deliveryNotesGridParser(product, this.bindPrice(product));
+              this.deliveryNotesDetailsTest.push(model);
+
               this.deliveryNotesDetailsList = this.deliveryNotesDetailsTest;
 
               /* Parseo dato a Dto Factura Detalle */
-              const modelDetail: DeliveryNotesDetails = deliveryNotesDetailParser(
-                product, product.purchasePrice
-              );
+              const modelDetail: DeliveryNotesDetails = deliveryNotesDetailParser(product, this.bindPrice(product));
               this.deliveryNotesDetails.push(modelDetail);
+               this.deliveryNotesDetailsList = this.deliveryNotesDetailsTest    
               this.totalCalculate();
-              this.loading = false;
+              this.isLoading = false;
               this.formProductSearch.controls['productSearchFilter'].setValue('');
-              
             }
+
           } else {
-            this.loading = false;
+            this.isLoading = false;
             this.openComponentProduct();
           }
+
         },
         error: () => {
-          this.loading = false;
+          this.isLoading = false;
           this.formProductSearch.controls['productSearchFilter'].setValue('');
-        },
-      });
+        }
+      })
     } else {
-      this.loading = false;
+      this.isLoading = false;
       this.queryParams.filter = '';
       this.openComponentProduct();
-    }
+    };
+  }; 
+
+ bindPrice(data: ProductsModel): number {
+  const typePayment = this.paymentSelected;
+  var a = Object.keys(data).filter(type => (type == typePayment));
+  switch (a[0]) {
+    case 'cardSalePrice':
+      return data.cardSalePrice;
+
+    case 'salePrice':
+      return data.salePrice;
+
+    default:
+      return data.cashSalePrice;
   }
-/*   } */
+};
   startEdit(id: number): void {
     this.editId = id;
   }
@@ -487,7 +468,7 @@ save(): void {
               `emito creado correctamente`
             );
             this.isSaving = false;
-            this.router.navigate(['/home/budgets']);
+            this.router.navigate(['/home/deliveryNotes']);
           },
           error: (r) => {
             this.isSaving = false;

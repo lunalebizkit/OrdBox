@@ -40,7 +40,7 @@
                 </nz-form-item>
         
                 <!--Contraseña-->
-                <nz-form-item *ngIf="showPasswordChange">
+                <nz-form-item *ngIf="!showPasswordChange || this.id == 0">
                     <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="password" nzRequired>Contraseña</nz-form-label>
                     <nz-form-control [nzSm]="14" [nzXs]="24">
                         <input nz-input type="password" id="password" formControlName="password" maxlength="250"
@@ -49,7 +49,7 @@
                 </nz-form-item>
         
                 <!--Repetir Contraseña-->
-                <!-- <nz-form-item *ngIf="showPasswordChange">
+               <nz-form-item *ngIf="!showPasswordChange">
                     <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="checkpassword" nzRequired>Confirmar Contraseña</nz-form-label>
                     <nz-form-control [nzSm]="14" [nzXs]="24" [nzErrorTip]="errorTpl">
                         <input nz-input type="password" formControlName="checkpassword" id="checkpassword" maxlength="250"
@@ -60,10 +60,10 @@
                             </ng-container>
                         </ng-template>
                     </nz-form-control>
-                </nz-form-item> -->
+                </nz-form-item> 
         
                 <!--Cambiar contraseña boton-->
-                <nz-form-item *ngIf="!showPasswordChange">
+                <nz-form-item *ngIf="showPasswordChange && this.id != 0">
                     <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="resetPassword">Contraseña</nz-form-label>
                     <nz-form-control [nzSm]="14" [nzXs]="24">
                         <button nz-button nzType="primary" (click)="showPasswordChangeBox()">
