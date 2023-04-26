@@ -1,4 +1,4 @@
-USE [Gestion_Stock]
+USE [Ordbox]
 GO
 
 INSERT INTO [dbo].[permission]
@@ -6,7 +6,7 @@ INSERT INTO [dbo].[permission]
 		   ,[key]
 		   ,[enumPermission])	
      VALUES
-           ('VerUsuariio','ViewUser',1),('EditarUsuario', 'EditUser',2),('EliminarUsuario', 'DeleteUser',3),('CrearUsuario', 'CreateUser',4),
+           ('VerUsuario','ViewUser',1),('EditarUsuario', 'EditUser',2),('EliminarUsuario', 'DeleteUser',3),('CrearUsuario', 'CreateUser',4),
 		   ('VerMarca','ViewBrand',5),('CrearMarca','CreateBrand',6),('EditarMarca','EditBrand',7),
 		   ('VerCategoria','ViewCategory',8),('CrearCategoria','CreateCategory',9),('EditarCategoria','EditCategory',10),
 		   ('VerCliente','ViewCustomer',11),('CrearCliente','CreateCustomer',12),('EditarCliente','EditCustomer',13),
@@ -19,5 +19,6 @@ INSERT INTO [dbo].[permission]
 		   ('ListadoFacturaCompra','GetReceipt',30), ('CrearFacturaCompra','CreateReceipt',31),
 		   ('ListadoIva','ListIva',32),
 		   ('ListadoPeriodo','GetPeriod',33),('CrearPeriodo','CreatePeriod',34),('EditarPeriodo','EditPeriod',35),('EliminarPeriodo','DeletePeriod',36),
-		   ('ListadoNotaCreditoYDebito','GetMemo', 37),('CrearNotaCreditoYDebito','CreateMemo',38),('ControldeRoles','RolControl',39),('ReportZ','ReportZ', 40)
+		   ('ListadoNotaCreditoYDebito','GetMemo', 37),('CrearNotaCreditoYDebito','CreateMemo',38),('ControldeRoles','RolControl',39),('ReportZ','ReportZ', 40),
+		   ('ListadoPresupuesto','GetBudget', 41),('CrearPresupuesto','CreateBudget', 42),('ListadoRemito','GetRemito', 43),('CrearRemito','CreateRemito', 44)
 GO
