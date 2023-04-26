@@ -93,12 +93,13 @@ const routes: Routes = [
           import('./permission-rol/permission-rol.module').then((m)=> m.PermissionModule)
       },
       {
+        canActivate: [AuthGuard],
         path:'budgets',
         loadChildren:()=>
         import('./budgets/budgets.module').then((m) => m.BudgetModule)
       },
       {
-       /*  canActivate: [AuthGuard], */
+        canActivate: [AuthGuard],
         path: 'deliveryNotes',
         loadChildren:()=>
           import('./deliveryNotes/deliveryNotes.module').then((m)=> m.DeliveryNotesModule)

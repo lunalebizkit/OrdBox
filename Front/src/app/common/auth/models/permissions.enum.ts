@@ -52,5 +52,11 @@ export enum Permission {
   GetMemo = 37,
   CreateMemo=38,
   RolControl= 39,
-  ReportZ=40
+  ReportZ=40,
+  //Budget
+  GetBudget=41,
+  CreateBudget=42,
+  //Remito
+  GetRemito = 43,
+  CreateRemito = 44
 }

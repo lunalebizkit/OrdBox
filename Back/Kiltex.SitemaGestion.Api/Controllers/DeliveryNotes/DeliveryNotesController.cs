@@ -26,18 +26,21 @@ namespace Kiltex.SistemaGestion.Api.Controllers.DeliveryNotes
 
         [HttpPost]
         [Route("[action]")]
+        [AllowAccess(Permission = new EPermission[] { EPermission.GetRemito })]
         public async Task<IActionResult> List([FromBody] RequestPaginatedData<SpecificFilter> filter)
         {
             return Return(await _service.ListDeliveryNotes(filter).ConfigureAwait(false));
         }
 
         [HttpPost]
+        [AllowAccess(Permission = new EPermission[] { EPermission.CreateRemito })]
         public async Task<IActionResult> New([FromBody] DtoRequestDeliveryNotes model)
         {
             return Return(await _service.NewDeliveryNotes(model).ConfigureAwait(false));
         }
 
         [HttpPut]
+
         [AllowAccess(Permission = new EPermission[] { EPermission.CreateMemo })]
         public async Task<IActionResult> Edit([FromBody] DtoRequestDeliveryNotes model)
         {

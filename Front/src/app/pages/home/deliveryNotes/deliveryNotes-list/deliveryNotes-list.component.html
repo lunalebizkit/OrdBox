@@ -3,13 +3,15 @@
       <nz-page-header-title> Listado de Remitos </nz-page-header-title>
       <nz-page-header-extra>
         <button
+        *authPermission="[permissions.GetRemito]"
           nz-tooltip
           nzTooltipTitle="Nuevo"
           nz-button
           nzType="primary"
           nzShape="circle"
           routerLink="/home/deliveryNotes/new"
-        >
+          
+        ><!-- -->
           <i
             nz-icon
             nzType="plus"
