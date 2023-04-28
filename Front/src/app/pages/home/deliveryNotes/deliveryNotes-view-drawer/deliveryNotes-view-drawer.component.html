@@ -60,6 +60,7 @@
           <th>Producto</th>
           <th [nzAlign]="'center'">Cantidad</th>
           <th [nzAlign]="'center'">Precio Unidad</th>
+          <th [nzAlign]="'center'">SubTotal</th>
         </tr>
       </thead>
       <tbody>
@@ -67,6 +68,9 @@
           <td>{{ data.productName}}</td>
           <td [nzAlign]="'right'">{{ data.quantity }}</td>
           <td [nzAlign]="'right'">{{ this.currencyFormat(data.price) }}</td>
+          <td [nzAlign]="'right'">
+            {{ this.currencyFormat(data.quantity * data.price) }}
+          </td>
         </tr>
       </tbody>
        <tfoot  class="{{this.tipo}}">

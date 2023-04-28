@@ -83,15 +83,15 @@ export class DeliveryNotesEditComponent extends BaseComponent implements OnInit 
   paid!: string;
   statusId!:number;
   subTotal!: number;
-  ivaTotal!: number;
-  
+  //ivaTotal!: number;
+  subtotal: number = 0;
 
   queryParams = {
     filter: '',
     page: 0,
     pageSize: 10,
   };
-  subtotal: number=0;
+
   idDeliveryNotes = this.route.snapshot.paramMap.get("id");
 
 
@@ -135,7 +135,7 @@ export class DeliveryNotesEditComponent extends BaseComponent implements OnInit 
   getDeliveryNotes(id: number): void {   
     if (this.id != 0 || this.id !== undefined)
       this.service.getDeliveryNotesById(this.id).subscribe({
-        next: (r: DeliveryNotesModel) => {
+        next: (r) => {
           this.edit= true
            this.id = this.id
            this.formDeliveryNotes.controls['deliveryNotesNumber'].setValue(r.deliveryNotes_number)
@@ -148,14 +148,20 @@ export class DeliveryNotesEditComponent extends BaseComponent implements OnInit 
             this.dateTime= r.dateTime
             this.formDeliveryNotes.controls['observation'].setValue(r.observation),
             this.isLoading = false;
+            
+            this.subtotal = r.subtotal;
+
             this.deliveryNotesDetails= r.deliveryNotesDetails;
             this.formDeliveryNotes.controls['importTotal'].setValue(r.importTotal) 
-             /*Bindeo detalles*/
+            
+            /*Bindeo detalles*/
           r.deliveryNotesDetails.forEach((modelDetail: DeliveryNotesDetails) => {
             const model = deliveryNotesGridFromParser(modelDetail)
 
-          this.deliveryNotesDetailsList.push(model)
+          this.deliveryNotesDetailsTest.push(model)
+         
           });
+          this.deliveryNotesDetailsList = this.deliveryNotesDetailsTest;
         },
         error: () => {
           this.isLoading = false;
@@ -218,7 +224,7 @@ getStatusName(id: number) {
                      /*Actualizo la lista de la tabla */
                     let newListElement = this.deliveryNotesDetailsList.filter(item => item.productId == data.id)[0];
                     newListElement.quantity += 1;
-                   /*  newListElement.subTotal += this.bindPrice(data) * newListElement.quantity; */
+                    newListElement.subtotal += this.bindPrice(data) * newListElement.quantity; 
                   
                     this.totalCalculate();
                     this.isLoading= false;
@@ -247,13 +253,13 @@ getStatusName(id: number) {
       /* } else { return; } */
     };
   totalCalculate(): void {  
-    this.subtotal= 0  
+    this.subtotal= 0; 
     this.total = 0;
-   try {  this.deliveryNotesDetailsList.forEach(data => { 
+   try {  this.deliveryNotesDetailsTest.forEach(data => { 
       /**Caluclo subtotal = precio y multiplico por cantidad*/
     this.subtotal += data.quantity *  data.price ;   
  }); 
-      this.deliveryNotesDetailsList.forEach( (dato) => {
+      this.deliveryNotesDetailsTest.forEach( (dato) => {
         /**Calculo iva restandolo al precio y multiplico por cantidad*/
        this.total +=  dato.price  * dato.quantity ;       
       });
@@ -277,11 +283,11 @@ getStatusName(id: number) {
                 .quantity += 1;
 
               /*Actualizo la lista de la tabla */
-              this.deliveryNotesDetailsList.filter(item => item.productId == model.id)[0]
+              this.deliveryNotesDetailsList.filter(item => item.ownCode == model.id)[0]
                 .quantity += 1;
 
-           /*    this.deliveryNotesDetailsList.filter(item => item.productId == model.id)[0]
-                .subtotal += this.bindPrice(model) * model.quantity; */
+            this.deliveryNotesDetailsList.filter(item => item.ownCode == model.id)[0]
+                .subtotal += this.bindPrice(model) * model.quantity; 
 
               this.totalCalculate();
               this.isLoading = false;
@@ -325,14 +331,9 @@ getStatusName(id: number) {
   const typePayment = this.paymentSelected;
   var a = Object.keys(data).filter(type => (type == typePayment));
   switch (a[0]) {
-    case 'cardSalePrice':
-      return data.cardSalePrice;
-
-    case 'salePrice':
-      return data.salePrice;
-
+  
     default:
-      return data.cashSalePrice;
+      return data.purchasePrice;
   }
 };
   startEdit(id: number): void {
@@ -344,21 +345,24 @@ getStatusName(id: number) {
   currencyFormat(data: any): string {
     return formatCurrency(data, this.locale, '$', 'ARS', '1.1-2');
   }
+
   changeQuantity(quantity: number): void {
     if (quantity == 0 || quantity == null) {
       quantity = 1;
     }
     let product = this.deliveryNotesDetailsList.filter(
-      (detail) => detail.productId == this.editId
-    )[0];
+      detail => detail.productId == this.editId)[0];
 
-    this.deliveryNotesDetailsList.filter(
-      (detail) => detail.productId == this.editId
-    )[0]
 
     this.deliveryNotesDetailsList.filter(
       detail => detail.productId == this.editId
-      )[0].quantity = quantity;
+    )[0].subtotal = quantity * product.price;
+
+    this.totalCalculate();
+
+    this.deliveryNotesDetails.filter(
+      detail => detail.productId== this.editId
+    )[0].quantity = quantity;
    
   }
 
@@ -465,7 +469,7 @@ save(): void {
           next: (r) => {
             this.showNotificationSuccess(
               'Guardado correcto',
-              `emito creado correctamente`
+              `Remito creado correctamente`
             );
             this.isSaving = false;
             this.router.navigate(['/home/deliveryNotes']);
