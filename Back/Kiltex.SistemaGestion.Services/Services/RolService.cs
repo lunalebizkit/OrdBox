@@ -82,7 +82,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                    var oldRol = await _contextSql
                                    .Rols
                                    .AsNoTracking()
-                                   .FirstAsync(p => p.Id == rolmodel.Id)
+                                   .FirstAsync(p => p.Id.ToString() == rolmodel.Key)
                                    .ConfigureAwait(false);  
                 
                         _contextSql.Rols.Update(rolmodel);
