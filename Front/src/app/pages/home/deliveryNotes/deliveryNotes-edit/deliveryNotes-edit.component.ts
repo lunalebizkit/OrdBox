@@ -20,6 +20,7 @@ import { ReceiptSupplierSearchComponent } from "../../invoices/receipt-supplier-
 import { CustomerAddModel } from "../../customers/model/customer.add.model";
 import { deliveryNotesService } from "../deliveryNotes.service";
 import { pStatusType, statusType } from "../model/status.model";
+import { disableDebugTools } from "@angular/platform-browser";
 
 
 
@@ -86,6 +87,9 @@ export class DeliveryNotesEditComponent extends BaseComponent implements OnInit 
   //ivaTotal!: number;
   subtotal: number = 0;
 
+  isDisabled = false;
+  viewOrder: boolean= false;
+
   queryParams = {
     filter: '',
     page: 0,
@@ -124,11 +128,13 @@ export class DeliveryNotesEditComponent extends BaseComponent implements OnInit 
         productSearchFilter: [''],
       });}
     
+
     ngOnInit(){
-      this.route.params.subscribe(params => {this.id = params['id'] })  
+      this.route.params.subscribe(params => {this.id = params['id']; })  
       if ( this.id != undefined){
-      this.getDeliveryNotes(this.id) 
-    }
+      this.getDeliveryNotes(this.id);
+      this.isDisabled = true; 
+      }
     }
    
 
@@ -139,9 +145,10 @@ export class DeliveryNotesEditComponent extends BaseComponent implements OnInit 
           this.edit= true
            this.id = this.id
            this.formDeliveryNotes.controls['deliveryNotesNumber'].setValue(r.deliveryNotes_number)
-            this.statusId= r.statusId
+           this.formDeliveryNotes.controls['statusId'].setValue(r.statusId);
+     
+           // this.statusId = r.statusId;
             this.formDeliveryNotes.controls['paid'].setValue(r.paid,)
-            this.supplierId= r.supplierId
             this.formDeliveryNotes.controls['supplierAddress'].setValue(r.supplierAddress),
             this.formDeliveryNotes.controls['supplierCuit'].setValue(r.supplierCuit),
             this.formDeliveryNotes.controls['supplierName'].setValue(r.supplierName),
@@ -150,18 +157,33 @@ export class DeliveryNotesEditComponent extends BaseComponent implements OnInit 
             this.isLoading = false;
             
             this.subtotal = r.subtotal;
-
+           
             this.deliveryNotesDetails= r.deliveryNotesDetails;
+            
             this.formDeliveryNotes.controls['importTotal'].setValue(r.importTotal) 
             
             /*Bindeo detalles*/
           r.deliveryNotesDetails.forEach((modelDetail: DeliveryNotesDetails) => {
-            const model = deliveryNotesGridFromParser(modelDetail)
-
-          this.deliveryNotesDetailsTest.push(model)
-         
+            const model = deliveryNotesGridFromParser(modelDetail)  
+            this.deliveryNotesDetailsTest.push(model)
           });
+
+
+          if (r.statusId === 1 || r.statusId === 2 ) {           
+            this.isDisabled = true;   
+            this.viewOrder = true; 
+          }else{
+           
+            this.viewOrder = false; 
+          }
+          
           this.deliveryNotesDetailsList = this.deliveryNotesDetailsTest;
+    
+     if(this.isDisabled == true){
+      this.formProductSearch.controls['productSearchFilter'].disable();
+      }
+   
+     //this.formDeliveryNotes.controls['statusId'].disable();
         },
         error: () => {
           this.isLoading = false;
@@ -170,10 +192,10 @@ export class DeliveryNotesEditComponent extends BaseComponent implements OnInit 
   }
 
 getStatusName(id: number) {
+
   return pStatusType [id];
+ 
 }
-
-
 
     searchSupplier(): void {
       this.cuit = this.formDeliveryNotes.controls['supplierCuit'].value;
@@ -198,9 +220,10 @@ getStatusName(id: number) {
         }
       }
     }
-
+   
     openComponentProduct(): void {
      /*  if (this.isValidForm(this.formDeliveryNotes)) { */
+    // this.isDisabled = true;
         const drawerRefProduct = this.drawerService.create<InvoiceProductSearchComponent, { filter: string }, ProductsModel>({
           nzTitle: 'Productos',
           nzContent: InvoiceProductSearchComponent,
@@ -220,7 +243,7 @@ getStatusName(id: number) {
                   /*Actualizo la lista que envio al back */
                     this.deliveryNotesDetails.filter(item => item.productId == data.id)[0]
                     .quantity += 1;                        
-  
+               
                      /*Actualizo la lista de la tabla */
                     let newListElement = this.deliveryNotesDetailsList.filter(item => item.productId == data.id)[0];
                     newListElement.quantity += 1;
@@ -270,6 +293,7 @@ getStatusName(id: number) {
   searchProduct(): void {
 
     this.product = this.formProductSearch.controls['productSearchFilter'].value;
+   //  this.formProductSearch.controls['productSearchFilter'].disable();
     this.queryParams.filter = this.product;
     if (this.product.length > 0) {
       this.serviceProduct.getProducts(this.queryParams).subscribe({
@@ -335,18 +359,23 @@ getStatusName(id: number) {
     default:
       return data.purchasePrice;
   }
-};
+  };
+
   startEdit(id: number): void {
     this.editId = id;
+  
   }
+
   stopEdit(): void {
     this.editId = null;
   }
+
   currencyFormat(data: any): string {
     return formatCurrency(data, this.locale, '$', 'ARS', '1.1-2');
   }
 
   changeQuantity(quantity: number): void {
+   
     if (quantity == 0 || quantity == null) {
       quantity = 1;
     }
@@ -363,6 +392,7 @@ getStatusName(id: number) {
     this.deliveryNotesDetails.filter(
       detail => detail.productId== this.editId
     )[0].quantity = quantity;
+
    
   }
 
@@ -421,10 +451,11 @@ save(): void {
         statusId: this.formDeliveryNotes.controls['statusId'].value,
         importTotal: this.totalItems,
         dateTime: this.formDeliveryNotes.controls['dateTime'].value,
-        deliveryNotesDetails: this.deliveryNotesDetails,
+        deliveryNotesDetails: this.deliveryNotesDetails ,
         deliveryNotes_number:this.id,
         supplierId: this.supplierId,
         cancelled: ""
+        
       };
 
       this.isSaving = true;
