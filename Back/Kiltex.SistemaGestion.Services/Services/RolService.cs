@@ -3,9 +3,11 @@ using Kiltex.SistemaGestion.Domain;
 using Kiltex.SistemaGestion.Domain.Model;
 using Kiltex.SistemaGestion.SDK.Error;
 using Kiltex.SistemaGestion.Services.Common;
+using Kiltex.SistemaGestion.Services.Models.Dtos;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 
 namespace Kiltex.SistemaGestion.Services.Services
 {
@@ -80,7 +82,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                    var oldRol = await _contextSql
                                    .Rols
                                    .AsNoTracking()
-                                   .FirstAsync(p => p.Id.ToString() == rolmodel.Key)
+                                   .FirstAsync(p => p.Id == rolmodel.Id)
                                    .ConfigureAwait(false);  
                 
                         _contextSql.Rols.Update(rolmodel);
