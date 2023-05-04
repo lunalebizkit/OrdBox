@@ -76,5 +76,6 @@ namespace Kiltex.SistemaGestion.Api.Controllers.User
         {
             return Return(await _service.ListUsers(filter).ConfigureAwait(false));
         }
+
     }
 }
