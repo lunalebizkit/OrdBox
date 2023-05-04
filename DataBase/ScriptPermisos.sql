@@ -1,6 +1,8 @@
 USE [Ordbox]
 GO
 
+DBCC CHECKIDENT ('dbo.permission', RESEED,0)
+
 INSERT INTO [dbo].[permission]
            ([name]
 		   ,[key]

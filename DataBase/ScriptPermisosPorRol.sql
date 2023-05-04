@@ -1,6 +1,8 @@
 USE [Ordbox]
 GO
 
+DBCC CHECKIDENT ('dbo.rol', RESEED,0)
+
 INSERT INTO [dbo].[permission_x_rol]
            ([role_id]
 		   ,[permission_id])	
