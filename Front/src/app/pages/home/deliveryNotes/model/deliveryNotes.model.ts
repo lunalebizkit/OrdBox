@@ -8,7 +8,7 @@ export interface DeliveryNotesModel {
     supplierAddress: string;
     statusId: number;
     cancelled: string;
-    paid: string;
+    paid: boolean;
     observation: string;
     importTotal: number;
     deliveryNotesDetails: DeliveryNotesDetails[]

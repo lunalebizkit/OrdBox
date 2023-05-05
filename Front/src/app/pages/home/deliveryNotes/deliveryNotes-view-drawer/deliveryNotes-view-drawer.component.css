@@ -1,12 +1,7 @@
 th {
     background:  rgb(100, 192, 223);
 }
-.Entregado{
-    background-color: var(--backg-A);
-  }
-  .Anulado{
-    background-color: var(--backg-B);
-  }
-  .Rechazado{
+
+.Remito{
     background-color: var(--backg-C);
   }
