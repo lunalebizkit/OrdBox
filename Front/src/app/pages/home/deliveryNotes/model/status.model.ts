@@ -1,4 +1,4 @@
-export const statusType = [{ value: 0, label: 'Todos   ' },
+export const statusType = [
 {value: 1, label: 'Entregado' },
 { value: 2, label: 'Rechazado' },
 { value: 3, label: 'Pendiente' }];

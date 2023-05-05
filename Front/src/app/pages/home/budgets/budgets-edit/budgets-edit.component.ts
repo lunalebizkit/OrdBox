@@ -1,6 +1,6 @@
-import { Component, ElementRef, Inject, LOCALE_ID, OnInit, TemplateRef, ViewChild } from "@angular/core";
+import { ChangeDetectorRef, Component, ElementRef, Inject, LOCALE_ID, OnInit, TemplateRef, ViewChild } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Data, Router } from '@angular/router';
 
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
@@ -84,6 +84,7 @@ export class BudgetsEditComponent extends BaseComponent implements OnInit {
     public serviceUser: AuthService,
     private drawerService: NzDrawerService,
     private serviceBudget: BudgetsService,
+    private changeDetectorRef: ChangeDetectorRef,
     @Inject(LOCALE_ID) public locale: string
 
 
@@ -279,6 +280,7 @@ export class BudgetsEditComponent extends BaseComponent implements OnInit {
     
     differenceInCalendarDays(current, this.today) > 0;
 
+    
   msjConfirmOk() {
     try {
       this.budgetDetailsList = this.budgetDetailsList.
@@ -294,6 +296,7 @@ export class BudgetsEditComponent extends BaseComponent implements OnInit {
       console.log(error);
     }
   }
+
   currencyFormat(data: any): string {
     return formatCurrency(data, this.locale, '$', 'ARS', '1.1-2')
   }
@@ -443,7 +446,6 @@ export class BudgetsEditComponent extends BaseComponent implements OnInit {
             this.isLoading = false;
             this.formProductSearch.controls['productSearchFilter'].setValue('');
 
-
           } else {
 
             /*Parseo dato a la grilla de tabla */
@@ -470,27 +472,27 @@ export class BudgetsEditComponent extends BaseComponent implements OnInit {
     })
   }
 
-  handleOk() {
+handleOk() {
     try {
-      this.budgetDetailsTest = this.budgetDetailsList.
-        filter(element => element.ownCode != this.popupComponent.elementSelectedToDelete);
-      this.budgetDetails = this.budgetDetails.
-        filter(element => element.productId != this.popupComponent.elementSelectedToDelete);
-      this.popupComponent.isDeleteConfirmationVisible = false;
-      if (this.budgetDetailsTest.length == 0) {
-        this.budgetDetailsList = []
-      } else {
-        this.budgetDetailsList = this.budgetDetailsTest;
-      }
+        this.budgetDetailsTest = this.budgetDetailsList.filter(element => element.ownCode != this.popupComponent.elementSelectedToDelete);
+        this.budgetDetails = this.budgetDetails.filter(element => element.id != this.popupComponent.elementSelectedToDelete);
+        this.popupComponent.isDeleteConfirmationVisible = false;
+   
+        if (this.budgetDetailsList.length == 0) {
 
-      this.totalCalculate();
+          this.budgetDetailsList = [];
+        } else { 
+
+          this.budgetDetailsList = this.budgetDetailsTest;
+
+        }
+
+        this.totalCalculate();  
     } catch (error) {
-      console.log(error);
-
+        console.log(error);
     }
-  };
-
+    console.log(this.budgetDetailsList);
+    console.log(this.budgetDetails);
 }
 
-
-
+}

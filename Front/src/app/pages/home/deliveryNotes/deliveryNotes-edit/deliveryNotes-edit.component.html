@@ -28,22 +28,27 @@
           </div>
         
           <div nz-col class="gutter-row" style="margin-right: 14px">
-          <nz-form-item>
-            <nz-form-label nzRequired nzFor="statusId">Estado</nz-form-label>
-            <nz-form-control>
+          <nz-form-item >
+            <nz-form-label nzRequired nzFor="statusId" >Estado</nz-form-label>
+            <nz-form-control >
               <nz-select
                 id="statusId"
                 formControlName="statusId"
                 [nzOptions]="type"
                 nzWidth="50px"
+                [nzDisabled]="id == 0 ? true : viewOrder"
+               
               >
               </nz-select>
-              <ng-template #clearQuery>
-                <i
+              <ng-template #clearQuery   
+              >
+                <i 
                   nz-icon
                   class="ant-input-clear-icon"
                   nzTheme="fill"
                   nzType="close-circle"
+                
+                  
                   *ngIf="
                     this.formDeliveryNotes.controls['statusId'].value !== ''
                     "
@@ -53,6 +58,7 @@
                     ].setValue('')
                   "
                 ></i>
+                
               </ng-template>
             </nz-form-control>
           </nz-form-item>
@@ -207,6 +213,7 @@
                 nzType="primary"
                 (click)="openComponentProduct()"
                 class="ml-5"
+                [disabled]="isDisabled"
               >
                 <i nz-icon nzType="search" nzTheme="outline"></i> Buscar
               </button>
@@ -256,7 +263,8 @@
             <th>Producto</th>
             <th>Cantidad</th>
             <th>Precio Unidad</th>
-            <th>Acción</th>
+            <th>SubTotal</th>
+            <th>Accion</th>
           </tr>
         </thead>
         <tbody>
@@ -266,27 +274,31 @@
               <div
                 class="editable-cell"
                 [hidden]="editId === data.productId"
+               
                 (click)="startEdit(data.productId)"
-              >
+                >
+              
                 {{ data.quantity }}
               </div>
               <nz-input-number
                 [hidden]="editId !== data.productId"
                 [nzMin]="1"
-                [nzMax]="10000"
+                [nzMax]="1000"
                 [(ngModel)]="data.quantity"
+                [disabled]="isDisabled"
                 (nzBlur)="stopEdit()"
-                (ngModelChange)="changeQuantity($event)"
+                (ngModelChange)="changeQuantity($event)" 
               ></nz-input-number>
             </td>
             <td [nzAlign]="'right'">{{  this.currencyFormat(data.price) }}</td>
-            <td style="text-align: center">
-              <nz-space [nzSplit]="spaceSplit">
+           <td [nzAlign]="'right'"> {{this.currencyFormat(data.subtotal)}}</td>
+            <td style="text-align: center" >
+              <nz-space [nzSplit]="spaceSplit" >
                 <ng-template #spaceSplit>
                   <nz-divider nzType="vertical"></nz-divider>
                 </ng-template>
-                <a
-                  *nzSpaceItem
+                 <a
+                  *nzSpaceItem 
                 >
                   <i
                   nz-tooltip
@@ -294,10 +306,12 @@
                   nz-icon
                   nzType="delete"
                   [nzTheme]="'twotone'"
+                  class="disabled-icon"
+                  [ngClass]="{'disabled': isDisabled}"
                   [nzTwotoneColor]="'#FF0000'"
-                  (click)="popup.showDeleteConfirmation(data.productId)"
+                  (click)="popup.showDeleteConfirmation(data.productId)" 
                   ></i>
-                </a>
+                </a> 
               </nz-space>
             </td> 
           </tr>
