@@ -10,7 +10,8 @@ namespace Kiltex.SistemaGestion.Services.Mapper
         public UserMapperProfile()
         {
             CreateMap<User, RequestAddUser>().ReverseMap();
-            CreateMap<User, DtoResponseUser>().ReverseMap();
+            CreateMap<User, DtoResponseUser>()
+                .ForMember(i => i.RoleId, o => o.MapFrom(p => p.Rol.Key));
         }
     }
 }

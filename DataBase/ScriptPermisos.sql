@@ -1,4 +1,4 @@
-USE [Gestion_Stock]
+USE [Ordbox]
 GO
 
 INSERT INTO [dbo].[permission]
@@ -6,18 +6,19 @@ INSERT INTO [dbo].[permission]
 		   ,[key]
 		   ,[enumPermission])	
      VALUES
-           ('ViewUser','ViewUser',1),('EditUser', 'EditUser',2),('DeleteUser', 'DeleteUser',3),('CreateUser', 'CreateUser',4),
-		   ('ViewBrand','ViewBrand',5),('CreateBrand','CreateBrand',6),('EditBrand','EditBrand',7),
-		   ('ViewCategory','ViewCategory',8),('CreateCategory','CreateCategory',9),('EditCategory','EditCategory',10),
-		   ('ViewCustomer','ViewCustomer',11),('CreateCustomer','CreateCustomer',12),('EditCustomer','EditCustomer',13),
-		   ('ViewEntity','ViewEntity',14),('CreateEntity','CreateEntity',15),('EditEntity','EditEntity',16),
-		   ('GetInvoice','GetInvoice',17),('CreateInvoice','CreateInvoice',18),
-		   ('ViewProduct','ViewProduct',19),('CreateProduct','CreateProduct',20),('EditProduct','EditProduct',21),
-		   ('ViewSupplier','ViewSupplier',22),('EditSupplier','EditSupplier',23),('CreateSupplier','CreateSupplier',24),
-		   ('ViewOrderSupplier','ViewOrderSupplier',25),('CreateOrderSupplier','CreateOrderSupplier',26),('EditOrderSupplier','EditOrderSupplier',27),
-		   ('ListUpdatePrice','ListUpdatePrice',28),('EditUpdatePrice','EditUpdatePrice',29),
-		   ('GetReceipt','GetReceipt',30), ('CreateReceipt','CreateReceipt',31),
-		   ('ListIva','ListIva',32),
-		   ('GetPeriod','GetPeriod',33),('CreatePeriod','CreatePeriod',34),('EditPeriod','EditPeriod',35),('DeletePeriod','DeletePeriod',36),
-		   ('GetMemo','GetMemo', 37),('CreateMemo','CreateMemo',38),('RolControl','RolControl',39),('ReportZ','ReportZ', 40)
+           ('VerUsuario','ViewUser',1),('EditarUsuario', 'EditUser',2),('EliminarUsuario', 'DeleteUser',3),('CrearUsuario', 'CreateUser',4),
+		   ('VerMarca','ViewBrand',5),('CrearMarca','CreateBrand',6),('EditarMarca','EditBrand',7),
+		   ('VerCategoria','ViewCategory',8),('CrearCategoria','CreateCategory',9),('EditarCategoria','EditCategory',10),
+		   ('VerCliente','ViewCustomer',11),('CrearCliente','CreateCustomer',12),('EditarCliente','EditCustomer',13),
+		   ('VerEntidades','ViewEntity',14),('CrearEntidades','CreateEntity',15),('EditarEntidades','EditEntity',16),
+		   ('ListadoFactura','GetInvoice',17),('CrearFactura','CreateInvoice',18),
+		   ('VerProducto','ViewProduct',19),('CrearProducto','CreateProduct',20),('EditarProducto','EditProduct',21),
+		   ('VerProveedor','ViewSupplier',22),('EditarProveedor','EditSupplier',23),('CrearProveedor','CreateSupplier',24),
+		   ('VerPedidos','ViewOrderSupplier',25),('CrearPedido','CreateOrderSupplier',26),('EditarPedido','EditOrderSupplier',27),
+		   ('ListaActualizarPrecio','ListUpdatePrice',28),('ActualizarPrecio','EditUpdatePrice',29),
+		   ('ListadoFacturaCompra','GetReceipt',30), ('CrearFacturaCompra','CreateReceipt',31),
+		   ('ListadoIva','ListIva',32),
+		   ('ListadoPeriodo','GetPeriod',33),('CrearPeriodo','CreatePeriod',34),('EditarPeriodo','EditPeriod',35),('EliminarPeriodo','DeletePeriod',36),
+		   ('ListadoNotaCreditoYDebito','GetMemo', 37),('CrearNotaCreditoYDebito','CreateMemo',38),('ControldeRoles','RolControl',39),('ReportZ','ReportZ', 40),
+		   ('ListadoPresupuesto','GetBudget', 41),('CrearPresupuesto','CreateBudget', 42),('ListadoRemito','GetRemito', 43),('CrearRemito','CreateRemito', 44)
 GO

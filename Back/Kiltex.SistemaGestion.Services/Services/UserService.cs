@@ -87,7 +87,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             try 
             {
                 var query = _contextSql
-                                    .Users
+                                    .Users.Include(P=>P.Rol)
                                     .AsNoTracking()
                                     .Where(p => ((p.FirstName.ToLower().Contains(request.Filter ?? "")) || (p.LastName.ToLower().Contains(request.Filter ?? "")))
                                                   && !p.IsDeleted);
