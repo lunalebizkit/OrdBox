@@ -71,7 +71,6 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                         .HasColumnName("observation");
 
                     b.Property<string>("Payment")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("payment");
 
@@ -418,9 +417,8 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("observation");
 
-                    b.Property<string>("Paid")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)")
+                    b.Property<bool>("Paid")
+                        .HasColumnType("bit")
                         .HasColumnName("paid");
 
                     b.Property<long>("StatusId")
@@ -1133,7 +1131,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                             FirstName = "admin",
                             IsDeleted = false,
                             LastName = "admin",
-                            Password = "$MYHASH$V1$100$iURZd9ts4+Be4eRDioAxdWdYG7rdbVTxMfS/75RFWtby4riI",
+                            Password = "$MYHASH$V1$100$ifoNhWy8pNHbtkz/DqH8kpYCbwEX85C3dIdXDLflP20rpzHw",
                             RoleId = 1L,
                             UserName = "admin"
                         });

@@ -10,7 +10,7 @@ namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest
 
         public string Key { get; set; }
 
-        public List<long> PermissionIds { get; set; }
+        public List<long>? PermissionIds { get; set; }
 
     }
 }

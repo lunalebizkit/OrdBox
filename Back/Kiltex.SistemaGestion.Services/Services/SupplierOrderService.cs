@@ -115,7 +115,7 @@ namespace Kiltex.SistemaGestion.Services.Services
         }
         public async Task<OperationResponse<IdResponse<long>>> AddOrUpdate(DtoRequestSupplierOrder model, CancellationToken ct = default)
         {
-            var transaction = _contextSql.Database.BeginTransaction();
+           // var transaction = _contextSql.Database.BeginTransaction();
             var newOrder = _mapper.Map<SupplierOrder>(model);
             var productDetail = new Product();
             try
@@ -132,13 +132,30 @@ namespace Kiltex.SistemaGestion.Services.Services
                 {
                     var oldOrder = await _contextSql
                         .SupplierOrders
-                        .AsNoTracking()
+                      
                         .Include(p => p.Supplier)
                         .Include(p => p.SupplierOrderDetail)
-                        .FirstAsync(p => p.Id == newOrder.Id, ct)
+                        .FirstAsync(p => p.Id == newOrder.Id)
                         .ConfigureAwait(false);
 
-                    _contextSql.SupplierOrders.Update(newOrder);
+                    
+                    _contextSql.SupplierOrderDetails.RemoveRange(oldOrder.SupplierOrderDetail);
+
+                    _contextSql.Entry(oldOrder).State = EntityState.Detached;
+
+                    await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
+
+                    var newOrder2 = _mapper.Map<SupplierOrder>(newOrder);
+
+                    foreach (var item in newOrder.SupplierOrderDetail)
+                    {
+                        item.Id = 0;
+
+                        oldOrder.SupplierOrderDetail.Add(item);
+                    }
+
+
+
 
                     if (newOrder.StatusId == (int)ESupplierOrderStatuses.Aceptado)
                     {
@@ -146,7 +163,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                         {
                             var oldProduct = await _contextSql.
                                                     Products
-                                                    .AsNoTracking()
+                                                    
                                                     .FirstOrDefaultAsync(p => p.Id == detail.ProductId, ct)
                                                     .ConfigureAwait(false);
 
@@ -156,13 +173,14 @@ namespace Kiltex.SistemaGestion.Services.Services
                         }
 
                     }
-
-
+                    _contextSql.Attach(newOrder2);
+                    _contextSql.Update(newOrder2);
+                  
                 }
 
                 await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
-
-                transaction.Commit();
+                
+               // transaction.Commit();
                 return Ok(new IdResponse<long>(newOrder.Id));
             }
             catch (Exception ex)
@@ -196,7 +214,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                     var result = _mapper.Map<DtoResponseSupplierOrderById>(order);
                     List<DtoResponseOrderByIdDetail> orderDetail = new List<DtoResponseOrderByIdDetail>(result.OrderDetail);
                    
-                    var email = await _emailService.SendOrder(model.Emails, order.Supplier.Name, order.Id.ToString(), order.DateTime.ToString(), order.IsPaid, orderDetail);
+                    var email = await _emailService.SendOrder(model.Emails, order.Supplier.Name, order.Id.ToString(), order.DateTime.ToString("dd/MM/yyyy"), order.IsPaid, orderDetail);
 
                     if (email.Success)
                     {

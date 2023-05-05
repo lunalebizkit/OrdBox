@@ -1,6 +1,8 @@
 USE [Ordbox]
 GO
 
+DELETE FROM dbo.permission_x_rol;
+
 INSERT INTO [dbo].[permission_x_rol]
            ([role_id]
 		   ,[permission_id])	

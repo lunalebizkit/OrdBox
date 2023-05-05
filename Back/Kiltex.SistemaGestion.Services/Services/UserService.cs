@@ -7,16 +7,22 @@ using Microsoft.EntityFrameworkCore;
 using Kiltex.SistemaGestion.Services.Common;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
+using DocumentFormat.OpenXml.Wordprocessing;
+using Kiltex.SistemaGestion.Domain.Enum;
+using DocumentFormat.OpenXml.Drawing.Charts;
+using DocumentFormat.OpenXml.Spreadsheet;
 
 namespace Kiltex.SistemaGestion.Services.Services
 {
     public class UserService : BaseService
+           
     {
-        public UserService(ErrorManager logger, DBContext context, IMapper maper) :
+        private readonly EmailService _emailService;
+        public UserService(ErrorManager logger, DBContext context, IMapper maper, EmailService emailService) :
             base(logger, context, maper)
 
         {
-
+            this._emailService = emailService;
         }
         //Login de Usuario
         public async Task<OperationResponse<User>> GetUserLogin(string userName, string password)
@@ -132,11 +138,14 @@ namespace Kiltex.SistemaGestion.Services.Services
                 }
 
                 var usermodel = _mapper.Map<User>(model);
-          
+
+                var email = await _emailService.SendUser(model.Email, model.UserName, model.Password);
+
                 if (usermodel.Id == 0)
                 {
                     usermodel.Password = SecurePasswordHasher.Hash(usermodel.Password, 100);
-                    await _contextSql.Users.AddAsync(usermodel, ct).ConfigureAwait(false);
+                    await _contextSql.Users.AddAsync(usermodel, ct).ConfigureAwait(false);               
+                    
                 }
                 else
                 {
@@ -161,13 +170,16 @@ namespace Kiltex.SistemaGestion.Services.Services
                 }
                 await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
 
-                return Ok(new IdResponse<long>(usermodel.Id));
+                return Ok(new IdResponse<long>(usermodel.Id));          
+
+               
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
-                _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
+                _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_010_ERROR_EXCEPTION), ex);
                 throw;
             }
+
         }
         //Actualizar usuario
         public async Task<OperationResponse<IdResponse<long>>> Update(RequestAddUser model, CancellationToken ct = default)
@@ -219,6 +231,8 @@ namespace Kiltex.SistemaGestion.Services.Services
                 _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
                 throw;
             }
-        }
+       }
+
+  
     }
 }
