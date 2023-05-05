@@ -138,6 +138,7 @@ export class UsersEditDrawerComponent extends BaseComponent implements OnInit {
                 this.form.controls['firstName'].setValue(r.firstName),
                     this.form.controls['lastName'].setValue(r.lastName),
                     this.form.controls['userName'].setValue(r.userName),
+                    this.form.controls['password'].setValue(r.password)
                     this.form.controls['email'].setValue(r.email),
                     this.form.controls['roleId'].setValue(r.roleId),
                 this.isLoading = false;
@@ -149,9 +150,8 @@ export class UsersEditDrawerComponent extends BaseComponent implements OnInit {
     };
 
     save(): void {
-        this.updateConfirmValidator(); 
-        if (this.isValidForm(this.form)) {
-            if(this.id > 0){
+    this.updateConfirmValidator(); 
+       if (this.isValidForm(this.form)) {  
                 const model: UserModel = {
                     id: this.id !== undefined ? this.id : 0,
                     firstName: this.form.controls['firstName'].value,
@@ -170,16 +170,15 @@ export class UsersEditDrawerComponent extends BaseComponent implements OnInit {
                             `Se edito correctamente el usuario ${model.userName}`
                         );
                         this.isSaving = false;
-                       this.close(r.id);
+                       this.close(r.id);                                       
                     },
                     error: ()=>{
                         this.isSaving = false;
                         this.showMessageError('No se pudo editar el usuario');
-                        this.close();
+                        this.close();                                           
                     }
                 })
-            }
-        }   
+       }    
     };
     close(id: number | void): void {
         this.drawerRef.close(id);
@@ -203,6 +202,7 @@ export class UsersEditDrawerComponent extends BaseComponent implements OnInit {
     updateConfirmValidator(): void {
         Promise.resolve().then(() => this.form.controls['password'].updateValueAndValidity());
         Promise.resolve().then(() => this.form.controls["checkpassword"].updateValueAndValidity());
+        
     }
 
     confirmationValidator = (control: FormControl): { [s: string]: boolean } => {
@@ -225,5 +225,6 @@ export class UsersEditDrawerComponent extends BaseComponent implements OnInit {
            console.log(error);
            
          }
-      }
+    }
+
 }
