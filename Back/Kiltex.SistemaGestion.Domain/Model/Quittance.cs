@@ -1,0 +1,30 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Kiltex.SistemaGestion.Domain.Model
+{
+    [Table("quittance")]
+    public class Quittance : BaseModel
+    {
+        [Column("quittance_number")]
+        public int QuittanceNumber { get; set; }
+
+        [Column("customer_name")]
+        public string? CustomerName { get; set; }
+
+        [Column("customer_address")]
+        public string? CustomerAddress { get; set; }
+
+        [Required]
+        [Column("dateTime")]
+        public DateTime DateTime { get; set; }
+
+        [Column("observation")]
+        public string? Observation { get; set; }
+    }
+}
