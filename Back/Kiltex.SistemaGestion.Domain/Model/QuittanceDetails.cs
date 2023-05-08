@@ -9,14 +9,16 @@ namespace Kiltex.SistemaGestion.Domain.Model
 {
     [Table("quittance_details")]
     public class QuittanceDetails
+    [Table("quittanceDetails")]
+    public class QuittanceDetails : BaseModel
     {
-        [Column("check_number")]
-        public string? CheckNumber { get; set; }
-
         [Column("total")]
         public string? Total { get; set; }
 
         [Column("bank")]
         public string? Bank { get; set; }
+
+        [Column("check_number")]
+        public string? Total { get; set; }
     }
 }

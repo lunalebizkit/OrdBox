@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Kiltex.SistemaGestion.Domain.Model
 {
@@ -26,9 +22,9 @@ namespace Kiltex.SistemaGestion.Domain.Model
         [Required]
         [Column("dateTime")]
         public DateTime DateTime { get; set; }
-
-        [Column("money")]
-        public string? Money { get; set; }
+        
+        [Column("amount")]
+        public string? Amount { get; set; }
 
         [Column("concept")]
         public string? Concept { get; set; }
