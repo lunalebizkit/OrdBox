@@ -1,14 +1,17 @@
 USE [Ordbox]
 GO
 
+
+DELETE FROM dbo.rol
+
+DBCC CHECKIDENT ('dbo.rol', RESEED,0)
+
 INSERT INTO [dbo].[rol]
            ([name]
            ,[key])
      VALUES
 		('admin',1),('vendedor',2),('contador',3),('supervisor',4)
 GO
-
-
 
 INSERT INTO [dbo].[user]
            ([first_name]

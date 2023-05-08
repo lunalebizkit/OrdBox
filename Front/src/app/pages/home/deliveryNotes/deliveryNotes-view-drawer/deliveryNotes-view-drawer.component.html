@@ -14,7 +14,7 @@
 >
 </app-header-op-buttons>
 <nz-collapse >
-  <nz-collapse-panel nzHeader="Datos Remito" [nzActive]="true"  class="{{this.tipo}}">
+  <nz-collapse-panel nzHeader="Datos Remito" [nzActive]="true"  class="Remito">
     
         <nz-descriptions nzSize="middle" [nzColumn]="3" style="margin-left: 100px; padding: 5px;">
           <nz-descriptions-item nzTitle=" * Fecha" >
@@ -33,7 +33,7 @@
             {{this.supplierCuit}}</nz-descriptions-item
           >
           <nz-descriptions-item nzTitle=" * Pagado" >
-            {{this.paid}}</nz-descriptions-item
+            {{this.paid == true ? 'Si': 'No'}}</nz-descriptions-item
           >
           <nz-descriptions-item nzTitle=" * Dirección" >
             {{this.supplierAddress}}
@@ -46,7 +46,7 @@
       </nz-descriptions> 
   </nz-collapse-panel>
 </nz-collapse>
-<nz-collapse   class="{{this.tipo}}">
+<nz-collapse   class="Remito">
   <nz-collapse-panel
     nzHeader="Detalle Remito"
     [nzActive]="true"
@@ -60,6 +60,7 @@
           <th>Producto</th>
           <th [nzAlign]="'center'">Cantidad</th>
           <th [nzAlign]="'center'">Precio Unidad</th>
+          <th [nzAlign]="'center'">SubTotal</th>
         </tr>
       </thead>
       <tbody>
@@ -67,9 +68,12 @@
           <td>{{ data.productName}}</td>
           <td [nzAlign]="'right'">{{ data.quantity }}</td>
           <td [nzAlign]="'right'">{{ this.currencyFormat(data.price) }}</td>
+          <td [nzAlign]="'right'">
+            {{ this.currencyFormat(data.quantity * data.price) }}
+          </td>
         </tr>
       </tbody>
-       <tfoot  class="{{this.tipo}}">
+       <tfoot  class="Remito">
         <tr> 
           <td colspan="8" [nzAlign]="'right'" >
             <b>Total </b

@@ -1,6 +1,8 @@
 USE [Ordbox]
 GO
 
+DELETE FROM dbo.permission
+
 DBCC CHECKIDENT ('dbo.permission', RESEED,0)
 
 INSERT INTO [dbo].[permission]

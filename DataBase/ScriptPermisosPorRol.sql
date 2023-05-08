@@ -1,7 +1,7 @@
 USE [Ordbox]
 GO
 
-DBCC CHECKIDENT ('dbo.rol', RESEED,0)
+DELETE FROM dbo.permission_x_rol;
 
 INSERT INTO [dbo].[permission_x_rol]
            ([role_id]
