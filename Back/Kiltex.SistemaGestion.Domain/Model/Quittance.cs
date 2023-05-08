@@ -30,7 +30,10 @@ namespace Kiltex.SistemaGestion.Domain.Model
         public string? Concept { get; set; }
 
         [Column("total")]
-        public string? Total { get; set; }
+        public decimal? Total { get; set; }
+
+        [Column("cash")]
+        public decimal? Cash { get; set; }
 
         public ICollection<QuittanceDetails> QuittanceDetails { get; set; } = new HashSet<QuittanceDetails>();
     }

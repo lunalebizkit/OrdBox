@@ -1,10 +1,9 @@
-﻿
+﻿using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
 
-namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse
+namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest
 {
-    public class DtoResponseQuittance
+    public class DtoRequestQuittance
     {
-
         public long Id { get; set; }
 
         public int QuittanceNumber { get; set; }
@@ -25,16 +24,19 @@ namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse
 
         public decimal? Total { get; set; }
 
-        public List<DtoResponseQuittanceDetails> QuittanceDetails { get; set; }
-    }
+        public List<DtoRequesQuittanceDetails> QuittanceDetails { get; set; }
 
-    public class DtoResponseQuittanceDetails
+    }
+    public class DtoRequesQuittanceDetails
     {
 
         public long QuittanceId { get; set; }
+
         public string? CheckNumber { get; set; }
 
         public decimal? Total { get; set; }
+
+        public int? Quantity { get; set; }
 
         public string? Bank { get; set; }
     }

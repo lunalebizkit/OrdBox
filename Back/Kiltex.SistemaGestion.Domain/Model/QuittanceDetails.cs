@@ -1,24 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Kiltex.SistemaGestion.Domain.Model
 {
     [Table("quittance_details")]
-    public class QuittanceDetails
-    [Table("quittanceDetails")]
     public class QuittanceDetails : BaseModel
     {
+        [Column("quittance_id")]
+        public long QuittanceId { get; set; }
+
+        [ForeignKey(nameof(QuittanceId))]
+        public Quittance? Quittance { get; set; }
+
         [Column("total")]
-        public string? Total { get; set; }
+        public decimal? Total { get; set; }
+
+        [Column("quantity")]
+        public int? Quantity { get; set; }
 
         [Column("bank")]
         public string? Bank { get; set; }
 
         [Column("check_number")]
-        public string? Total { get; set; }
+        public string? CheckNumber { get; set; }
     }
 }
