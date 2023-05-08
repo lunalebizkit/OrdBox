@@ -20,11 +20,22 @@ namespace Kiltex.SistemaGestion.Domain.Model
         [Column("customer_address")]
         public string? CustomerAddress { get; set; }
 
+        [Column("customer_cuit")]
+        public string? CustomerCuit { get; set; }
+
         [Required]
         [Column("dateTime")]
         public DateTime DateTime { get; set; }
 
-        [Column("observation")]
-        public string? Observation { get; set; }
+        [Column("money")]
+        public string? Money { get; set; }
+
+        [Column("concept")]
+        public string? Concept { get; set; }
+
+        [Column("total")]
+        public string? Total { get; set; }
+
+        public ICollection<QuittanceDetails> QuittanceDetails { get; set; } = new HashSet<QuittanceDetails>();
     }
 }
