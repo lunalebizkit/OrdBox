@@ -24,6 +24,7 @@ import { OrdersEditDrawerComponent } from '../orders-edit-drawer/orders-edit.dra
 import { OrdersService } from '../orders.service';
 import { Permission } from 'src/app/common/auth/models/permissions.enum';
 import { CustomerModel } from '../../customers/model/customer.model';
+import { CategoryModel } from '../../categories/model/category.model';
 
 @Component({
   selector: 'app-orders-list',
@@ -58,6 +59,7 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
       status: 0,
       date: '',
       supplier: [0],
+      
     },
     page: 0,
     pageSize: 20,
@@ -71,6 +73,7 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
     pageSize: 20,
   };
   entityList: CustomerModel[] = [];
+  categorieList: CategoryModel [] = [];
   totalItems = 0;
   selectedIndex!: number;
   selectedOrders!: NewOrder;
@@ -177,6 +180,9 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
       this.getSupplier(this.queryData);
     }
   }
+
+  
+
   getSupplier(params: any): void {
     this.loading = true;
     this.serviceEntity.getSuppliers(params).subscribe({
@@ -191,6 +197,31 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
       },
     });
   }
+
+  //Busca por categoria
+  onSearch2(data: string): void {
+    if (data.length > 2) {
+      this.queryData.page = 0;
+      this.queryData.filter = data;
+      this.getCategory(this.queryData);
+    }
+  }
+
+  getCategory(params:any):void{
+    this.loading = true;
+    this.serviceCategory.getByFilter(params).subscribe({
+      next: (r) => {
+        this.categorieList = r.data;
+        this.totalItems = r.totalCount;
+        this.loading = false;
+      },
+      error: () => {
+        this.loading = false;
+        this.categorieList = [];
+      },
+    });
+  }
+
   onSelect(id: number): void {
     this.orderDetailList = this.allOrders.filter(
       (order) => order.id == id
@@ -205,6 +236,8 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
         this.queryParams.filter.supplier = [id];
       }
   }
+
+
   dateSelectedChange(id: any): void {
     this.queryParams.filter.date = id == null ? '' : this.formaterDate(id) ;  
   }
