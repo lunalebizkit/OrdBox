@@ -9,6 +9,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzDrawerRef } from 'ng-zorro-antd/drawer';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
@@ -27,6 +28,7 @@ export class ReceiptViewDrawerComponent
   extends BaseComponent
   implements OnInit
 {
+  router: any;
   
   @Input() set filter(value: number) {
     this.id = value;
@@ -126,5 +128,8 @@ export class ReceiptViewDrawerComponent
   }
   close(): void {
     this.drawerRef.close();
+  }
+  direction() {
+    this.router.navigate(['/home/invoices/receipt']);
   }
 }

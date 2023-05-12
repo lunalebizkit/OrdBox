@@ -1,4 +1,4 @@
-<app-header-op-buttons 
+<!--<app-header-op-buttons 
 #header 
 [btnCancelText]="'Volver'" 
 [btnSaveText]="'Guardar'" 
@@ -13,12 +13,24 @@
 [iconBack]="'rollback'" 
 [iconSave]="'save'" 
 (onSaveClick)="save()">
-</app-header-op-buttons>
+</app-header-op-buttons>-->
+
+<nz-page-header class="list-header">
+  <nz-page-header-title>
+    <i nz-icon nzType="container" nzTheme="outline" style="color: #ff7875;"></i> Presupuesto</nz-page-header-title>
+  <nz-page-header-extra>
+    <button nz-button (click)="direction()" type="submit" nzSize="default" >
+      <i nz-icon nzType="rollback" nzTheme="outline"></i>Volver
+    </button>
+  </nz-page-header-extra>
+</nz-page-header>
+
+<!--agregar direccion (click)="direction()" -->
 
 <!--ENcabezado-->
 <form nz-form [formGroup]="form">
   <nz-collapse>
-    <nz-collapse-panel nzHeader="Encabezado"  [nzActive]="true" [nzShowArrow]="true"> 
+    <nz-collapse-panel nzHeader="Encabezado"  [nzActive]="true" [nzShowArrow]="true" style="font-weight: bold;"> 
       <nz-content>
         
         <div nz-row nzJustify="center">
@@ -74,7 +86,7 @@
         <nz-divider
         nzText="Cliente"
         nzOrientation="left"
-        style="margin-top: 0"
+        style="margin-top: 0; text-decoration: underline;"
       ></nz-divider>
 
    
@@ -98,7 +110,7 @@
         </nz-form-item>
 
         <!-- Buscador de Productos -->
-        <nz-divider nzText="Producto" nzOrientation="left"></nz-divider>
+        <nz-divider nzText="Producto" nzOrientation="left" style="margin-top: 0; text-decoration: underline;"></nz-divider>
 
         <form nz-form [formGroup]="formProductSearch">
           <nz-form-item>
@@ -132,7 +144,7 @@
         <br />
 
         <!-- Observaciones-->
-        <nz-divider nzText="Observaciones" nzOrientation="left" style="margin-top: 0"></nz-divider>
+        <nz-divider nzText="Observaciones" nzOrientation="left" style="margin-top: 0; text-decoration: underline;"></nz-divider>
         <nz-form-item>
           <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="observation">Observación
           </nz-form-label>
@@ -148,7 +160,7 @@
 
 
 <nz-collapse>
-  <nz-collapse-panel nzHeader="Detalle" [nzActive]="true" [nzShowArrow]="true">
+  <nz-collapse-panel nzHeader="Detalle" [nzActive]="true" [nzShowArrow]="true" style="font-weight: bold;">
     <nz-content>
       <nz-table 
       [nzBordered]="true" 
@@ -219,7 +231,7 @@
             <td></td>
             <td colspan="1">
               <b>Total </b>
-              <b style="color: red">{{ this.currencyFormat(this.total) }}</b>
+              <b style="color: red; font-size: 15px;">{{ this.currencyFormat(this.total) }}</b>
             </td>
             <td></td>
             <td colspan="5" [nzAlign]="'right'">

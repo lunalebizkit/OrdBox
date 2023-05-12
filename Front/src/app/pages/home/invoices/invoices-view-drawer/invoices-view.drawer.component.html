@@ -7,24 +7,56 @@
   [hideClose]="true"
   [hideUpdate]="true"
   [hideSave]="true"
-  [hideCerrar]="true" 
+  [hideCerrar]="true"
   [hideFacturaPro]="true"
   [hideBack]="true"
-  [disabled]="invoiceNumber == 0? true:false"
+  [disabled]="invoiceNumber == 0 ? true : false"
   [title]="'Comprobantes de Ventas'"
   [iconReprint]="'file-excel'"
   [iconBack]="'rollback'"
   [iconTitle]="'container'"
   (onReprintClick)="popupReimprimir.showConfirmation()"
-
 >
 </app-header-op-buttons>
-<nz-collapse class="{{this.tipo}}">
+<nz-collapse class="{{ this.tipo }}">
+  <nz-collapse-panel nzHeader="Datos Comprobante" [nzActive]="true">
+    <div style="display: flex; flex-direction: row">
+      <div style="flex: 1">
+        <b><label>* Fecha: </label></b>
+        <span>{{ dateTime ? (dateTime | date : "YYYY-MM-dd") : "N/A" }}</span>
+        <br />
+        <b><label>* Cliente: </label></b>
+        <span>{{ customerName }}</span>
+        <br />
+        <b><label>* Observación: </label></b>
+        <span>{{ observation }}</span>
+        <br />
+      </div>
+      <div style="flex: 1">
+        <b><label>* Tipo: </label></b>
+        <span>
+          <nz-page-header-tags>
+            <nz-tag [nzColor]="'blue'">{{ this.invoiceType(type) }}</nz-tag>
+          </nz-page-header-tags>
+        </span>
+        <br />
+        <b><label>* Cuit: </label></b>
+        <span>{{ customerCuit | cuit }}</span>
+      </div>
+      <div style="flex: 1">
+        <b><label>* Número de Factura: </label></b>
+        <span>{{ this.invoiceNumber }}</span>
+        <br />
+        <b><label>* Dirección: </label></b>
+        <span>{{ customerAddress }}</span>
+      </div>
+    </div>
+  </nz-collapse-panel>
 
-  <nz-collapse-panel nzHeader="Datos Comprobante" [nzActive]="true" >
+  <!-- <nz-collapse-panel nzHeader="Datos Comprobante" [nzActive]="true">
+    <nz-descriptions nzSize="small" [nzColumn]="3" style=  "margin-left: 100px; padding: 5px;">
 
-    <nz-descriptions nzSize="small" [nzColumn]="3" style="margin-left: 100px; padding: 5px;">
-      <nz-descriptions-item nzTitle=" * Fecha" >
+      <nz-descriptions-item nzTitle=" * Fecha">
         <a>{{ dateTime ? (dateTime | date : "YYYY-MM-dd") : "N/A" }} </a>
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="* Tipo">
@@ -34,7 +66,7 @@
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="* Número de Factura" >
         {{ this.invoiceNumber }}</nz-descriptions-item>
-      <nz-descriptions-item nzTitle=" * Cliente" >
+      <nz-descriptions-item  nzTitle=" * Cliente " >
         {{ customerName }}</nz-descriptions-item
       >
       <nz-descriptions-item nzTitle="* Cuit" >
@@ -48,75 +80,77 @@
       </nz-descriptions-item>
     </nz-descriptions>
   </nz-collapse-panel>
-</nz-collapse>
-<nz-collapse>
-  <nz-collapse-panel
-    nzHeader="Detalle Comprobante"
-    [nzActive]="true"
-    [nzShowArrow]="true"
-    class="{{this.tipo}}"
-  >
-    <nz-content >
-      <nz-table [nzBordered]="true" nzTemplateMode [nzSize]="'small'" >
-        <thead>
-          <tr>
-            <th>Código</th>
-            <th>Código Interno</th>
-            <th>Producto</th>
-            <th [nzAlign]="'center'">Cantidad</th>
-            <th [nzAlign]="'center'">Precio Unidad</th>
-            <th [nzAlign]="'center'">SubTotal</th>
-            <th>Iva</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let data of invoiceDetail">
-            <td>{{ data.productCode }}</td>
-            <td>{{ data.productId }}</td>
-            <td>{{ data.productName }}</td>
-            <td [nzAlign]="'right'">{{ data.quantity }}</td>
-            <td [nzAlign]="'right'">{{ this.currencyFormat(data.price) }}</td>
-            <td [nzAlign]="'right'">
-              {{ this.currencyFormat(data.quantity * data.price) }}
-            </td>
-            <td>{{ data.iva }}</td>
-          </tr>
-        </tbody>
-        <tfoot class="{{this.tipo}}">
-          <tr>
-            <td></td>
-            <td [colSpan]="2" *ngIf="type == 1; else elseBlock">
-              <b>Iva </b>
-              <span style="color: blue"
-                >{{ this.currencyFormat(ivaTotal) }}
-              </span>
-            </td>
-            <td *ngIf="type == 1; else elseBlock" [colSpan]="2">
-              <b>SubTotal </b>
-              <span style="color: blue"
-                >{{ this.currencyFormat(subTotal) }}
-              </span>
-            </td>
-            <td [colSpan]="2" >
-              <b>Total </b
-              ><span style="color: blue"
-                >{{ this.currencyFormat(total) }}
-              </span>
-            </td>
-            <ng-template #elseBlock>
-              <td [colSpan]="2"></td>
-            </ng-template>
-          </tr>
-        </tfoot>
-      </nz-table>
-    </nz-content>
-  </nz-collapse-panel>
-</nz-collapse>
+</nz-collapse>-->
 
-<app-popup-confirmation
-  #popupReimprimir
-  [title]="'Confirmar Reimpresion'"
-  [header]="'¿Está seguro de que desea reimprimir esta factura?'"
-  (handleOk)="hideReprint()"
->
-</app-popup-confirmation>
+  <nz-collapse>
+    <nz-collapse-panel
+      nzHeader="Detalle Comprobante"
+      [nzActive]="true"
+      [nzShowArrow]="true"
+      class="{{ this.tipo }}"
+    >
+      <nz-content>
+        <nz-table [nzBordered]="true" nzTemplateMode [nzSize]="'small'">
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Código Interno</th>
+              <th>Producto</th>
+              <th [nzAlign]="'center'">Cantidad</th>
+              <th [nzAlign]="'center'">Precio Unidad</th>
+              <th [nzAlign]="'center'">SubTotal</th>
+              <th>Iva</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let data of invoiceDetail">
+              <td>{{ data.productCode }}</td>
+              <td>{{ data.productId }}</td>
+              <td>{{ data.productName }}</td>
+              <td [nzAlign]="'right'">{{ data.quantity }}</td>
+              <td [nzAlign]="'right'">{{ this.currencyFormat(data.price) }}</td>
+              <td [nzAlign]="'right'">
+                {{ this.currencyFormat(data.quantity * data.price) }}
+              </td>
+              <td>{{ data.iva }}</td>
+            </tr>
+          </tbody>
+          <tfoot class="{{ this.tipo }}">
+            <tr>
+              <td></td>
+              <td [colSpan]="2" *ngIf="type == 1; else elseBlock">
+                <b>Iva </b>
+                <span style="color: blue; font-size: 15px"
+                  >{{ this.currencyFormat(ivaTotal) }}
+                </span>
+              </td>
+              <td *ngIf="type == 1; else elseBlock" [colSpan]="2">
+                <b>SubTotal </b>
+                <span style="color: blue; font-size: 15px"
+                  >{{ this.currencyFormat(subTotal) }}
+                </span>
+              </td>
+              <td [colSpan]="2">
+                <b>Total </b
+                ><span style="color: blue; font-size: 15px"
+                  >{{ this.currencyFormat(total) }}
+                </span>
+              </td>
+              <ng-template #elseBlock>
+                <td [colSpan]="2"></td>
+              </ng-template>
+            </tr>
+          </tfoot>
+        </nz-table>
+      </nz-content>
+    </nz-collapse-panel>
+  </nz-collapse>
+
+  <app-popup-confirmation
+    #popupReimprimir
+    [title]="'Confirmar Reimpresion'"
+    [header]="'¿Está seguro de que desea reimprimir esta factura?'"
+    (handleOk)="hideReprint()"
+  >
+  </app-popup-confirmation>
+</nz-collapse>

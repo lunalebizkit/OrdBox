@@ -27,6 +27,9 @@ import { ePayment } from "../../invoices/model/invoice-payment.Enum";
 })
 
 export class BudgetsEditComponent extends BaseComponent implements OnInit {
+direccion() {
+throw new Error('Method not implemented.');
+}
 
   @ViewChild('header') headerComponent!: HeaderOperationsButtonsComponent;
   @ViewChild('popup') popupComponent!: PopupConfirmationComponent;
@@ -494,5 +497,9 @@ handleOk() {
     console.log(this.budgetDetailsList);
     console.log(this.budgetDetails);
 }
+direction() {
+  this.router.navigate(['/home/budgets']);
+}
+
 
 }
