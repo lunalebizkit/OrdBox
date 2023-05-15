@@ -59,7 +59,7 @@ export class DeliveryNotesViewDrawerComponent
   deliveryNotesNumber!:number;
   observation!: string;
   dateTime!: Date;
-  paid!: string;
+  paid!: boolean;
   statusId!:number;
   subTotal!: number;
   total!: number;

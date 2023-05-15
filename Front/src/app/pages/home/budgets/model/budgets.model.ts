@@ -32,6 +32,7 @@ export interface BudgetDetailList {
     quantity: number;
     price: number;
     subTotal: number;
+    
 }
 //f
 export function BudgetGridParser(value: any, price: number) {

@@ -50,3 +50,11 @@
 nz-option{
   width: 200px;
 }
+
+.disabled-icon {
+  pointer-events: auto;
+}
+
+.disabled-icon.disabled {
+  pointer-events: none;
+}

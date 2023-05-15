@@ -33,7 +33,7 @@ namespace Kiltex.SistemaGestion.Domain.Model
         public string? Cancelled { get; set; }
 
         [Column("paid")]
-        public string Paid { get; set; }
+        public Boolean Paid { get; set; }
 
         [Column("observation")]
         public string? Observation { get; set; }

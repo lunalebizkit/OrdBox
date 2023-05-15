@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
+using System.Data.OleDb;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -81,11 +82,8 @@ namespace Kiltex.SistemaGestion.Services.Services
 
         public async Task<OperationResponse<IdResponse<long>>> AddOrUpdate(DtoRequestBudget model, CancellationToken ct = default)
         {
-
-           
             try
             {
-                
                 var newModel = _mapper.Map<Budget>(model);
 
                 if (newModel.Id == 0)
@@ -96,14 +94,37 @@ namespace Kiltex.SistemaGestion.Services.Services
                 {
                     var oldBrand = await _contextSql
                                     .Budgets
-                                    .AsNoTracking()
+                                    .Include(x => x.BudgetDetails)                   
                                     .FirstAsync(p => p.Id == model.Id)
                                     .ConfigureAwait(false);
-                    _contextSql.Budgets.Update(newModel);
+
+                   //_contextSql.BudgetDetails.RemoveRange(oldBrand.BudgetDetails.Where(p => !newModel.BudgetDetails.Any(m => m.Id == p.Id)));
+                    _contextSql.BudgetDetails.RemoveRange(oldBrand.BudgetDetails);
+
+                    _contextSql.Entry(oldBrand).State = EntityState.Detached;
+                    await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
+
+                    newModel.Total = 0;
+                    
+                    var newModel2 = _mapper.Map <Budget>(newModel);
+                    foreach (var item in newModel.BudgetDetails)
+                    {
+                        item.Id = 0;
+                        newModel.Total += item.Price * item.Quantity;
+                        oldBrand.BudgetDetails.Add(item);
+                    }
+
+                   
+                    //oldBrand.BudgetDetails = newModel.BudgetDetails;
+                  
+                    _contextSql.Attach(newModel2);
+                  // _contextSql.Entry(oldBrand).State = EntityState.Modified;
+                    //_contextSql.Entry<Budget>(newModel2).State= EntityState.Modified;
+                    _contextSql.Update(newModel2);
+              
+
                 }
-
                 await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
-
                 return Ok(new IdResponse<long>(newModel.Id));
             }
             catch (Exception ex)

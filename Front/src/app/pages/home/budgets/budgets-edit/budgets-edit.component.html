@@ -3,10 +3,11 @@
 [btnCancelText]="'Volver'" 
 [btnSaveText]="'Guardar'" 
 [hideSave]="true" 
-[hideTag]="false"
+[hideTag]="true"
 [hideClose]="false"
 [hideFacturaPro]="true"
 [hideCerrar]="true" 
+[iconTitle]="'container'"
 [title]="'Presupuesto'" 
 [showSpinner]="isSaving" 
 [iconBack]="'rollback'" 
@@ -17,7 +18,7 @@
 <!--ENcabezado-->
 <form nz-form [formGroup]="form">
   <nz-collapse>
-    <nz-collapse-panel nzHeader="Encabezado" [nzActive]="true" [nzShowArrow]="true">
+    <nz-collapse-panel nzHeader="Encabezado"  [nzActive]="true" [nzShowArrow]="true"> 
       <nz-content>
         
         <div nz-row nzJustify="center">
@@ -170,7 +171,7 @@
         </thead>
 
         <tbody>
-          <tr *ngFor="let data of budgetDetailsList" class="small-text">
+          <tr *ngFor="let data of budgetDetailsList"   class="small-text">
             <td>{{data.productCode}}</td>
             <td>{{ data.productId }}</td>
             <td nzBreakWord>{{ data.productName }}</td>
@@ -209,6 +210,7 @@
                 </a>
               </nz-space>
             </td>  
+          
           </tr>
         </tbody>
 

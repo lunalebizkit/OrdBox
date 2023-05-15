@@ -8,7 +8,7 @@ export interface DeliveryNotesModel {
     supplierAddress: string;
     statusId: number;
     cancelled: string;
-    paid: string;
+    paid: boolean;
     observation: string;
     importTotal: number;
     deliveryNotesDetails: DeliveryNotesDetails[]
@@ -26,9 +26,10 @@ export interface DeliveryNotesDetails{
 export interface deliveryNotesDetailsList {
     productId: number;
     productName: string;
+    ownCode : number;
     quantity: number;
     price: number;
-/*     subtotal:number */
+    subtotal:number 
   }
 export function deliveryNotesGridParser(value: any, price:number ) {
     return {
@@ -37,15 +38,17 @@ export function deliveryNotesGridParser(value: any, price:number ) {
       price: value.purchasePrice,
       quantity:1,
       subtotal: price, 
+      ownCode: value.id,
     };
   } export function deliveryNotesGridFromParser(value: any) {
     return {
       
         productId: value.productId,
         productName: value.productName,
+        ownCode: value.id,
         price: value.price,
         quantity: value.quantity,
-       /*  subTotal: value.price * value.quantity */
+        subtotal: value.price * value.quantity 
     }}
   export function deliveryNotesDetailParser(value: any, price: number) {
     return {

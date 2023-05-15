@@ -12,5 +12,5 @@ export interface AddOrUpdatePermission {
     id: number,
     name: '',
     key: '',
-    permissionIds: number[]
+    permissionIds: Permission[]
 }

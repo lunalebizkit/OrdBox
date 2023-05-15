@@ -23,7 +23,7 @@ namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest
 
         public string? Cancelled { get; set; }
 
-        public string Paid { get; set; }
+        public Boolean Paid { get; set; }
 
         public string? Observation { get; set; }
 
