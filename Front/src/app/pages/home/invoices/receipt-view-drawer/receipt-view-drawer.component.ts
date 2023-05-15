@@ -129,7 +129,7 @@ export class ReceiptViewDrawerComponent
   close(): void {
     this.drawerRef.close();
   }
-  direction() {
+  direction(): void {
     this.router.navigate(['/home/invoices/receipt']);
   }
 }

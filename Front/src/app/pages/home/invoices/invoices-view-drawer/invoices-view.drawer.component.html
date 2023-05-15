@@ -16,10 +16,13 @@
   [iconBack]="'rollback'"
   [iconTitle]="'container'"
   (onReprintClick)="popupReimprimir.showConfirmation()"
+  [colors]="'#52c41a'"
 >
 </app-header-op-buttons>
+
+
 <nz-collapse class="{{ this.tipo }}">
-  <nz-collapse-panel nzHeader="Datos Comprobante" [nzActive]="true">
+  <nz-collapse-panel nzHeader="Encabezado" [nzActive]="true"  >
     <div style="display: flex; flex-direction: row">
       <div style="flex: 1">
         <b><label>* Fecha: </label></b>
@@ -84,7 +87,7 @@
 
   <nz-collapse>
     <nz-collapse-panel
-      nzHeader="Detalle Comprobante"
+      nzHeader="Detalle"
       [nzActive]="true"
       [nzShowArrow]="true"
       class="{{ this.tipo }}"
@@ -120,19 +123,19 @@
               <td></td>
               <td [colSpan]="2" *ngIf="type == 1; else elseBlock">
                 <b>Iva </b>
-                <span style="color: blue; font-size: 15px"
+                <span style="color: blue; font-size: 15px; font-weight: bold;"
                   >{{ this.currencyFormat(ivaTotal) }}
                 </span>
               </td>
               <td *ngIf="type == 1; else elseBlock" [colSpan]="2">
                 <b>SubTotal </b>
-                <span style="color: blue; font-size: 15px"
+                <span style="color: blue; font-size: 15px; font-weight: bold;"
                   >{{ this.currencyFormat(subTotal) }}
                 </span>
               </td>
               <td [colSpan]="2">
                 <b>Total </b
-                ><span style="color: blue; font-size: 15px"
+                ><span style="color: blue; font-size: 15px; font-weight: bold;"
                   >{{ this.currencyFormat(total) }}
                 </span>
               </td>

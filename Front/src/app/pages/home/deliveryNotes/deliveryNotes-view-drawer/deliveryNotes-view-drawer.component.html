@@ -11,13 +11,12 @@
   [hideFacturaPro]="true"
   [iconBack]="'rollback'"
   [iconTitle]="'container'"
+  [colors]="'#36cfc9'"
+  
 >
 </app-header-op-buttons>
-
-
-
-<nz-collapse>
-  <nz-collapse-panel nzHeader="Datos Remito" [nzActive]="true" class="Remito">
+<nz-collapse class="Remito">
+  <nz-collapse-panel nzHeader="Encabezado" [nzActive]="true">
     <div style="display: flex; flex-direction: row">
       <div style="flex: 1">
         <b><label> * Fecha: </label></b>
@@ -89,7 +88,7 @@
 
   <nz-collapse class="Remito">
     <nz-collapse-panel
-      nzHeader="Detalle Remito"
+      nzHeader="Detalle"
       [nzActive]="true"
       [nzShowArrow]="true"
     >
@@ -117,7 +116,7 @@
             <tr>
               <td colspan="8" [nzAlign]="'right'">
                 <b>Total </b
-                ><span style="color: blue; font-size: 15px">
+                ><span style="color: blue; font-size: 15px ; font-weight: bold;">
                   {{ this.currencyFormat(this.importTotal) }}
                 </span>
               </td>

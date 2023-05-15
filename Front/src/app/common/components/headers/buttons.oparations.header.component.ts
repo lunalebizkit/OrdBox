@@ -31,6 +31,7 @@ export class HeaderOperationsButtonsComponent implements OnInit {
   @Input('iconBack') iconBack!: string;
   @Input('iconSend') iconSend!: string;
   @Input('iconUpdate') iconUpdate!: string;
+  @Input('colors') colors!: string;
   
 
   @Input('iconReprint') iconReprint!: string;

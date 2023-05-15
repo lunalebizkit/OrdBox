@@ -10,11 +10,12 @@
   [iconTitle]="'container'"
   [hideCerrar]="true"
   [hideFacturaPro]="true"
+  [colors]="'#52c41a'"
 >
 </app-header-op-buttons>
 
 <nz-collapse class="{{ this.tipo }}">
-  <nz-collapse-panel nzHeader="Datos Comprobante" [nzActive]="true">
+  <nz-collapse-panel nzHeader="Encabezado" [nzActive]="true">
     <div style="display: flex; flex-direction: row">
       <div style="flex: 1">
         <b><label> * Fecha: </label></b>
@@ -80,12 +81,9 @@
   </nz-collapse-panel>
 </nz-collapse>-->
 
+  <nz-collapse-panel nzHeader="Detalle" [nzActive]="true" [nzShowArrow]="true" >
   <nz-collapse class="{{ this.tipo }}">
-    <nz-collapse-panel
-      nzHeader="Detalle Comprobante"
-      [nzActive]="true"
-      [nzShowArrow]="true"
-    >
+    
       <nz-content>
         <nz-table [nzBordered]="true" nzTemplateMode [nzSize]="'small'">
           <thead>
@@ -116,37 +114,37 @@
             <tr>
               <td colspan="2" *ngIf="type == 1; else elseBlock">
                 <b>Iva </b>
-                <span style="color: blue; font-size: 15px"
+                <span style="color: blue; font-size: 15px; font-weight: bold;"
                   >{{ this.currencyFormat(ivaTotal) }}
                 </span>
               </td>
               <td colspan="1">
                 <b>Conc. No Gravado </b
-                ><span style="color: blue; font-size: 15px"
+                ><span style="color: blue; font-size: 15px; font-weight: bold;"
                   >{{ this.currencyFormat(concNoGravado) }}
                 </span>
               </td>
               <td colspan="1">
                 <b>Perc. Iva </b
-                ><span style="color: blue; font-size: 15px"
+                ><span style="color: blue; font-size: 15px; font-weight: bold;"
                   >{{ this.currencyFormat(percIva) }}
                 </span>
               </td>
               <td colspan="1">
                 <b>Perc. Ing. Brutos </b
-                ><span style="color: blue; font-size: 15px"
+                ><span style="color: blue; font-size: 15px; font-weight: bold;"
                   >{{ this.currencyFormat(percIngBrutos) }}
                 </span>
               </td>
               <td colspan="1" *ngIf="type == 1; else elseBlock2">
                 <b>SubTotal </b>
-                <span style="color: blue; font-size: 15px"
+                <span style="color: blue; font-size: 15px ; font-weight: bold;"
                   >{{ this.currencyFormat(subTotal) }}
                 </span>
               </td>
               <td colspan="1">
                 <b>Total </b
-                ><span style="color: blue; font-size: 15px"
+                ><span style="color: blue; font-size: 15px ; font-weight: bold;"
                   >{{ this.currencyFormat(total) }}
                 </span>
               </td>
@@ -160,6 +158,6 @@
           </tfoot>
         </nz-table>
       </nz-content>
-    </nz-collapse-panel>
+    
   </nz-collapse>
-</nz-collapse>
+

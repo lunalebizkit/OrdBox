@@ -34,6 +34,7 @@ export class DeliveryNotesViewDrawerComponent
   supplierName!: string;
   supplierCuit!: string;
   supplierAddress!: string;
+
   
   @Input() set filter(value: number) {
     this.id = value;
@@ -65,6 +66,7 @@ export class DeliveryNotesViewDrawerComponent
   total!: number;
   ivaTotal!: number;
   type: any;
+  formDeliveryNotes!: FormGroup;
   
   
  deliveryNotesDetails: DeliveryNotesDetails[]=[]

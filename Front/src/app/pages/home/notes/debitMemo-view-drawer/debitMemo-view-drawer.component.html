@@ -10,10 +10,11 @@
   [iconTitle]="'container'"
   [hideCerrar]="true"
   [hideFacturaPro]="true"
+  [colors]="'#1890ff'"
 >
 </app-header-op-buttons>
 <nz-collapse class="{{ this.tipo }}">
-  <nz-collapse-panel nzHeader="Datos Nota de Débito" [nzActive]="true">
+  <nz-collapse-panel nzHeader="Encabezado" [nzActive]="true">
     <div style="display: flex; flex-direction: row">
       <div style="flex: 1">
         <b><label>* Fecha: </label></b>
@@ -102,7 +103,7 @@
 
     <nz-collapse>
       <nz-collapse-panel
-        nzHeader="Detalle Nota de Débito"
+        nzHeader="Detalle"
         [nzActive]="true"
         [nzShowArrow]="true"
         class="{{ this.tipo }}"
@@ -139,7 +140,7 @@
               <tr>
                 <td colspan="8" [nzAlign]="'right'">
                   <b>Total </b
-                  ><span style="color: blue; font-size: 15px"
+                  ><span style="color: blue; font-size: 15px ; font-weight: bold;"
                     >{{ this.currencyFormat(total) }}
                   </span>
                 </td>
