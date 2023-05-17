@@ -54,7 +54,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                 var countBrands = await _contextSql
                                     .Brands
                                     .AsNoTracking()
-                                    .CountAsync(p => p.Description.ToLower() == model.Description.ToLower() && p.Id != model.Id, ct);
+                                    .CountAsync(p => p.Description.ToUpper() == model.Description.ToUpper() && p.Id != model.Id, ct);
                 if (countBrands > 0)
                 {
                     _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_009_ERROR_DUPLICATE));

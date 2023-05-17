@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Kiltex.SistemaGestion.Domain.Model
 {
     [Table("entity")]
-    public class Entity : BaseModel
+    public partial class Entity : BaseModel
     {
         [Column("dni")]
         public int? Dni { get; set; }

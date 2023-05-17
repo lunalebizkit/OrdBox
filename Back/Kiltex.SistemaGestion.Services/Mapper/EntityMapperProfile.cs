@@ -10,11 +10,21 @@ namespace Kiltex.SistemaGestion.Services.Mapper
         {
             CreateMap<Customer, DtoEntity>()
             .ForMember(x => x.EmailEntity, o => o.MapFrom(x => x.EmailEntities))
+            
+          
+            .AfterMap((o, d, c) =>
+            {
+                d.Name = o.ChangeName(o.Name);
+            })
             .ForMember(x => x.PhoneEntity, o => o.MapFrom(x => x.PhoneEntities));
+
+           
+
             CreateMap<DtoEntity, Customer>()
                 .AfterMap((o, d, c) =>
                 {
                     d.Dni = o.Dni == 0 ? null : o.Dni;
+                    d.Name = d.ChangeName(o.Name);
                 });
             CreateMap<DtoEntity, Supplier>()
                 .AfterMap((o, d, c) =>
