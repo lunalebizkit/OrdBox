@@ -14,7 +14,7 @@ namespace Kiltex.SistemaGestion.Domain.Model
         public string? CustomerName { get; set; }
 
         [Column("customer_address")]
-        public string? CustomerAddress { get; set; }
+        public string? Address { get; set; }
 
         [Column("customer_cuit")]
         public string? CustomerCuit { get; set; }

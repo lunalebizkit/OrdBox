@@ -10,7 +10,7 @@ namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest
 
         public string? CustomerName { get; set; }
 
-        public string? CustomerAddress { get; set; }
+        public string? Address { get; set; }
 
         public string? CustomerCuit { get; set; }
 

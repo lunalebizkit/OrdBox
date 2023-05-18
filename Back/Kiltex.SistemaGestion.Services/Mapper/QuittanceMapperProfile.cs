@@ -12,7 +12,7 @@ namespace Kiltex.SistemaGestion.Services.Mapper
             CreateMap<DtoRequestQuittance, Quittance>()
                 .AfterMap((o, d, c) =>
                 {
-                    d.Total = o.QuittanceDetails.Sum(p => (p.Quantity * p.Total)) + d.Cash;
+                    d.Total = o.QuittanceDetails.Sum(p => p.Total) + d.Cash;
                 });
 
             CreateMap<DtoRequesQuittanceDetails, QuittanceDetails>().ReverseMap();

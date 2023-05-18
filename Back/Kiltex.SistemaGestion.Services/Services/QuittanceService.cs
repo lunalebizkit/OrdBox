@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Kiltex.SistemaGestion.Domain;
 using Kiltex.SistemaGestion.Domain.Model;
 using Kiltex.SistemaGestion.SDK.Error;
 using Kiltex.SistemaGestion.Services.Common;
+using Kiltex.SistemaGestion.Services.Mapper;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
 using Microsoft.EntityFrameworkCore;
@@ -66,7 +68,7 @@ namespace Kiltex.SistemaGestion.Services.Services
 
                 var count = await query.CountAsync().ConfigureAwait(false);
 
-                var list = await query.OrderByDescending(p => p.DateTime).ThenBy(p => p.QuittanceNumber)
+                var list = await query.OrderByDescending(p => p.Id).ThenBy(p => p.QuittanceNumber)
                                       .Skip(request.Page * request.PageSize)
                                       .Take(request.PageSize)
                                       .ToListAsync()
@@ -107,12 +109,28 @@ namespace Kiltex.SistemaGestion.Services.Services
                 }
                 else
                 {
-                    var oldDeliveryNotes = await _contextSql
-                                    .DeliveryNotes
+                    var oldQuittance = await _contextSql
+                                    .Quittance
+                                    .Include(x => x.QuittanceDetails)
                                     .AsNoTracking()
                                     .FirstAsync(p => p.Id == model.Id)
                                     .ConfigureAwait(false);
-                    _contextSql.Quittance.Update(newModel);
+                    _contextSql.QuittanceDetails.RemoveRange(oldQuittance.QuittanceDetails);
+
+                    _contextSql.Entry(oldQuittance).State = EntityState.Detached;
+                    await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
+
+
+                    var newModel2 = _mapper.Map<Quittance>(newModel);
+                    foreach (var item in newModel.QuittanceDetails)
+                    {
+                        item.Id = 0;
+                        oldQuittance.QuittanceDetails.Add(item);
+                    }
+
+                    _contextSql.Attach(newModel2);
+                    _contextSql.Update(newModel2);
+
                 }
 
                 await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
