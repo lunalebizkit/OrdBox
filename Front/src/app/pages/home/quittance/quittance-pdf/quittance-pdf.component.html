@@ -56,25 +56,27 @@ t<app-header-op-buttons
     <nz-table [nzBordered]="true" nzTemplateMode  class="tabla"> 
         <div nzSize="middle" style="margin-left: 100px; padding: 5px; font-size: 55px;">
             <th >
-             * Recibi(mos) la suma de  
+             Recibi(mos) la suma de  
             </th>
-            <td> {{ currencyFormat(this.cash)}}</td>
-            <th  >
-              * En concepto de 
+            <td> {{ currencyFormat(this.cash)}}</td></div>
+            <div nzSize="middle" style="margin-left: 100px; padding: 5px; font-size: 55px;">
+              <th  >
+              En concepto de 
             </th>
-            <td>{{this.concept}}</td>
-          </div>
+            <td>{{this.concept}}</td>  
+            </div>
+          
             <div nz-row *ngFor="let data of quittanceDetail" style="margin-left: 106px; text-align: center;" >
               <div >
-                <th>* Cheque n°:</th>
+                <th> Cheque n°:</th>
                 <td>{{data.checkNumber}}</td> 
               </div>
                   <div style="margin-left: 50px;">
-                    <th>* Banco:</th>
+                    <th> Banco:</th>
                 <td>{{data.bank}}</td> 
                   </div>       
                    <div style="margin-left: 50px;">
-                    <th>* Total:</th>
+                    <th> Total:</th>
                 <td>{{this.currencyFormat(data.total)}}</td> 
                    </div>  
                 
