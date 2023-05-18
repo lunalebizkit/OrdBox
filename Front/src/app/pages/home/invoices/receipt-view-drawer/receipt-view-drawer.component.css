@@ -7,3 +7,8 @@
   .factC{
     background-color: var(--backg-C);
   }
+  .bold{
+    color: red !important;
+    font-weight:bold  !important;
+    
+  }

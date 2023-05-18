@@ -14,6 +14,8 @@ import { EntityService } from '../../customers/customer.service';
 import { HeaderOperationsButtonsComponent } from 'src/app/common/components/headers/buttons.oparations.header.component';
 import { PopupConfirmationComponent } from 'src/app/common/components/popup-confirmation/popup-confirmation.component';
 import { formatCurrency } from '@angular/common';
+import { CategoryModel } from '../../categories/model/category.model';
+import { BrandsModel } from '../../brands/model/brands.model';
 
 @Component({
   selector: 'app-products-list',
@@ -29,7 +31,8 @@ export class UpdatePriceProductsComponent extends BaseComponent implements OnIni
   */
   productList: ProductsModel[] = [];
   selectedValue = null;
-
+  categorieList: CategoryModel [] = [];
+  brandList: BrandsModel [] = [];
   /*
   ** Indicador de carga de la grilla
   */
@@ -252,6 +255,53 @@ export class UpdatePriceProductsComponent extends BaseComponent implements OnIni
       }
     })}
     
+    //Busca por categoria
+  onSearch2(data: string): void {
+    if (data.length > 2) {
+      this.queryData.page = 0;
+      this.queryData.filter = data;
+      this.getCategory(this.queryData);
+    }
+  }
+
+  getCategory(params:any):void{
+    this.loading = true;
+    this.serviceCategory.getByFilter(params).subscribe({
+      next: (r) => {
+        this.categorieList = r.data;
+        this.totalItems = r.totalCount;
+        this.loading = false;
+      },
+      error: () => {
+        this.loading = false;
+        this.categorieList = [];
+      },
+    });
+  }
+
+  //Busca por marca
+  onSearchBrand(data: string): void {
+    if (data.length > 2) {
+      this.queryData.page = 0;
+      this.queryData.filter = data;
+      this.getBrand(this.queryData);
+    }
+  }
+
+  getBrand(params:any):void{
+    this.loading = true;
+    this.serviceBrand.getByFilter(params).subscribe({
+      next: (r) => {
+        this.brandList = r.data;
+        this.totalItems = r.totalCount;
+        this.loading = false;
+      },
+      error: () => {
+        this.loading = false;
+        this.brandList = [];
+      },
+    });
+  }
 
   /*
   ** Evento al presionar buscar o presionar enter

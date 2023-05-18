@@ -393,7 +393,7 @@ export class BudgetsEditComponent extends BaseComponent implements OnInit {
               /* Parseo dato a Dto Factura Detalle */
               const modelDetail: BudgetDetails = BudgetDetailParser(product, this.bindPrice(product));
               this.budgetDetails.push(modelDetail);
-              //  this.budgetDetailsList = this.budgetDetailsTest    
+              this.budgetDetailsList = this.budgetDetailsTest    
               this.totalCalculate();
               this.isLoading = false;
               this.formProductSearch.controls['productSearchFilter'].setValue('');

@@ -51,15 +51,17 @@
             <div nz-col nzSpan="8">
               <nz-form-item>
                 <nz-form-label>Marca</nz-form-label>
-                <nz-form-control>
-                  <nz-select
-                    id="brand"
-                    nzShowSearch
-                    nzAllowClear
-                    formControlName="brand"
-                    (ngModelChange)="brandSelectedChange($event)"
-                    [nzOptions]="allBrands"
-                  >
+                <nz-form-control [nzSm]="24">
+                  <nz-select nzPlaceHolder="Ingrese una marca" nzAllowClear
+                  nzShowSearch nzServerSearch (nzOnSearch)="onSearchBrand($event)" formControlName="brand"
+                  (ngModelChange)="brandSelectedChange($event)">
+                  <ng-container *ngFor="let o of brandList">
+                    <nz-option *ngIf="!isLoading" [nzValue]="o.id" [nzLabel]="o.description"></nz-option>
+                  </ng-container>
+                  <nz-option *ngIf="isLoading" nzDisabled nzCustomContent>
+                    <span nz-icon nzType="loading" class="loading-icon"></span>
+                    Cargando ...
+                  </nz-option>
                   </nz-select>
                   <ng-template #clearQuery>
                     <i
@@ -112,17 +114,19 @@
             <div nz-col nzSpan="8">
               <nz-form-item>
                 <nz-form-label nzFor="category">Categoría </nz-form-label>
-                <nz-form-control>
-                  <nz-spin [nzSpinning]="isLoadingCategory">
-                    <nz-select
-                      id="category"
-                      nzShowSearch
-                      nzAllowClear
-                      formControlName="category"
-                      (ngModelChange)="categorySelectedChange($event)"
-                      [nzOptions]="allCategories"
-                    >
-                    </nz-select>
+                <nz-form-control [nzSm]="24">
+                  <nz-select nzPlaceHolder="Ingrese una categoria" nzAllowClear
+                  nzShowSearch nzServerSearch (nzOnSearch)="onSearch2($event)" formControlName="category"
+                  (ngModelChange)="categorySelectedChange($event)">
+                  <ng-container *ngFor="let o of categorieList">
+                    <nz-option *ngIf="!isLoading" [nzValue]="o.id" [nzLabel]="o.description"></nz-option>
+                  </ng-container>
+                  <nz-option *ngIf="isLoading" nzDisabled nzCustomContent>
+                    <span nz-icon nzType="loading" class="loading-icon"></span>
+                    Cargando ...
+                  </nz-option>
+                  </nz-select>
+                 
                     <ng-template #clearQuery>
                       <i
                         nz-icon
@@ -133,7 +137,6 @@
                         (click)="formSearch.get('category')?.setValue(0)"
                       ></i>
                     </ng-template>
-                  </nz-spin>
                 </nz-form-control>
               </nz-form-item>
             </div>
@@ -174,6 +177,7 @@
           <nz-input-number
             formControlName="value"
             id="value"
+            [nzMin]="0"
             [nzMax]="1000000"
             [nzFormatter]="formatterPesoOPorcentaje"
             style="width: 100px"
