@@ -193,7 +193,7 @@
             <th>Cantidad</th>
             <th>Precio Unidad</th>
             <th>SubTotal</th>
-            <th>Accion</th>
+            <th *ngIf="this.edit == false">Acción</th>
           </tr>
         </thead>
         <tbody>
@@ -210,7 +210,7 @@
             </td>
             <td [nzAlign]="'right'">{{ this.currencyFormat(data.price) }}</td>
             <td [nzAlign]="'right'"> {{this.currencyFormat(data.subtotal)}}</td>
-            <td style="text-align: center">
+            <td *ngIf="this.edit == false" style="text-align: center">
               <nz-space [nzSplit]="spaceSplit">
                 <ng-template #spaceSplit>
                   <nz-divider nzType="vertical"></nz-divider>

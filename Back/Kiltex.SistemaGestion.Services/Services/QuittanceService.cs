@@ -55,7 +55,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             }
         }
 
-        public async Task<OperationResponse<DtoPagination<DtoResponseQuittance>>> ListQuittance(RequestPaginatedData<string> request)
+        public async Task<OperationResponse<DtoPagination<DtoResponseQuittance>>> ListQuittance(RequestPaginatedData<SpecificFilter> request)
         {
 
             try
@@ -64,7 +64,10 @@ namespace Kiltex.SistemaGestion.Services.Services
                                     .Quittance
                                     .Include(p => p.QuittanceDetails)
                                     .AsNoTracking()
-                                    .Where(p => ((p.QuittanceNumber.ToString().Contains(request.Filter ?? ""))));
+                                    .Where((p => (!string.IsNullOrEmpty(request.Filter.Cuit) ? p.CustomerCuit.ToLower().Contains(request.Filter.Cuit) : true)
+                                     && ((request.Filter.Number.HasValue && request.Filter.Number != 0) ? p.Id == request.Filter.Number : true)
+                                     &&
+                                     ((!request.Filter.Date.Contains("") || request.Filter.Date != null) ? p.DateTime.Date.ToString().Contains(request.Filter.Date) : true)));
 
                 var count = await query.CountAsync().ConfigureAwait(false);
 

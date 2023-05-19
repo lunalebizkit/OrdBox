@@ -149,11 +149,11 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
     page: 0,
     pageSize: 20,
   };
-  queryData = {
+   queryData = {
     filter: '',
     page: 0,
     pageSize: 20,
-  };
+  }; 
 
   constructor(
     notificacionService: NzNotificationService,
@@ -313,8 +313,7 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
               `Se guardo correctamente el pedido`
             );
             this.isSaving = false;
-            this.close(r.id);
-            this.ngOnInit()
+             this.close(r.id);
            
           },
           error: () => {

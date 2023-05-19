@@ -34,11 +34,6 @@ export class QuittanceListComponent implements OnInit {
   /*
    ** Parametros de busqueda
    */
-  queryParams = {
-    filter: '',
-    page: 0,
-    pageSize: 20,
-  };
 
   SpecificFilter = {
     filter: {
@@ -70,15 +65,15 @@ export class QuittanceListComponent implements OnInit {
    ** Evento de inicio de angular
    */
   ngOnInit(): void {
-    this.getData(this.queryParams);
+    this.getData(this.SpecificFilter);
   }
   /*
    ** Evento al presionar buscar o presionar enter
    */
   search(): void {
-    this.getData(this.queryParams);
-    this.queryParams.page = 0;
-    this.queryParams.pageSize = 20; 
+    this.getData(this.SpecificFilter);
+    this.SpecificFilter.page = 0;
+    this.SpecificFilter.pageSize = 20; 
 
   }
   /*
@@ -103,9 +98,6 @@ export class QuittanceListComponent implements OnInit {
     });
   }
 
-/*   getInvoiceType(id: number) {
-    return eInvoiceType[id];
-  } */
 
   formaterDate(date: string | number | Date): string {
     return formatDate(date, 'YYYY-MM-dd', this.locale);
@@ -181,15 +173,15 @@ export class QuittanceListComponent implements OnInit {
     );
     if (
       ScrollPosition <= 5 &&
-      this.totalItems / this.queryParams.page > this.queryParams.page
+      this.totalItems / this.SpecificFilter.page > this.SpecificFilter.page
     ) {
-      let page = this.queryParams.page;
-      this.queryParams.page = this.queryParams.page + 1;
+      let page = this.SpecificFilter.page;
+      this.SpecificFilter.page = this.SpecificFilter.page + 1;
       if (
         this.totalItems === undefined ||
-        this.queryParams.page * this.queryParams.pageSize <= this.totalItems
+        this.SpecificFilter.page * this.SpecificFilter.pageSize <= this.totalItems
       ) {
-        this.service.getQuittance(this.queryParams).subscribe({
+        this.service.getQuittance(this.SpecificFilter).subscribe({
           next: (r) => {
             r.data.map((quittance: quittanceModel) =>
               this.quittanceList.push(quittance)
@@ -202,7 +194,7 @@ export class QuittanceListComponent implements OnInit {
           },
         });
       } else {
-        this.queryParams.page = page;
+        this.SpecificFilter.page = page;
       }
     }
   }
