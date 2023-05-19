@@ -182,6 +182,12 @@ export class PermissionService {
         permissions: [Permission.GetRemito, Permission.CreateRemito],
       },
       //#endrregion
+      //#regionQuittance
+      {
+        url: new RegExp('/home/quittance'),
+        permissions: [Permission.GetQuittance, Permission.CreateQuittance],
+      },
+      //#endrregion
 
   ];
 

@@ -839,6 +839,92 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                     b.ToTable("product");
                 });
 
+            modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.Quittance", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
+                    b.Property<string>("Amount")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("amount");
+
+                    b.Property<decimal?>("Cash")
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("cash");
+
+                    b.Property<string>("Concept")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("concept");
+
+                    b.Property<string>("CustomerAddress")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("customer_address");
+
+                    b.Property<string>("CustomerCuit")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("customer_cuit");
+
+                    b.Property<string>("CustomerName")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("customer_name");
+
+                    b.Property<DateTime>("DateTime")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("dateTime");
+
+                    b.Property<int>("QuittanceNumber")
+                        .HasColumnType("int")
+                        .HasColumnName("quittance_number");
+
+                    b.Property<decimal?>("Total")
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("total");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("quittance");
+                });
+
+            modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.QuittanceDetails", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
+                    b.Property<string>("Bank")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("bank");
+
+                    b.Property<string>("CheckNumber")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("check_number");
+
+                    b.Property<int?>("Quantity")
+                        .HasColumnType("int")
+                        .HasColumnName("quantity");
+
+                    b.Property<long>("QuittanceId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("quittance_id");
+
+                    b.Property<decimal?>("Total")
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("total");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("QuittanceId");
+
+                    b.ToTable("quittance_details");
+                });
+
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.Receipt", b =>
                 {
                     b.Property<long>("Id")
@@ -1131,7 +1217,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                             FirstName = "admin",
                             IsDeleted = false,
                             LastName = "admin",
-                            Password = "$MYHASH$V1$100$ifoNhWy8pNHbtkz/DqH8kpYCbwEX85C3dIdXDLflP20rpzHw",
+                            Password = "$MYHASH$V1$100$6dOq2rSiqzHlJKV7cEZGaWk9fYTIicmO5HSihRbRPfg6YgG+",
                             RoleId = 1L,
                             UserName = "admin"
                         });
@@ -1404,6 +1490,17 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                     b.Navigation("Supplier");
                 });
 
+            modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.QuittanceDetails", b =>
+                {
+                    b.HasOne("Kiltex.SistemaGestion.Domain.Model.Quittance", "Quittance")
+                        .WithMany("QuittanceDetails")
+                        .HasForeignKey("QuittanceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Quittance");
+                });
+
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.Receipt", b =>
                 {
                     b.HasOne("Kiltex.SistemaGestion.Domain.Model.Supplier", "Supplier")
@@ -1536,6 +1633,11 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.Permission", b =>
                 {
                     b.Navigation("PermissionXRols");
+                });
+
+            modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.Quittance", b =>
+                {
+                    b.Navigation("QuittanceDetails");
                 });
 
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.Receipt", b =>

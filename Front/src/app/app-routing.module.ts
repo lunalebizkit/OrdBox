@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { BudgetsViewComponent } from './pages/home/budgets/budgets-view/budgets-view.component';
 import { DeliveryNotesPdfComponent } from './pages/home/deliveryNotes/deliveryNotes-pdf/deliveryNotes-pdf.component';
+import { QuittancePdfComponent } from './pages/home/quittance/quittance-pdf/quittance-pdf.component';
 
 const routes: Routes = [
   
@@ -13,7 +14,9 @@ const routes: Routes = [
 
   {path:'_/:id',component:BudgetsViewComponent},
 
-  {path:'__/:id',component:DeliveryNotesPdfComponent}
+  {path:'__/:id',component:DeliveryNotesPdfComponent},
+
+  {path:'__-/:id',component:QuittancePdfComponent},
 
   
 ];

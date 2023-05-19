@@ -103,7 +103,13 @@ const routes: Routes = [
         path: 'deliveryNotes',
         loadChildren:()=>
           import('./deliveryNotes/deliveryNotes.module').then((m)=> m.DeliveryNotesModule)
-      }
+      },
+      {
+        canActivate: [AuthGuard], 
+        path: 'quittance',
+        loadChildren:()=>
+          import('./quittance/quittance.module').then((m)=> m.QuittanceModule)
+      },
     ],
   },
 ];

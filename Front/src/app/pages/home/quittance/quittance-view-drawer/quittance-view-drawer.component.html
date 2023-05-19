@@ -1,0 +1,69 @@
+<app-header-op-buttons
+  #header
+  (onCloseClick)="close()"
+  [hideClose]="true"
+  [hideUpdate]="true"
+  [hideSave]="true"
+  [hideBack]="true"
+  [title]="'Recibo'"
+  [hideClose]="true"
+  [hideCerrar]="true"
+  [hideFacturaPro]="true"
+  [iconBack]="'rollback'"
+  [iconTitle]="'container'"
+>
+</app-header-op-buttons>
+<nz-collapse >
+  <nz-collapse-panel nzHeader="Datos Recibo" [nzActive]="true"  class="Recibo">
+    
+        <nz-descriptions nzSize="middle" [nzColumn]="2" style="margin-left: 100px; padding: 5px;">
+          <nz-descriptions-item nzTitle=" * Fecha" >
+          <a>{{ dateTime ? (dateTime | date : "YYYY-MM-dd") : "N/A" }} </a>
+        </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="* Nro Recibo" >
+              {{ this.id | number: '8.0-0' | noComma}}
+          </nz-descriptions-item>  
+        <nz-descriptions-item nzTitle="* Cliente" >
+         {{this.customerName}} </nz-descriptions-item
+        > 
+          <nz-descriptions-item nzTitle=" * Cuit" >
+            {{this.customerCuit}}</nz-descriptions-item
+          >
+          <nz-descriptions-item nzTitle=" * Dirección" >
+            {{this.address}}
+          </nz-descriptions-item>
+        </nz-descriptions>
+          <nz-descriptions nzSize="middle" [nzColumn]="2" style="margin-left: 100px; padding: 5px;">
+          <nz-descriptions-item nzTitle=" * Recibi(mos) la suma de " >
+            {{ currencyFormat(this.cash)}}
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle=" * En concepto de " >
+            {{this.concept}}
+          </nz-descriptions-item>
+        </nz-descriptions>
+        <ng-container nzSize="middle" *ngFor="let data of quittanceDetails">
+            <div nz-row style="margin-left: 106px; text-align: center;" >
+              <div >
+                <th>* Cheque n°:</th>
+                <td>{{data.checkNumber}}</td> 
+              </div>
+                  <div style="margin-left: 50px;">
+                    <th>* Banco:</th>
+                <td>{{data.bank}}</td> 
+                  </div>       
+                   <div style="margin-left: 50px;">
+                    <th>* Total:</th>
+                <td>{{this.currencyFormat(data.total)}}</td> 
+                   </div>  
+                
+            </div>
+              </ng-container>
+              <div style=" margin-left: 500px;">
+                 <td >
+                <b>Total</b
+                ><b style="color: red">{{ this.currencyFormat(this.total) }}</b>
+              </td>
+              </div> 
+             
+  </nz-collapse-panel>
+</nz-collapse>
