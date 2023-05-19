@@ -26,7 +26,7 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Quittance
         [HttpPost]
         [Route("[action]")]
         [AllowAccess(Permission = new EPermission[] { EPermission.GetQuittance })]
-        public async Task<IActionResult> List([FromBody] RequestPaginatedData<string> filter)
+        public async Task<IActionResult> List([FromBody] RequestPaginatedData<SpecificFilter> filter)
         {
             return Return(await _service.ListQuittance(filter).ConfigureAwait(false));
         }

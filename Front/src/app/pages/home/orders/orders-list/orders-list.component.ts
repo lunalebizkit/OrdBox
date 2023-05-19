@@ -258,7 +258,7 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
   search(): void {
     this.queryParams.page = 0;
     this.orderDetailList = [];
-    this.getAllOrders();
+    //this.getAllOrders();
   }
 
   getStatusName(id: number) {

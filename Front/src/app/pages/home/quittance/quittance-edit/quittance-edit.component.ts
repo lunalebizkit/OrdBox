@@ -112,7 +112,7 @@ export class QuittanceEditComponent extends BaseComponent implements OnInit {
           this.id = id
           this.formQuittance.controls['quittanceNumber'].setValue(r.id)
             this.formQuittance.controls['address'].setValue(r.address),
-            this.formQuittance.controls['customerCuit'].setValue(r.customerCuit),
+            this.formQuittance.controls['customerCuit'].setValue(r.customerCuit ),
             this.formQuittance.controls['customerName'].setValue(r.customerName),
             this.formQuittance.controls['cash'].setValue(r.cash)
             this.formQuittance.controls['concept'].setValue(r.concept),
@@ -174,7 +174,6 @@ removeCheck( e: MouseEvent, index: any): void {
       if (this.id > 0) {
         const model = this.formQuittance.getRawValue();
         model.id = this.id;  
-        console.log(model)
         this.isSaving = true;
         this.service.editQuittance(model)
           .subscribe({
