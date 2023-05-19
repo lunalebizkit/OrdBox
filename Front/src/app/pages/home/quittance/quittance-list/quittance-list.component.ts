@@ -90,6 +90,7 @@ export class QuittanceListComponent implements OnInit {
         this.selectedIndex = 0;
         this.selectedQuittance = this.quittanceList[this.selectedIndex];
         document.getElementById(this.selectedIndex.toString())?.focus();
+        console.log(this.quittanceList);
       },
       error: () => {
         this.loading = false;

@@ -447,15 +447,14 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
               }
             } else {
               this.loading = false;
+              this.openComponentProduct();
             }
           },
-          error: () => {
-            this.loading = false;
-            this.openComponentProduct();
-          }
-        },
+         
+        
         error: () => {
           this.loading = false;
+         
           this.formProductSearch.controls['productSearchFilter'].setValue('');
         },
       });
@@ -463,6 +462,7 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
       this.loading = false;
     }
   }
+}
 
   openComponentProduct(): void {
     const drawerRefProduct = this.drawerService.create<
