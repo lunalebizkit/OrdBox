@@ -38,14 +38,14 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                     total = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     bank = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     check_number = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    QuittanceId = table.Column<long>(type: "bigint", nullable: true)
+                    quittance_id = table.Column<long>(type: "bigint", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_quittance_details", x => x.id);
                     table.ForeignKey(
-                        name: "FK_quittance_details_quittance_QuittanceId",
-                        column: x => x.QuittanceId,
+                        name: "FK_quittance_details_quittance_quittance_id",
+                        column: x => x.quittance_id,
                         principalTable: "quittance",
                         principalColumn: "id");
                 });
@@ -58,9 +58,9 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                 value: "$MYHASH$V1$100$xzTyVaguwTx0pf8xIUMSDYVVuxMbNiWUUcCZ7sIgYqPegS/8");
 
             migrationBuilder.CreateIndex(
-                name: "IX_quittance_details_QuittanceId",
+                name: "IX_quittance_details_quittance_id",
                 table: "quittance_details",
-                column: "QuittanceId");
+                column: "quittance_id");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
