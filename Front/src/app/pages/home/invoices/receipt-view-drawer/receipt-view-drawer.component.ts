@@ -9,6 +9,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzDrawerRef } from 'ng-zorro-antd/drawer';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
@@ -130,6 +131,6 @@ export class ReceiptViewDrawerComponent
     this.drawerRef.close();
   }
   direction(): void {
-    this.router.navigate(['/home/invoices/']);
+    this.router.navigate(['/home/invoices/receipt']);
   }
 }

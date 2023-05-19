@@ -534,6 +534,12 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
       this.dni = null;
     }
   }
+  direction() {
+    this.router.navigate(['/home/invoices/invoices-sale']);
+  }
+  
+
+
 
 }
 
