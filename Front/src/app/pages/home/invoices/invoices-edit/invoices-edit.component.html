@@ -155,57 +155,36 @@
 
         <!-- Buscador de Productos -->
         <nz-divider nzText="Producto" nzOrientation="left"></nz-divider>
-        
+
         <form nz-form [formGroup]="formProductSearch">
           <nz-form-item>
-            <nz-form-label
-              [nzSm]="6"
-              [nzXs]="14"
-              nzRequired
-              nzFor="productSearchFilter"
-              >Búsqueda de Producto
+            <nz-form-label [nzSm]="6" [nzXs]="14" nzRequired nzFor="productSearchFilter">Búsqueda de producto
             </nz-form-label>
             <nz-form-control [nzSm]="14" [nzXs]="14">
               <nz-input-group [nzSuffix]="clearQuery">
-                <input
-                  nz-input
-                  formControlName="productSearchFilter"
-                  placeholder="Ingrese Marca, Código, Categoría o Producto"
-                  nzSize="small"
-                  (keydown.enter)="searchProduct(); $event.preventDefault()"
-                />
+                <input nz-input formControlName="productSearchFilter"
+                  placeholder="Ingrese Marca, Código, Categoría o Producto" nzSize="small"
+                  (keydown.enter)="searchProduct(); $event.preventDefault()" />
+
               </nz-input-group>
 
               <ng-template #clearQuery>
-                <i
-                  nz-icon
-                  class="ant-input-clear-icon"
-                  nzTheme="fill"
-                  nzType="close-circle"
-                  *ngIf="
-                    this.formProductSearch.controls['productSearchFilter']
-                      .value !== ''
-                  "
-                  (click)="
-                    this.formProductSearch.controls[
-                      'productSearchFilter'
-                    ].setValue('')
-                  "
-                ></i>
+                <i nz-icon class="ant-input-clear-icon" 
+                nzTheme="fill" 
+                nzType="close-circle"
+                *ngIf="this.formProductSearch.controls['productSearchFilter'].value !== '' "
+             (click)=" this.formProductSearch.controls[ 'productSearchFilter'].setValue('')
+          "></i>
               </ng-template>
             </nz-form-control>
             <div nz-col style="margin: 3px">
-              <button
-                nz-button
-                nzSize="small"
-                nzType="primary"
-                (click)="openComponentProduct()"
-                class="ml-5"
-              >
+              <button nz-button nzSize="small" nzType="primary" (click)="openComponentProduct()" class="ml-5">
                 <i nz-icon nzType="search" nzTheme="outline"></i> Buscar
               </button>
             </div>
           </nz-form-item>
+
+       
         
         </form>
         <br />

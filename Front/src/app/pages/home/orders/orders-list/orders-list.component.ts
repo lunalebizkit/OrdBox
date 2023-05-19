@@ -104,10 +104,10 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
     });
   }
   ngOnInit(): void {
-    this.getAllCategories();
+   // this.getAllCategories();
     this.getAllOrders();
     this.getStatusName(this.id)
-    this.search()
+    //this.search()
   }
   /*
    ** Indicador de carga de marcas y lineas

@@ -444,6 +444,7 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
             }
           } else {
             this.loading = false;
+            this.openComponentProduct();
           }
         },
         error: () => {

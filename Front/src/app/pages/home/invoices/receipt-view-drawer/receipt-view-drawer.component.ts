@@ -18,6 +18,7 @@ import { InvoiceService } from '../invoices.service';
 import { eInvoiceType } from '../model/invoice-type.Enum';
 import { receiptDetails,  } from '../model/receipt.model';
 
+
 @Component({
   selector: 'app-receipt-view-drawer',
   templateUrl: './receipt-view-drawer.component.html',
@@ -27,6 +28,7 @@ export class ReceiptViewDrawerComponent
   extends BaseComponent
   implements OnInit
 {
+  router: any;
   
   @Input() set filter(value: number) {
     this.id = value;
@@ -126,5 +128,8 @@ export class ReceiptViewDrawerComponent
   }
   close(): void {
     this.drawerRef.close();
+  }
+  direction(): void {
+    this.router.navigate(['/home/invoices/']);
   }
 }

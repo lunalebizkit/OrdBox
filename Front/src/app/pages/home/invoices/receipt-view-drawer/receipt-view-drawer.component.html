@@ -11,6 +11,7 @@
   [hideCerrar]="true" [hideFacturaPro]="true"
 >
 </app-header-op-buttons>
+
 <nz-collapse class="{{this.tipo}}">
   
   <nz-collapse-panel nzHeader="Datos Comprobante" [nzActive]="true">
@@ -21,7 +22,6 @@
           <b>  <a >{{ dateTime ? (dateTime | date : "YYYY-MM-dd") : "N/A" }} </a> </b>
         </nz-descriptions-item>
      
-      
       <nz-descriptions-item nzTitle=" * Tipo" >
         <nz-page-header-tags>
           <nz-tag [nzColor]="'blue'">{{ this.invoiceType(type) }}</nz-tag>

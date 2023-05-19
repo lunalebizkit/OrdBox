@@ -202,7 +202,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
   };
 
   openComponentProduct(): void {
-    if (this.isValidForm(this.formInvoice)) {
+    
       const drawerRefProduct = this.drawerService.create<InvoiceProductSearchComponent, { filter: string }, ProductsModel>({
         nzTitle: 'Productos',
         nzContent: InvoiceProductSearchComponent,
@@ -252,7 +252,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
           }
 
         })
-    } else { return; }
+   
   };
  
   searchCustomer(): void {
@@ -310,7 +310,9 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
                   this.invoiceDetailsList = this.invoiceListTest;
                     /* Parseo dato a Dto Factura Detalle */
              const modelDetail : InvoiceDetails = invoiceDetailParser(product, this.iva, this.bindPrice(product));
-             this.invoiceDetails.push(modelDetail);           
+             this.invoiceDetails.push(modelDetail);      
+           
+                  
           this.totalCalculate();
           this.isLoading= false;
           this.formProductSearch.controls['productSearchFilter'].setValue('');
@@ -318,6 +320,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
             
           }else{
             this.isLoading= false;
+            this.openComponentProduct();
           }
           
         },
