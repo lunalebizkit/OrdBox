@@ -1,5 +1,5 @@
 <nz-page-header class="list-header">
-    <nz-page-header-title> <i nz-icon nzType="container" nzTheme="outline"></i>Recibos</nz-page-header-title>
+    <nz-page-header-title> <i nz-icon nzType="container" nzTheme="outline" style="color: #FF69B4;" ></i> Recibos</nz-page-header-title>
     <nz-page-header-extra>
       <button nz-button (click)="direction()" type="submit" nzSize="default"><i nz-icon nzType="rollback"
           nzTheme="outline"></i>Volver</button>
@@ -9,16 +9,14 @@
 <div></div>
   <form nz-form [formGroup]="formQuittance">
     <nz-collapse>
-      <nz-collapse-panel nzHeader="Encabezado" [nzActive]="true" [nzShowArrow]="true">
+      <nz-collapse-panel nzHeader="Encabezado" [nzActive]="true" [nzShowArrow]="true" style="font-weight: bold">
         <nz-content>
           <div nz-row nzJustify="center" style="margin: 10px;">
             <div nz-col class="gutter-row" [nzSpan]="4" style="margin-right: 5px; margin-left: 5px;">
               <nz-form-item>
                 <nz-form-label>Fecha</nz-form-label>
                 <nz-form-control>
-                  <b>
                     {{ startDate ? (startDate | date : "YYYY-MM-dd") : "N/A" }}
-                  </b>
                 </nz-form-control>
               </nz-form-item>
             </div>
@@ -38,8 +36,8 @@
            
   
           <!-- Datos del Cliente -->
-          <nz-divider nzText="Cliente" nzOrientation="left" style="margin-top: 0"></nz-divider>
-  
+          <nz-divider nzText="Cliente" nzOrientation="left" style="margin-top: 0 ; text-decoration: underline;"></nz-divider>
+         
           <nz-form-item>
             <nz-form-label [nzSm]="6" [nzXs]="14" nzRequired nzFor="customerName">Nombre
             </nz-form-label>
@@ -83,7 +81,7 @@
       </nz-collapse-panel>
     </nz-collapse>
     <nz-collapse>
-        <nz-collapse-panel nzHeader="Detalle" [nzActive]="true" [nzShowArrow]="true">
+        <nz-collapse-panel nzHeader="Detalle" [nzActive]="true" [nzShowArrow]="true"style="font-weight: bold" >
             <nz-form-item>
                 <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="cash">Recibi(mos) la suma de 
                 </nz-form-label>
@@ -109,7 +107,7 @@
               <div formArrayName="quittanceDetails">
               <div *ngFor="let cheques of quittanceDetailsFormGroups.controls, let i = index">
                  <div [formGroupName]="i">
-                  <div nz-row style="margin-left: 170px;">
+                  <div nz-row style="margin-left: 310px;">
                   <nz-form-item>
                  <nz-form-label [nzSm]="14" [nzXs]="24" for="checkNumber">Cheque N°</nz-form-label> 
                  <nz-form-control [nzSm]="14" [nzXs]="24">
