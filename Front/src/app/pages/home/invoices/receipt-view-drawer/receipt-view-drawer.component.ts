@@ -9,6 +9,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzDrawerRef } from 'ng-zorro-antd/drawer';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
@@ -17,6 +18,7 @@ import { HeaderOperationsButtonsComponent } from 'src/app/common/components/head
 import { InvoiceService } from '../invoices.service';
 import { eInvoiceType } from '../model/invoice-type.Enum';
 import { receiptDetails,  } from '../model/receipt.model';
+
 
 @Component({
   selector: 'app-receipt-view-drawer',
@@ -27,6 +29,7 @@ export class ReceiptViewDrawerComponent
   extends BaseComponent
   implements OnInit
 {
+  router: any;
   
   @Input() set filter(value: number) {
     this.id = value;
@@ -126,5 +129,8 @@ export class ReceiptViewDrawerComponent
   }
   close(): void {
     this.drawerRef.close();
+  }
+  direction(): void {
+    this.router.navigate(['/home/invoices/receipt']);
   }
 }

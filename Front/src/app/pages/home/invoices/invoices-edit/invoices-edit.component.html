@@ -1,18 +1,26 @@
-<app-header-op-buttons
+<!--<app-header-op-buttons
   #header
   [btnCancelText]="'Volver'"
   [hideSave]="true"
   [hideTag]="false"
   [hideCerrar]="true"
   [hideFacturaPro]="true"
-  [tagText]="'Comprobante'"
-  [title]="'Refrigeraciones Dante'"
+  [iconTitle]="'container'"
+  [title]="'Comprobante'"
   [iconBack]="'rollback'"
-  [color]="'blue'"
   [iconUpdate]="'check'"
   (onCancelClick)="back()"
 >
-</app-header-op-buttons>
+</app-header-op-buttons>-->
+<nz-page-header class="list-header">
+  <nz-page-header-title>
+    <i nz-icon nzType="container" nzTheme="outline" style="color: #52c41a;"></i> Comprobante</nz-page-header-title>
+  <nz-page-header-extra>
+    <button nz-button (click)="direction()" type="submit" nzSize="default" >
+      <i nz-icon nzType="rollback" nzTheme="outline"></i>Volver
+    </button>
+  </nz-page-header-extra>
+</nz-page-header>
 
 <!-- Encabezado de la Factura -->
 <form nz-form [formGroup]="formInvoice">
@@ -21,6 +29,7 @@
       nzHeader="Encabezado"
       [nzActive]="true"
       [nzShowArrow]="true"
+      style="font-weight: bold;"
     >
       <nz-content> 
         <div nz-row nzJustify="center">
@@ -69,9 +78,10 @@
         <nz-divider
           nzText="Cliente"
           nzOrientation="left"
-          style="margin-top: 0"
+          style="margin-top: 0; text-decoration: underline;"
         ></nz-divider>
 
+    
         <nz-form-item>
           <nz-form-label [nzSm]="6" [nzXs]="14" nzRequired nzFor="customerCuit"
             >Cuit - Cuil
@@ -154,58 +164,37 @@
         </nz-form-item>
 
         <!-- Buscador de Productos -->
-        <nz-divider nzText="Producto" nzOrientation="left"></nz-divider>
-        
+        <nz-divider nzText="Producto" nzOrientation="left" style="margin-top: 0; text-decoration: underline;"></nz-divider >
+
         <form nz-form [formGroup]="formProductSearch">
           <nz-form-item>
-            <nz-form-label
-              [nzSm]="6"
-              [nzXs]="14"
-              nzRequired
-              nzFor="productSearchFilter"
-              >Búsqueda de Producto
+            <nz-form-label [nzSm]="6" [nzXs]="14" nzRequired nzFor="productSearchFilter">Búsqueda de producto
             </nz-form-label>
             <nz-form-control [nzSm]="14" [nzXs]="14">
               <nz-input-group [nzSuffix]="clearQuery">
-                <input
-                  nz-input
-                  formControlName="productSearchFilter"
-                  placeholder="Ingrese Marca, Código, Categoría o Producto"
-                  nzSize="small"
-                  (keydown.enter)="searchProduct(); $event.preventDefault()"
-                />
+                <input nz-input formControlName="productSearchFilter"
+                  placeholder="Ingrese Marca, Código, Categoría o Producto" nzSize="small"
+                  (keydown.enter)="searchProduct(); $event.preventDefault()" />
+
               </nz-input-group>
 
               <ng-template #clearQuery>
-                <i
-                  nz-icon
-                  class="ant-input-clear-icon"
-                  nzTheme="fill"
-                  nzType="close-circle"
-                  *ngIf="
-                    this.formProductSearch.controls['productSearchFilter']
-                      .value !== ''
-                  "
-                  (click)="
-                    this.formProductSearch.controls[
-                      'productSearchFilter'
-                    ].setValue('')
-                  "
-                ></i>
+                <i nz-icon class="ant-input-clear-icon" 
+                nzTheme="fill" 
+                nzType="close-circle"
+                *ngIf="this.formProductSearch.controls['productSearchFilter'].value !== '' "
+             (click)=" this.formProductSearch.controls[ 'productSearchFilter'].setValue('')
+          "></i>
               </ng-template>
             </nz-form-control>
             <div nz-col style="margin: 3px">
-              <button
-                nz-button
-                nzSize="small"
-                nzType="primary"
-                (click)="openComponentProduct()"
-                class="ml-5"
-              >
+              <button nz-button nzSize="small" nzType="primary" (click)="openComponentProduct()" class="ml-5">
                 <i nz-icon nzType="search" nzTheme="outline"></i> Buscar
               </button>
             </div>
           </nz-form-item>
+
+       
         
         </form>
         <br />
@@ -213,7 +202,7 @@
          <nz-divider
          nzText="Observaciones"
          nzOrientation="left"
-         style="margin-top: 0"
+         style="margin-top: 0; text-decoration: underline;"
        ></nz-divider>
         <nz-form-item>
           <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="observation"
@@ -235,7 +224,7 @@
 
 <!-- Tabla Detalle -->
 <nz-collapse>
-  <nz-collapse-panel nzHeader="Detalle" [nzActive]="true" [nzShowArrow]="true">
+  <nz-collapse-panel nzHeader="Detalle" [nzActive]="true" [nzShowArrow]="true" style="font-weight: bold;">
     <nz-content>
       <nz-table
         [nzBordered]="true"
@@ -337,19 +326,19 @@
             <td></td>
             <td colspan="2" *ngIf="invoiceA; else elseBlock">
               <b>Iva </b
-              ><b style="color: red">{{
+              ><b style="color: red; font-size: 15px;" >{{
                 this.currencyFormat(this.ivaTotal)
               }}</b>
             </td>
             <td colspan="2" *ngIf="invoiceA; else elseBlock">
               <b>SubTotal </b
-              ><b style="color: red">{{
+              ><b style="color: red; font-size: 15px;">{{
                 this.currencyFormat(this.subtotal)
               }}</b>
             </td>
             <td colspan="1">
               <b>Total </b
-              ><b style="color: red">{{ this.currencyFormat(this.total) }}</b>
+              ><b style="color: red ; font-size: 15px;">{{ this.currencyFormat(this.total) }}</b>
             </td>
             <td></td>
             <td colspan="2" [nzAlign]="'right'">

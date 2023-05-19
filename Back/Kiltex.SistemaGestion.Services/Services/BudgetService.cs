@@ -1,14 +1,11 @@
 ﻿
 using AutoMapper;
-
 using Kiltex.SistemaGestion.Domain;
 using Kiltex.SistemaGestion.Domain.Model;
 using Kiltex.SistemaGestion.SDK.Error;
 using Kiltex.SistemaGestion.Services.Common;
-using Kiltex.SistemaGestion.Services.ImpresoraFiscal.Printer250F;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
-
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -59,9 +56,6 @@ namespace Kiltex.SistemaGestion.Services.Services
                 _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
                 throw;
             }
-
-
-
         }
         public async Task<OperationResponse<IdResponse<long>>> New(DtoRequestBudget model, CancellationToken ct = default)
         {
@@ -190,10 +184,6 @@ namespace Kiltex.SistemaGestion.Services.Services
                 throw;
             }
         }
-
-       
-
-
     }
 
 }

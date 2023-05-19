@@ -58,5 +58,8 @@ export enum Permission {
   CreateBudget=42,
   //Remito
   GetRemito = 43,
-  CreateRemito = 44
+  CreateRemito = 44,
+  //Recibo
+  GetQuittance= 45,
+  CreateQuittance=46
 }

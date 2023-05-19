@@ -7,3 +7,6 @@
   .factC{
     background-color: var(--backg-C);
   }
+  .nz-descriptions-item[nztitle] {
+    font-weight: bold;
+  }

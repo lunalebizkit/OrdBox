@@ -7,6 +7,7 @@ import { ActivatedRoute, Router } from '@angular/router';
   templateUrl: './buttons.oparations.header.component.html',
   styleUrls: ['button.operations.header.css'],
 })
+
 export class HeaderOperationsButtonsComponent implements OnInit {
   @Input('btnSaveText') btnSaveText: string = 'Guardar';
   @Input('btnSendText') btnSendText: string = 'Guardar y Enviar';
@@ -30,6 +31,8 @@ export class HeaderOperationsButtonsComponent implements OnInit {
   @Input('iconBack') iconBack!: string;
   @Input('iconSend') iconSend!: string;
   @Input('iconUpdate') iconUpdate!: string;
+  @Input('colors') colors!: string;
+  
 
   @Input('iconReprint') iconReprint!: string;
   @Input('iconPrint') iconPrint!: string;
@@ -109,3 +112,7 @@ export class HeaderOperationsButtonsComponent implements OnInit {
     }
   }
 }
+function Directive(arg0: { selector: string; }): (target: typeof HeaderOperationsButtonsComponent) => void | typeof HeaderOperationsButtonsComponent {
+  throw new Error('Function not implemented.');
+}
+
