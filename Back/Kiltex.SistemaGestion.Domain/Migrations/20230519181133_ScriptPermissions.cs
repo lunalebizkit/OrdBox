@@ -68,10 +68,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                 $"('CrearRemito','CreateRemito', 44)," +
                 $"('ListadoRecibos','GetQuittance',45)," +
                 $"('CrearRecibos','CreateQuittance',46)");
-
-
-
-       
+    
         }
        
         protected override void Down(MigrationBuilder migrationBuilder)
