@@ -8,7 +8,11 @@ namespace Kiltex.SistemaGestion.Services.Mapper
     {
         public BrandMapperProfile()
         {
-            CreateMap<Brand, DtoResponseBrand>().ReverseMap();
+            CreateMap<Brand, DtoResponseBrand>()
+                .AfterMap((o, d, c) =>
+                {
+                    d.Description = d.Description.ToUpper();
+                });
         }
     }
 }

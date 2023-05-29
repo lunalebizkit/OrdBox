@@ -12,6 +12,7 @@ import { eInvoiceType } from "../model/invoice-type.Enum";
 import { InvoiceDetails, InvoiceModel } from "../model/invoice.model";
 
 
+
 @Component({
   selector: 'app-invoices-view-drawer',
   templateUrl: './invoices-view.drawer.component.html',
@@ -26,6 +27,7 @@ export class InvoicesViewDrawerComponent extends BaseComponent implements OnInit
 
 @ViewChild('header') headerComponent!: HeaderOperationsButtonsComponent;
 @ViewChild('popupReimprimir') popupComponent!: PopupConfirmationComponent;
+@Input('btnReprintText') btnReprintText: string = 'Reimprimir';
 
   // variables Generales
   isLoading=true;

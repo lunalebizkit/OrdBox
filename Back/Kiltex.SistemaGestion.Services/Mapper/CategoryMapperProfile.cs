@@ -8,7 +8,11 @@ namespace Kiltex.SistemaGestion.Services.Mapper
     {
         public CategoryMapperProfile()
         {
-            CreateMap<Category, DtoResponseCategory>().ReverseMap();
+            CreateMap<Category, DtoResponseCategory>()
+                .AfterMap((o,d,c)=>
+                {
+                    d.Description = d.Description?.ToUpper();
+                });
 
         }
     }

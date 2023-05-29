@@ -1,0 +1,159 @@
+<nz-page-header class="list-header">
+    <nz-page-header-title> <i nz-icon nzType="container" nzTheme="outline" style="color: #FF69B4;" ></i> Recibos</nz-page-header-title>
+    <nz-page-header-extra>
+      <button nz-button (click)="direction()" type="submit" nzSize="default"><i nz-icon nzType="rollback"
+          nzTheme="outline"></i>Volver</button>
+    </nz-page-header-extra>
+  </nz-page-header>
+
+<div></div>
+  <form nz-form [formGroup]="formQuittance">
+    <nz-collapse>
+      <nz-collapse-panel nzHeader="Encabezado" [nzActive]="true" [nzShowArrow]="true" style="font-weight: bold">
+        <nz-content>
+          <div nz-row nzJustify="center" style="margin: 10px;">
+            <div nz-col class="gutter-row" [nzSpan]="4" style="margin-right: 5px; margin-left: 5px;">
+              <nz-form-item>
+                <nz-form-label>Fecha</nz-form-label>
+                <nz-form-control>
+                    {{ startDate ? (startDate | date : "YYYY-MM-dd") : "N/A" }}
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <nz-form-item >
+              <nz-form-label [nzSm]="12" [nzXs]="18" nzRequired >
+                Número de Recibo
+              </nz-form-label>
+              <nz-form-control [nzSm]="10" [nzXs]="20">
+                <input
+                nz-input
+                  nzSize="small"
+                  formControlName="quittanceNumber"
+                />
+               </nz-form-control>
+            </nz-form-item>
+          </div>
+           
+  
+          <!-- Datos del Cliente -->
+          <nz-divider nzText="Cliente" nzOrientation="left" style="margin-top: 0 ; text-decoration: underline;"></nz-divider>
+         
+          <nz-form-item>
+            <nz-form-label [nzSm]="6" [nzXs]="14" nzRequired nzFor="customerName">Nombre
+            </nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="14" [nzErrorTip]="cuit">
+              <input nz-input nzSize="small" formControlName="customerName" />
+            </nz-form-control>
+            <!-- Boton que abre el buscador de CLiente en drawer -->
+            <form nz-form [formGroup]="formCustomerSearch">
+              <div style="margin: 3px">
+                <button nz-button nzSize="small" nzType="primary" class="ml-5"
+                   (click)="openComponentCustomer()">
+                  <i nz-icon nzType="search" nzTheme="outline"></i>Buscar
+                </button>
+              </div>
+            </form>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="customerCuit">Cuit - Cuil
+            </nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="24">
+              <input nz-input maxlength="250" nzSize="small" formControlName="customerCuit" />
+            </nz-form-control>
+          </nz-form-item>
+          <ng-template #cuit let-control>
+            <ng-container *ngIf="control.hasError('required')">
+              Debe ingresar un cuit valido.
+            </ng-container>
+            <ng-container *ngIf="!control.hasError('required') && control.hasError('pattern')">
+              El cuit ingresado debe tener 11 caracteres numericos.
+            </ng-container>
+          </ng-template>
+  
+          <nz-form-item >
+            <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="address">Domicilio
+            </nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="24">
+              <input nz-input nzSize="small" maxlength="250" formControlName="address" />
+            </nz-form-control>
+          </nz-form-item>
+        </nz-content>
+      </nz-collapse-panel>
+    </nz-collapse>
+    <nz-collapse>
+        <nz-collapse-panel nzHeader="Detalle" [nzActive]="true" [nzShowArrow]="true"style="font-weight: bold" >
+            <nz-form-item>
+                <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="cash">Recibi(mos) la suma de 
+                </nz-form-label>
+                <nz-form-control [nzSm]="14" [nzXs]="24">
+                  <input nz-input nzSize="small" maxlength="250" formControlName="cash" />
+                </nz-form-control>
+            </nz-form-item>
+              <nz-form-item>
+                <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="concept">En concepto de 
+                </nz-form-label>
+                <nz-form-control [nzSm]="14" [nzXs]="24">
+                  <textarea nz-input nzSize="small" maxlength="250" formControlName="concept" ></textarea>
+                </nz-form-control>
+            <div style="margin: 3px; margin-top: 21px; ">
+              <button nz-button nzType="primary" style="font-size:11px;text-align: center;" nzSize="small"class="ml-5"(click)="showPasswordChangeBox()">
+                Agregar Cheque
+            </button>
+            </div> 
+          </nz-form-item>   
+            
+              <div >
+             </div>
+              <div formArrayName="quittanceDetails">
+              <div *ngFor="let cheques of quittanceDetailsFormGroups.controls, let i = index">
+                 <div [formGroupName]="i">
+                  <div nz-row style="margin-left: 145px;">
+                  <nz-form-item>
+                 <nz-form-label [nzSm]="14" [nzXs]="24" for="checkNumber">Cheque N°</nz-form-label> 
+                 <nz-form-control [nzSm]="14" [nzXs]="24">
+                 <input nz-input type="text" nzSize="small" formControlName="checkNumber"/>
+                </nz-form-control>
+              </nz-form-item>
+              <nz-form-item>
+                 <nz-form-label  [nzSm]="14" [nzXs]="24"for="bank">Banco</nz-form-label>
+                <nz-form-control [nzSm]="14" [nzXs]="24">
+                <input nz-input type="text" nzSize="small" formControlName="bank"/>
+                </nz-form-control>
+              </nz-form-item>
+              <nz-form-item>
+                <nz-form-label  [nzSm]="14" [nzXs]="24"for="total">Total </nz-form-label> 
+                <nz-form-control [nzSm]="14" [nzXs]="24">
+                 <input nz-input type="text" nzSize="small" formControlName="total"/> 
+                </nz-form-control> 
+              </nz-form-item>  
+              <i nz-icon nzType="minus-circle-o" class="dynamic-delete-button" style="color: rgb(243, 79, 79); margin-top:10px; margin-left: 5px;"
+                (click)="removeCheck($event, i)"></i>
+                </div>             
+                </div> 
+               
+              </div>
+          
+            </div>
+           <div style="background-color: #fafafa; margin-left: 70%;">
+            <td >
+                <button
+                  id="actualizarbutton"
+                  nz-button
+                  nzSize="large"
+                  style="background-color: #24ce41"
+                  (click)="msjConfirmOk()"
+                >
+                  <i nz-icon nzType="save" nzTheme="outline"></i>Grabar
+                </button>
+              </td>
+           </div>
+        </nz-collapse-panel>
+    </nz-collapse>
+  </form> 
+
+  <app-popup-confirmation #pop 
+  [title]="'Confirmar Guardado de comprobante'"
+    [header]="'¿Está seguro que desea guardar el comprobante?'"
+     [message]="'Esta acción no se puede revertir'"
+    (handleOk)="save()">
+  </app-popup-confirmation>

@@ -78,6 +78,7 @@ builder.Services.AddScoped<EmailService>();
 builder.Services.AddScoped<ReporteZService>();
 builder.Services.AddScoped<DeliveryNotesService>();
 builder.Services.AddScoped<BudgetService>();
+builder.Services.AddScoped<QuittanceService>();
 builder.Services.AddDbContext<DBContext>(x => x.UseSqlServer(connectionString));
 builder.Services.AddScoped<ReimprimirDocService>();
 builder.Services.AddCors(options =>

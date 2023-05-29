@@ -11,13 +11,52 @@
   [hideFacturaPro]="true"
   [iconBack]="'rollback'"
   [iconTitle]="'container'"
+  [colors]="'#36cfc9'"
+  
 >
 </app-header-op-buttons>
-<nz-collapse >
-  <nz-collapse-panel nzHeader="Datos Remito" [nzActive]="true"  class="Remito">
-    
-        <nz-descriptions nzSize="middle" [nzColumn]="3" style="margin-left: 100px; padding: 5px;">
-          <nz-descriptions-item nzTitle=" * Fecha" >
+<nz-collapse class="Remito">
+  <nz-collapse-panel nzHeader="Encabezado" [nzActive]="true">
+    <div style="display: flex; flex-direction: row">
+      <div style="flex: 1">
+        <b><label> * Fecha: </label></b>
+        <span>{{ dateTime ? (dateTime | date : "YYYY-MM-dd") : "N/A" }}</span>
+        <br />
+        <b><label>* Cliente: </label></b>
+        <span>{{ this.supplierName }}</span>
+        <br />
+        <b><label>* Dirección: </label></b>
+        <span>{{ this.supplierAddress }}</span>
+        <br />
+        <b><label>* Observación: </label></b>
+        <span>{{ this.observation }}</span>
+      </div>
+      <div style="flex: 1">
+        <b><label>* Estado: </label></b>
+        <span>
+          <nz-page-header-tags>
+            <nz-tag [nzColor]="'blue'">{{
+              this.getStatusName(this.statusId)
+            }}</nz-tag>
+          </nz-page-header-tags>
+        </span>
+        <br />
+        <b><label>* Cuit: </label></b>
+        <span>{{ this.supplierCuit }}</span>
+        <br />
+      </div>
+      <div style="flex: 1">
+        <b><label>* Nro de Remito: </label></b>
+        <span>{{ this.deliveryNotesNumber | number : "8.0-0" | noComma }}</span>
+        <br />
+        <b><label>* Pagado: </label></b>
+        <span>{{ this.paid == true ? "Si" : "No" }}</span>
+      </div>
+    </div>
+  </nz-collapse-panel>
+
+  <!-- <nz-descriptions nzSize="middle" [nzColumn]="3" style="margin-left: 100px; padding: 5px;">
+          <nz-descriptions-item nzTitle =  " * Fecha">
           <a>{{ dateTime ? (dateTime | date : "YYYY-MM-dd") : "N/A" }} </a>
         </nz-descriptions-item>
         <nz-descriptions-item nzTitle=" * Estado" >
@@ -45,45 +84,46 @@
         </nz-descriptions-item>  
       </nz-descriptions> 
   </nz-collapse-panel>
-</nz-collapse>
-<nz-collapse   class="Remito">
-  <nz-collapse-panel
-    nzHeader="Detalle Remito"
-    [nzActive]="true"
-    [nzShowArrow]="true"
-  
-  >
-  <nz-content>
-    <nz-table [nzBordered]="true" nzTemplateMode [nzSize]="'small'">
-      <thead>
-        <tr>
-          <th>Producto</th>
-          <th [nzAlign]="'center'">Cantidad</th>
-          <th [nzAlign]="'center'">Precio Unidad</th>
-          <th [nzAlign]="'center'">SubTotal</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let data of deliveryNotesDetails">
-          <td>{{ data.productName}}</td>
-          <td [nzAlign]="'right'">{{ data.quantity }}</td>
-          <td [nzAlign]="'right'">{{ this.currencyFormat(data.price) }}</td>
-          <td [nzAlign]="'right'">
-            {{ this.currencyFormat(data.quantity * data.price) }}
-          </td>
-        </tr>
-      </tbody>
-       <tfoot  class="Remito">
-        <tr> 
-          <td colspan="8" [nzAlign]="'right'" >
-            <b>Total </b
-            ><span style="color: blue"
-              > {{this.currencyFormat(this.importTotal)}}
-            </span>
-          </td>
-        </tr>
-      </tfoot>
-    </nz-table>
-  </nz-content>
-  </nz-collapse-panel>
+</nz-collapse>-->
+
+  <nz-collapse class="Remito">
+    <nz-collapse-panel
+      nzHeader="Detalle"
+      [nzActive]="true"
+      [nzShowArrow]="true"
+    >
+      <nz-content>
+        <nz-table [nzBordered]="true" nzTemplateMode [nzSize]="'small'">
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th [nzAlign]="'center'">Cantidad</th>
+              <th [nzAlign]="'center'">Precio Unidad</th>
+              <th [nzAlign]="'center'">SubTotal</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let data of deliveryNotesDetails">
+              <td>{{ data.productName }}</td>
+              <td [nzAlign]="'right'">{{ data.quantity }}</td>
+              <td [nzAlign]="'right'">{{ this.currencyFormat(data.price) }}</td>
+              <td [nzAlign]="'right'">
+                {{ this.currencyFormat(data.quantity * data.price) }}
+              </td>
+            </tr>
+          </tbody>
+          <tfoot class="Remito">
+            <tr>
+              <td colspan="8" [nzAlign]="'right'">
+                <b>Total </b
+                ><span style="color: blue; font-size: 15px ; font-weight: bold;">
+                  {{ this.currencyFormat(this.importTotal) }}
+                </span>
+              </td>
+            </tr>
+          </tfoot>
+        </nz-table>
+      </nz-content>
+    </nz-collapse-panel>
+  </nz-collapse>
 </nz-collapse>

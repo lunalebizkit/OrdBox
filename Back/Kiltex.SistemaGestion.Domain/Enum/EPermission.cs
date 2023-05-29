@@ -65,6 +65,10 @@ namespace Kiltex.SistemaGestion.Domain.Enum
 
         //DeliveryNote
         GetRemito = 43,
-        CreateRemito = 44
+        CreateRemito = 44,
+
+        //Quittance
+        GetQuittance = 45,
+        CreateQuittance = 46
     }
 }

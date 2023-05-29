@@ -1,8 +1,8 @@
 <!-- <div class="sticky"> -->
 <nz-page-header class="sticky">
   <nz-page-header-title
-    ><i nz-icon [nzType]="iconTitle" style="padding-right: 5px"></i
-    >{{ title }}</nz-page-header-title
+    ><i nz-icon [nzType]="iconTitle" style="padding-right: 5px; color: {{colors || 'none'}}"  ></i
+    >{{ title }} </nz-page-header-title
   >
   <nz-page-header-tags *ngIf="!hideTag">
     <nz-tag [nzColor]="color">{{ tagText }}</nz-tag>
@@ -15,7 +15,7 @@
       nz-button
       nzDanger
       [nzLoading]="showSpinner"
-      (click)="onDeleteClick?.emit($event)"
+      (click)="onDeleteClick.emit($event)"
     >
       <i nz-icon [nzType]="iconDelete"></i>{{ btnDeleteText }}
     </button>
@@ -41,7 +41,7 @@
       nz-button
       nzType="default"
       [disabled]="showSpinner"
-      (click)="onCloseClick?.emit($event)"
+      (click)="onCloseClick.emit($event)"
     >
       <i nz-icon [nzType]="iconBack"></i>{{ btnCloseText }}
     </button>
@@ -54,7 +54,7 @@
       nzType="primary"
       [nzLoading]="showSpinner"
       [disabled]="disabled"
-      (click)="onSaveClick?.emit($event)"
+      (click)="onSaveClick.emit($event)"
     >
       <i nz-icon [nzType]="iconSave"></i>{{ btnSaveText }}
     </button>
@@ -65,7 +65,7 @@
       nz-button
       nzType="primary"
       [nzLoading]="showSpinner"
-      (click)="onSendClick?.emit($event)"
+      (click)="onSendClick.emit($event)"
     >
       <i nz-icon [nzType]="iconSend"></i>{{ btnSendText }}
     </button>
@@ -76,7 +76,7 @@
       nzType="primary"
       [nzLoading]="showSpinner"
       [disabled]="disabled"
-      (click)="onSendEmailClick?.emit($event)"
+      (click)="onSendEmailClick.emit($event)"
     >
       <i nz-icon [nzType]="iconSend"></i>{{ btnSendEmail }}
     </button>
@@ -86,7 +86,7 @@
       nz-button
       class="btnGreen"
       [nzLoading]="showSpinner"
-      (click)="onUpdateClick?.emit($event)"
+      (click)="onUpdateClick.emit($event)"
     >
       <i nz-icon [nzType]="iconUpdate"></i>{{ btnUpdateText }}
     </button>
@@ -99,7 +99,7 @@
     class="btnGreen"
     [disabled]="disabled"
     [nzLoading]="showSpinner"
-    (click)="onReprintClick?.emit($event)"
+    (click)="onReprintClick.emit($event)"
   >
     <i nz-icon [nzType]="iconReprint"></i>{{ btnReprintText }}
   </button>
@@ -114,7 +114,7 @@
   nz-button
   [disabled]="disabled"
   
-   (click)="onCerrarClick?.emit($event)"
+   (click)="onCerrarClick.emit($event)"
   
   >
   <i nz-icon [nzType]="iconReprint"></i>{{ btnCerrarText }}
@@ -127,7 +127,7 @@
   class="btnGreen"
    [disabled]="disabled"
     [nzLoading]="showSpinner"
-    (click)="onReprintClick?.emit($event)"
+    (click)="onReprintClick.emit($event)"
    
    >
    <i nz-icon [nzType]="iconReprint"></i>{{ btnPrintText }}
@@ -140,7 +140,7 @@
    nz-button
    [disabled]="disabled"
    
-   (click)="onFacturaProClick?.emit($event)"
+   (click)="onFacturaProClick.emit($event)"
    
    >
    <i nz-icon [nzType]="iconFacturaPro"></i>{{ btnFacturaProText }}

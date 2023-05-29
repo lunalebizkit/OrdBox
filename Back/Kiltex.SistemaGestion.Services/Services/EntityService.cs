@@ -1,13 +1,10 @@
-﻿
-
-using AutoMapper;
+﻿using AutoMapper;
 using Kiltex.SistemaGestion.Domain;
 using Kiltex.SistemaGestion.Domain.Model;
 using Kiltex.SistemaGestion.SDK.Error;
 using Kiltex.SistemaGestion.Services.Common;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
 using Microsoft.EntityFrameworkCore;
-using static Google.Apis.Requests.BatchRequest;
 
 namespace Kiltex.SistemaGestion.Services.Services
 {
@@ -486,7 +483,9 @@ namespace Kiltex.SistemaGestion.Services.Services
                                     .Include(p =>p.PhoneEntities)
                                     .Where(p => p.Name.ToLower().Contains(request.Filter ?? "") 
                                     || p.Dni.ToString().Contains( request.Filter ?? "") 
-                                    || p.Cuit.ToLower().Contains(request.Filter ?? ""));          
+                                    || p.Cuit.ToLower().Contains(request.Filter ?? ""));
+
+               
 
                 var count = await query.CountAsync().ConfigureAwait(false);
             
@@ -497,7 +496,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                                       .ConfigureAwait(false);
 
                 var result = _mapper.Map<List<DtoEntityList>>(list);
-
+            
        
                 return new OperationResponse<DtoPagination<DtoEntityList>>(new DtoPagination<DtoEntityList>
                 {

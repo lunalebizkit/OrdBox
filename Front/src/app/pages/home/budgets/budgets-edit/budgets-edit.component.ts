@@ -27,6 +27,9 @@ import { ePayment } from "../../invoices/model/invoice-payment.Enum";
 })
 
 export class BudgetsEditComponent extends BaseComponent implements OnInit {
+direccion() {
+throw new Error('Method not implemented.');
+}
 
   @ViewChild('header') headerComponent!: HeaderOperationsButtonsComponent;
   @ViewChild('popup') popupComponent!: PopupConfirmationComponent;
@@ -393,7 +396,7 @@ export class BudgetsEditComponent extends BaseComponent implements OnInit {
               /* Parseo dato a Dto Factura Detalle */
               const modelDetail: BudgetDetails = BudgetDetailParser(product, this.bindPrice(product));
               this.budgetDetails.push(modelDetail);
-              //  this.budgetDetailsList = this.budgetDetailsTest    
+              this.budgetDetailsList = this.budgetDetailsTest    
               this.totalCalculate();
               this.isLoading = false;
               this.formProductSearch.controls['productSearchFilter'].setValue('');
@@ -494,5 +497,9 @@ handleOk() {
     console.log(this.budgetDetailsList);
     console.log(this.budgetDetails);
 }
+direction() {
+  this.router.navigate(['/home/budgets']);
+}
+
 
 }

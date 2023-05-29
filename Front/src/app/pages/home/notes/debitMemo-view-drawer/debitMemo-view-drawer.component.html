@@ -8,13 +8,52 @@
   [title]="'Nota de Débito'"
   [iconBack]="'rollback'"
   [iconTitle]="'container'"
-  [hideCerrar]="true" [hideFacturaPro]="true"
+  [hideCerrar]="true"
+  [hideFacturaPro]="true"
+  [colors]="'#1890ff'"
 >
 </app-header-op-buttons>
-<nz-collapse >
-  <nz-collapse-panel nzHeader="Datos Nota de Débito" [nzActive]="true"  class="{{this.tipo}}">
-    
-        <nz-descriptions nzSize="small" [nzColumn]="3" style="margin-left: 100px; padding: 5px;">
+<nz-collapse class="{{ this.tipo }}">
+  <nz-collapse-panel nzHeader="Encabezado" [nzActive]="true">
+    <div style="display: flex; flex-direction: row">
+      <div style="flex: 1">
+        <b><label>* Fecha: </label></b>
+        <span>{{ dateTime ? (dateTime | date : "YYYY-MM-dd") : "N/A" }}</span>
+        <br />
+        <b><label>* Tipo: </label></b>
+        <span>
+          <nz-page-header-tags>
+            <nz-tag [nzColor]="'blue'">{{ this.debitMemoType(type) }}</nz-tag>
+          </nz-page-header-tags>
+        </span>
+        <br />
+        <b><label>* Factura Relacionada: </label></b>
+        <span>{{ this.invoiceNumber }}</span>
+        <br />
+        <b><label>* Nro de Nota de Debito: </label></b>
+        <span>{{ this.debitMemoNumber }}</span>
+        <br />
+      </div>
+      <div style="flex: 1">
+        <b><label>* Cliente: </label></b>
+        <span>{{ this.customerName }}</span>
+        <br />
+        <b><label>* Cuit: </label></b>
+        <span>{{ this.customerCuit | cuit }}</span>
+        <br />
+      </div>
+      <div style="flex: 1">
+        <b><label>* Dirección: </label></b>
+        <span>{{ this.customerAddress }}</span>
+        <br />
+        <b><label>* Observación: </label></b>
+        <span>{{ this.observation }}</span>
+        <br />
+      </div>
+    </div>
+  </nz-collapse-panel>
+
+    <!-- <nz-descriptions nzSize="small" [nzColumn]="3" style="margin-left: 100px; padding: 5px;">
           <nz-descriptions-item nzTitle=" * Fecha" >
           <a>{{ dateTime ? (dateTime | date : "YYYY-MM-dd") : "N/A" }} </a>
         </nz-descriptions-item>
@@ -41,10 +80,10 @@
           <nz-descriptions-item nzTitle=" * Observación" >
             {{ this.observation }}
           </nz-descriptions-item>
-        </nz-descriptions> 
+        </nz-descriptions> -->
     <!--   </div> 
         <div  nz-col  > -->
-         <!--  <nz-descriptions nzSize="small" [nzColumn]="2">
+    <!--  <nz-descriptions nzSize="small" [nzColumn]="2">
           <nz-descriptions-item nzTitle="* Cliente" >
             {{ this.customerName }}</nz-descriptions-item
           > 
@@ -58,53 +97,57 @@
             {{ this.observation }}
           </nz-descriptions-item>
         </nz-descriptions>  -->
-   <!--   </div>   -->
-  </nz-collapse-panel>
-</nz-collapse>
-<nz-collapse>
-  <nz-collapse-panel
-    nzHeader="Detalle Nota de Débito"
-    [nzActive]="true"
-    [nzShowArrow]="true"
-    class="{{this.tipo}}"
-  >
-    <nz-content>
-      <nz-table [nzBordered]="true" nzTemplateMode [nzSize]="'small'">
-        <thead >
-          <tr class="thead">
-            <th >Código</th>
-            <th>Código Interno</th>
-            <th>Producto</th>
-            <th [nzAlign]="'center'">Cantidad</th>
-            <th [nzAlign]="'center'">Precio Unidad</th>
-            <th [nzAlign]="'center'">SubTotal</th>
-            <th>Iva</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let data of debitMemoDetail">
-            <td>{{ data.productCode }}</td>
-            <td>{{ data.productId }}</td>
-            <td>{{ data.productName }}</td>
-            <td [nzAlign]="'right'">{{ data.quantity }}</td>
-            <td [nzAlign]="'right'">{{ this.currencyFormat(data.price) }}</td>
-            <td [nzAlign]="'right'">
-              {{ this.currencyFormat(data.quantity * data.price) }}
-            </td>
-            <td>{{ data.iva }}</td>
-          </tr>
-        </tbody>
-        <tfoot  class="{{this.tipo}}">
-          <tr> 
-            <td colspan="8" [nzAlign]="'right'">
-              <b>Total </b
-              ><span style="color: blue"
-                >{{ this.currencyFormat(total) }}
-              </span>
-            </td>
-         </tr>
-        </tfoot> 
-      </nz-table>
-    </nz-content>
-  </nz-collapse-panel>
-</nz-collapse>
+    <!--   </div>   -->
+    <!--</nz-collapse-panel>
+</nz-collapse>-->
+
+    <nz-collapse>
+      <nz-collapse-panel
+        nzHeader="Detalle"
+        [nzActive]="true"
+        [nzShowArrow]="true"
+        class="{{ this.tipo }}"
+      >
+        <nz-content>
+          <nz-table [nzBordered]="true" nzTemplateMode [nzSize]="'small'">
+            <thead>
+              <tr class="thead">
+                <th>Código</th>
+                <th>Código Interno</th>
+                <th>Producto</th>
+                <th [nzAlign]="'center'">Cantidad</th>
+                <th [nzAlign]="'center'">Precio Unidad</th>
+                <th [nzAlign]="'center'">SubTotal</th>
+                <th>Iva</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let data of debitMemoDetail">
+                <td>{{ data.productCode }}</td>
+                <td>{{ data.productId }}</td>
+                <td>{{ data.productName }}</td>
+                <td [nzAlign]="'right'">{{ data.quantity }}</td>
+                <td [nzAlign]="'right'">
+                  {{ this.currencyFormat(data.price) }}
+                </td>
+                <td [nzAlign]="'right'">
+                  {{ this.currencyFormat(data.quantity * data.price) }}
+                </td>
+                <td>{{ data.iva }}</td>
+              </tr>
+            </tbody>
+            <tfoot class="{{ this.tipo }}">
+              <tr>
+                <td colspan="8" [nzAlign]="'right'">
+                  <b>Total </b
+                  ><span style="color: blue; font-size: 15px ; font-weight: bold;"
+                    >{{ this.currencyFormat(total) }}
+                  </span>
+                </td>
+              </tr>
+            </tfoot>
+          </nz-table>
+        </nz-content>
+      </nz-collapse-panel>
+    </nz-collapse>
+ 

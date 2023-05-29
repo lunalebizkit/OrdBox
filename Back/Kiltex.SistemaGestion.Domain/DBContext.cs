@@ -27,6 +27,11 @@ namespace Kiltex.SistemaGestion.Domain
                 .WithOne(i => i.Receipt)
                 .OnDelete(DeleteBehavior.NoAction);
 
+            builder.Entity<Quittance>()
+               .HasMany(i => i.QuittanceDetails)
+               .WithOne(i => i.Quittance)
+               .OnDelete(DeleteBehavior.NoAction);
+
             //base.OnModelCreating(builder);
             builder.Entity<CreditMemo>()
                 .HasMany(i => i.CreditMemoDetail)
@@ -91,9 +96,11 @@ namespace Kiltex.SistemaGestion.Domain
         public virtual DbSet<DebitMemoDetails> DebitMemoDetails { get; set; }
         public virtual DbSet<Budget>Budgets { get; set; }
         public virtual DbSet<BudgetDetail> BudgetDetails { get; set; }
-        
         public virtual DbSet<DeliveryNotes> DeliveryNotes { get; set; }
         public virtual DbSet<DeliveryNotesDetails> DeliveryNotesDetails { get; set; }
+        public virtual DbSet<Quittance> Quittance { get; set; }
+        public virtual DbSet<QuittanceDetails> QuittanceDetails { get; set; }
+
 
 
         //private static void InitialRoles(ModelBuilder modelBuilder)

@@ -422,6 +422,7 @@ constructor(@Inject(LOCALE_ID) public locale: string,
             
           }else{
             this.isLoading= false;
+            this.openComponentProduct();
           }
           
         },
