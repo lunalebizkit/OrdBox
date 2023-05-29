@@ -34,7 +34,8 @@ namespace Kiltex.SistemaGestion.Services.Services
             string CUIT = "24442455568";
             string Dirección = "Buena Nueva";
             string Tipo = "A";
-            DateTime fecha = DateTime.Now;
+            DateTime fecha = DateTime.Now; 
+  
 
 
             string titulo = "REFRIGERACION DANTE";
@@ -52,6 +53,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             PdfWriter writer = PdfWriter.GetInstance(document, new FileStream(filePath + "archivo.pdf", FileMode.Create));
 
             document.Open();
+
             Paragraph paragraph = new Paragraph
             {
                 new Chunk("Cliente: " + Cliente),
@@ -62,44 +64,63 @@ namespace Kiltex.SistemaGestion.Services.Services
                 Chunk.Newline,
                 new Chunk("Tipo: " + Tipo),
                 Chunk.Newline,
-                new Chunk("Fecha: " + fecha.ToString())
+                new Chunk("Fecha: " + fecha.ToString("yyyy-MM-dd"))
             };
-           // document.Add(paragraph);
 
-            Paragraph paragraph2 = new Paragraph
-            {
-                new Chunk(titulo),
-                Chunk.Newline,
-                new Chunk("DNI: " + dni),
-                Chunk.Newline,
-                new Chunk("Direccion: " + direccion),
-                Chunk.Newline,
-                new Chunk("Nombre y Apellido: " + nombre_apellido),
-                Chunk.Newline,
-                new Chunk("Email: " +email)
-            };
+            string imagePath = "C:\\Users\\Usuario\\Desktop\\Proyectos\\Gestion de Stock\\gestion-stock\\Front\\src\\assets\\img\\dantesLogo1.png";
+
+            // Crear el objeto de imagen
+            iTextSharp.text.Image image = iTextSharp.text.Image.GetInstance(imagePath);
+
+            // Establecer el tamaño de la imagen (opcional)
+            image.ScaleToFit(50f, 50f); // Ajusta la imagen al tamaño máximo de 200x200 puntos
+
+            Chunk imageChunk = new Chunk(image, 1, 1);
+
+            Phrase phrase = new Phrase();
+            phrase.Add(new Chunk(titulo));
+            phrase.Add(imageChunk);
+            phrase.Add(Chunk.Newline);
+            phrase.Add(new Chunk("DNI: " + dni));
+            phrase.Add(Chunk.Newline);
+            phrase.Add(new Chunk("Direccion: " + direccion));
+            phrase.Add(Chunk.Newline);
+            phrase.Add(new Chunk("Nombre y Apellido: " + nombre_apellido));
+            phrase.Add(Chunk.Newline);
+            phrase.Add(new Chunk("Email: " + email));
 
             PdfPTable table = new PdfPTable(2);
 
             // Primera columna: paragraph
-            PdfPCell cell1 = new PdfPCell(paragraph);
-            cell1.PaddingTop = 10f; // Ajustar el espacio superior de la celda
-            cell1.HorizontalAlignment = Element.ALIGN_CENTER; // Centrar horizontalmente el contenido de la celda
+            PdfPCell cell1 = new PdfPCell(paragraph)
+            {
+                Border = PdfPCell.NO_BORDER,
+                PaddingTop = 40f,
+                HorizontalAlignment = Element.ALIGN_LEFT
+            };
             table.AddCell(cell1);
 
+           
+
             // Segunda columna: paragraph2
-            PdfPCell cell2 = new PdfPCell(paragraph2);
-            cell2.PaddingTop = 10f; // Ajustar el espacio superior de la celda
-            cell2.HorizontalAlignment = Element.ALIGN_CENTER; // Centrar horizontalmente el contenido de la celda
+            PdfPCell cell2 = new PdfPCell(phrase)
+            {
+                Border = PdfPCell.NO_BORDER,
+                PaddingTop = 6f,
+                HorizontalAlignment = Element.ALIGN_LEFT,
+                FixedHeight = 120f // Ajustar la altura de la celda
+            };
             table.AddCell(cell2);
 
-            // Establecer el ancho de las columnas
-            float[] columnWidths = { 1f, 1f }; // 50% de ancho para cada columna
+            float[] columnWidths = { 11f, 15f }; // 50% de ancho para cada columna
             table.SetWidths(columnWidths);
+
+            // Establecer el estilo de borde de la tabla como "None"
+            table.DefaultCell.Border = PdfPCell.NO_BORDER;
 
             // Agregar la tabla al documento
             document.Add(table);
-           // document.Add(paragraph2);
+            // document.Add(paragraph2);
             document.Close();
            
         }
