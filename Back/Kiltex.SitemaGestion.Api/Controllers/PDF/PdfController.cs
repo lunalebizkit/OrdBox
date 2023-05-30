@@ -1,4 +1,5 @@
 ﻿using Kiltex.SistemaGestion.Services.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Kiltex.SistemaGestion.Api.Controllers.PDF
@@ -15,6 +16,7 @@ namespace Kiltex.SistemaGestion.Api.Controllers.PDF
 
         [HttpGet]
         [Route("[action]")]
+        [AllowAnonymous]
         public async Task <IActionResult> Pdf()
         { 
            return Ok( await _service.Imprimir());
