@@ -8,7 +8,7 @@ namespace Kiltex.SistemaGestion.Domain.Model
         [Column("quittance_id")]
         public long QuittanceId { get; set; }
 
-        [ForeignKey(nameof(QuittanceId))]
+        [ForeignKey("QuittanceId")]
         public Quittance? Quittance { get; set; }
 
         [Column("total")]

@@ -151,6 +151,8 @@ namespace Kiltex.SistemaGestion.Services.Services
             return Ok(new IdResponse<long>(receiptModel.Id));
         }
 
+   
+
 
     }
 }
