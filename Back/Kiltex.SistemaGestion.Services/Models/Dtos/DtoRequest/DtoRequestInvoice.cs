@@ -31,6 +31,7 @@ namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest
         public decimal? Iva10 { get; set; }
 
         public int Type { get; set; }
+        public string Status { get; set; }
 
         public List<DtoResponseInvoiceDetail> InvoiceDetails { get; set; }
 

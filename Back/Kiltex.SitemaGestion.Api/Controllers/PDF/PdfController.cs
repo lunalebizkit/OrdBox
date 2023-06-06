@@ -17,9 +17,10 @@ namespace Kiltex.SistemaGestion.Api.Controllers.PDF
         [HttpGet]
         [Route("[action]")]
         [AllowAnonymous]
-        public async Task <IActionResult> Pdf()
+        public async Task <IActionResult> Pdf(long id, [FromServices] InvoiceService service)
         { 
-           return Ok( await _service.Imprimir());
+            var factura = await service.GetById(id);
+           return Ok( await _service.Imprimir(factura.Data));
         }
 
 

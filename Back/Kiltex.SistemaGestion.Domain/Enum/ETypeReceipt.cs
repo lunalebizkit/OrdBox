@@ -10,4 +10,11 @@ namespace Kiltex.SistemaGestion.Domain.Enum
         BImpresion = 6,
         CImpresion = 11,
     }
+
+    //public enum EInvoiceType
+    //{
+    //    A,
+    //    B,
+    //    C
+    //}
 }
