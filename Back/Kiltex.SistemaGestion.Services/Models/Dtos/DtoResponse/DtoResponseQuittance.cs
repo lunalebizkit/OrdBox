@@ -37,5 +37,8 @@ namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse
         public decimal? Total { get; set; }
 
         public string? Bank { get; set; }
+        //public string? Concept { get; set; }
+
+        //public decimal Cash { get; set; }
     }
 }
