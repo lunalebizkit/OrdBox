@@ -146,7 +146,7 @@ namespace Kiltex.SistemaGestion.Api.Controllers.PDF
 
             Paragraph encabezado = await _service.Encabezado(dtoEncabezado);
             Paragraph Cabecera = await _service.Cabecera(dtoCabecera);
-            Paragraph Detalle = await _service.Detalle(dtoDetalle);
+            Paragraph Detalle = await _service.DetallePresupuestoYRemito(dtoDetalle);
             Paragraph paragraph = new Paragraph();
             paragraph.Add(encabezado);
             paragraph.Add(Cabecera);
@@ -188,7 +188,7 @@ namespace Kiltex.SistemaGestion.Api.Controllers.PDF
 
             Paragraph encabezado = await _service.Encabezado(dtoEncabezado);
             Paragraph Cabecera = await _service.Cabecera(dtoCabecera);
-            Paragraph Detalle = await _service.Detalle(dtoDetalle);
+            Paragraph Detalle = await _service.DetallePresupuestoYRemito(dtoDetalle);
             Paragraph paragraph = new Paragraph();
             paragraph.Add(encabezado);
             paragraph.Add(Cabecera);

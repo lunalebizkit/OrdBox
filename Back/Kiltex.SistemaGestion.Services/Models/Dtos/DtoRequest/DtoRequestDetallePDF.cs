@@ -16,6 +16,7 @@ namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest
         public int Iva { get; set; }
         public int IvaTotal { get; set; }
         public int Total { get; set; }
+        public int Quantity { get; set; }
         public int Iva10 { get; set; }
         public int Iva21 { get; set; }
         public int Iva27 { get; set; }
