@@ -38,7 +38,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("brand");
+                    b.ToTable("brand", (string)null);
                 });
 
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.Budget", b =>
@@ -86,7 +86,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("budget");
+                    b.ToTable("budget", (string)null);
                 });
 
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.BudgetDetail", b =>
@@ -128,7 +128,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("budget_detail");
+                    b.ToTable("budget_detail", (string)null);
                 });
 
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.Category", b =>
@@ -147,7 +147,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("category");
+                    b.ToTable("category", (string)null);
                 });
 
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.CreditMemo", b =>
@@ -220,7 +220,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("credit_memo");
+                    b.ToTable("credit_memo", (string)null);
                 });
 
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.CreditMemoDetail", b =>
@@ -266,7 +266,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("credit_memo_details");
+                    b.ToTable("credit_memo_details", (string)null);
                 });
 
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.DebitMemo", b =>
@@ -339,7 +339,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("debit_memo");
+                    b.ToTable("debit_memo", (string)null);
                 });
 
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.DebitMemoDetails", b =>
@@ -385,7 +385,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("debit_memo_details");
+                    b.ToTable("debit_memo_details", (string)null);
                 });
 
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.DeliveryNotes", b =>
@@ -443,7 +443,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("delivery_notes");
+                    b.ToTable("delivery_notes", (string)null);
                 });
 
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.DeliveryNotesDetails", b =>
@@ -483,7 +483,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
 
                     b.HasIndex("DeliveryNotes_Id");
 
-                    b.ToTable("deliveryNotes_details");
+                    b.ToTable("deliveryNotes_details", (string)null);
                 });
 
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.EmailEntity", b =>
@@ -508,7 +508,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
 
                     b.HasIndex("EntityId");
 
-                    b.ToTable("email_entity");
+                    b.ToTable("email_entity", (string)null);
                 });
 
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.Entity", b =>
@@ -538,7 +538,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("entity");
+                    b.ToTable("entity", (string)null);
                 });
 
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.Invoice", b =>
@@ -601,7 +601,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("invoice");
+                    b.ToTable("invoice", (string)null);
                 });
 
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.InvoiceDetail", b =>
@@ -647,7 +647,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("invoice_detail");
+                    b.ToTable("invoice_detail", (string)null);
                 });
 
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.Period", b =>
@@ -673,7 +673,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("period");
+                    b.ToTable("period", (string)null);
                 });
 
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.Permission", b =>
@@ -700,7 +700,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("permission");
+                    b.ToTable("permission", (string)null);
                 });
 
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.PermissionXRol", b =>
@@ -726,7 +726,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("permission_x_rol");
+                    b.ToTable("permission_x_rol", (string)null);
                 });
 
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.PhoneEntity", b =>
@@ -751,7 +751,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
 
                     b.HasIndex("EntityId");
 
-                    b.ToTable("phone_entity");
+                    b.ToTable("phone_entity", (string)null);
                 });
 
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.Product", b =>
@@ -836,7 +836,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
 
                     b.HasIndex("SupplierId");
 
-                    b.ToTable("product");
+                    b.ToTable("product", (string)null);
                 });
 
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.Quittance", b =>
@@ -847,6 +847,10 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                         .HasColumnName("id");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
+                    b.Property<string>("Address")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("customer_address");
 
                     b.Property<string>("Amount")
                         .HasColumnType("nvarchar(max)")
@@ -859,10 +863,6 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                     b.Property<string>("Concept")
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("concept");
-
-                    b.Property<string>("CustomerAddress")
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("customer_address");
 
                     b.Property<string>("CustomerCuit")
                         .HasColumnType("nvarchar(max)")
@@ -886,7 +886,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("quittance");
+                    b.ToTable("quittance", (string)null);
                 });
 
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.QuittanceDetails", b =>
@@ -922,7 +922,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
 
                     b.HasIndex("QuittanceId");
 
-                    b.ToTable("quittance_details");
+                    b.ToTable("quittance_details", (string)null);
                 });
 
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.Receipt", b =>
@@ -997,7 +997,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("receipt");
+                    b.ToTable("receipt", (string)null);
                 });
 
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.ReceiptDetails", b =>
@@ -1043,7 +1043,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
 
                     b.HasIndex("ReceiptId");
 
-                    b.ToTable("receipt_details");
+                    b.ToTable("receipt_details", (string)null);
                 });
 
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.Rol", b =>
@@ -1067,7 +1067,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("rol");
+                    b.ToTable("rol", (string)null);
 
                     b.HasData(
                         new
@@ -1115,7 +1115,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
 
                     b.HasIndex("SupplierId");
 
-                    b.ToTable("supplier_order");
+                    b.ToTable("supplier_order", (string)null);
                 });
 
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.SupplierOrderDetail", b =>
@@ -1153,7 +1153,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
 
                     b.HasIndex("SupplierOrderId");
 
-                    b.ToTable("supplier_order_detail");
+                    b.ToTable("supplier_order_detail", (string)null);
                 });
 
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.User", b =>
@@ -1207,7 +1207,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("user");
+                    b.ToTable("user", (string)null);
 
                     b.HasData(
                         new
@@ -1217,7 +1217,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                             FirstName = "admin",
                             IsDeleted = false,
                             LastName = "admin",
-                            Password = "$MYHASH$V1$100$6dOq2rSiqzHlJKV7cEZGaWk9fYTIicmO5HSihRbRPfg6YgG+",
+                            Password = "$MYHASH$V1$100$0C/x+/pSl0/nWmazTYU22nNN5cIC/rgvEGx8hdUWUhwUIfmS",
                             RoleId = 1L,
                             UserName = "admin"
                         });
@@ -1231,7 +1231,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("observation");
 
-                    b.ToTable("customer");
+                    b.ToTable("customer", (string)null);
 
                     b.HasData(
                         new
@@ -1252,7 +1252,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("observation");
 
-                    b.ToTable("supplier");
+                    b.ToTable("supplier", (string)null);
                 });
 
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.Budget", b =>
@@ -1495,7 +1495,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                     b.HasOne("Kiltex.SistemaGestion.Domain.Model.Quittance", "Quittance")
                         .WithMany("QuittanceDetails")
                         .HasForeignKey("QuittanceId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Quittance");

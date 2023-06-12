@@ -17,5 +17,6 @@
         public decimal Price { get; set; }
 
         public decimal Iva { get; set; }
+       
     }
 }

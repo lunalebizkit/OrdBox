@@ -208,4 +208,9 @@ export class ReceiptListComponent implements OnInit {
       }
     }
   }
+
+  proforma(id:Number){
+    window.open('home/invoices/receiptpro/'+id);
+     
+  }
 }
