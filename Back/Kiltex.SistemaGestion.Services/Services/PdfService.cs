@@ -665,14 +665,12 @@ namespace Kiltex.SistemaGestion.Services.Services
 
 
             var resumen = model;
-            var subTotal = 0;
             //Presupuesto
             if (resumen.BudgetDetails != null)
             {
                 foreach (var item in resumen.BudgetDetails)
                 {
 
-                    subTotal = resumen.Total * item.Quantity;
                     table.AddCell(new PdfPCell(new Phrase(item.ProductName, font2))
                     {
                         Border = PdfPCell.RIGHT_BORDER,
@@ -702,7 +700,6 @@ namespace Kiltex.SistemaGestion.Services.Services
             {
                 foreach (var item in resumen.DeliveryNotesDetails)
                 {
-                    subTotal = resumen.Total * item.Quantity;
 
                     table.AddCell(new PdfPCell(new Phrase(item.ProductName, font2))
                     {
@@ -750,8 +747,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             float[] columnWidths2 = { 1f, 2f,1f,1f }; // Ancho relativo de cada columna
             table2.SetWidths(columnWidths2);          
 
-     
-
+   
 
             table2.AddCell(emptyCell);
             table2.AddCell(emptyCell);
