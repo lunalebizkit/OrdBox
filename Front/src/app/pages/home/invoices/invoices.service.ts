@@ -9,7 +9,7 @@ import { Type } from '@angular/compiler';
   providedIn: 'root',
 })
 export class InvoiceService {
-  constructor(public api: ApiService) {}
+  constructor(public api: ApiService) { }
 
   /**
    * Obtiene un Comprobante por Id
@@ -65,9 +65,21 @@ export class InvoiceService {
     return this.api.post(`receipt`, model, false);
   }
 
- /*Reimprimir resivo
- Reimprimir?tipoDocumento=1&numeroComprobante=0*/
- public Reprint(type: number, number: number) : Observable<any>{
-  return this.api.get(`Reimprimir?tipoDocumento=${type}&numeroComprobante=${number}`,false);
- }
+  /*Reimprimir resivo
+  Reimprimir?tipoDocumento=1&numeroComprobante=0*/
+  public Reprint(type: number, number: number): Observable<any> {
+    return this.api.get(`Reimprimir?tipoDocumento=${type}&numeroComprobante=${number}`, false);
+  }
+  /**
+    * Guarda una Factura/Comprobante
+    * @param model
+    * @returns
+    */
+ 
+   public Reprintinvoice(id: number): Observable<any> {
+    return this.api.get(`Pdf/PdfComprobanteVenta?id=${id}`,false)
+
+  }
+ /* https://localhost:7261/api/v1/Pdf/PdfComprobanteVenta?id=40024*/
 }
+

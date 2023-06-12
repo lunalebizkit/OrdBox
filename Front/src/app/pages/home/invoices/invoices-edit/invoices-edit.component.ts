@@ -99,7 +99,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
   value1!: string;
   value2!: string;
   value3!: string;
-
+  
 
     /*
   ** Parametros de busqueda
@@ -112,6 +112,9 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
 
   selectedDni: boolean = false;
   dni: any;
+  iva21Undefined!: number;
+  iva27Undefined!: number;
+  iva10Undefined!: number;
    
   constructor(
     private fb: FormBuilder,
@@ -123,6 +126,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
     public servicePeriod: PeriodsService,
     el: ElementRef,
     private router: Router,
+    
     private route: ActivatedRoute,
     message: NzMessageService,
     private drawerService: NzDrawerService,
@@ -436,8 +440,12 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
           customerAddress: this.formInvoice.controls['address'].value,          
           observation: this.formInvoice.controls['observation'].value,
           dateTime: this.formInvoice.controls['dateTime'].value,
+          iva21: this.iva21Undefined,
+          iva27: this.iva27Undefined,
+          iva10:this.iva10Undefined,
           total: this.totalItems,
           ivaTotal: this.ivaTotal,
+          ivaSelected: this.ivaSelected,
         
           type: this.formInvoice.controls['type'].value,
           invoiceDetails: this.invoiceDetails,
