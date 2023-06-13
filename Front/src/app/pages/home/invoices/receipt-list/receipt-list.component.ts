@@ -209,8 +209,25 @@ export class ReceiptListComponent implements OnInit {
     }
   }
 
-  proforma(id:Number){
-    window.open('home/invoices/receiptpro/'+id);
-     
+  reimprimirReceipt(id:number):void{
+    const fileName = `ejemplo`
+    this.service.ReprintReceipt(id).subscribe({
+      next:(r)=>{  this.downloadFile(r, fileName);}
+      
+    });
+  }
+  
+  downloadFile(response: any, fileName: string){
+    const dataType= response.type;
+    const binaryData = [];
+  
+    binaryData.push(response);
+  
+    const filtePath = window.URL.createObjectURL(new Blob(binaryData, {type: dataType}))
+    const downloadLink = document.createElement('a');
+    downloadLink.href = filtePath;
+    downloadLink.setAttribute('download', fileName);
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
   }
 }

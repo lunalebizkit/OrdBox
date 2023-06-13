@@ -43,6 +43,10 @@ export class InvoicesViewDrawerComponent extends BaseComponent implements OnInit
   customerCuit!: string;
   invoiceNumber!: number;
   ivaTotal!: number;
+  ivaSelected!: number;
+  iva21!: number;
+  iva27!: number;
+  iva10!: number;
   total!: number;
   customerName!: string;
   observation!: string;
@@ -77,6 +81,7 @@ export class InvoicesViewDrawerComponent extends BaseComponent implements OnInit
     if (id != 0)
     this.service.getInvoiceById(id).subscribe({
         next: (r: InvoiceModel) => {
+          console.log(r)
           this.type = r.type,
           this.customerAddress = r.customerAddress,
           this.customerCuit = r.customerCuit,
@@ -84,6 +89,10 @@ export class InvoicesViewDrawerComponent extends BaseComponent implements OnInit
           this.observation = r.observation,
           this.invoiceNumber= r.invoiceNumber,
           this.ivaTotal= r.ivaTotal,
+          this.ivaSelected= r.ivaSelected,
+          this.iva21= r.iva21,
+          this.iva27= r.iva27,
+          this.iva10=r.iva10,
           this.total = r.total,
           this.userId = r.userId,
           this.dateTime = r.dateTime,
@@ -91,6 +100,9 @@ export class InvoicesViewDrawerComponent extends BaseComponent implements OnInit
           this.subTotal= r.total - r.ivaTotal;          
           this.isLoading = false;
           this.getTipo(r.type);
+
+          console.log("iva selected " + this.ivaSelected);
+          console.log("iva total " + this.ivaTotal);          
           
         },
         error: () => { this.isLoading = false; }
@@ -150,6 +162,7 @@ hideReprint() {
   }
 
 }
+
 
 
 }
