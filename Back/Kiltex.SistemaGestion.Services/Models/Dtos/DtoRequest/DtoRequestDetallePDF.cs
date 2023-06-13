@@ -36,6 +36,7 @@ namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest
 
         public decimal Cash { get; set; }
 
+        public int Type { get; set; }
 
     }
 }
