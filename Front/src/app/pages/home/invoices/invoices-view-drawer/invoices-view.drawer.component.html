@@ -154,15 +154,15 @@
             <tr *ngIf="type == 1; else elseBlock">
               <td [colSpan]="2">
                 <div *ngIf="iva10 > 0">
-                  <b>Iva 10: {{ iva10 }}</b
+                  <b>Iva 10: {{ iva10.toFixed(2) }}</b
                   ><br />
                 </div>
                 <div *ngIf="iva21 > 0">
-                  <b>Iva 21: {{ iva21 }}</b
+                  <b>Iva 21: {{ iva21.toFixed(2) }}</b
                   ><br />
                 </div>
                 <div *ngIf="iva27 > 0">
-                  <b>Iva 27: {{ iva27 }}</b
+                  <b>Iva 27: {{ iva27.toFixed(2) }}</b
                   ><br />
                 </div>
 
