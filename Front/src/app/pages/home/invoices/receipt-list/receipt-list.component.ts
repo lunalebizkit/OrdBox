@@ -210,7 +210,7 @@ export class ReceiptListComponent implements OnInit {
   }
 
   reimprimirReceipt(id:number):void{
-    const fileName = `ejemplo`
+    const fileName = `Comprobante_de_Compra`
     this.service.ReprintReceipt(id).subscribe({
       next:(r)=>{  this.downloadFile(r, fileName);}
       

@@ -157,7 +157,7 @@ currencyFormat(data: any): string {
 }
 
 reimprimirBudgets(id:number):void{
-  const fileName = `ejemplo`
+  const fileName = `Presupuesto`
   this.service.ReprintBudgets(id).subscribe({
     next:(r)=>{  this.downloadFile(r, fileName);}
     

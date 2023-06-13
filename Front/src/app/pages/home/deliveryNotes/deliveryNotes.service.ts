@@ -47,7 +47,7 @@ export class deliveryNotesService {
       }
 
       public ReprintdeliveryNotes(id: number): Observable<any> {
-        return this.api.get(`Pdf/PdfRemito?id=${id}`,false)
+        return this.api.get(`Pdf/PdfRemito?id=${id}`,false , {responseType:'blob' as 'json'})
     
       }
 }

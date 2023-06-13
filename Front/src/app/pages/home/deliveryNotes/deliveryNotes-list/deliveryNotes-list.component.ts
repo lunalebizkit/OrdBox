@@ -224,7 +224,7 @@ export class DeliveryNotesListComponent implements OnInit {
     }
     
     reimprimirdeliveryNotes(id:number):void{
-      const fileName = `ejemplo`
+      const fileName = `Remito`
       this.service.ReprintdeliveryNotes(id).subscribe({
         next:(r)=>{  this.downloadFile(r, fileName);}
         

@@ -224,7 +224,7 @@ export class InvoicesListComponent implements OnInit {
   }
 
   reimprimirInvoice(id: number): void {
-    const fileName = `ejemplo`
+    const fileName = `Factura_Proforma`
     this.service.Reprintinvoice(id).subscribe({
       next: (r) => { this.downloadFile(r, fileName); }
 
