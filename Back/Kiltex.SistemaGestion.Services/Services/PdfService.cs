@@ -12,6 +12,7 @@ using Aspose.Words.XAttr;
 using DocumentFormat.OpenXml.Spreadsheet;
 using Kiltex.SistemaGestion.Services.Common;
 using System.IO;
+using Newtonsoft.Json;
 
 namespace Kiltex.SistemaGestion.Services.Services
 {
@@ -21,6 +22,7 @@ namespace Kiltex.SistemaGestion.Services.Services
         private IWebHostEnvironment _Env;
 
         private bool mostrarIvaTotal;
+        private bool mostrarIvaTotal2;
         public PdfService(IConfiguration configuration, IWebHostEnvironment env)
 
         { _configuration = configuration;
@@ -61,8 +63,8 @@ namespace Kiltex.SistemaGestion.Services.Services
                 }
                 finally
                 {
-                    // Liberar los recursos
                     document.Dispose();
+                    stream.Dispose();
                 }
             }
         }
@@ -94,9 +96,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             Chunk titleChunk = new Chunk(titulo, titleFont);
 
             Font titleFont2 = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 13, BaseColor.Black);
-            Chunk titleComprobante = new(model.TituloComprobante, titleFont2);
-
-            //Font titleFont3 = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 13, BaseColor.Black);
+            Chunk titleComprobante = new(model.TituloComprobante, titleFont2);      
             Chunk numero = new(model.NumeroComprobante, titleFont2);
 
             phrase.Add(new Chunk(titleChunk));
@@ -121,14 +121,9 @@ namespace Kiltex.SistemaGestion.Services.Services
             PdfPCell textCell = new PdfPCell(phrase)
             {
                 Border = PdfPCell.NO_BORDER,
-                PaddingTop = 20f,
-                //PaddingBottom = 10f,
+                PaddingTop = 20f,   
                 VerticalAlignment = Element.ALIGN_LEFT,
-            };
-
-            //// Establecer color de fondo para el título
-            //textCell.BackgroundColor = new BaseColor(230, 230, 230);
-
+            };          
             // Establecer alineación y tamaño de fuente para el título
             textCell.HorizontalAlignment = Element.ALIGN_LEFT;
             textCell.Phrase.Font.Size = 16;
@@ -166,9 +161,6 @@ namespace Kiltex.SistemaGestion.Services.Services
                 CUIT = resumen.Cuit.ToString();
             }
 
-
-
-
             string Cliente = resumen.Nombre;        
             string Dirección = resumen.Direccion;
             string Observacion = resumen.Observacion;
@@ -197,6 +189,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             };
 
              mostrarIvaTotal = string.Equals(resumen.Tipo, "B", StringComparison.OrdinalIgnoreCase);
+             mostrarIvaTotal2 = string.Equals(resumen.Tipo, "2", StringComparison.OrdinalIgnoreCase);
 
             //Segunda Columna
             Phrase textoDerecha = new()
@@ -406,7 +399,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             table2.SetWidths(columnWidths2);
 
             table2.AddCell(emptyCell);
-            if (mostrarIvaTotal != true)
+            if (mostrarIvaTotal != true && mostrarIvaTotal2 != true)
             {
                 if (resumen.Iva10 != 0)
                 {
@@ -467,7 +460,7 @@ namespace Kiltex.SistemaGestion.Services.Services
 
 
             table2.AddCell(emptyCell);
-            if (mostrarIvaTotal != true)
+            if (mostrarIvaTotal != true && mostrarIvaTotal2 != true)
             {
                 table2.AddCell(new PdfPCell(new Phrase("IvaTotal: "))
                 {
@@ -488,7 +481,7 @@ namespace Kiltex.SistemaGestion.Services.Services
 
             var subTotal = resumen.Total - resumen.IvaTotal;
             table2.AddCell(emptyCell);
-            if (mostrarIvaTotal != true)
+            if (mostrarIvaTotal != true && mostrarIvaTotal2 != true)
             {
                 table2.AddCell(new PdfPCell(new Phrase("SubTotal: "))
                 {
@@ -521,7 +514,6 @@ namespace Kiltex.SistemaGestion.Services.Services
 
             paragraphTotal.Add(table2);
             paragraph.Add(paragraphDetalle);
-           // paragraph.Add(paragraphSaltoDeLinea);
             paragraph.Add(paragraphTotal);
 
             return paragraph;
@@ -782,7 +774,6 @@ namespace Kiltex.SistemaGestion.Services.Services
 
             paragraphTotal.Add(table2);
             paragraph.Add(paragraphDetalle);
-            // paragraph.Add(paragraphSaltoDeLinea);
             paragraph.Add(paragraphTotal);
 
             return paragraph;

@@ -1,9 +1,11 @@
 ﻿
 using iTextSharp.text;
+using Kiltex.SistemaGestion.Services.ImpresoraFiscal.Printer250F.Dto;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
 using Kiltex.SistemaGestion.Services.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace Kiltex.SistemaGestion.Api.Controllers.PDF
 {
@@ -62,7 +64,9 @@ namespace Kiltex.SistemaGestion.Api.Controllers.PDF
             paragraph.Add(encabezado);
             paragraph.Add(Cabecera);
             paragraph.Add(Detalle);
-            var contenido = await _service.Imprimir(paragraph);
+
+            var contenido = await _service.Imprimir(paragraph).ConfigureAwait(false);
+            //string json = JsonConvert.SerializeObject(_service.Imprimir(paragraph));
             return File(contenido.Data, "application/pdf", $"FacturaProforma_{DateTime.Now:dd-MM-yyyy}.pdf");
         } 
 
@@ -75,7 +79,7 @@ namespace Kiltex.SistemaGestion.Api.Controllers.PDF
             var factura = await service.GetById(id);
             var dtoEncabezado = new DtoRequestEncabezadoPDF()
             {
-                TituloComprobante = "Comprobante De Venta",
+                TituloComprobante = "Comprobante De Compra",
                 NumeroComprobante = factura.Data.ReceiptNumber.ToString()
 
             };
