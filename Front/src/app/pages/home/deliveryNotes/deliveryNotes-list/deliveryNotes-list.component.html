@@ -26,22 +26,7 @@
       >
         <form nz-form style="margin-left: 13px">
           <div nz-row>
-            <!-- <nz-form-item style="margin-left: 25px;">
-                  <nz-form-label>Nro de comprobante</nz-form-label>
-                  <nz-form-control>
-                    <nz-input-group [nzSuffix]="clearQuery" style="width: 100%;">
-                      <input [ngModelOptions]="{ standalone: true }" type="number" placeholder="Ingrese numero de factura" nz-input
-                        (keydown.enter)="search()" [(ngModel)]="SpecificFilter.filter.number" min="0"/>
-                    </nz-input-group>
-  
-                    <ng-template #clearQuery>
-                      <i nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle"
-                        *ngIf="SpecificFilter.filter.number" (click)="SpecificFilter.filter.number = 0; search()"></i>
-                    </ng-template>
-                  </nz-form-control>
-                </nz-form-item> -->
-            <!--   </div>
-              <div nz-col class="gutter-row" [nzSpan]="8"> -->
+          
             <nz-form-item style="margin-left: 55px">
               <nz-form-label>Fecha</nz-form-label>
               <nz-form-control>
@@ -54,8 +39,7 @@
                 ></nz-date-picker>
               </nz-form-control>
             </nz-form-item>
-            <!-- </div>
-            <div style="margin-left: 15px;"> -->
+           
             <button
               nz-button
               nzType="primary"
