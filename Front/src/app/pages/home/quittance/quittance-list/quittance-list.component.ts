@@ -215,10 +215,29 @@ export class QuittanceListComponent implements OnInit {
       nzClosable: false,
     });
   }
-
-  print(id: Number){
-    window.open('__-/'+id,"_blank");
+  reimprimirQuittance(id:number):void{
+    const fileName = `ejemplo`
+    this.service.ReprintQuittance(id).subscribe({
+      next:(r)=>{  this.downloadFile(r, fileName);}
+      
+    });
   }
+
+  downloadFile(response: any, fileName: string){
+    const dataType= response.type;
+    const binaryData = [];
+
+    binaryData.push(response);
+
+    const filtePath = window.URL.createObjectURL(new Blob(binaryData, {type: dataType}))
+    const downloadLink = document.createElement('a');
+    downloadLink.href = filtePath;
+    downloadLink.setAttribute('download', fileName);
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+  }
+
+ 
 }
 
 

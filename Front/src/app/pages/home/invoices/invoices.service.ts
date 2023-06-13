@@ -75,11 +75,20 @@ export class InvoiceService {
     * @param model
     * @returns
     */
- 
-   public Reprintinvoice(id: number): Observable<any> {
-    return this.api.get(`Pdf/PdfComprobanteVenta?id=${id}`,false)
+
+  public Reprintinvoice(id: number): Observable<any> {
+    return this.api.get(`Pdf/PdfComprobanteVenta?id=${id}`, false)
 
   }
- /* https://localhost:7261/api/v1/Pdf/PdfComprobanteVenta?id=40024*/
+  public ReprintReceipt(id: number): Observable<any> {
+    return this.api.get(`Pdf/PdfComprobanteCompra?id=${id}`, false)
+
+  }
+
+
+
+
+
+  /* https://localhost:7261/api/v1/Pdf/PdfComprobanteVenta?id=40024*/
 }
 

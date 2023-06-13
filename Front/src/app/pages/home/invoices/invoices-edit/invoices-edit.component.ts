@@ -451,6 +451,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
           invoiceDetails: this.invoiceDetails,
         };
         this.isSaving = true;
+        console.log(model)
         this.serviceInvoice.saveInvoice(model)
           .subscribe({
             next: (r) => {            

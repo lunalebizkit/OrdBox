@@ -1,116 +1,191 @@
 <nz-layout>
-    <nz-page-header class="list-header">
-      <nz-page-header-title>Listado de Recibos</nz-page-header-title>
-      <nz-page-header-extra>
-        <button nz-tooltip  *authPermission="[permissions.CreateQuittance, permissions.GetQuittance]" nzTooltipTitle="Nuevo" nz-button nzType="primary"
-          nzShape="circle" routerLink="/home/quittance/new">
-          <i nz-icon nzType="plus" nzTheme="outline"></i>
-        </button>
-      </nz-page-header-extra>
-    </nz-page-header>
-  
-    <nz-content>
-      <nz-collapse>
-        <nz-collapse-panel nzSize="small" nzHeader="Filtros" style="font-weight: bold;">
-          <form nz-form style="margin-left: 13px;">
-            <div nz-row>
-             <!--  <div nz-col nzSpan="14" > -->
-                <nz-form-item style="margin-left: 15px;">
-                  <nz-form-label>CUIT</nz-form-label>
-                  <nz-form-control>
-                    <nz-input-group [nzSuffix]="clearQuery" style="width: 100%;">
-                      <input [ngModelOptions]="{ standalone: true }" type="text" placeholder="Ingrese CUIT/CUIL o DNI" nz-input
-                        (keydown.enter)="search()" [(ngModel)]="SpecificFilter.filter.cuit" />
-                    </nz-input-group>
-  
-                    <ng-template #clearQuery>
-                      <i nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle"
-                        *ngIf="SpecificFilter.filter.cuit" (click)="SpecificFilter.filter.cuit = ''; search()"></i>
-                    </ng-template>
-                  </nz-form-control>
-                </nz-form-item>
-               <!--  </div>
+  <nz-page-header class="list-header">
+    <nz-page-header-title>Listado de Recibos</nz-page-header-title>
+    <nz-page-header-extra>
+      <button
+        nz-tooltip
+        *authPermission="[
+          permissions.CreateQuittance,
+          permissions.GetQuittance
+        ]"
+        nzTooltipTitle="Nuevo"
+        nz-button
+        nzType="primary"
+        nzShape="circle"
+        routerLink="/home/quittance/new"
+      >
+        <i nz-icon nzType="plus" nzTheme="outline"></i>
+      </button>
+    </nz-page-header-extra>
+  </nz-page-header>
+
+  <nz-content>
+    <nz-collapse>
+      <nz-collapse-panel
+        nzSize="small"
+        nzHeader="Filtros"
+        style="font-weight: bold"
+      >
+        <form nz-form style="margin-left: 13px">
+          <div nz-row>
+            <!--  <div nz-col nzSpan="14" > -->
+            <nz-form-item style="margin-left: 15px">
+              <nz-form-label>CUIT</nz-form-label>
+              <nz-form-control>
+                <nz-input-group [nzSuffix]="clearQuery" style="width: 100%">
+                  <input
+                    [ngModelOptions]="{ standalone: true }"
+                    type="text"
+                    placeholder="Ingrese CUIT/CUIL o DNI"
+                    nz-input
+                    (keydown.enter)="search()"
+                    [(ngModel)]="SpecificFilter.filter.cuit"
+                  />
+                </nz-input-group>
+
+                <ng-template #clearQuery>
+                  <i
+                    nz-icon
+                    class="ant-input-clear-icon"
+                    nzTheme="fill"
+                    nzType="close-circle"
+                    *ngIf="SpecificFilter.filter.cuit"
+                    (click)="SpecificFilter.filter.cuit = ''; search()"
+                  ></i>
+                </ng-template>
+              </nz-form-control>
+            </nz-form-item>
+            <!--  </div>
                 <div nz-col nzSpan="8"> -->
-                <nz-form-item style="margin-left: 25px;">
-                  <nz-form-label>Nro de comprobante</nz-form-label>
-                  <nz-form-control>
-                    <nz-input-group [nzSuffix]="clearQuery" style="width: 100%;">
-                      <input [ngModelOptions]="{ standalone: true }" type="number" placeholder="Ingrese numero de factura" nz-input
-                        (keydown.enter)="search()" [(ngModel)]="SpecificFilter.filter.number" min="0"/>
-                    </nz-input-group>
-  
-                    <ng-template #clearQuery>
-                      <i nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle"
-                        *ngIf="SpecificFilter.filter.number" (click)="SpecificFilter.filter.number = 0; search()"></i>
-                    </ng-template>
-                  </nz-form-control>
-                </nz-form-item>
+            <nz-form-item style="margin-left: 25px">
+              <nz-form-label>Nro de comprobante</nz-form-label>
+              <nz-form-control>
+                <nz-input-group [nzSuffix]="clearQuery" style="width: 100%">
+                  <input
+                    [ngModelOptions]="{ standalone: true }"
+                    type="number"
+                    placeholder="Ingrese numero de factura"
+                    nz-input
+                    (keydown.enter)="search()"
+                    [(ngModel)]="SpecificFilter.filter.number"
+                    min="0"
+                  />
+                </nz-input-group>
+
+                <ng-template #clearQuery>
+                  <i
+                    nz-icon
+                    class="ant-input-clear-icon"
+                    nzTheme="fill"
+                    nzType="close-circle"
+                    *ngIf="SpecificFilter.filter.number"
+                    (click)="SpecificFilter.filter.number = 0; search()"
+                  ></i>
+                </ng-template>
+              </nz-form-control>
+            </nz-form-item>
             <!--   </div>
               <div nz-col class="gutter-row" [nzSpan]="8"> -->
-                <nz-form-item style="margin-left: 55px;">
-                  <nz-form-label >Fecha</nz-form-label>
-                  <nz-form-control >
-                    <nz-date-picker
-                    nzFormat="dd/MM/yyyy"
-                      [(ngModel)]="dia"
-                      name="date"
-                      [nzPlaceHolder]="'Fecha'"       
-                      (ngModelChange)="dateChange($event)"
-                    ></nz-date-picker>
-                  </nz-form-control>
-                </nz-form-item>
+            <nz-form-item style="margin-left: 55px">
+              <nz-form-label>Fecha</nz-form-label>
+              <nz-form-control>
+                <nz-date-picker
+                  nzFormat="dd/MM/yyyy"
+                  [(ngModel)]="dia"
+                  name="date"
+                  [nzPlaceHolder]="'Fecha'"
+                  (ngModelChange)="dateChange($event)"
+                ></nz-date-picker>
+              </nz-form-control>
+            </nz-form-item>
             <!-- </div>
             <div style="margin-left: 15px;"> -->
-              <button nz-button nzType="primary" style="margin-left: 90px; font-size: 14px;" (click)="search()">
-                <i nz-icon nzType="search"></i>
-                Buscar
-              </button>
-            </div>
-            <!-- </div> -->
-          </form>
-        </nz-collapse-panel>
-      </nz-collapse>
-  
-      <!-- Tabla -->
-  
-      <!--   <div > -->
-      <div class="table" (scroll)="onScroll($event)">
-        <nz-table class="tabla" nzShowSizeChanger [nzData]="quittanceList" nzBordered="false" [nzSize]="'small'"
-          [nzLoading]="loading" [nzPaginationType]="'small'" nzShowPagination="false">
-          <thead>
-            <tr>
-              <th>Número</th>
-              <th>Fecha</th>
-              <th>Cuit/Cuil</th>
-              <th>Nombre</th>
-              <th [nzAlign]="'center'">Total</th>
-              <th [nzAlign]="'center'">Acción</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr id="{{ i }}" *ngFor="let data of quittanceList; let i = index" class="small-text" tabindex="-1"
-              (click)="onClick(data, i)" (keydown)="myNavegation($event)" [style.background-color]="
-                data === selectedQuittance ? 'lightblue' : ''
-              " (keydown.enter)="onEnter($event)" (dblclick)="onDoubleClicked(data)">
-              <td>{{ data.id | number: '8.0-0' | noComma}}</td>
-              <td>{{ this.formaterDate(data.dateTime) }}</td>
-              <td>{{ data.customerCuit | cuit}}</td>
-              <td>{{ data.customerName }}</td>
-              <td [nzAlign]="'right'">
-                <b>{{ this.currencyFormat(data.total) }}</b>
-              </td>
-              <td style="text-align: center">
-                <a>
-                  <i nz-icon nzType="eye" [nzTheme]="'twotone'" [nzTwotoneColor]="'#52c41a'" style="font-size: 17px ;margin-right: 20px;" (click)="onDoubleClicked(data)"></i>
-                </a>
-                <a target="_blank" style="margin-left: 15px;">
-                  <i nz-icon nzType="printer" nzTheme="outline" style="font-size: 16px" (click)="print(data.id)"></i>
-                </a>
-               
-              </td>
-            </tr>
-          </tbody>
-        </nz-table>
-      </div>
-    </nz-content>
-  </nz-layout>
+            <button
+              nz-button
+              nzType="primary"
+              style="margin-left: 90px; font-size: 14px"
+              (click)="search()"
+            >
+              <i nz-icon nzType="search"></i>
+              Buscar
+            </button>
+          </div>
+          <!-- </div> -->
+        </form>
+      </nz-collapse-panel>
+    </nz-collapse>
+
+    <!-- Tabla -->
+
+    <!--   <div > -->
+    <div class="table" (scroll)="onScroll($event)">
+      <nz-table
+        class="tabla"
+        nzShowSizeChanger
+        [nzData]="quittanceList"
+        nzBordered="false"
+        [nzSize]="'small'"
+        [nzLoading]="loading"
+        [nzPaginationType]="'small'"
+        nzShowPagination="false"
+      >
+        <thead>
+          <tr>
+            <th>Número</th>
+            <th>Fecha</th>
+            <th>Cuit/Cuil</th>
+            <th>Nombre</th>
+            <th [nzAlign]="'center'">Total</th>
+            <th [nzAlign]="'center'">Acción</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            id="{{ i }}"
+            *ngFor="let data of quittanceList; let i = index"
+            class="small-text"
+            tabindex="-1"
+            (click)="onClick(data, i)"
+            (keydown)="myNavegation($event)"
+            [style.background-color]="
+              data === selectedQuittance ? 'lightblue' : ''
+            "
+            (keydown.enter)="onEnter($event)"
+            (dblclick)="onDoubleClicked(data)"
+          >
+            <td>{{ data.id | number : "8.0-0" | noComma }}</td>
+            <td>{{ this.formaterDate(data.dateTime) }}</td>
+            <td>{{ data.customerCuit | cuit }}</td>
+            <td>{{ data.customerName }}</td>
+            <td [nzAlign]="'right'">
+              <b>{{ this.currencyFormat(data.total) }}</b>
+            </td>
+            <td style="text-align: center">
+              <a>
+                <i
+                  nz-icon
+                  nzType="eye"
+                  [nzTheme]="'twotone'"
+                  [nzTwotoneColor]="'#52c41a'"
+                  style="font-size: 17px; margin-right: 20px"
+                  (click)="onDoubleClicked(data)"
+                ></i>
+              </a>
+              <a (click)="reimprimirQuittance(data.id)">
+                <i
+                  nz-icon
+                  nz-tooltip
+                  nzTooltipTitle="Descargar pdf"
+                  nzType="file-pdf"
+                  nzTheme="twotone"
+                  [nzTwotoneColor]="'#f5222d'"
+                  style="font-size: 16px; margin-right: 2px"
+                ></i>
+              </a>
+            </td>
+          </tr>
+        </tbody>
+      </nz-table>
+    </div>
+  </nz-content>
+</nz-layout>

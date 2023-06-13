@@ -45,4 +45,9 @@ export class deliveryNotesService {
       public editDeliveryNotes(model: DeliveryNotesModel): Observable<any> {
         return this.api.put(`deliveryNotes`, model, false);    
       }
+
+      public ReprintdeliveryNotes(id: number): Observable<any> {
+        return this.api.get(`Pdf/PdfRemito?id=${id}`,false)
+    
+      }
 }
