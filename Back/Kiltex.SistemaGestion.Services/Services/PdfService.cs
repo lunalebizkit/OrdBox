@@ -8,6 +8,10 @@ using Path = System.IO.Path;
 using Document = iTextSharp.text.Document;
 using Font = iTextSharp.text.Font;
 using Paragraph = iTextSharp.text.Paragraph;
+using Aspose.Words.XAttr;
+using DocumentFormat.OpenXml.Spreadsheet;
+using Kiltex.SistemaGestion.Services.Common;
+using System.IO;
 
 namespace Kiltex.SistemaGestion.Services.Services
 {
@@ -23,34 +27,44 @@ namespace Kiltex.SistemaGestion.Services.Services
             _Env = env;
         }
 
-        public async Task<bool> Imprimir(Paragraph paragraph)
+        public async Task<OperationResponse<byte[]>> Imprimir(Paragraph paragraph)
         {
-            Document document = new Document();
-            // Establecer el nombre y ubicación del archivo PDF resultante
-            string filePath = _configuration.GetSection("Archivos:Pdf").Value;
-            string fileName = $"archivo_{DateTime.Now.ToString("yyyyMMdd")}.pdf";
-            string fullPath = Path.Combine(filePath, fileName);
-            try
+            using (MemoryStream stream = new MemoryStream())
             {
-                // Crear el escritor PDF
-                PdfWriter writer = PdfWriter.GetInstance(document, new FileStream(fullPath + $"{DateTime.Now.Second.ToString()}.pdf", FileMode.Create));
-                //PdfWriter writer = PdfWriter.GetInstance(document, new FileStream(filePath+fileName, FileMode.Create));
+                Document document = new Document();
 
-                document.Open();
-                document.Add(paragraph);
-                document.Close();
-                return true;
+                // Establecer el nombre y ubicación del archivo PDF resultante
+                string filePath = _configuration.GetSection("Archivos:Pdf").Value;
+                string fileName = $"archivo_{DateTime.Now.ToString("yyyyMMdd")}.pdf";
+                string fullPath = Path.Combine(filePath, fileName);
+
+                try
+                {
+                    // Crear el escritor PDF
+                    PdfWriter writer = PdfWriter.GetInstance(document, stream);
+
+                    document.Open();
+                    document.Add(paragraph);
+                    document.Close();
+
+                    // Obtener los bytes del MemoryStream después de cerrarlo
+                    byte[] pdfBytes = stream.ToArray();
+
+                    // Guardar el contenido del MemoryStream en un archivo en el disco
+                    File.WriteAllBytes(fullPath, pdfBytes);
+
+                    return new OperationResponse<byte[]>(pdfBytes);
+                }
+                catch (Exception ex)
+                {
+                    throw;
+                }
+                finally
+                {
+                    // Liberar los recursos
+                    document.Dispose();
+                }
             }
-            catch (Exception ex)
-            {
-                throw;
-
-            }
-            finally {
-                document.Dispose();
-            }
-
-
         }
 
         public async Task<Paragraph> Encabezado(DtoRequestEncabezadoPDF model)

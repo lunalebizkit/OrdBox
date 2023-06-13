@@ -62,7 +62,8 @@ namespace Kiltex.SistemaGestion.Api.Controllers.PDF
             paragraph.Add(encabezado);
             paragraph.Add(Cabecera);
             paragraph.Add(Detalle);
-            return Ok(await _service.Imprimir(paragraph));
+            var contenido = await _service.Imprimir(paragraph);
+            return File(contenido.Data, "application/pdf", $"FacturaProforma_{DateTime.Now:dd-MM-yyyy}.pdf");
         } 
 
         //COmprobante de venta
@@ -109,7 +110,9 @@ namespace Kiltex.SistemaGestion.Api.Controllers.PDF
             paragraph.Add(encabezado);
             paragraph.Add(Cabecera);
             paragraph.Add(Detalle);
-            return Ok(await _service.Imprimir(paragraph));
+
+           var contenido = await _service.Imprimir(paragraph);
+          return File(contenido.Data, "application/pdf", $"ComprobanteVenta_{DateTime.Now:dd-MM-yyyy}.pdf");
         }
 
         //Presupuesto
@@ -151,7 +154,8 @@ namespace Kiltex.SistemaGestion.Api.Controllers.PDF
             paragraph.Add(encabezado);
             paragraph.Add(Cabecera);
             paragraph.Add(Detalle);
-            return Ok(await _service.Imprimir(paragraph));
+            var contenido = await _service.Imprimir(paragraph);
+            return File(contenido.Data, "application/pdf", $"Presupuesto_{DateTime.Now:dd-MM-yyyy}.pdf");
         }
 
         [HttpGet]
@@ -193,7 +197,8 @@ namespace Kiltex.SistemaGestion.Api.Controllers.PDF
             paragraph.Add(encabezado);
             paragraph.Add(Cabecera);
             paragraph.Add(Detalle);
-            return Ok(await _service.Imprimir(paragraph));
+            var contenido = await _service.Imprimir(paragraph);
+            return File(contenido.Data, "application/pdf", $"Remito_{DateTime.Now:dd-MM-yyyy}.pdf");
         }
 
         [HttpGet]
@@ -235,7 +240,8 @@ namespace Kiltex.SistemaGestion.Api.Controllers.PDF
             paragraph.Add(encabezado);
             paragraph.Add(Cabecera);
             paragraph.Add(Detalle);
-            return Ok(await _service.Imprimir(paragraph));
+            var contenido = await _service.Imprimir(paragraph);
+            return File(contenido.Data, "application/pdf", $"Recibo_{DateTime.Now:dd-MM-yyyy}.pdf");
         }
     }
 }
