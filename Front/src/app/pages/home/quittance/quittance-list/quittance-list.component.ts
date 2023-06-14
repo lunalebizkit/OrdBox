@@ -216,7 +216,7 @@ export class QuittanceListComponent implements OnInit {
     });
   }
   reimprimirQuittance(id:number):void{
-    const fileName = `ejemplo`
+    const fileName = `Recibo`
     this.service.ReprintQuittance(id).subscribe({
       next:(r)=>{  this.downloadFile(r, fileName);}
       

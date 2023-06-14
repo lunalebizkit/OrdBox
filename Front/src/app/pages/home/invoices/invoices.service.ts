@@ -77,11 +77,11 @@ export class InvoiceService {
     */
 
   public Reprintinvoice(id: number): Observable<any> {
-    return this.api.get(`Pdf/PdfComprobanteVenta?id=${id}`, false)
+    return this.api.get(`Pdf/PdfComprobanteVenta?id=${id}`, false, {responseType:'blob' as 'json'}) 
 
   }
   public ReprintReceipt(id: number): Observable<any> {
-    return this.api.get(`Pdf/PdfComprobanteCompra?id=${id}`, false)
+    return this.api.get(`Pdf/PdfComprobanteCompra?id=${id}`, false, {responseType:'blob' as 'json'})
 
   }
 
