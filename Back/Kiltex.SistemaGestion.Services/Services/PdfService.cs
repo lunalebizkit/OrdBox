@@ -13,6 +13,9 @@ using DocumentFormat.OpenXml.Spreadsheet;
 using Kiltex.SistemaGestion.Services.Common;
 using System.IO;
 using Newtonsoft.Json;
+using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
+using Microsoft.AspNetCore.Html;
+using Aspose.Words.Tables;
 
 namespace Kiltex.SistemaGestion.Services.Services
 {
@@ -23,6 +26,8 @@ namespace Kiltex.SistemaGestion.Services.Services
 
         private bool mostrarIvaTotal;
         private bool mostrarIvaTotal2;
+        private bool mostrarIvaA;
+        private bool mostrarIvaB;
         public PdfService(IConfiguration configuration, IWebHostEnvironment env)
 
         { _configuration = configuration;
@@ -189,7 +194,10 @@ namespace Kiltex.SistemaGestion.Services.Services
             };
 
              mostrarIvaTotal = string.Equals(resumen.Tipo, "B", StringComparison.OrdinalIgnoreCase);
-             mostrarIvaTotal2 = string.Equals(resumen.Tipo, "2", StringComparison.OrdinalIgnoreCase);
+             mostrarIvaTotal2 = string.Equals(resumen.Tipo, "A", StringComparison.OrdinalIgnoreCase);
+
+             mostrarIvaA = string.Equals(resumen.Tipo, "1" ,StringComparison.OrdinalIgnoreCase);
+             mostrarIvaB = string.Equals(resumen.Tipo, "2" ,StringComparison.OrdinalIgnoreCase);
 
             //Segunda Columna
             Phrase textoDerecha = new()
@@ -302,47 +310,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                 }
 
             }
-            //Comprobante Venta
-            if (resumen.ReceiptDetails != null)
-            {
-                foreach (var item in resumen.ReceiptDetails)
-                {
 
-
-                    table.AddCell(new PdfPCell(new Phrase(item.ProductName, font2))
-                    {
-                        Border = PdfPCell.RIGHT_BORDER,
-                        PaddingTop = 10f
-                    });
-
-                    table.AddCell(new PdfPCell(new Phrase(item.Quantity.ToString(), font2))
-                    {
-                        HorizontalAlignment = Element.ALIGN_RIGHT,
-                        Border = PdfPCell.RIGHT_BORDER,
-                        PaddingTop = 10f
-                    });
-
-                    table.AddCell(new PdfPCell(new Phrase(string.Format("{0,7:##.00}", item.Price), font2))
-                    {
-                        HorizontalAlignment = Element.ALIGN_RIGHT,
-                        Border = PdfPCell.RIGHT_BORDER,
-                        PaddingTop = 10f
-                    });
-
-                    if (item.Iva != null)
-                    {
-                        table.AddCell(new PdfPCell(new Phrase(item.Iva.ToString(), font2))
-                        {
-                            HorizontalAlignment = Element.ALIGN_RIGHT,
-                            Border = PdfPCell.LEFT_BORDER,
-                            PaddingTop = 10f
-                        });
-                    }
-
-
-
-                }
-            }
 
             //Presupuesto
             if (resumen.BudgetDetails != null)
@@ -395,15 +363,17 @@ namespace Kiltex.SistemaGestion.Services.Services
             PdfPTable table2 = new PdfPTable(4);
 
 
-            float[] columnWidths2 = { 1f, 2f, 1f, 1f }; // Ancho relativo de cada columna
+            float[] columnWidths2 = { 1f, 1f, 1f, 1f }; // Ancho relativo de cada columna
             table2.SetWidths(columnWidths2);
 
             table2.AddCell(emptyCell);
-            if (mostrarIvaTotal != true && mostrarIvaTotal2 != true)
+            table2.AddCell(emptyCell);
+
+            if (mostrarIvaTotal != true && mostrarIvaTotal2 != true && mostrarIvaB != true && mostrarIvaA != true)
             {
                 if (resumen.Iva10 != 0)
                 {
-                    table2.AddCell(emptyCell);
+                    
                     table2.AddCell(new PdfPCell(new Phrase("Iva 10: "))
                     {
                         HorizontalAlignment = Element.ALIGN_LEFT,
@@ -423,12 +393,16 @@ namespace Kiltex.SistemaGestion.Services.Services
                 {
 
                     table2.AddCell(emptyCell);
+                    table2.AddCell(emptyCell);
+                    table2.AddCell(emptyCell);
+                    table2.AddCell(emptyCell);
                     table2.AddCell(new PdfPCell(new Phrase("Iva 21: "))
                     {
                         HorizontalAlignment = Element.ALIGN_LEFT,
                         Border = PdfPCell.LEFT_BORDER | PdfPCell.BOTTOM_BORDER | PdfPCell.TOP_BORDER
                     });
 
+                 
                     table2.AddCell(new PdfPCell(new Phrase(string.Format("{0,7:##.00}", "$" + resumen.Iva21)))
                     {
                         HorizontalAlignment = Element.ALIGN_RIGHT,
@@ -436,11 +410,16 @@ namespace Kiltex.SistemaGestion.Services.Services
                     });
 
                     table2.AddCell(emptyCell);
+                    table2.AddCell(emptyCell);
                 }
 
                 if (resumen.Iva27 != 0)
                 {
+                  
                     table2.AddCell(emptyCell);
+                    table2.AddCell(emptyCell);
+                    table2.AddCell(emptyCell);
+                   
                     table2.AddCell(new PdfPCell(new Phrase("Iva 27: "))
                     {
                         HorizontalAlignment = Element.ALIGN_LEFT,
@@ -453,15 +432,24 @@ namespace Kiltex.SistemaGestion.Services.Services
                         Border = PdfPCell.RIGHT_BORDER | PdfPCell.BOTTOM_BORDER | PdfPCell.TOP_BORDER,
                     });
                     table2.AddCell(emptyCell);
+                    table2.AddCell(emptyCell);
                 }
 
-            }
-
-
+            }            
+                              
 
             table2.AddCell(emptyCell);
-            if (mostrarIvaTotal != true && mostrarIvaTotal2 != true)
+            table2.AddCell(emptyCell);
+            table2.AddCell(emptyCell);
+            table2.AddCell(emptyCell);
+
+            var subTotal = resumen.Total - resumen.IvaTotal;
+            if (mostrarIvaTotal != true )
             {
+                table2.AddCell(emptyCell);
+                table2.AddCell(emptyCell);
+                table2.AddCell(emptyCell);
+                table2.AddCell(emptyCell);
                 table2.AddCell(new PdfPCell(new Phrase("IvaTotal: "))
                 {
                     HorizontalAlignment = Element.ALIGN_LEFT,
@@ -474,15 +462,13 @@ namespace Kiltex.SistemaGestion.Services.Services
                     Border = PdfPCell.RIGHT_BORDER | PdfPCell.BOTTOM_BORDER | PdfPCell.TOP_BORDER,
 
                 });
-            }
-           
 
-            table2.AddCell(emptyCell);
-
-            var subTotal = resumen.Total - resumen.IvaTotal;
-            table2.AddCell(emptyCell);
-            if (mostrarIvaTotal != true && mostrarIvaTotal2 != true)
-            {
+                table2.AddCell(emptyCell);
+                table2.AddCell(emptyCell);
+                table2.AddCell(emptyCell);
+                table2.AddCell(emptyCell);
+                table2.AddCell(emptyCell);
+                table2.AddCell(emptyCell);
                 table2.AddCell(new PdfPCell(new Phrase("SubTotal: "))
                 {
                     HorizontalAlignment = Element.ALIGN_LEFT,
@@ -493,22 +479,49 @@ namespace Kiltex.SistemaGestion.Services.Services
                     HorizontalAlignment = Element.ALIGN_RIGHT,
                     Border = PdfPCell.RIGHT_BORDER | PdfPCell.BOTTOM_BORDER | PdfPCell.TOP_BORDER,
                 });
+
+                table2.AddCell(emptyCell);
+                table2.AddCell(emptyCell);
+                table2.AddCell(emptyCell);
+                table2.AddCell(emptyCell);
+                table2.AddCell(emptyCell);
+                table2.AddCell(emptyCell);
+
+                table2.AddCell(new PdfPCell(new Phrase("Total:"))
+                {
+                    HorizontalAlignment = Element.ALIGN_LEFT,
+                    Border = PdfPCell.LEFT_BORDER | PdfPCell.BOTTOM_BORDER | PdfPCell.TOP_BORDER
+                });
+                table2.AddCell(new PdfPCell(new Phrase(string.Format("{0,7:##.00}", "$" + resumen.Total.ToString())))
+                {
+                    HorizontalAlignment = Element.ALIGN_RIGHT,
+                    Border = PdfPCell.RIGHT_BORDER | PdfPCell.BOTTOM_BORDER | PdfPCell.TOP_BORDER,
+                });
             }
-                
-          
+           
 
             table2.AddCell(emptyCell);
-            table2.AddCell(emptyCell);
 
-            table2.AddCell(new PdfPCell(new Phrase("Total:"))
-            { 
-                HorizontalAlignment = Element.ALIGN_LEFT, Border = PdfPCell.LEFT_BORDER | PdfPCell.BOTTOM_BORDER | PdfPCell.TOP_BORDER 
-            });   
-            table2.AddCell(new PdfPCell(new Phrase(string.Format("{0,7:##.00}", "$" + resumen.Total.ToString())))
+           
+
+            if (mostrarIvaTotal2 != true)
             {
-                HorizontalAlignment = Element.ALIGN_RIGHT,
-                Border = PdfPCell.RIGHT_BORDER | PdfPCell.BOTTOM_BORDER | PdfPCell.TOP_BORDER,
-            });
+                table2.AddCell(emptyCell); 
+                table2.AddCell(emptyCell);
+                table2.AddCell(emptyCell);
+
+                table2.AddCell(new PdfPCell(new Phrase("Total:"))
+                {
+                    HorizontalAlignment = Element.ALIGN_LEFT,
+                    Border = PdfPCell.LEFT_BORDER | PdfPCell.BOTTOM_BORDER | PdfPCell.TOP_BORDER
+                });
+                table2.AddCell(new PdfPCell(new Phrase(string.Format("{0,7:##.00}", "$" + resumen.Total.ToString())))
+                {
+                    HorizontalAlignment = Element.ALIGN_RIGHT,
+                    Border = PdfPCell.RIGHT_BORDER | PdfPCell.BOTTOM_BORDER | PdfPCell.TOP_BORDER,
+                });
+            }
+      
             table2.AddCell(emptyCell);
             table2.AddCell(emptyCell);
 
@@ -623,6 +636,303 @@ namespace Kiltex.SistemaGestion.Services.Services
             paragraph.Add(table);
             return paragraph;
 
+        }
+
+        public async Task<Paragraph> DetalleComprobanteCompra(DtoRequestDetallePDF model)
+        {
+
+            Paragraph paragraph = new Paragraph();
+            PdfPTable table = new PdfPTable(4);       
+
+            // Establecer el ancho de las columnas
+            float[] columnWidths = { 6f, 2f, 3f, 2f }; // Ancho entre columnas
+            table.SetWidths(columnWidths);
+
+            //Le agrego color a la letra de la tabla y tamaño
+            BaseColor black = BaseColor.Black;
+            Font font = FontFactory.GetFont(FontFactory.HELVETICA, 12, Font.BOLD, black);
+            Font font2 = FontFactory.GetFont(FontFactory.HELVETICA, 10);
+
+
+            PdfPCell productoCell = new PdfPCell(new Phrase("Producto", font))
+            {
+                Border = PdfPCell.RIGHT_BORDER | PdfPCell.BOTTOM_BORDER,
+                HorizontalAlignment = Element.ALIGN_CENTER,
+                PaddingBottom = 10f,
+                PaddingTop = 5f
+            };
+
+            table.AddCell(productoCell);
+            table.AddCell(new PdfPCell(new Phrase("Cantidad", font))
+            {
+                Border = PdfPCell.RIGHT_BORDER | PdfPCell.BOTTOM_BORDER,
+                HorizontalAlignment = Element.ALIGN_CENTER,
+                PaddingBottom = 10f,
+                PaddingTop = 5f
+            });
+            table.AddCell(new PdfPCell(new Phrase("Precio Unidad", font))
+            {
+                Border = PdfPCell.RIGHT_BORDER | PdfPCell.BOTTOM_BORDER,
+                HorizontalAlignment = Element.ALIGN_CENTER,
+                PaddingBottom = 10f,
+                PaddingTop = 5f
+            });
+
+
+            table.AddCell(new PdfPCell(new Phrase("Iva", font))
+            {
+                Border = PdfPCell.BOTTOM_BORDER,
+                HorizontalAlignment = Element.ALIGN_CENTER,
+                PaddingBottom = 10f,
+                PaddingTop = 5f
+            });
+
+
+            var resumen = model;
+
+            if (resumen.ReceiptDetails != null)
+            {
+                foreach (var item in resumen.ReceiptDetails)
+                {
+
+
+                    table.AddCell(new PdfPCell(new Phrase(item.ProductName, font2))
+                    {
+                        Border = PdfPCell.RIGHT_BORDER,
+                        PaddingTop = 10f
+                    });
+
+                    table.AddCell(new PdfPCell(new Phrase(item.Quantity.ToString(), font2))
+                    {
+                        HorizontalAlignment = Element.ALIGN_RIGHT,
+                        Border = PdfPCell.RIGHT_BORDER,
+                        PaddingTop = 10f
+                    });
+
+                    table.AddCell(new PdfPCell(new Phrase(string.Format("{0,7:##.00}", item.Price), font2))
+                    {
+                        HorizontalAlignment = Element.ALIGN_RIGHT,
+                        Border = PdfPCell.RIGHT_BORDER,
+                        PaddingTop = 10f
+                    });
+
+                    if (item.Iva != null)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(item.Iva.ToString(), font2))
+                        {
+                            HorizontalAlignment = Element.ALIGN_RIGHT,
+                            Border = PdfPCell.LEFT_BORDER,
+                            PaddingTop = 10f
+                        });
+                    }
+
+                }
+
+            }
+
+            Tabla();
+         
+            paragraph.Add(table);
+
+            Paragraph saltoDeLinea1 = new Paragraph("                                                                                                                                                                                                                                                                                                                                                                                   ");
+            paragraph.Add(saltoDeLinea1);
+
+            paragraph.Add(Tabla());
+           
+            return paragraph;
+
+        }
+
+        public Paragraph Tabla()
+        {
+         
+            Paragraph paragraph = new Paragraph();
+
+
+            PdfPTable table2 = new PdfPTable(6);
+            float[] columnWidths2 = { 1f, 1f, 1f, 1f, 1f, 1f }; // Ancho relativo de cada columna
+            table2.SetWidths(columnWidths2);
+
+
+            PdfPCell emptyCell = new PdfPCell()
+            {
+                Border = PdfPCell.NO_BORDER
+            };
+
+            var resumen = new DtoRequestDetallePDF();
+            var subTotal = resumen.Total - resumen.IvaTotal;
+
+            if (mostrarIvaA == true)
+            {
+                table2.AddCell(emptyCell);
+                table2.AddCell(emptyCell);
+                table2.AddCell(emptyCell);
+                table2.AddCell(emptyCell);
+                table2.AddCell(new PdfPCell(new Phrase("Conc. No Gravado "))
+                {
+                    HorizontalAlignment = Element.ALIGN_LEFT,
+                    Border = PdfPCell.LEFT_BORDER | PdfPCell.BOTTOM_BORDER | PdfPCell.TOP_BORDER,//Saco la linea del medio
+                });
+                table2.AddCell(new PdfPCell(new Phrase("$" + resumen.ConcNoGravado.ToString()))
+                {
+                    HorizontalAlignment = Element.ALIGN_RIGHT,
+                    Border = PdfPCell.RIGHT_BORDER | PdfPCell.BOTTOM_BORDER | PdfPCell.TOP_BORDER,
+                });
+
+                table2.AddCell(emptyCell);
+                table2.AddCell(emptyCell);
+                table2.AddCell(emptyCell);
+                table2.AddCell(emptyCell);
+
+                table2.AddCell(new PdfPCell(new Phrase("Perc. Iva "))
+                {
+                    HorizontalAlignment = Element.ALIGN_LEFT,
+                    Border = PdfPCell.LEFT_BORDER | PdfPCell.BOTTOM_BORDER | PdfPCell.TOP_BORDER,//Saco la linea del medio
+                });
+                table2.AddCell(new PdfPCell(new Phrase("$" + resumen.PercIva.ToString()))
+                {
+                    HorizontalAlignment = Element.ALIGN_RIGHT,
+                    Border = PdfPCell.RIGHT_BORDER | PdfPCell.BOTTOM_BORDER | PdfPCell.TOP_BORDER,
+                });
+
+                table2.AddCell(emptyCell);
+                table2.AddCell(emptyCell);
+                table2.AddCell(emptyCell);
+                table2.AddCell(emptyCell);
+
+                table2.AddCell(new PdfPCell(new Phrase("Perc. Ing. Bruto "))
+                {
+                    HorizontalAlignment = Element.ALIGN_LEFT,
+                    Border = PdfPCell.LEFT_BORDER | PdfPCell.BOTTOM_BORDER | PdfPCell.TOP_BORDER,//Saco la linea del medio
+                });
+                table2.AddCell(new PdfPCell(new Phrase("$" + resumen.PercIngBrutos.ToString()))
+                {
+                    HorizontalAlignment = Element.ALIGN_RIGHT,
+                    Border = PdfPCell.RIGHT_BORDER | PdfPCell.BOTTOM_BORDER | PdfPCell.TOP_BORDER,
+                });
+
+                table2.AddCell(emptyCell);
+                table2.AddCell(emptyCell);
+                table2.AddCell(emptyCell);
+                table2.AddCell(emptyCell);
+
+                table2.AddCell(new PdfPCell(new Phrase("Iva Total: "))
+                {
+                    HorizontalAlignment = Element.ALIGN_LEFT,
+                    Border = PdfPCell.LEFT_BORDER | PdfPCell.BOTTOM_BORDER | PdfPCell.TOP_BORDER,//Saco la linea del medio
+                });
+                table2.AddCell(new PdfPCell(new Phrase("$" + resumen.IvaTotal.ToString()))
+                {
+                    HorizontalAlignment = Element.ALIGN_RIGHT,
+                    Border = PdfPCell.RIGHT_BORDER | PdfPCell.BOTTOM_BORDER | PdfPCell.TOP_BORDER,
+                });
+
+
+                table2.AddCell(emptyCell);
+                table2.AddCell(emptyCell);
+                table2.AddCell(emptyCell);
+                table2.AddCell(emptyCell);
+
+                table2.AddCell(new PdfPCell(new Phrase("SubTotal: "))
+                {
+                    HorizontalAlignment = Element.ALIGN_LEFT,
+                    Border = PdfPCell.LEFT_BORDER | PdfPCell.BOTTOM_BORDER | PdfPCell.TOP_BORDER,//Saco la linea del medio
+                });
+                table2.AddCell(new PdfPCell(new Phrase("$" + subTotal.ToString()))
+                {
+                    HorizontalAlignment = Element.ALIGN_RIGHT,
+                    Border = PdfPCell.RIGHT_BORDER | PdfPCell.BOTTOM_BORDER | PdfPCell.TOP_BORDER,
+                });
+
+
+                table2.AddCell(emptyCell);
+                table2.AddCell(emptyCell);
+                table2.AddCell(emptyCell);
+                table2.AddCell(emptyCell);
+
+                table2.AddCell(new PdfPCell(new Phrase("Total:"))
+                {
+                    HorizontalAlignment = Element.ALIGN_LEFT,
+                    Border = PdfPCell.LEFT_BORDER | PdfPCell.BOTTOM_BORDER | PdfPCell.TOP_BORDER
+                });
+                table2.AddCell(new PdfPCell(new Phrase(string.Format("{0,7:##.00}", "$" + resumen.Total.ToString())))
+                {
+                    HorizontalAlignment = Element.ALIGN_RIGHT,
+                    Border = PdfPCell.RIGHT_BORDER | PdfPCell.BOTTOM_BORDER | PdfPCell.TOP_BORDER,
+                });
+
+            }
+            else
+            {
+                table2.AddCell(emptyCell);
+                table2.AddCell(emptyCell);
+                table2.AddCell(emptyCell);
+                table2.AddCell(emptyCell);
+                table2.AddCell(new PdfPCell(new Phrase("Conc. No Gravado "))
+                {
+                    HorizontalAlignment = Element.ALIGN_LEFT,
+                    Border = PdfPCell.LEFT_BORDER | PdfPCell.BOTTOM_BORDER | PdfPCell.TOP_BORDER,//Saco la linea del medio
+                });
+                table2.AddCell(new PdfPCell(new Phrase("" + resumen.ConcNoGravado.ToString()))
+                {
+                    HorizontalAlignment = Element.ALIGN_RIGHT,
+                    Border = PdfPCell.RIGHT_BORDER | PdfPCell.BOTTOM_BORDER | PdfPCell.TOP_BORDER,
+                });
+
+                table2.AddCell(emptyCell);
+                table2.AddCell(emptyCell);
+                table2.AddCell(emptyCell);
+                table2.AddCell(emptyCell);
+
+                table2.AddCell(new PdfPCell(new Phrase("Perc. Iva "))
+                {
+                    HorizontalAlignment = Element.ALIGN_LEFT,
+                    Border = PdfPCell.LEFT_BORDER | PdfPCell.BOTTOM_BORDER | PdfPCell.TOP_BORDER,//Saco la linea del medio
+                });
+                table2.AddCell(new PdfPCell(new Phrase("" + resumen.PercIva.ToString()))
+                {
+                    HorizontalAlignment = Element.ALIGN_RIGHT,
+                    Border = PdfPCell.RIGHT_BORDER | PdfPCell.BOTTOM_BORDER | PdfPCell.TOP_BORDER,
+                });
+
+                table2.AddCell(emptyCell);
+                table2.AddCell(emptyCell);
+                table2.AddCell(emptyCell);
+                table2.AddCell(emptyCell);
+
+                table2.AddCell(new PdfPCell(new Phrase("Perc. Ing. Bruto "))
+                {
+                    HorizontalAlignment = Element.ALIGN_LEFT,
+                    Border = PdfPCell.LEFT_BORDER | PdfPCell.BOTTOM_BORDER | PdfPCell.TOP_BORDER,//Saco la linea del medio
+                });
+                table2.AddCell(new PdfPCell(new Phrase("" + resumen.PercIngBrutos.ToString()))
+                {
+                    HorizontalAlignment = Element.ALIGN_RIGHT,
+                    Border = PdfPCell.RIGHT_BORDER | PdfPCell.BOTTOM_BORDER | PdfPCell.TOP_BORDER,
+                });
+
+
+                table2.AddCell(emptyCell);
+                table2.AddCell(emptyCell);
+                table2.AddCell(emptyCell);
+                table2.AddCell(emptyCell);
+
+                table2.AddCell(new PdfPCell(new Phrase("Total:"))
+                {
+                    HorizontalAlignment = Element.ALIGN_LEFT,
+                    Border = PdfPCell.LEFT_BORDER | PdfPCell.BOTTOM_BORDER | PdfPCell.TOP_BORDER
+                });
+                table2.AddCell(new PdfPCell(new Phrase(string.Format("{0,7:##.00}", "$" + resumen.Total.ToString())))
+                {
+                    HorizontalAlignment = Element.ALIGN_RIGHT,
+                    Border = PdfPCell.RIGHT_BORDER | PdfPCell.BOTTOM_BORDER | PdfPCell.TOP_BORDER,
+                });
+            }
+          
+
+            paragraph.Add(table2);
+           
+            return paragraph;
         }
 
         public async Task<Paragraph> DetallePresupuestoYRemito(DtoRequestDetallePDF model)

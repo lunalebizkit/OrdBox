@@ -99,9 +99,9 @@ namespace Kiltex.SistemaGestion.Api.Controllers.PDF
                 ReceiptDetails = factura.Data.ReceiptDetails,
                 Cantidad = factura.Data.ReceiptDetails.Select(p => p.Quantity).FirstOrDefault(),
                 Producto = factura.Data.ReceiptDetails.Select(p => p.ProductName).FirstOrDefault(),
-                Iva10 = (int)factura.Data.Iva10,
-                Iva21 = (int)factura.Data.Iva21,
-                Iva27 = (int)factura.Data.Iva27,
+                ConcNoGravado = (int)factura.Data.ConcNoGravado,
+                PercIva = (int)factura.Data.PercIva,
+                PercIngBrutos = (int)factura.Data.PercIngBrutos,
                 Precio = (int)factura.Data.ReceiptDetails.Select(p => p.Price).FirstOrDefault(),
                 IvaTotal = (int)factura.Data.IvaTotal,
                 Total = (int)factura.Data.Total
@@ -109,7 +109,7 @@ namespace Kiltex.SistemaGestion.Api.Controllers.PDF
 
             Paragraph encabezado = await _service.Encabezado(dtoEncabezado);
             Paragraph Cabecera = await _service.Cabecera(dtoCabecera);
-            Paragraph Detalle = await _service.Detalle(dtoDetalle);
+            Paragraph Detalle = await _service.DetalleComprobanteCompra(dtoDetalle);
             Paragraph paragraph = new Paragraph();
             paragraph.Add(encabezado);
             paragraph.Add(Cabecera);
