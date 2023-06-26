@@ -730,22 +730,22 @@ namespace Kiltex.SistemaGestion.Services.Services
 
             }
 
-            Tabla();
+            Tabla(resumen);
          
             paragraph.Add(table);
 
-            Paragraph saltoDeLinea1 = new Paragraph("                                                                                                                                                                                                                                                                                                                                                                                   ");
+            Paragraph saltoDeLinea1 = new Paragraph("");
             paragraph.Add(saltoDeLinea1);
 
-            paragraph.Add(Tabla());
+            paragraph.Add(Tabla(resumen));
            
             return paragraph;
 
         }
 
-        public Paragraph Tabla()
+        public Paragraph Tabla(DtoRequestDetallePDF model)
         {
-         
+
             Paragraph paragraph = new Paragraph();
 
 
@@ -759,7 +759,8 @@ namespace Kiltex.SistemaGestion.Services.Services
                 Border = PdfPCell.NO_BORDER
             };
 
-            var resumen = new DtoRequestDetallePDF();
+            var resumen = model; 
+
             var subTotal = resumen.Total - resumen.IvaTotal;
 
             if (mostrarIvaA == true)
