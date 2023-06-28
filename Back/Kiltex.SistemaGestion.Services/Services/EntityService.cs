@@ -1,13 +1,10 @@
-﻿
-
-using AutoMapper;
+﻿using AutoMapper;
 using Kiltex.SistemaGestion.Domain;
 using Kiltex.SistemaGestion.Domain.Model;
 using Kiltex.SistemaGestion.SDK.Error;
 using Kiltex.SistemaGestion.Services.Common;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
 using Microsoft.EntityFrameworkCore;
-using static Google.Apis.Requests.BatchRequest;
 
 namespace Kiltex.SistemaGestion.Services.Services
 {
