@@ -156,4 +156,28 @@ currencyFormat(data: any): string {
   return formatCurrency(data, this.locale!, '$', 'ARS', '1.1-2');
 }
 
+reimprimirBudgets(id:number):void{
+  const fileName = `Presupuesto`
+  this.service.ReprintBudgets(id).subscribe({
+    next:(r)=>{  this.downloadFile(r, fileName);}
+    
+  });
+}
+
+downloadFile(response: any, fileName: string){
+  const dataType= response.type;
+  const binaryData = [];
+
+  binaryData.push(response);
+
+  const filtePath = window.URL.createObjectURL(new Blob(binaryData, {type: dataType}))
+  const downloadLink = document.createElement('a');
+  downloadLink.href = filtePath;
+  downloadLink.setAttribute('download', fileName);
+  document.body.appendChild(downloadLink);
+  downloadLink.click();
+}
+
+
+
 }

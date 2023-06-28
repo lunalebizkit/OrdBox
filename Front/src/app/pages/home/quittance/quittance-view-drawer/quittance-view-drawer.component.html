@@ -16,61 +16,61 @@
 </app-header-op-buttons>
 
 <nz-collapse class="Recibo">
-  <nz-collapse-panel nzHeader="Detalle" [nzActive]="true">
-    <div style="margin: left 0;  padding: 5px;">
-      <div style="display: flex; flex-direction: row;">
-        <div style="flex: 1;">
+  <nz-collapse-panel nzHeader="Encabezado" [nzActive]="true">
+    <div style="margin: left 0; padding: 5px">
+      <div style="display: flex; flex-direction: row">
+        <div style="flex: 1">
           <label><b>* Fecha: </b></label>
-          <span>{{ dateTime ? (dateTime | date : "YYYY-MM-dd") : "N/A" }}</span>
-          <br>
+          <span>{{ dateTime ? (dateTime | date : 'YYYY-MM-dd') : 'N/A' }}</span>
+          <br />
           <label><b>* Nro Recibo: </b></label>
-          <span>{{ this.id | number: '8.0-0' | noComma }}</span>
-          <br>
+          <span>{{ this.id | number : '8.0-0' | noComma }}</span>
+          <br />
           <label><b>* Cliente: </b></label>
           <span>{{ this.customerName }}</span>
-          <br>
+          <br />
         </div>
-        <div style="flex: 1;">
+        <div style="flex: 1">
           <label><b>* Cuit: </b></label>
           <span>{{ this.customerCuit }}</span>
-          <br>
+          <br />
           <label><b>* Dirección: </b></label>
           <span>{{ this.address }}</span>
-          <br>
-        </div>
-      </div>
-      <div style="display: flex; flex-direction: row;">
-        <div style="flex: 1;">
-          <label><b>* Recibi(mos) la suma de: </b></label>
-          <span>{{ currencyFormat(this.cash) }}</span>
-        </div>
-        <div style="flex: 1;">
-          <label><b>* En concepto de: </b></label>
-          <span>{{ this.concept }}</span>
+          <br />
         </div>
       </div>
     </div>
+  </nz-collapse-panel>
+
+  <nz-collapse-panel nzHeader="Detalle" [nzActive]="true" [nzShowArrow]="true" class="Recibo">
+    <label><b>* Recibi(mos) la suma de: </b></label>
+    <span>{{ currencyFormat(this.cash) }}</span>
+
+    <div style="flex: 1">
+      <label><b>* En concepto de: </b></label>
+      <span>{{ this.concept }}</span>
+    </div>
 
     <ng-container nzSize="middle" *ngFor="let data of quittanceDetails">
-      <div nz-row style="margin: left 0 ; padding: 5px; ">
+      <div nz-row style="margin: left 0; padding: px">
         <div>
           <label><b>* Cheque n°: </b></label>
           <span>{{ data.checkNumber }}</span>
         </div>
-        <div style="margin-left: 50px;">
+        <div style="margin-left: 50px">
           <label><b>* Banco: </b></label>
           <span>{{ data.bank }}</span>
         </div>
-        <div style="margin-left: 50px;">
+        <div style="margin-left: 50px">
           <label><b>* Total: </b></label>
           <span>{{ this.currencyFormat(data.total) }}</span>
         </div>
       </div>
     </ng-container>
 
-    <div style="margin-left: 900px;">
+    <div style="margin-left: 900px">
       <label><b>Total: </b></label>
-      <b style="color: red; font-size: 15px; font-weight: bold;">{{ this.currencyFormat(this.total) }}</b>
+      <b style="color: red; font-size: 15px; font-weight: bold">{{ this.currencyFormat(this.total) }}</b>
     </div>
   </nz-collapse-panel>
 </nz-collapse>

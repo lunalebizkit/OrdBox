@@ -7,6 +7,9 @@ import { BudgetsModel } from "./model/budgets.model";
     providedIn: 'root',
 })
 export class BudgetsService {
+  Reprintinvoice(id: number) {
+    throw new Error('Method not implemented.');
+  }
   
     constructor(private api: ApiService) { }
      /**
@@ -55,7 +58,11 @@ export class BudgetsService {
   public getByCuit(cuit: string | number): Observable<any> {
     return this.api.get(`Budget/GetBudgetByCuit?cuit=${cuit}`, false);
   }
-      
+  public ReprintBudgets(id: number): Observable<any> {
+    return this.api.get(`Pdf/PdfPresupuesto?id=${id}`,false, {responseType:'blob' as 'json'})
+
+  }
+  
 
 
 }

@@ -81,6 +81,7 @@ builder.Services.AddScoped<BudgetService>();
 builder.Services.AddScoped<QuittanceService>();
 builder.Services.AddDbContext<DBContext>(x => x.UseSqlServer(connectionString));
 builder.Services.AddScoped<ReimprimirDocService>();
+builder.Services.AddScoped<PdfService>();
 builder.Services.AddCors(options =>
    {
        options.AddPolicy("AllowAll", builder =>

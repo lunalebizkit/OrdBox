@@ -15,7 +15,7 @@ import { Permission } from 'src/app/common/auth/models/permissions.enum';
 export class InvoicesListComponent implements OnInit {
   router: any;
   permissions = Permission;
-  dia:any;
+  dia: any;
   index!: number;
   id!: number;
   dato!: any
@@ -48,7 +48,7 @@ export class InvoicesListComponent implements OnInit {
       statusid: 0,
       number: 0,
       cuit: "",
-      date:"",
+      date: "",
     },
     page: 0,
     pageSize: 20
@@ -78,7 +78,7 @@ export class InvoicesListComponent implements OnInit {
   search(): void {
     this.getData(this.SpecificFilter);
     this.SpecificFilter.page = 0;
-    this.SpecificFilter.pageSize = 20; 
+    this.SpecificFilter.pageSize = 20;
 
   }
   /*
@@ -110,12 +110,12 @@ export class InvoicesListComponent implements OnInit {
   formaterDate(date: string | number | Date): string {
     return formatDate(date, 'YYYY-MM-dd', this.locale);
   }
- 
-  dateChange(date:any):void{
-    if(date){
+
+  dateChange(date: any): void {
+    if (date) {
       this.dia = date
-      this.SpecificFilter.filter.date =this.formaterDate(date)
-    }else{
+      this.SpecificFilter.filter.date = this.formaterDate(date)
+    } else {
       this.SpecificFilter.filter.date = ''
     }
   }
@@ -223,9 +223,29 @@ export class InvoicesListComponent implements OnInit {
     });
   }
 
+  reimprimirInvoice(id: number): void {
+    const fileName = `Factura_Proforma`
+    this.service.Reprintinvoice(id).subscribe({
+      next: (r) => { this.downloadFile(r, fileName); }
 
-  proforma(id:Number){
-  window.open('home/invoices/invoicespro/'+id);
-   
+    });
   }
+
+  downloadFile(response: any, fileName: string) {
+    const dataType = response.type;
+    const binaryData = [];
+
+    binaryData.push(response);
+
+    const filtePath = window.URL.createObjectURL(new Blob(binaryData, { type: dataType }))
+    const downloadLink = document.createElement('a');
+    downloadLink.href = filtePath;
+    downloadLink.setAttribute('download', fileName);
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+  }
+
+
+
+
 }

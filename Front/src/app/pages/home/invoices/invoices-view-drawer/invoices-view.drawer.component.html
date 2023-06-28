@@ -20,9 +20,8 @@
 >
 </app-header-op-buttons>
 
-
 <nz-collapse class="{{ this.tipo }}">
-  <nz-collapse-panel nzHeader="Encabezado" [nzActive]="true"  >
+  <nz-collapse-panel nzHeader="Encabezado" [nzActive]="true">
     <div style="display: flex; flex-direction: row">
       <div style="flex: 1">
         <b><label>* Fecha: </label></b>
@@ -118,11 +117,13 @@
               <td>{{ data.iva }}</td>
             </tr>
           </tbody>
-          <tfoot class="{{ this.tipo }}">
+
+          <!-- <tfoot class="tfoot-container {{ this.tipo }}">
             <tr>
               <td></td>
-              <td [colSpan]="2" *ngIf="type == 1; else elseBlock">
-                <b>Iva </b>
+              <tr *ngIf="type == 1;  elseBlock">
+              <td [colSpan]="2" *ngIf="ivaTotal > 0">
+                <b>{{ ivaTotal > 0 ? "IVA 21%" : "IVA" }} </b>
                 <span style="color: blue; font-size: 15px; font-weight: bold;"
                   >{{ this.currencyFormat(ivaTotal) }}
                 </span>
@@ -143,8 +144,57 @@
                 <td [colSpan]="2"></td>
               </ng-template>
             </tr>
-          </tfoot>
+          </tfoot>-->
         </nz-table>
+        <div class="contBoxGree">
+          <tfoot class="tfoot-container">
+            <tr>
+              <td></td>
+            </tr>
+            <tr *ngIf="type == 1; else elseBlock">
+              <td [colSpan]="2">
+                <div *ngIf="iva10 > 0">
+                  <b>Iva 10: {{ iva10.toFixed(2) }}</b
+                  ><br />
+                </div>
+                <div *ngIf="iva21 > 0">
+                  <b>Iva 21: {{ iva21.toFixed(2) }}</b
+                  ><br />
+                </div>
+                <div *ngIf="iva27 > 0">
+                  <b>Iva 27: {{ iva27.toFixed(2) }}</b
+                  ><br />
+                </div>
+
+                <b>Iva Total</b>
+                <span style="color: blue; font-size: 15px; font-weight: bold">
+                  {{ this.currencyFormat(ivaTotal) }}
+                </span>
+              </td>
+            </tr>
+            <tr *ngIf="type == 1; else elseBlock">
+              <td [colSpan]="2">
+                <b>SubTotal </b>
+                <span style="color: blue; font-size: 15px; font-weight: bold"
+                  >{{ this.currencyFormat(subTotal) }}
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <td [colSpan]="2">
+                <b>Total </b>
+                <span style="color: blue; font-size: 15px; font-weight: bold">
+                  {{ this.currencyFormat(total) }}
+                </span>
+              </td>
+            </tr>
+            <ng-template #elseBlock>
+              <tr>
+                <td [colSpan]="2"></td>
+              </tr>
+            </ng-template>
+          </tfoot>
+        </div>
       </nz-content>
     </nz-collapse-panel>
   </nz-collapse>

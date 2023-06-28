@@ -1,126 +1,129 @@
 <nz-layout>
-    <nz-page-header class="list-header">
-      <nz-page-header-title> Listado de Remitos </nz-page-header-title>
-      <nz-page-header-extra>
-        <button
+  <nz-page-header class="list-header">
+    <nz-page-header-title> Listado de Remitos </nz-page-header-title>
+    <nz-page-header-extra>
+      <button
         *authPermission="[permissions.GetRemito]"
-          nz-tooltip
-          nzTooltipTitle="Nuevo"
-          nz-button
-          nzType="primary"
-          nzShape="circle"
-          routerLink="/home/deliveryNotes/new"
+        nz-tooltip
+        nzTooltipTitle="Nuevo"
+        nz-button
+        nzType="primary"
+        nzShape="circle"
+        routerLink="/home/deliveryNotes/new"
+      >
+        <!-- -->
+        <i nz-icon nzType="plus" nzTheme="outline"></i>
+      </button>
+    </nz-page-header-extra>
+  </nz-page-header>
+  <nz-content>
+    <!-- Busqueda -->
+    <nz-collapse>
+      <nz-collapse-panel
+        nzSize="small"
+        nzHeader="Filtros"
+        style="font-weight: bold"
+      >
+        <form nz-form style="margin-left: 13px">
+          <div nz-row>
           
-        ><!-- -->
-          <i
-            nz-icon
-            nzType="plus"
-            nzTheme="outline"
-          ></i>
-        </button>
-      </nz-page-header-extra>
-    </nz-page-header>
-    <nz-content>
-      <!-- Busqueda -->
-      <nz-collapse>
-        <nz-collapse-panel nzSize="small" nzHeader="Filtros" style="font-weight: bold;">
-          <form nz-form style="margin-left: 13px;">
-            <div nz-row >
-                <!-- <nz-form-item style="margin-left: 25px;">
-                  <nz-form-label>Nro de comprobante</nz-form-label>
-                  <nz-form-control>
-                    <nz-input-group [nzSuffix]="clearQuery" style="width: 100%;">
-                      <input [ngModelOptions]="{ standalone: true }" type="number" placeholder="Ingrese numero de factura" nz-input
-                        (keydown.enter)="search()" [(ngModel)]="SpecificFilter.filter.number" min="0"/>
-                    </nz-input-group>
-  
-                    <ng-template #clearQuery>
-                      <i nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle"
-                        *ngIf="SpecificFilter.filter.number" (click)="SpecificFilter.filter.number = 0; search()"></i>
-                    </ng-template>
-                  </nz-form-control>
-                </nz-form-item> -->
-            <!--   </div>
-              <div nz-col class="gutter-row" [nzSpan]="8"> -->
-                <nz-form-item style="margin-left: 55px;">
-                  <nz-form-label >Fecha</nz-form-label>
-                  <nz-form-control >
-                    <nz-date-picker
-                    nzFormat="dd/MM/yyyy"
-                      [(ngModel)]="dia"
-                      name="date"
-                      [nzPlaceHolder]="'Fecha'"       
-                      (ngModelChange)="dateChange($event)"
-                    ></nz-date-picker>
-                  </nz-form-control>
-                </nz-form-item>
-            <!-- </div>
-            <div style="margin-left: 15px;"> -->
-              <button nz-button nzType="primary" style="margin-left: 90px; font-size: 14px;" (click)="search()">
-                <i nz-icon nzType="search"></i>
-                Buscar
-              </button>
-            </div>
-            <!-- </div> -->
-          </form>
-        </nz-collapse-panel>
-      </nz-collapse>
-  
-      <!-- Tabla -->
-      <div class="table" (scroll)="onScroll($event)">
-        <nz-table
-          class="tabla"
-          nzShowSizeChanger
-          [nzData]="deliveryNotesList"
-          nzBordered="true"
-          [nzSize]="'small'"
-          nzShowPagination="false"
-          nzTableLayout="fixed"
-          [nzLoading]="loading"
-        >
-          <thead>
-            <tr>
-              <th nzEllipsis >N° Remito</th>
-              <th nzEllipsis >Fecha</th>
-              <th nzEllipsis >Estado</th>
-              <th nzEllipsis [nzAlign]="'center'" >Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              class="small-text"
-              tabindex="-1"
-              id="{{ i }}"
-              *ngFor="let data of deliveryNotesList; let i = index"
-              (click)="onClick(data, i)" 
-              (keydown)="myNavegation($event)"
-               [style.background-color]="
-              data === selectedDeliveryNotes ? 'lightblue' : ''
-            " (keydown.enter)="onEnter(id)" 
-              (dblclick)="onDoubleClicked(data)"
+            <nz-form-item style="margin-left: 55px">
+              <nz-form-label>Fecha</nz-form-label>
+              <nz-form-control>
+                <nz-date-picker
+                  nzFormat="dd/MM/yyyy"
+                  [(ngModel)]="dia"
+                  name="date"
+                  [nzPlaceHolder]="'Fecha'"
+                  (ngModelChange)="dateChange($event)"
+                ></nz-date-picker>
+              </nz-form-control>
+            </nz-form-item>
+           
+            <button
+              nz-button
+              nzType="primary"
+              style="margin-left: 90px; font-size: 14px"
+              (click)="search()"
             >
-              <td nzEllipsis>{{ data.id | number: '8.0-0' | noComma}}</td>
-              <td nzEllipsis>{{this.formaterDate(data.dateTime)}}</td>
-              <td>{{ this.getStatusName(data.statusId) }}</td>
-              <td style="text-align: center">
-                <a>
-                  <i nz-icon nzType="eye" [nzTheme]="'twotone'" [nzTwotoneColor]="'#52c41a'"style="font-size: 16px" (click)="onDoubleClicked(data)"></i>
-                </a>
-                <a target="_blank" style="margin-left: 15px;">
-                  <i nz-icon nzType="printer" nzTheme="outline" style="font-size: 16px" (click)="print(data.id)"></i>
-                </a>
-              </td>
-            </tr>
-          </tbody>
-        </nz-table>
-      </div>
-    </nz-content>
-  </nz-layout>
-  
-  <app-popup-confirmation
-    #popup
-    [title]="'Confirmar eliminación'"
-    [header]="'¿Está seguro de que desea eliminar el usuario seleccionado?'"
-    [message]="'Esta acción no se puede revertir'"
-  >
-  </app-popup-confirmation>
+              <i nz-icon nzType="search"></i>
+              Buscar
+            </button>
+          </div>
+          <!-- </div> -->
+        </form>
+      </nz-collapse-panel>
+    </nz-collapse>
+
+    <!-- Tabla -->
+    <div class="table" (scroll)="onScroll($event)">
+      <nz-table
+        class="tabla"
+        nzShowSizeChanger
+        [nzData]="deliveryNotesList"
+        nzBordered="true"
+        [nzSize]="'small'"
+        nzShowPagination="false"
+        nzTableLayout="fixed"
+        [nzLoading]="loading"
+      >
+        <thead>
+          <tr>
+            <th nzEllipsis>N° Remito</th>
+            <th nzEllipsis>Fecha</th>
+            <th nzEllipsis>Estado</th>
+            <th nzEllipsis [nzAlign]="'center'">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            class="small-text"
+            tabindex="-1"
+            id="{{ i }}"
+            *ngFor="let data of deliveryNotesList; let i = index"
+            (click)="onClick(data, i)"
+            (keydown)="myNavegation($event)"
+            [style.background-color]="
+              data === selectedDeliveryNotes ? 'lightblue' : ''
+            "
+            (keydown.enter)="onEnter(id)"
+            (dblclick)="onDoubleClicked(data)"
+          >
+            <td nzEllipsis>{{ data.id | number : "8.0-0" | noComma }}</td>
+            <td nzEllipsis>{{ this.formaterDate(data.dateTime) }}</td>
+            <td>{{ this.getStatusName(data.statusId) }}</td>
+            <td style="text-align: center">
+              <a>
+                <i
+                  nz-icon
+                  nzType="eye"
+                  style="font-size: 16px"
+                  (click)="onDoubleClicked(data)"
+                ></i>
+              </a>
+              <a style="margin-left: 20px" (click)="reimprimirdeliveryNotes(data.id)">
+                <i
+                  nz-icon
+                  nz-tooltip
+                  nzTooltipTitle="Descargar pdf"
+                  nzType="file-pdf"
+                  nzTheme="twotone"
+                  [nzTwotoneColor]="'#f5222d'"
+                  style="font-size: 16px; margin-right: 2px"
+                ></i>
+              </a>
+            </td>
+          </tr>
+        </tbody>
+      </nz-table>
+    </div>
+  </nz-content>
+</nz-layout>
+
+<app-popup-confirmation
+  #popup
+  [title]="'Confirmar eliminación'"
+  [header]="'¿Está seguro de que desea eliminar el usuario seleccionado?'"
+  [message]="'Esta acción no se puede revertir'"
+>
+</app-popup-confirmation>

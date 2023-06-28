@@ -55,4 +55,8 @@ export class QuittanceService {
     public editQuittance(model: quittanceModel): Observable<any> {
       return this.api.put(`quittance`, model, false);    
     }
+    public ReprintQuittance(id: number): Observable<any> {
+      return this.api.get(`Pdf/PdfRecibo?id=${id}`,false, {responseType:'blob' as 'json'})
+  
+    }
 }

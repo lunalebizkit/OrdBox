@@ -9,10 +9,13 @@ export interface InvoiceModel {
     customerAddress: string;
     observation: string;
     dateTime: Date;
+    iva21:number;
+    iva27:number;
+    iva10:number;
     total: number;
     ivaTotal: number;
     type: number;
-    
+    ivaSelected: number;
     invoiceDetails: InvoiceDetails[]
 }
 export interface InvoiceDetails {

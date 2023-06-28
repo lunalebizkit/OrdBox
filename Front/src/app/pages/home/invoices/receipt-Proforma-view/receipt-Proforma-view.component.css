@@ -1,0 +1,44 @@
+.todo {
+    padding-bottom: 30px;
+    height:100%;
+    left: 10%;
+    padding: 20px;
+  }
+  
+  #contenedor {
+    border: 1px solid black;
+    left: 26px;
+    width: 90%;
+    margin-top: 10px;
+  }
+  
+  #izquierdo {
+    float: left;
+    padding: 10px;
+    width: 300px;
+    margin: 40px;
+    text-align: left;
+  }
+  
+  #derecho {
+    position: absolute;
+    left: 200%;
+    float: right;
+    padding: 10px;
+    width: 350px;
+    margin: 8px;
+    text-align: left;
+  }
+  
+  #tabla {
+    padding: 10px;
+    height: 100%;
+    border: 1px solid black;
+    margin-top: 10px;
+    left: 26px;
+    width: 90%;
+    padding-bottom: 60px;
+  
+  }
+  
+  

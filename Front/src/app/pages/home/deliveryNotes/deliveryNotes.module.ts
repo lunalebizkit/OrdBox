@@ -22,6 +22,7 @@ import { DeliveryNotesViewDrawerComponent } from './deliveryNotes-view-drawer/de
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { DeliveryNotesPdfComponent } from './deliveryNotes-pdf/deliveryNotes-pdf.component';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
+import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 ;
 
 
@@ -53,7 +54,7 @@ import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
         NzInputNumberModule,
         NzDescriptionsModule,
         NzDatePickerModule,
-
+        NzToolTipModule,
     ]
 })
 export class DeliveryNotesModule { }
