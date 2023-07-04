@@ -194,8 +194,7 @@ removeCheck( e: MouseEvent, index: any): void {
       } else {
        const model = this.formQuittance.getRawValue();
         model.id = this.id;  
-        console.log(model);
-        console.log(this.formQuittance.getRawValue());
+       
         
         
          
@@ -235,7 +234,7 @@ removeCheck( e: MouseEvent, index: any): void {
           this.formQuittance.controls['address'].setValue(data.address);
           this.formQuittance.controls['customerCuit'].setValue(data.cuit);
           this.formQuittance.controls['customerName'].setValue(data.name);
-          console.log(data);
+         
           
           
         },

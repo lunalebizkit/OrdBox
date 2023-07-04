@@ -494,8 +494,7 @@ handleOk() {
     } catch (error) {
         console.log(error);
     }
-    console.log(this.budgetDetailsList);
-    console.log(this.budgetDetails);
+
 }
 direction() {
   this.router.navigate(['/home/budgets']);
