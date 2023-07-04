@@ -81,7 +81,7 @@ export class InvoicesViewDrawerComponent extends BaseComponent implements OnInit
     if (id != 0)
     this.service.getInvoiceById(id).subscribe({
         next: (r: InvoiceModel) => {
-          console.log(r)
+       
           this.type = r.type,
           this.customerAddress = r.customerAddress,
           this.customerCuit = r.customerCuit,
@@ -100,9 +100,7 @@ export class InvoicesViewDrawerComponent extends BaseComponent implements OnInit
           this.subTotal= r.total - r.ivaTotal;          
           this.isLoading = false;
           this.getTipo(r.type);
-
-          console.log("iva selected " + this.ivaSelected);
-          console.log("iva total " + this.ivaTotal);          
+ 
           
         },
         error: () => { this.isLoading = false; }
