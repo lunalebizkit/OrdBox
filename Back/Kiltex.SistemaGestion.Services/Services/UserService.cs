@@ -3,14 +3,11 @@ using Kiltex.SistemaGestion.Domain;
 using Kiltex.SistemaGestion.Domain.Model;
 using Kiltex.SistemaGestion.SDK.Error;
 using Kiltex.SistemaGestion.SDK.Security;
-using Microsoft.EntityFrameworkCore;
 using Kiltex.SistemaGestion.Services.Common;
-using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
-using DocumentFormat.OpenXml.Wordprocessing;
-using Kiltex.SistemaGestion.Domain.Enum;
-using DocumentFormat.OpenXml.Drawing.Charts;
-using DocumentFormat.OpenXml.Spreadsheet;
+using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace Kiltex.SistemaGestion.Services.Services
 {
@@ -18,8 +15,8 @@ namespace Kiltex.SistemaGestion.Services.Services
            
     {
         private readonly EmailService _emailService;
-        public UserService(ErrorManager logger, DBContext context, IMapper maper, EmailService emailService) :
-            base(logger, context, maper)
+        public UserService(ErrorManager logger, DBContext context, IMapper maper, IConfiguration configuration, EmailService emailService) :
+            base(logger, context, maper, configuration)
 
         {
             this._emailService = emailService;

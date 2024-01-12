@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Dapper;
 using Kiltex.SistemaGestion.Domain;
 using Kiltex.SistemaGestion.Domain.Enum;
 using Kiltex.SistemaGestion.Domain.Model;
@@ -6,17 +7,15 @@ using Kiltex.SistemaGestion.SDK.Error;
 using Kiltex.SistemaGestion.Services.Common;
 using Kiltex.SistemaGestion.Services.ImpresoraFiscal;
 using Kiltex.SistemaGestion.Services.ImpresoraFiscal.Printer250F;
-using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
-using Microsoft.EntityFrameworkCore;
-using System.Text.RegularExpressions;
 using Kiltex.SistemaGestion.Services.LibroIvaDigital;
 using Kiltex.SistemaGestion.Services.LibrosIvaDigital;
-using Microsoft.Extensions.Configuration;
-using Kiltex.SistemaGestion.Services.Scripts;
-using Microsoft.Data.SqlClient;
-using Dapper;
-using System.Data;
+using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using System.Data;
+using System.Text.RegularExpressions;
 
 namespace Kiltex.SistemaGestion.Services.Services
 {
@@ -24,14 +23,11 @@ namespace Kiltex.SistemaGestion.Services.Services
     {
         private readonly PrinterStatus _config;
         private readonly IPrinter _printer;
-        private readonly IConfiguration _configuration;
-
         public InvoiceService(ErrorManager logger, DBContext context, IMapper maper, IPrinter printer, PrinterStatus config, IConfiguration configuration) :
-            base(logger, context, maper)
+            base(logger, context, maper, configuration)
         {
             _config = config;
             _printer = printer;
-            _configuration = configuration;
         }
         public async Task<OperationResponse<DtoRequestInvoice>> GetById(long id)
         {
@@ -232,11 +228,8 @@ namespace Kiltex.SistemaGestion.Services.Services
 
         public async Task<OperationResponse<IEnumerable<DtoResponseInvoiceReportTotals>>> InvioceReport(RequestPaginatedData<SpecificFilter> request)
         {
-
-            var connection = _configuration.GetConnectionString("sqlconnection");
-
             IEnumerable<DtoResponseInvoiceReportTotals> invoiceReports = new List<DtoResponseInvoiceReportTotals>();
-            using (var con = new SqlConnection(connection))
+            using (var con = new SqlConnection(ConnectionString))
             {                
                 var ventas = con.Query<DtoResponseInviocesReport>("InvoiceReports", commandType: CommandType.StoredProcedure);
                 var totalVentas = con.Query<DtoResponseInvoiceReportTotals>("InvoiceReportsTotal", commandType: CommandType.StoredProcedure);

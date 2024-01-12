@@ -6,6 +6,7 @@ using Kiltex.SistemaGestion.Services.Common;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,8 +17,8 @@ namespace Kiltex.SistemaGestion.Services.Services
 {
     public class ReceiptService : BaseService
     {
-        public ReceiptService(ErrorManager logger , DBContext context , IMapper maper): 
-            base(logger , context , maper) 
+        public ReceiptService(ErrorManager logger , DBContext context , IMapper maper, IConfiguration configuration) : 
+            base(logger , context , maper, configuration) 
         { }
 
         //Get Receipt

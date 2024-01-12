@@ -12,10 +12,8 @@ namespace Kiltex.SistemaGestion.Services.Services
 {
     public class QuittanceService : BaseService
     {
-        private IConfiguration _configuration;
-        public QuittanceService(ErrorManager logger, DBContext context, IMapper mapper, IConfiguration config) : base(logger, context, mapper)
+        public QuittanceService(ErrorManager logger, DBContext context, IMapper mapper, IConfiguration configuration) : base(logger, context, mapper, configuration)
         {
-            _configuration = config;
         }
 
         public async Task<OperationResponse<DtoResponseQuittance>> GetById(long id)

@@ -7,24 +7,14 @@ using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Data.OleDb;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 
 namespace Kiltex.SistemaGestion.Services.Services
 {
     public class BudgetService : BaseService
     {
-        private IConfiguration _configuration;
-        public BudgetService(ErrorManager logger, DBContext context, IMapper mapper, IConfiguration config) : base(logger, context, mapper)
+        public BudgetService(ErrorManager logger, DBContext context, IMapper mapper, IConfiguration config) : base(logger, context, mapper, config)
         {
-            _configuration = config;
         }
 
         public async Task<OperationResponse<DtoResponseBudget>> GetById(long id)
@@ -91,7 +81,6 @@ namespace Kiltex.SistemaGestion.Services.Services
                                     .FirstAsync(p => p.Id == model.Id)
                                     .ConfigureAwait(false);
 
-                   //_contextSql.BudgetDetails.RemoveRange(oldBrand.BudgetDetails.Where(p => !newModel.BudgetDetails.Any(m => m.Id == p.Id)));
                     _contextSql.BudgetDetails.RemoveRange(oldBrand.BudgetDetails);
 
                     _contextSql.Entry(oldBrand).State = EntityState.Detached;
@@ -105,14 +94,10 @@ namespace Kiltex.SistemaGestion.Services.Services
                         item.Id = 0;
                         newModel.Total += item.Price * item.Quantity;
                         oldBrand.BudgetDetails.Add(item);
-                    }
-
-                   
-                    //oldBrand.BudgetDetails = newModel.BudgetDetails;
+                    }                   
                   
                     _contextSql.Attach(newModel2);
-                  // _contextSql.Entry(oldBrand).State = EntityState.Modified;
-                    //_contextSql.Entry<Budget>(newModel2).State= EntityState.Modified;
+
                     _contextSql.Update(newModel2);
               
 

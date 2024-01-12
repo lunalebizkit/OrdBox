@@ -8,6 +8,7 @@ using Kiltex.SistemaGestion.Services.ImpresoraFiscal;
 using Kiltex.SistemaGestion.Services.ImpresoraFiscal.Printer250F;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System.Text.RegularExpressions;
 
 namespace Kiltex.SistemaGestion.Services.Services
@@ -16,8 +17,8 @@ namespace Kiltex.SistemaGestion.Services.Services
     {
         private readonly PrinterStatus _config;
         private readonly IPrinter _printer;
-        public CreditMemoService(ErrorManager logger, DBContext context, IMapper mapper, IPrinter printer, PrinterStatus config) :
-          base(logger, context, mapper)
+        public CreditMemoService(ErrorManager logger, DBContext context, IMapper mapper, IPrinter printer, PrinterStatus config, IConfiguration configuration) :
+          base(logger, context, mapper, configuration)
         {
             _config = config;
             _printer = printer;
