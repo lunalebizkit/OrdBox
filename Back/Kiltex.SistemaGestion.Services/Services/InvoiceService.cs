@@ -231,8 +231,8 @@ namespace Kiltex.SistemaGestion.Services.Services
             IEnumerable<DtoResponseInvoiceReportTotals> invoiceReports = new List<DtoResponseInvoiceReportTotals>();
             using (var connection = new SqlConnection(ConnectionString))
             {                
-                var ventas = connection.Query<DtoResponseInviocesReport>("InvoiceReports", commandType: CommandType.StoredProcedure);
-                var totalVentas = connection.Query<DtoResponseInvoiceReportTotals>("InvoiceReportsTotal", commandType: CommandType.StoredProcedure);
+                var ventas = connection.Query<DtoResponseInviocesReport>( StoredProcedure.INVOICEREPORTS, commandType: CommandType.StoredProcedure);
+                var totalVentas = connection.Query<DtoResponseInvoiceReportTotals>(StoredProcedure.INVOICEREPORTSTOTAL, commandType: CommandType.StoredProcedure);
                 foreach (var item in totalVentas)
                 {
                     item.InvoicesReports = new List<DtoResponseInviocesReport>();
