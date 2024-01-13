@@ -229,10 +229,10 @@ namespace Kiltex.SistemaGestion.Services.Services
         public async Task<OperationResponse<IEnumerable<DtoResponseInvoiceReportTotals>>> InvioceReport(RequestPaginatedData<SpecificFilter> request)
         {
             IEnumerable<DtoResponseInvoiceReportTotals> invoiceReports = new List<DtoResponseInvoiceReportTotals>();
-            using (var con = new SqlConnection(ConnectionString))
+            using (var connection = new SqlConnection(ConnectionString))
             {                
-                var ventas = con.Query<DtoResponseInviocesReport>("InvoiceReports", commandType: CommandType.StoredProcedure);
-                var totalVentas = con.Query<DtoResponseInvoiceReportTotals>("InvoiceReportsTotal", commandType: CommandType.StoredProcedure);
+                var ventas = connection.Query<DtoResponseInviocesReport>("InvoiceReports", commandType: CommandType.StoredProcedure);
+                var totalVentas = connection.Query<DtoResponseInvoiceReportTotals>("InvoiceReportsTotal", commandType: CommandType.StoredProcedure);
                 foreach (var item in totalVentas)
                 {
                     item.InvoicesReports = new List<DtoResponseInviocesReport>();

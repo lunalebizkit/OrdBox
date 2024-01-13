@@ -1,5 +1,6 @@
 ﻿
 using AutoMapper;
+using Dapper;
 using Kiltex.SistemaGestion.Domain;
 using Kiltex.SistemaGestion.Domain.Enum;
 using Kiltex.SistemaGestion.Domain.Model;
@@ -7,6 +8,8 @@ using Kiltex.SistemaGestion.SDK.Error;
 using Kiltex.SistemaGestion.Services.Common;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
+using Kiltex.SistemaGestion.Services.Scripts;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
@@ -247,6 +250,24 @@ namespace Kiltex.SistemaGestion.Services.Services
             }
         }
 
-       
+       public async Task<OperationResponse<DtoResponseProductReportTotal>> GetProductReport()
+        {
+            DtoResponseProductReportTotal productReportTotal = new DtoResponseProductReportTotal();
+            IEnumerable<DtoResponseProductReport> productReport = new List<DtoResponseProductReport>();
+
+            using (var connection = new SqlConnection(ConnectionString))
+            {
+                productReport =await connection.QueryAsync<DtoResponseProductReport>(SqlScripts.GetProductReport);
+            }
+            if (productReport != null && productReport.Count() > 0)
+            {
+                productReportTotal.Total = productReport?.Sum(p => (p.Quantity * p.Purchase_Price)) ?? 0m;
+                productReportTotal.Date = DateTime.Now;
+                productReportTotal.Products = productReport.ToList();
+            }
+             
+
+            return new OperationResponse<DtoResponseProductReportTotal>(productReportTotal);
+        }
     }
 }
