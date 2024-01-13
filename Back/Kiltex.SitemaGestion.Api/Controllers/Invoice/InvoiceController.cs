@@ -89,7 +89,7 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Invoice
         [AllowAccess(Permission = new EPermission[] { EPermission.GetInvoice })]
         public async Task<IActionResult> InvoiceReport([FromBody] RequestPaginatedData<SpecificFilter> filter)
         {
-            return Return(await _service.InvioceReport(filter).ConfigureAwait(false));
+            return Return(await _service.InvoiceReport(filter).ConfigureAwait(false));
         }
     }
 }

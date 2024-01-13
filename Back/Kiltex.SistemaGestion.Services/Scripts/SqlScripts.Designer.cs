@@ -59,14 +59,5 @@ namespace Kiltex.SistemaGestion.Services.Scripts {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   Busca una cadena traducida similar a select * from Invoice;.
-        /// </summary>
-        internal static string GetInvoiceReports {
-            get {
-                return ResourceManager.GetString("GetInvoiceReports", resourceCulture);
-            }
-        }
     }
 }
