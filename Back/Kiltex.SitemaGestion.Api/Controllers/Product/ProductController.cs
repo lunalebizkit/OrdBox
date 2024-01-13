@@ -65,7 +65,18 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Product
         {
             return Return(await _service.Update(model).ConfigureAwait(false));
         }
+        /// <summary>
+        /// Devuelve un listado de Facturas creadas, con paginado.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("[action]")]
+        [AllowAccess(Permission = new EPermission[] { EPermission.ViewProduct })]
+        public async Task<IActionResult> ProductReport()
+        {
+            return Return(await _service.GetProductReport().ConfigureAwait(false));
+        }
 
-     
     }
 }

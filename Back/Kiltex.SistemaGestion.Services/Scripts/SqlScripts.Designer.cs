@@ -59,5 +59,27 @@ namespace Kiltex.SistemaGestion.Services.Scripts {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a DECLARE @TOTALINVOICES TABLE (  [product_name] NVARCHAR(100), [quantity]INT, [price] DECIMAL(18,2), [subTotal]DECIMAL(18,2), [customer_name] NVARCHAR(100), [dateTime] DATETIME);
+        ///;With Invoices as (SELECT [in].[id]
+        ///      ,[in].[customer_name]
+        ///      ,[in].[customer_cuit]
+        ///      ,[in].[dateTime]
+        ///      ,[in].[total]
+        ///      ,[in].[iva_total]
+        ///      ,[in].[type]
+        ///	  ,[ind].[product_name]
+        ///	  ,[ind].[quantity]
+        ///	  ,[ind].[price]
+        ///  FROM [invoice] [in]
+        ///  INNER JOIN
+        ///  [invoice_detail] [ind] ON [in].[id] = [ind [resto de la cadena truncado]&quot;;.
+        /// </summary>
+        internal static string GetProductReport {
+            get {
+                return ResourceManager.GetString("GetProductReport", resourceCulture);
+            }
+        }
     }
 }
