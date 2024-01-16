@@ -226,13 +226,15 @@ namespace Kiltex.SistemaGestion.Services.Services
             }
         }
 
-        public async Task<OperationResponse<IEnumerable<DtoResponseInvoiceReportTotals>>> InvoiceReport(RequestPaginatedData<SpecificFilter> request)
+        public async Task<OperationResponse<IEnumerable<DtoResponseInvoiceReportTotals>>> InvioceReport(RequestPaginatedData<StoredProcedureFilter> request)
         {
             IEnumerable<DtoResponseInvoiceReportTotals> invoiceReports = new List<DtoResponseInvoiceReportTotals>();
+
+            var parameters = new { dateFrom = request.Filter.DateFrom, dateTo = request.Filter.DateTo, categoryId = request.Filter.CategoryId };
             using (var connection = new SqlConnection(ConnectionString))
             {                
-                var ventas = connection.Query<DtoResponseInviocesReport>( StoredProcedure.INVOICEREPORTS, commandType: CommandType.StoredProcedure);
-                var totalVentas = connection.Query<DtoResponseInvoiceReportTotals>(StoredProcedure.INVOICEREPORTSTOTAL, commandType: CommandType.StoredProcedure);
+                var ventas = connection.Query<DtoResponseInviocesReport>( StoredProcedure.INVOICEREPORTS, parameters, commandType: CommandType.StoredProcedure);
+                var totalVentas = connection.Query<DtoResponseInvoiceReportTotals>(StoredProcedure.INVOICEREPORTSTOTAL, parameters, commandType: CommandType.StoredProcedure);
                 foreach (var item in totalVentas)
                 {
                     item.InvoicesReports = new List<DtoResponseInviocesReport>();

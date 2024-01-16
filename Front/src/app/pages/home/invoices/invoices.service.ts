@@ -52,6 +52,14 @@ export class InvoiceService {
    * @param queryParams
    * @returns
    */
+  public getInvoiceReport(queryParams: any): Observable<any> {
+    return this.api.post(`invoice/invoicereport`, queryParams, false);
+  }
+  /**
+   * Obtiene todos los Comprobantes de venta
+   * @param queryParams
+   * @returns
+   */
   public getReceipt(queryParams: any): Observable<any> {
     return this.api.post(`receipt/list`, queryParams, false);
   }

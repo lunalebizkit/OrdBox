@@ -87,7 +87,7 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Invoice
         [HttpPost]
         [Route("[action]")]
         [AllowAccess(Permission = new EPermission[] { EPermission.GetInvoice })]
-        public async Task<IActionResult> InvoiceReport([FromBody] RequestPaginatedData<SpecificFilter> filter)
+        public async Task<IActionResult> InvoiceReport([FromBody] RequestPaginatedData<StoredProcedureFilter> filter)
         {
             return Return(await _service.InvoiceReport(filter).ConfigureAwait(false));
         }
