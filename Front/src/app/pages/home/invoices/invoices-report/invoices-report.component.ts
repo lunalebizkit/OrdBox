@@ -1,4 +1,4 @@
-import {ViewChild} from '@angular/core';
+import {Inject, LOCALE_ID, ViewChild} from '@angular/core';
 import { Component, ElementRef, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -8,7 +8,7 @@ import { HeaderOperationsButtonsComponent } from 'src/app/common/components/head
 import { PopupConfirmationComponent } from 'src/app/common/components/popup-confirmation/popup-confirmation.component';
 import { InvoiceService } from '../invoices.service';
 import { InvoiceReportTotal } from '../model/invoice.model';
-
+import { formatCurrency, formatDate } from '@angular/common';
 @Component({
     selector: 'app-invoices-report',
     templateUrl: './invoices-report.component.html',
@@ -24,19 +24,24 @@ import { InvoiceReportTotal } from '../model/invoice.model';
    ** Parametros de busqueda
    */
   queryParams = {
-    filter: '',
+    filter: {
+      dateTo: null,
+      dateFrom: null,
+      category: null,
+    },
     page: 0,
     pageSize: 10,
   };
 
-  invoicesReportList!: InvoiceReportTotal;
+  invoicesReportList: InvoiceReportTotal[] = [];
   loading = false;
     constructor( 
       notificacionService: NzNotificationService,
       el: ElementRef,
       message: NzMessageService,
       private router: Router,
-      private service : InvoiceService
+      private service : InvoiceService,
+      @Inject(LOCALE_ID) public locale: string,
       ) {
         super(notificacionService, el, message);
     }
@@ -44,15 +49,30 @@ import { InvoiceReportTotal } from '../model/invoice.model';
     ngOnInit(): void {
     }
     invoicesReport(){
+      this.loading = true;
       this.service.getInvoiceReport(this.queryParams).subscribe({
         next: (r) => {
-          this.invoicesReportList = r.data;
+          this.invoicesReportList = r;        
           this.loading = false;
+          this.popComponent.handleCance()
         },
         error: () => {
           this.loading = false;
+          this.invoicesReportList = [];
         },
-      });
-      
+      });      
      }
+     msjConfirmOk() {
+      try {
+        this.popComponent.showConfirmation() 
+      } catch (error) {}
+    }
+  
+    handleOk(){
+      this.invoicesReport()
+    }
+
+    formaterDate(date: string | number | Date): string {
+      return formatDate(date, 'MM/dd/YYYY', this.locale);
+    }   
 }

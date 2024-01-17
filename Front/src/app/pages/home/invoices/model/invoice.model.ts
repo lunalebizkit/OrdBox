@@ -73,7 +73,7 @@ export interface InvoiceReportTotal {
     totalQuantity: number;
     totalPrice: number;
     totalSubTotal : number;
-    invoiceReports: InvoiceReport[]
+    invoicesReports: InvoiceReport[]
 
 }
 export interface InvoiceReport {
