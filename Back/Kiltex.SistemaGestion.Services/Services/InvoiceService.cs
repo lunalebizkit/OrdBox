@@ -230,25 +230,19 @@ namespace Kiltex.SistemaGestion.Services.Services
         {
             IEnumerable<DtoResponseInvoiceReportTotals> invoiceReports = new List<DtoResponseInvoiceReportTotals>();
 
-            var parameters = new { dateFrom = request.Filter.DateFrom, dateTo = request.Filter.DateTo, categoryId = request.Filter.CategoryId };
+            var parameters = new { dateFrom = request.Filter.DateFrom, dateTo = request.Filter.DateTo, categoryId = request.Filter.CategoryId == 0 ? null : request.Filter.CategoryId };
             using (var connection = new SqlConnection(ConnectionString))
             {                
                 var ventas = connection.Query<DtoResponseInviocesReport>( StoredProcedure.INVOICEREPORTS, parameters, commandType: CommandType.StoredProcedure);
+                
                 var totalVentas = connection.Query<DtoResponseInvoiceReportTotals>(StoredProcedure.INVOICEREPORTSTOTAL, parameters, commandType: CommandType.StoredProcedure);
+                
                 foreach (var item in totalVentas)
                 {
                     item.InvoicesReports = new List<DtoResponseInviocesReport>();
-                    foreach (var item2 in ventas)
-                    {
-                        if ((DateTimeOffset)item.InvoiceDate.Value.Date == (DateTimeOffset)item2.Date.Date)
-                        {
-                            item.InvoicesReports.Add(item2);
-                        }
-                        else
-                        {
-                            continue;
-                        }
-                    };
+                    
+                    item.InvoicesReports = ventas.Where(yo => (DateTimeOffset)yo.Date.Date == (DateTimeOffset)item.InvoiceDate).ToList();
+                  
                 }
                 invoiceReports = totalVentas;
              

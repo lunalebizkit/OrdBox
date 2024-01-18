@@ -1,0 +1,65 @@
+<nz-layout>
+    <nz-page-header class="list-header">
+        <nz-page-header-title>Reporte de mercadería</nz-page-header-title>
+        <nz-page-header-extra>
+          <button
+            nz-tooltip
+            nzTooltipTitle="Generar Reporte de Stock"
+            nz-button
+            nzType="primary"
+            (click)="msjConfirmOk()"
+          >Generar Reporte de Stock
+          </button>
+        </nz-page-header-extra>
+      </nz-page-header> 
+      <nz-content >
+        <div >
+  
+          <nz-collapse>
+            <nz-collapse-panel nzHeader="Mercadería" [nzActive]="true" [nzShowArrow]="true">
+              <nz-table nzShowPagination="false" style="overflow: auto">
+                <thead>
+                    <th></th>
+                    <!-- <th>Fecha {{ this.formaterDate(productsReportModel.date ?? null) }}</th>-->
+                    <!-- <th>Total $ {{productsReportModel.total != undefined ? productsReportModel.total : null}}</th>  -->
+                </thead>
+                <thead>
+                    <th>
+                        Marca
+                    </th>
+                    <th>
+                        Codigo
+                    </th>
+                    <th>
+                        Cantidad
+                    </th>
+                    <th>
+                        Precio
+                    </th>
+                    <th>
+                        SubTotal
+                    </th>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let info of productsReportModel?.products">
+                    <td>{{info?.brandName}}</td>
+                    <td>{{info?.code}}</td>
+                    <td>{{info?.quantity}}</td>
+                    <td>{{info?.purchase_Price}}</td>
+                    <td>{{info?.subTotal}}</td>
+                  </tr>
+                </tbody>
+              </nz-table>              
+            </nz-collapse-panel>
+          </nz-collapse>
+        </div>
+      </nz-content>
+</nz-layout>
+<app-popup-confirmation
+  #pop
+  [title]="'Confirmar Reporte de Venta'"
+  [header]="'¿Está seguro que desea realizar un Reporte de Stock?'"
+  [message]="'Esta acción no se puede revertir'"
+  (handleOk)="productsReport()"
+  >
+</app-popup-confirmation>

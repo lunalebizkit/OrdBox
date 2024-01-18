@@ -67,7 +67,9 @@ export class ProductService {
     }
   }
 
-
+public productsReport(){
+  return this.api.post(`product/productreport`, false)
+}
 
 }
 
