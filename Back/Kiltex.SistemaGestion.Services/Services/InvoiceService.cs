@@ -226,7 +226,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             }
         }
 
-        public async Task<OperationResponse<IEnumerable<DtoResponseInvoiceReportTotals>>> InvioceReport(RequestPaginatedData<StoredProcedureFilter> request)
+        public async Task<OperationResponse<IEnumerable<DtoResponseInvoiceReportTotals>>> InvoiceReport(RequestPaginatedData<StoredProcedureFilter> request)
         {
             IEnumerable<DtoResponseInvoiceReportTotals> invoiceReports = new List<DtoResponseInvoiceReportTotals>();
 
