@@ -9,6 +9,7 @@ import { PopupConfirmationComponent } from 'src/app/common/components/popup-conf
 import { InvoiceService } from '../invoices.service';
 import { InvoiceReportTotal } from '../model/invoice.model';
 import { formatCurrency, formatDate } from '@angular/common';
+import { CategoriesService } from '../../categories/category.services';
 @Component({
   selector: 'app-invoices-report',
   templateUrl: './invoices-report.component.html',
@@ -19,7 +20,6 @@ export class InvoicesReportComponent extends BaseComponent implements OnInit {
   @ViewChild('popup') popupComponent!: PopupConfirmationComponent;
   @ViewChild('header') headerComponent!: HeaderOperationsButtonsComponent;
   @ViewChild('pop') popComponent!: PopupConfirmationComponent;
-
   /*
  ** Parametros de busqueda
  */
@@ -27,16 +27,24 @@ export class InvoicesReportComponent extends BaseComponent implements OnInit {
     filter: {
       dateTo: null,
       dateFrom: null,
-      category: null,
+      categoryId: 0,
     },
     page: 0,
     pageSize: 10,
   };
+  queryData = {
+    filter: '',
+    page: 0,
+    pageSize: 20,
+  };
 
   invoicesReportList: InvoiceReportTotal[] = [];
   loading = false;
+  dia: any;
+  categoryList: any;
   constructor(
     notificacionService: NzNotificationService,
+    private serviceCategory: CategoriesService,
     el: ElementRef,
     message: NzMessageService,
     private router: Router,
@@ -47,14 +55,15 @@ export class InvoicesReportComponent extends BaseComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.ListCategory(this.queryData);
   }
+  
   invoicesReport() {
     this.loading = true;
     this.service.getInvoiceReport(this.queryParams).subscribe({
       next: (r) => {
         this.invoicesReportList = r;
         this.loading = false;
-        this.popComponent.handleCance()
       },
       error: () => {
         this.loading = false;
@@ -67,12 +76,33 @@ export class InvoicesReportComponent extends BaseComponent implements OnInit {
       this.popComponent.showConfirmation()
     } catch (error) { }
   }
-
-  handleOk() {
-    this.invoicesReport()
+  changeDate( fecha: any):void {             
+    this.queryParams.filter.dateFrom = fecha;
+    
+  }
+  changeEndDate( fecha: any):void {
+     this.queryParams.filter.dateTo= fecha;        
   }
 
   formaterDate(date: string | number | Date): string {
     return formatDate(date, 'MM/dd/YYYY', this.locale);
+  }
+  ListCategory(params:any):void{
+    this.loading = true;
+    this.serviceCategory.getByFilter(params).subscribe({
+      next: (r) => {
+        this.categoryList = r.data; 
+        this.loading = false;
+      },
+      error: () => {
+        this.loading = false;
+        this.categoryList = [];
+      },
+    });
+  }
+  categorySelectedChange(id: number): void {
+    this.queryParams.filter.categoryId = id;
+    console.log(id);
+    
   }
 }

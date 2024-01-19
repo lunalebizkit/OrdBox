@@ -1,57 +1,125 @@
 <nz-layout>
   <nz-page-header class="list-header">
       <nz-page-header-title>Reporte de venta</nz-page-header-title>
-      <nz-page-header-extra>
-        <button
-          nz-tooltip
-          nzTooltipTitle="Generar Reporte de Venta"
-          nz-button
-          nzType="primary"
-          (click)="msjConfirmOk()"
-        >Generar Reporte de Venta
-        </button>
-      </nz-page-header-extra>
     </nz-page-header>   
     <nz-content >
       <div >
-
         <nz-collapse>
-          <nz-collapse-panel nzHeader="Ventas {{ this.formaterDate(data.invoiceDate) }}" [nzActive]="true" [nzShowArrow]="true" *ngFor="let data of invoicesReportList;">
-            <nz-table nzShowPagination="false" style="overflow: auto" [nzData]="data.invoicesReports">
+          <nz-collapse-panel 
+          nzSize="small"
+            nzHeader="Filtros"
+            [nzActive]="true">
+            <form nz-form>
+            <div nz-row>
+                <nz-form-item style="margin-left: 100px; font-weight: bold">
+                  <nz-form-label >Fecha Desde</nz-form-label>
+                  <nz-form-control >
+                    <nz-date-picker
+                    nzFormat="dd/MM/yyyy"
+                    [(ngModel)]="queryParams.filter.dateFrom"
+                    name="dateTo"
+                    [nzPlaceHolder]="'Fecha'"       
+                    [nzAllowClear]="true"
+                    (ngModelChange)='changeDate($event)'
+                    ></nz-date-picker>
+                  </nz-form-control>
+                </nz-form-item>
+                <nz-form-item style="margin-left: 15px; font-weight: bold">
+                  <nz-form-label >Fecha Hasta</nz-form-label>
+                  <nz-form-control >
+                    <nz-date-picker
+                    nzFormat="dd/MM/yyyy"
+                    [(ngModel)]="queryParams.filter.dateTo"
+                    name="dateFrom"
+                    [nzPlaceHolder]="'Fecha'"       
+                    [nzAllowClear]="true"
+                    (ngModelChange)='changeEndDate($event)'
+                    ></nz-date-picker>
+                  </nz-form-control>
+                </nz-form-item>
+                <div nz-col nzSpan="6">
+                  <nz-form-item style="margin-left: 15px">
+                    <nz-form-label style="font-weight: bold"nzFor="category">Categoría </nz-form-label>
+                    <nz-select nzPlaceHolder="Ingrese una categoria" nzAllowClear  
+                    [(ngModel)]="queryParams.filter.categoryId"
+                    [ngModelOptions]="{ standalone: true }"
+                    (ngModelChange)="categorySelectedChange($event)">
+                    <ng-container *ngFor="let category of categoryList">
+                      <nz-option [nzValue]="category.id" [nzLabel]="category.description"></nz-option>
+                    </ng-container>
+                    </nz-select> 
+                  </nz-form-item>
+                </div>
+                <button
+                nz-tooltip
+                nzTooltipTitle="Generar Reporte de Venta"
+                nz-button
+                nzType="primary"
+                (click)="invoicesReport()"
+              >Generar Reporte de Venta
+              </button>
+      
+            </div>
+          </form>
+          </nz-collapse-panel>
+        </nz-collapse>
+        <nz-collapse>
+          <nz-collapse-panel 
+          nzHeader="Ventas {{ this.formaterDate(data.invoiceDate) }}" 
+          [nzActive]="true" 
+          [nzShowArrow]="true" 
+          *ngFor="let data of invoicesReportList;">
+            <nz-table 
+            nzShowPagination="false"
+             style="overflow: auto" 
+             [nzData]="data.invoicesReports"
+             class="tabla"
+             nzBordered="false"
+             [nzLoading]="loading"
+             [nzSize]="'small'">
+              <thead>
+                <tr>
+                  <th>Nombre Producto</th>
+                  <th>Proveedor</th>
+                  <th>Cantidad</th>
+                  <th>Subtotal</th>
+                </tr>
+              </thead>
               <tbody>
                 <tr *ngFor="let info of data.invoicesReports">
-                  <td>{{ this.formaterDate(info.date) }}</td>
                   <td>{{info?.productName}}</td>
                   <td>{{info?.customerName}}</td>
                   <td>{{info?.quantity}}</td>
                   <td>{{info?.subTotal}}</td>
                 </tr>
               </tbody>
-            </nz-table>
-            <tfoot>
-              <th>
-                <tr>
-                  <td></td>
-                  <td>Cantidad {{data.totalQuantity}}</td>
-                  <td></td>
-                  <td>PrecioTotal {{data.totalPrice}}</td>
-                  <td></td>
-                  <td>SubTotal {{data.totalSubTotal}}</td>
-                </tr>
-              </th>
-            </tfoot>
+           </nz-table>
+           <div class="contBoxGree">  
+              <tr >
+                <td >
+                  <b>Cantidad :</b
+                  ><span style="color: blue; font-size: 15px; font-weight: bold; margin-right: 50px;"
+                    >{{data.totalQuantity}}
+                  </span>
+                </td>
+                <td >
+                  <b>SubTotal: </b>
+                  <span style="color: blue; font-size: 15px ; font-weight: bold;margin-right: 50px;"
+                    >{{data.totalSubTotal}}
+                  </span>
+                </td>
+                <td>
+                  <b>PrecioTotal:</b
+                  ><span style="color: blue; font-size: 15px; font-weight: bold;"
+                    >{{data.totalPrice}} 
+                  </span>
+                </td>
+              </tr>
+         
+          </div>
+           
           </nz-collapse-panel>
         </nz-collapse>
       </div>
     </nz-content>
 </nz-layout>
-
-<app-popup-confirmation
-  #pop
-  [title]="'Confirmar Reporte de Venta'"
-  [header]="'¿Está seguro que desea realizar un Reporte de Venta?'"
-  [message]="'Esta acción no se puede revertir'"
-  (handleOk)="invoicesReport()"
-
-  >
-</app-popup-confirmation>

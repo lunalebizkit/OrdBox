@@ -17,7 +17,12 @@
   
           <nz-collapse>
             <nz-collapse-panel nzHeader="Mercadería" [nzActive]="true" [nzShowArrow]="true">
-              <nz-table nzShowPagination="false" style="overflow: auto">
+              <nz-table   nzShowPagination="false"
+             style="overflow: auto" 
+             class="tabla"
+             nzBordered="false"
+             [nzLoading]="loading"
+             [nzSize]="'small'">>
                 <thead>
                     <th></th>
                     <!-- <th>Fecha {{ this.formaterDate(productsReportModel.date ?? null) }}</th>-->

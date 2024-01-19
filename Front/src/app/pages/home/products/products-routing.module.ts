@@ -6,10 +6,10 @@ import { ProductsReportComponent } from './products-report/products-report.compo
 
 const routes: Routes = [
     {
-        path: 'list', component: ProductsListComponent
-    },
+        path: '', component: ProductsListComponent,
+    }, 
     { path: 'updateprice', component: UpdatePriceProductsComponent },
-    { path: 'report', component: ProductsReportComponent }
+    { path: 'productsReport', component: ProductsReportComponent }
 ];
 @NgModule({
     imports: [RouterModule.forChild(routes)],
