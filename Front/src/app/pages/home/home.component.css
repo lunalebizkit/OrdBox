@@ -16,9 +16,6 @@ nz-page-header {
   margin-left: auto;
 
 }
-/* li{
-  margin-left:55px;
-} */
 @media only screen and (max-width: 1000px) {
   nz-footer {
     text-align: center;
@@ -74,4 +71,23 @@ nz-page-header {
   .img{
     display: none;
   }
+}
+.theme-switch-wrapper {
+  display: flex;
+  align-items: center;
+
+  em {
+    margin-left: 10px;
+    font-size: 1rem;
+  }
+}
+.theme-switch {
+  display: inline-block;
+  height: 34px;
+  position: relative;
+  width: 60px;
+}
+
+.theme-switch input {
+  display:none;
 }

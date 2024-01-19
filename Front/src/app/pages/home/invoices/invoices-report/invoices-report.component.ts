@@ -102,7 +102,6 @@ export class InvoicesReportComponent extends BaseComponent implements OnInit {
   }
   categorySelectedChange(id: number): void {
     this.queryParams.filter.categoryId = id;
-    console.log(id);
     
   }
 }
