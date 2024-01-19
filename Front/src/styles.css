@@ -5,17 +5,72 @@
     --backg-A: rgba(118, 233, 194, 0.829);
     --backg-B: rgba(135, 206, 250, 0.788);
     --backg-C: rgba(255, 182, 193, 0.781);
+    --background: #ffffff;
+    --text: #666;
+    --btn-green: #27AE60;
+    --btn-green-hover: #35c370;
+    --box-shadow: #a3a1a3;
+    --btn-txt : #3daeff;
+    --btn-txt-hover : #67b7f0;
 }
-.btn-export{
-    background-color: #27AE60;
+
+.btn-txt-export {
+    background-color: var(--btn-txt);
     border: none;
+    margin-left: 30px;
+    margin-top: 3px;
 }
-.btn-export:hover{
-    background-color: #35c370;
+
+.btn-txt-export:hover {
+    background-color: var(--btn-txt-hover)
 }
-.ml-5{
+
+.btn-excel-export {
+    background-color: var(--btn-green);
+    border: none;
+    margin-left: 30px;
+    margin-top: 3px;
+}
+
+.btn-excel-export:hover {    
+    background-color: var(--btn-green-hover)
+}
+.btn-reprint {
+    background-color: #24ce41;
+    color: var(--background);
+}
+
+.btn-reprint:hover {    
+    background-color: var(--btn-green-hover)
+}
+
+.ml-5 {
     margin-left: 5px;
 }
-body{
+
+body {
     font-family: Trebuchet MS
+}
+.list-header {
+    position: relative;
+    height: 64px;
+    padding: 10px;
+    background: var(--background);  
+    box-shadow: -1px 1px 5px 1px var(--box-shadow);
+    margin-bottom: 10px;
+}
+
+@media (prefers-color-scheme: dark){
+    :root {
+        --backg-A: rgba(118, 233, 195, 0.653);
+        --backg-B: rgba(135, 206, 250, 0.614);
+        --backg-C: rgba(255, 182, 193, 0.562);
+        --background: #333237;
+        --text: #f8f8f8;
+        --btn-green: #27AE60;
+        --btn-green-hover: #35c370;
+        --box-shadow: #a3a1a3;
+        --btn-txt : #3daeff;
+        --btn-txt-hover : #67b7f0;
+    }
 }
