@@ -50,10 +50,10 @@ export class ProductsReportComponent extends BaseComponent implements OnInit {
       }
     
       productsReport() {
-        this.loading = true;
+       this.loading = true;
         this.service.productsReport().subscribe({
-          next: (r) => {
-            this.productsReportList = r;
+          next: (r) => {  
+           this.productsReportList = r;
             this.finishPage = this.productsReportList.products.length/100;
             this.actualPage= 0;
             this.loading = false;         
