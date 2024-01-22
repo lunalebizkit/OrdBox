@@ -9,7 +9,6 @@
 
   <nz-page-header-extra class="menu">
     <ul nz-menu nzMode="horizontal">
-
       <li nz-submenu nzPlacement="bottomLeft" nzTitle="Persona" nzIcon="user">
         <ul>
           <li nz-menu-item nzMatchRouter style="padding-left: 5%;">
@@ -30,7 +29,7 @@
         <ul>
           <li nz-menu-item nzMatchRouter style="padding-left: 5%;">
             <span nz-icon [nzType]="'gold'" [nzTheme]="'twotone'" [nzTwotoneColor]="'#EFF22D'"> </span>
-            <a routerLink="/home/products" style="padding-left: 5%;">Productos</a>
+            <a routerLink="/home/products/list" style="padding-left: 5%;">Productos</a>
           </li>
           <li nz-menu-item nzMatchRouter style="padding-left: 5%;">
             <span nz-icon [nzType]="'project'" [nzTheme]="'twotone'" [nzTwotoneColor]="'#CB2DF2'"> </span>
@@ -112,43 +111,39 @@
           </li>
           <li nz-menu-item nzMatchRouter style="padding-left: 5%;">
             <span nz-icon [nzType]="'container'" [nzTheme]="'twotone'" [nzTwotoneColor]="'#ff0000'"> </span>
-            <a routerLink="/home/products/productsReport" style="padding-left: 8%;">Informe de Stock</a>
+            <a routerLink="/home/products/report" style="padding-left: 8%;">Informe de Stock</a>
           </li>
           <li nz-menu-item nzMatchRouter style="padding-left: 5%;">
             <span nz-icon [nzType]="'container'" [nzTheme]="'twotone'" [nzTwotoneColor]="'#ff0000'"> </span>
             <a routerLink="/home/invoices/report" style="padding-left: 8%;">Informe de ventas</a>
-          </li>
+          </li>          
         </ul>
       </li>
-<!--Crear una lista presupuetro-->
-     
-
-
+<!--Crear una lista presupuetro-->   
       <li nz-submenu nzTitle="Sistema" nzIcon="setting">
         <ul>
           <li nz-menu-item nzMatchRouter style="padding-left: 5%;">
             <span nz-icon [nzType]="'setting'" [nzTheme]="'twotone'"> </span>
             <a routerLink="/home/permission" style="padding-left: 8%;">Configuración</a>
-          </li>
+          </li>         
           <li nz-menu-item (click)="logOut()" style="padding-left: 5%;">
             <span nz-icon [nzType]="'api'" [nzTheme]="'twotone'" [nzTwotoneColor]="'#eb2f96'"> </span>
             Salir del Sistema
           </li>
         </ul>
-      </li>
-
+      </li>      
     </ul>
   </nz-page-header-extra>
   <nz-page-header-extra class="avatar" style="margin-top: 1rem;">
+    <nz-switch>Dark Mode</nz-switch>
+    <nz-divider nzType="vertical"></nz-divider>
     <nz-avatar [nzGap]="2" [ngStyle]="{ 'background-color': color }" [nzText]="usuario" nzSize="large"
-      style="vertical-align: middle;">
-    </nz-avatar>
+    style="vertical-align: middle;">
+  </nz-avatar>
   </nz-page-header-extra>
 
   <nz-page-header-content>
-
     <router-outlet></router-outlet>
-
     <div *ngIf="this.permiso.length == 0" style="height: 25em; position: absolute; width: 100vh;"></div>
 
 
