@@ -22,8 +22,10 @@ export class ProductsReportComponent extends BaseComponent implements OnInit {
     @ViewChild('pop') popComponent!: PopupConfirmationComponent;
 
     loading =false;
+     finishPage : number = 0;
+     actualPage: number = 0;
 
-    productsReportModel!: ProductReport;
+    productsReportList!: ProductReport;
 
     constructor(
         notificacionService: NzNotificationService,
@@ -47,7 +49,11 @@ export class ProductsReportComponent extends BaseComponent implements OnInit {
         this.loading = true;
         this.service.productsReport().subscribe({
           next: (r) => {
-            this.productsReportModel = r;
+            this.productsReportList = r;
+            this.finishPage = this.productsReportList.products.length/100;
+            this.actualPage= 0;
+            console.log(r.products.length/100);
+            
             this.loading = false;
             this.popComponent.handleCance();            
           },
@@ -64,5 +70,14 @@ export class ProductsReportComponent extends BaseComponent implements OnInit {
     
       formaterDate(date: string | number | Date): string {
         return formatDate(date, 'MM/dd/YYYY', this.locale);
+      }
+      onScroll() {
+        if (this.actualPage < this.finishPage) {
+          this.actualPage ++;
+          console.log("hola");
+          
+        } else {
+          console.log('No more lines. Finish page!');
+        }
       }
 }

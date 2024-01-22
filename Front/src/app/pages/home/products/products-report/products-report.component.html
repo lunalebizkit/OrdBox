@@ -13,51 +13,49 @@
         </nz-page-header-extra>
       </nz-page-header> 
       <nz-content >
-        <div >
-  
           <nz-collapse>
-            <nz-collapse-panel nzHeader="Mercadería" [nzActive]="true" [nzShowArrow]="true">
-              <nz-table   nzShowPagination="false"
-             style="overflow: auto" 
-             class="tabla"
-             nzBordered="false"
-             [nzLoading]="loading"
-             [nzSize]="'small'">>
-                <thead>
-                    <th></th>
-                    <!-- <th>Fecha {{ this.formaterDate(productsReportModel.date ?? null) }}</th>-->
-                    <!-- <th>Total $ {{productsReportModel.total != undefined ? productsReportModel.total : null}}</th>  -->
-                </thead>
-                <thead>
-                    <th>
-                        Marca
-                    </th>
-                    <th>
-                        Codigo
-                    </th>
-                    <th>
-                        Cantidad
-                    </th>
-                    <th>
-                        Precio
-                    </th>
-                    <th>
-                        SubTotal
-                    </th>
+            <nz-collapse-panel nzHeader="Mercadería" [nzActive]="true" [nzShowArrow]="true" >
+              <div class="table" infiniteScroll [infiniteScrollDistance]="10"  [infiniteScrollThrottle]="100" (scrolled)="onScroll()"> 
+               <div>
+                <tr *ngIf="productsReportList">
+                  <th style="background-color: white "></th>
+                  <th style="background-color: white  "></th>
+                  <th style="background-color: white  "></th>
+                  <th *ngIf="productsReportList" style="background-color: rgb(223, 223, 223); font-size:small;">
+                    <strong>Fecha :</strong> {{ productsReportList.date != undefined ? this.formaterDate(productsReportList.date) : null }}<br>
+                    <strong>Total :</strong> $ {{productsReportList?.total != undefined ? productsReportList?.total : null}} </th>
+                  <th style="background-color: white "></th>
+                </tr>
+               </div> 
+              <nz-table  
+              nzShowPagination="false"
+              class="tabla"
+              nzBordered="false"
+              [nzLoading]="loading"
+              nzTableLayout="fixed"
+              [nzSize]="'small'">
+                <thead>  
+                  <tr>
+                    <th>Marca</th>
+                    <th>Código</th>
+                    <th>Cantidad</th>
+                    <th>Precio</th>
+                    <th>SubTotal</th> 
+                  </tr>
                 </thead>
                 <tbody>
-                  <tr *ngFor="let info of productsReportModel?.products">
+                  <tr *ngFor="let info of productsReportList?.products">
                     <td>{{info?.brandName}}</td>
                     <td>{{info?.code}}</td>
                     <td>{{info?.quantity}}</td>
                     <td>{{info?.purchase_Price}}</td>
                     <td>{{info?.subTotal}}</td>
                   </tr>
-                </tbody>
-              </nz-table>              
+               </tbody>
+              </nz-table>  
+              </div>      
             </nz-collapse-panel>
           </nz-collapse>
-        </div>
       </nz-content>
 </nz-layout>
 <app-popup-confirmation

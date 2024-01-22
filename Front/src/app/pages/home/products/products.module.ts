@@ -24,6 +24,7 @@ import { AgGridModule } from 'ag-grid-angular';
 import { NzIconModule } from "ng-zorro-antd/icon";
 import { ProductsEditDrawerComponent } from "./products-edit-drawer/products-edit.drawer.component";
 import { ProductsReportComponent } from "./products-report/products-report.component";
+import { InfiniteScrollModule } from "ngx-infinite-scroll";
 
 @NgModule({
     imports: [CommonModule,
@@ -47,7 +48,8 @@ import { ProductsReportComponent } from "./products-report/products-report.compo
     NzUploadModule,
     NzSpaceModule,
     NzImageModule,
-    AgGridModule  
+    AgGridModule,
+    InfiniteScrollModule  
     ],
     declarations:[ ProductsListComponent, UpdatePriceProductsComponent, ProductsEditDrawerComponent, ProductsReportComponent]
 })

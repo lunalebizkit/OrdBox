@@ -8,7 +8,6 @@
 }
 .tabla th{
   font-size: 12px;
-  position: sticky;
   top: 0; 
   padding: 6%;
   z-index: 2;
@@ -25,8 +24,4 @@
   position: relative;
   border-collapse: collapse;
 } 
-.tabla {
-  width: 100%;
-  table-layout: fixed;
-}
 
