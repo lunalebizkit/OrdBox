@@ -20,10 +20,14 @@ export class ProductsReportComponent extends BaseComponent implements OnInit {
     @ViewChild('popup') popupComponent!: PopupConfirmationComponent;
     @ViewChild('header') headerComponent!: HeaderOperationsButtonsComponent;
     @ViewChild('pop') popComponent!: PopupConfirmationComponent;
+    
 
-    loading =false;
+    loading!: boolean;
      finishPage : number = 0;
      actualPage: number = 0;
+     selectedIndex!: number;
+     selectedProduct: any;
+     index!: number;
 
     productsReportList!: ProductReport;
 
@@ -52,20 +56,12 @@ export class ProductsReportComponent extends BaseComponent implements OnInit {
             this.productsReportList = r;
             this.finishPage = this.productsReportList.products.length/100;
             this.actualPage= 0;
-            console.log(r.products.length/100);
-            
-            this.loading = false;
-            this.popComponent.handleCance();            
+            this.loading = false;         
           },
           error: () => {
             this.loading = false;
-            // this.invoicesReportList = [];
           },
         });
-      }
-
-      handleOk() {
-        this.productsReport()
       }
     
       formaterDate(date: string | number | Date): string {
@@ -73,11 +69,44 @@ export class ProductsReportComponent extends BaseComponent implements OnInit {
       }
       onScroll() {
         if (this.actualPage < this.finishPage) {
-          this.actualPage ++;
-          console.log("hola");
-          
+          this.actualPage ++; 
         } else {
           console.log('No more lines. Finish page!');
         }
       }
+       currencyFormat(data: any):string  {    
+    return formatCurrency(data, this.locale, '$', 'ARS', '1.1-2')
+  }
+  
+  onClick(datos: any, index: number): void {
+    this.index = index;
+    this.selectedIndex = index;
+    this.selectedProduct = datos;
+  }
+  myNavegation(event: any) {
+    switch (event.key) {
+      case 'ArrowDown':
+        let nextCell =
+          this.productsReportList.products.length > this.selectedIndex
+            ? ++this.selectedIndex
+            : this.productsReportList.products.length;
+        if (this.productsReportList.products[nextCell] !== undefined) {
+          this.selectedProduct = this.productsReportList.products[nextCell];
+          this.index = nextCell;
+          document.getElementById(nextCell.toString())?.focus();
+        }
+        setTimeout(() => {
+          this.onScroll;
+        }, 9000)
+        break;
+      case 'ArrowUp':
+        let previousCell = this.selectedIndex > 0 ? --this.selectedIndex : 0;
+        if (this.productsReportList.products[previousCell] !== undefined) {
+          this.selectedProduct = this.productsReportList.products[previousCell];
+          this.index = previousCell;
+          document.getElementById(previousCell.toString())?.focus();
+        }
+        break;
+    }
+  }
 }

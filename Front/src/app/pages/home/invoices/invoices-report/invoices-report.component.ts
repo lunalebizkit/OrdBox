@@ -101,8 +101,9 @@ export class InvoicesReportComponent extends BaseComponent implements OnInit {
     });
   }
   categorySelectedChange(id: number): void {
-    this.queryParams.filter.categoryId = id;
-    console.log(id);
-    
+    this.queryParams.filter.categoryId = id;    
+  }
+  currencyFormat(data: any):string  {    
+    return formatCurrency(data, this.locale, '$', 'ARS', '1.1-2')
   }
 }
