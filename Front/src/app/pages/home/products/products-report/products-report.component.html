@@ -12,6 +12,7 @@
           </button>
         </nz-page-header-extra>
       </nz-page-header> 
+      <nz-spin [nzSpinning]="loading" >
       <nz-content *ngIf="productsReportList">
           <nz-collapse>
             <nz-collapse-panel nzHeader="Mercadería" [nzActive]="true" [nzShowArrow]="true" >
@@ -33,17 +34,17 @@
               class="tabla"
               [nzData]="productsReportList.products"
               nzBordered="false"
-              [nzLoading]="loading"
               nzTableLayout="fixed"
               [nzSize]="'small'"
               #tablaReport>
                 <thead>  
                   <tr>
-                    <th>Marca</th>
-                    <th>Código</th>
-                    <th>Cantidad</th>
-                    <th>Precio</th>
-                    <th>SubTotal</th> 
+                    <th nzEllipsis nzWidth="260px">Producto</th>
+                    <th nzEllipsis nzWidth="70px">Marca</th>
+                    <th nzEllipsis nzWidth="90px" style="text-align: right">Código</th>
+                    <th nzEllipsis nzWidth="50px" style="text-align: center">Cantidad</th>
+                    <th nzEllipsis nzWidth="50px" style="text-align: right;">Precio</th>
+                    <th nzEllipsis nzWidth="70px"  style="text-align: right">SubTotal</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -56,11 +57,12 @@
                   [style.background-color]="
                   info === selectedProduct ? 'lightblue' : ''
                 ">
+                    <td>{{info.description}}</td>
                     <td>{{info.brandName}}</td>
-                    <td>{{info.code}}</td>
-                    <td>{{info.quantity}}</td>
-                    <td>{{info.purchase_Price}}</td>
-                    <td>{{this.currencyFormat(info.subTotal)}}</td>
+                    <td nzEllipsis style="text-align: right">{{info.code}}</td>
+                    <td style="text-align: center" >{{info.quantity}}</td>
+                    <td nzEllipsis style=" color: blue;text-align: right">{{this.currencyFormat(info.purchase_Price)}}</td>
+                    <td nzEllipsis style="font-weight: bold; text-align: right">{{this.currencyFormat(info.subTotal)}}</td>
                   </tr>
                </tbody>
               </nz-table>  
@@ -68,4 +70,5 @@
             </nz-collapse-panel>
           </nz-collapse>
       </nz-content>
+    </nz-spin>
 </nz-layout>

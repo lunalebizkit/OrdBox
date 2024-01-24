@@ -10,8 +10,9 @@
             nzHeader="Filtros"
             [nzActive]="true">
             <form nz-form>
-            <div nz-row>
-                <nz-form-item style="margin-left: 100px; font-weight: bold">
+            <div nz-row style="margin-left: 15%;">
+              <div nz-col nzSpan="8" class="mb-2">
+                <nz-form-item style=" font-weight: bold;">
                   <nz-form-label >Fecha Desde</nz-form-label>
                   <nz-form-control >
                     <nz-date-picker
@@ -24,7 +25,9 @@
                     ></nz-date-picker>
                   </nz-form-control>
                 </nz-form-item>
-                <nz-form-item style="margin-left: 15px; font-weight: bold">
+              </div>
+                <div  nz-col nzSpan="10">
+                 <nz-form-item style=" font-weight: bold">
                   <nz-form-label >Fecha Hasta</nz-form-label>
                   <nz-form-control >
                     <nz-date-picker
@@ -36,11 +39,14 @@
                     (ngModelChange)='changeEndDate($event)'
                     ></nz-date-picker>
                   </nz-form-control>
-                </nz-form-item>
-                <div nz-col nzSpan="6">
-                  <nz-form-item style="margin-left: 15px">
+                </nz-form-item> 
+                </div>
+                
+                <div  nz-col nzSpan="10">
+                  <nz-form-item>
                     <nz-form-label style="font-weight: bold"nzFor="category">Categoría </nz-form-label>
-                    <nz-select nzPlaceHolder="Ingrese una categoria" nzAllowClear  
+                    <nz-form-control [nzSm]="16">
+                    <nz-select  nzPlaceHolder="Ingrese una categoria" nzAllowClear  
                     [(ngModel)]="queryParams.filter.categoryId"
                     [ngModelOptions]="{ standalone: true }"
                     (ngModelChange)="categorySelectedChange($event)">
@@ -48,9 +54,10 @@
                       <nz-option [nzValue]="category.id" [nzLabel]="category.description"></nz-option>
                     </ng-container>
                     </nz-select> 
+                  </nz-form-control>
                   </nz-form-item>
                 </div>
-                <button
+                <button style="margin-left: 10px;"
                 nz-tooltip
                 nzTooltipTitle="Generar Reporte de Venta"
                 nz-button
@@ -93,18 +100,18 @@
              [nzSize]="'small'">
               <thead>
                 <tr>
-                  <th>Nombre Producto</th>
-                  <th>Proveedor</th>
-                  <th>Cantidad</th>
-                  <th>Subtotal</th>
+                  <th nzEllipsis nzWidth="260px">Producto</th>
+                  <th nzEllipsis nzWidth="90px">Proveedor</th>
+                  <th nzEllipsis nzWidth="50px" style="text-align: center">Cantidad</th>
+                  <th nzEllipsis nzWidth="70px"  style="text-align: right">Subtotal</th>
                 </tr>
               </thead>
               <tbody>
                 <tr *ngFor="let info of data.invoicesReports">
                   <td>{{info.productName}}</td>
-                  <td>{{info.customerName}}</td>
-                  <td>{{info.quantity}}</td>
-                  <td>{{ this.currencyFormat(info.subTotal)}}</td>
+                  <td nzEllipsis>{{info.customerName}}</td>
+                  <td style="text-align: center" >{{info.quantity}}</td>
+                  <td nzEllipsis style="font-weight: bold; text-align: right" >{{ this.currencyFormat(info.subTotal)}}</td>
                 </tr>
               </tbody>
            </nz-table>
