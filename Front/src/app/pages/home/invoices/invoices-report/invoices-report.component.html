@@ -66,9 +66,23 @@
         <nz-collapse>
           <nz-collapse-panel 
           nzHeader="Ventas {{ this.formaterDate(data.invoiceDate) }}" 
-          [nzActive]="true" 
+          [nzActive]="false" 
           [nzShowArrow]="true" 
           *ngFor="let data of invoicesReportList;">
+          <div style="margin-left: 84%;" >
+            <tr *ngIf="invoicesReportList" >
+              <th style="background-color: white "></th>
+              <th style="background-color: white  "></th>
+              <th style="background-color: white  "></th>
+              <th *ngIf="invoicesReportList" style="background-color: rgb(223, 223, 223); font-size:small; padding: 15px; margin-left: 150px;">
+                <b>PrecioTotal:</b
+                ><span style="color: blue; font-size: small; font-weight: bold;"
+                  >{{this.currencyFormat(data.totalPrice)}} 
+                </span>
+              </th>
+              <th style="background-color: white "></th>
+            </tr>
+           </div> 
             <nz-table 
             nzShowPagination="false"
              style="overflow: auto" 
@@ -87,10 +101,10 @@
               </thead>
               <tbody>
                 <tr *ngFor="let info of data.invoicesReports">
-                  <td>{{info?.productName}}</td>
-                  <td>{{info?.customerName}}</td>
-                  <td>{{info?.quantity}}</td>
-                  <td>{{info?.subTotal}}</td>
+                  <td>{{info.productName}}</td>
+                  <td>{{info.customerName}}</td>
+                  <td>{{info.quantity}}</td>
+                  <td>{{ this.currencyFormat(info.subTotal)}}</td>
                 </tr>
               </tbody>
            </nz-table>
@@ -105,13 +119,7 @@
                 <td >
                   <b>SubTotal: </b>
                   <span style="color: blue; font-size: 15px ; font-weight: bold;margin-right: 50px;"
-                    >{{data.totalSubTotal}}
-                  </span>
-                </td>
-                <td>
-                  <b>PrecioTotal:</b
-                  ><span style="color: blue; font-size: 15px; font-weight: bold;"
-                    >{{data.totalPrice}} 
+                    >{{this.currencyFormat(data.totalSubTotal)}}
                   </span>
                 </td>
               </tr>
