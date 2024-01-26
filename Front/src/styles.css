@@ -1,18 +1,44 @@
 /* You can add global styles to this file, and also import other style files */
 /* @import 'ag-grid-community/styles/ag-grid.css'; */
 /* @import 'ag-grid-community/styles/ag-theme-alpine.css'; */
+/* general colors */
+*{
+    --blue: blue;
+    
+    --blue-light: rgb(217, 239, 254);
+}
+
 :root {
+    color-scheme: light;
     --backg-A: rgba(118, 233, 194, 0.829);
     --backg-B: rgba(135, 206, 250, 0.788);
     --backg-C: rgba(255, 182, 193, 0.781);
-    --background: #ffffff;
+    --background: var(--body-background-light);
     --text: #666;
     --btn-green: #27AE60;
     --btn-green-hover: #35c370;
     --box-shadow: #a3a1a3;
-    --btn-txt : #3daeff;
-    --btn-txt-hover : #67b7f0;
+    --btn-txt: #3daeff;
+    --btn-txt-hover: #67b7f0;
 }
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        color-scheme: dark;
+        --backg-A: rgba(118, 233, 195, 0.653);
+        --backg-B: rgba(135, 206, 250, 0.614);
+        --backg-C: rgba(255, 182, 193, 0.562);
+        --background: var(--body-background-dark);
+        --text: #f8f8f8;
+        --btn-green: #27AE60;
+        --btn-green-hover: #35c370;
+        --box-shadow: #a3a1a3;
+        --btn-txt: #3daeff;
+        --btn-txt-hover: #67b7f0;
+    }
+}
+ 
+
 
 .btn-txt-export {
     background-color: var(--btn-txt);
@@ -32,15 +58,16 @@
     margin-top: 3px;
 }
 
-.btn-excel-export:hover {    
+.btn-excel-export:hover {
     background-color: var(--btn-green-hover)
 }
+
 .btn-reprint {
     background-color: #24ce41;
     color: var(--background);
 }
 
-.btn-reprint:hover {    
+.btn-reprint:hover {
     background-color: var(--btn-green-hover)
 }
 
@@ -49,28 +76,27 @@
 }
 
 body {
-    font-family: Trebuchet MS
+    font-family: Trebuchet MS;
+    font: var(--text);
+    background-color: var(--background);
 }
+
 .list-header {
     position: relative;
     height: 64px;
     padding: 10px;
-    background: var(--background);  
+    background: var(--background);
     box-shadow: -1px 1px 5px 1px var(--box-shadow);
     margin-bottom: 10px;
 }
-
-@media (prefers-color-scheme: dark){
-    :root {
-        --backg-A: rgba(118, 233, 195, 0.653);
-        --backg-B: rgba(135, 206, 250, 0.614);
-        --backg-C: rgba(255, 182, 193, 0.562);
-        --background: #333237;
-        --text: #f8f8f8;
-        --btn-green: #27AE60;
-        --btn-green-hover: #35c370;
-        --box-shadow: #a3a1a3;
-        --btn-txt : #3daeff;
-        --btn-txt-hover : #67b7f0;
-    }
+nz-footer {
+    text-align: center;
+    background-color: var(--background);
+}
+.invoiceReportFilter{    
+    display: flex;
+    flex-flow: row;
+}
+.marginLeft {
+    margin-left: 10px;
 }

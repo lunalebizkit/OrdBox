@@ -15,14 +15,14 @@
       <nz-spin [nzSpinning]="loading" >
       <nz-content *ngIf="productsReportList">
           <nz-collapse>
-            <nz-collapse-panel nzHeader="Mercadería" [nzActive]="true" [nzShowArrow]="true" >
+            <nz-collapse-panel nzHeader="Mercadería" [nzActive]="true" [nzShowArrow]="true" style="background-color: var(--blue-light);">
               <div >
                 <tr *ngIf="productsReportList"  
                 >
                   <th style="background-color: white "></th>
                   <th style="background-color: white  "></th>
                   <th style="background-color: white  "></th>
-                  <th *ngIf="productsReportList" style="background-color: var(--backg-B); font-size:small; padding: 15px; margin-left: 1px;">
+                  <th *ngIf="productsReportList" style="background-color: var(--blue-light); font-size:small; padding: 15px; margin-left: 1px;">
                     <strong>Fecha :</strong> {{ productsReportList.date != undefined ? this.formaterDate(productsReportList.date) : null }}<br>
                     <strong>Total :</strong> <span style="color: var(--blue);font-weight: bold;">{{productsReportList.total != undefined ? this.currencyFormat(productsReportList.total) : null}} </span></th>
                   <th style="background-color: white "></th>
