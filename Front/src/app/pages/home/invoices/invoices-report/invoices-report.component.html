@@ -94,7 +94,7 @@
               <tr *ngFor="let info of data.invoicesReports">
                 <td>{{info.productName}}</td>
                 <td nzEllipsis>{{info.customerName}}</td>
-                <td style="text-align: center">{{info.quantity}}</td>
+                <td style="font-weight: bold; text-align: center">{{info.quantity}}</td>
                 <td nzEllipsis style="font-weight: bold; text-align: right">{{ this.currencyFormat(info.subTotal)}}</td>
               </tr>
             </tbody>
