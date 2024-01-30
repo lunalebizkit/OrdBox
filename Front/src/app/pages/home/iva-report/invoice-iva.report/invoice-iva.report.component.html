@@ -3,7 +3,7 @@
     <nz-page-header-title>Reporte Iva Venta </nz-page-header-title>
     <nz-page-header-extra>
       <button nz-button routerLink="/home/periods" type="submit" nzSize="default" 
-      ><i nz-icon nzType="arrow-left" nzTheme="outline"></i>volver</button>
+      ><i nz-icon nzType="arrow-left" nzTheme="outline"></i>Volver</button>
     </nz-page-header-extra>
    
   </nz-page-header>
@@ -67,9 +67,8 @@
               nz-button
               nzSize="small"
               nzType="primary"
-              style="margin-left: 30px; margin-top:3px "
               (click)="exportExcel()"
-              class="btn-export"
+              class="btn-excel-export"
               >
               <span nz-icon nzType="download" nzTheme="outline"></span>Exportar Excel
             </button>
@@ -77,9 +76,8 @@
             nz-button
             nzSize="small"
             nzType="primary"
-            style="margin-left: 30px; margin-top:3px; background:rgb(0, 255, 98);"
             (click)="downloadTxt()"
-            class="btn-export"
+            class="btn-txt-export"
             >
             <span nz-icon nzType="download" nzTheme="outline"></span>Libro Iva Ventas
           </button>

@@ -31,10 +31,10 @@ namespace Kiltex.SistemaGestion.Services.Services
         private IConfiguration _config;
         private object color;
 
-        public EmailService(ErrorManager logger, DBContext context, IMapper maper, IConfiguration config) :
-          base(logger, context, maper)
+        public EmailService(ErrorManager logger, DBContext context, IMapper maper, IConfiguration configuration) :
+          base(logger, context, maper, configuration)
         {
-            _config = config;
+            _config = configuration;
         }
         ///Email General
 

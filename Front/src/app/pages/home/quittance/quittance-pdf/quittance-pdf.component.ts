@@ -107,8 +107,7 @@ import { QuittanceService } from '../quittance.service';
                 this.concept= r.concept
                 this.quittanceNumber = r.quittanceNumber,
                 this.customerAddress = r.address
-                this.total=r.total
-                console.log(r);
+                this.total=r.total;
                 
             },
             error:() => {this.isLoading = false;}

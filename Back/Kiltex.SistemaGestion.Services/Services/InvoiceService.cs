@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Dapper;
 using Kiltex.SistemaGestion.Domain;
 using Kiltex.SistemaGestion.Domain.Enum;
 using Kiltex.SistemaGestion.Domain.Model;
@@ -6,11 +7,15 @@ using Kiltex.SistemaGestion.SDK.Error;
 using Kiltex.SistemaGestion.Services.Common;
 using Kiltex.SistemaGestion.Services.ImpresoraFiscal;
 using Kiltex.SistemaGestion.Services.ImpresoraFiscal.Printer250F;
-using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
-using Microsoft.EntityFrameworkCore;
-using System.Text.RegularExpressions;
 using Kiltex.SistemaGestion.Services.LibroIvaDigital;
 using Kiltex.SistemaGestion.Services.LibrosIvaDigital;
+using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
+using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using System.Data;
+using System.Text.RegularExpressions;
 
 namespace Kiltex.SistemaGestion.Services.Services
 {
@@ -18,9 +23,8 @@ namespace Kiltex.SistemaGestion.Services.Services
     {
         private readonly PrinterStatus _config;
         private readonly IPrinter _printer;
-
-        public InvoiceService(ErrorManager logger, DBContext context, IMapper maper, IPrinter printer, PrinterStatus config) :
-            base(logger, context, maper)
+        public InvoiceService(ErrorManager logger, DBContext context, IMapper maper, IPrinter printer, PrinterStatus config, IConfiguration configuration) :
+            base(logger, context, maper, configuration)
         {
             _config = config;
             _printer = printer;
@@ -176,7 +180,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                     {
                         var error = await PrintInvoice(invoiceModel, ct);
 
-                    #region ERRORES
+                        #region ERRORES
 
                         if (error == "ErrorCliente")
                         {
@@ -222,6 +226,29 @@ namespace Kiltex.SistemaGestion.Services.Services
             }
         }
 
+        public async Task<OperationResponse<IEnumerable<DtoResponseInvoiceReportTotals>>> InvoiceReport(RequestPaginatedData<StoredProcedureFilter> request)
+        {
+            IEnumerable<DtoResponseInvoiceReportTotals> invoiceReports = new List<DtoResponseInvoiceReportTotals>();
+
+            var parameters = new { dateFrom = request.Filter.DateFrom, dateTo = request.Filter.DateTo, categoryId = request.Filter.CategoryId == 0 ? null : request.Filter.CategoryId };
+            using (var connection = new SqlConnection(ConnectionString))
+            {                
+                var ventas = connection.Query<DtoResponseInviocesReport>( StoredProcedure.INVOICEREPORTS, parameters, commandType: CommandType.StoredProcedure);
+                
+                var totalVentas = connection.Query<DtoResponseInvoiceReportTotals>(StoredProcedure.INVOICEREPORTSTOTAL, parameters, commandType: CommandType.StoredProcedure);
+                
+                foreach (var item in totalVentas)
+                {
+                    item.InvoicesReports = new List<DtoResponseInviocesReport>();
+                    
+                    item.InvoicesReports = ventas.Where(yo => (DateTimeOffset)yo.Date.Date == (DateTimeOffset)item.InvoiceDate).ToList();
+                  
+                }
+                invoiceReports = totalVentas;
+             
+            }
+            return new OperationResponse<IEnumerable<DtoResponseInvoiceReportTotals>>(invoiceReports);
+        }
 
         #region Alicuota Digital
 
@@ -248,7 +275,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                 MemoryStream ms = new MemoryStream();
                 TextWriter tw = new StreamWriter(ms);
 
-                foreach(var item in query)
+                foreach (var item in query)
                 {
                     var subtotal = item.Total - item.IvaTotal;
                     string sinComa = subtotal.ToString().Replace(",", "");
@@ -256,32 +283,32 @@ namespace Kiltex.SistemaGestion.Services.Services
                     var newItem = _mapper.Map<AlicuotaIvaDto>(item);
 
                     #region Condicionales Tipo
-                        if (item.Type == 2)
-                        {
-                            tipo= 6;
-                        }
-                        if (item.Type == 1)
-                        {
-                            tipo= 1;
-                        }
+                    if (item.Type == 2)
+                    {
+                        tipo = 6;
+                    }
+                    if (item.Type == 1)
+                    {
+                        tipo = 1;
+                    }
 
                     #endregion
-                    
+
                     foreach (var item2 in item.InvoiceDetails)
                     {
                         #region Condicionales Iva
-                            if (item2.Iva == 10.50m)
-                            {
-                                iva = 4;
-                            }
-                             if (item2.Iva == 21.00m)
-                            {
-                                iva = 5;
-                            }
-                            if (item2.Iva == 27.00m)
-                            {
-                                iva = 6;
-                            }
+                        if (item2.Iva == 10.50m)
+                        {
+                            iva = 4;
+                        }
+                        if (item2.Iva == 21.00m)
+                        {
+                            iva = 5;
+                        }
+                        if (item2.Iva == 27.00m)
+                        {
+                            iva = 6;
+                        }
                         #endregion
 
                         await tw.WriteAsync
@@ -289,9 +316,9 @@ namespace Kiltex.SistemaGestion.Services.Services
                                 tipo.ToString().PadLeft(3, '0') +
                                 newItem.PuntoDeVenta.ToString().PadLeft(5, '0') +
                                 item.InvoiceNumber.ToString().PadLeft(20, '0') +
-                                sinComa.ToString().PadLeft(15, '0') + 
+                                sinComa.ToString().PadLeft(15, '0') +
                                 iva.ToString().PadLeft(4, '0') +
-                                ivaSinComa.PadLeft(15, '0') + 
+                                ivaSinComa.PadLeft(15, '0') +
                                 "\n"
                             );
                     }
@@ -306,7 +333,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                 return new OperationResponse<byte[]>(bytes);
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine(ex);
                 throw;
@@ -346,7 +373,7 @@ namespace Kiltex.SistemaGestion.Services.Services
 
                     foreach (var item in query)
                     {
-                        if(item.Type == 2)
+                        if (item.Type == 2)
                         {
                             tipoComprobante = 6;
                         }
@@ -356,7 +383,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                             tipoComprobante = 1;
                         }
 
-                        if(item.CustomerCuit.Length == 8)
+                        if (item.CustomerCuit.Length == 8)
                         {
                             tipoDocumento = "96";
                         }
@@ -367,34 +394,34 @@ namespace Kiltex.SistemaGestion.Services.Services
                         }
                         string sinComa = item.Total.ToString().Replace(",", "");
                         var newItem = _mapper.Map<ArchivoTxtDto>(item);
-                        
-                            await tw.WriteAsync
-                                (
-                                    item.DateTime.ToString("yyyyMMdd") +
-                                    tipoComprobante.ToString().PadLeft(3, '0') +
-                                    newItem.PuntoDeVenta.PadLeft(5, '0') +
-                                    item.InvoiceNumber.ToString().PadLeft(20, '0') +
-                                    item.InvoiceNumber.ToString().PadLeft(20, '0') +
-                                    tipoDocumento +
-                                    item.CustomerCuit.ToString().PadLeft(20, '0') +
-                                    item.CustomerName.PadRight(30, ' ') +
-                                    sinComa.PadLeft(15, '0') +
-                                    newItem.NetoGravado +
-                                    newItem.NoCategorizados +
-                                    newItem.OperacionesExentas +
-                                    newItem.ImpuestosNacionales +
-                                    newItem.IngresosBrutos +
-                                    newItem.ImpuestosMunicipales +
-                                    newItem.ImpuestosInternos +
-                                    newItem.CodigoDeMoneda +
-                                    newItem.TipoDeCambio +
-                                    newItem.AlicuotaIva +
-                                    newItem.CodigoDeOperacion + 
-                                    newItem.OtrosTributos +
-                                    item.DateTime.ToString("yyyyMMdd") +
-                                    '\n'
 
-                               );
+                        await tw.WriteAsync
+                            (
+                                item.DateTime.ToString("yyyyMMdd") +
+                                tipoComprobante.ToString().PadLeft(3, '0') +
+                                newItem.PuntoDeVenta.PadLeft(5, '0') +
+                                item.InvoiceNumber.ToString().PadLeft(20, '0') +
+                                item.InvoiceNumber.ToString().PadLeft(20, '0') +
+                                tipoDocumento +
+                                item.CustomerCuit.ToString().PadLeft(20, '0') +
+                                item.CustomerName.PadRight(30, ' ') +
+                                sinComa.PadLeft(15, '0') +
+                                newItem.NetoGravado +
+                                newItem.NoCategorizados +
+                                newItem.OperacionesExentas +
+                                newItem.ImpuestosNacionales +
+                                newItem.IngresosBrutos +
+                                newItem.ImpuestosMunicipales +
+                                newItem.ImpuestosInternos +
+                                newItem.CodigoDeMoneda +
+                                newItem.TipoDeCambio +
+                                newItem.AlicuotaIva +
+                                newItem.CodigoDeOperacion +
+                                newItem.OtrosTributos +
+                                item.DateTime.ToString("yyyyMMdd") +
+                                '\n'
+
+                           );
                         newDtoDetalleResumem.Add(newItem);
                     }
                     tw.Flush();
@@ -411,7 +438,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                     throw;
                 }
                 finally
-                { 
+                {
                     OutPutFile.Close();
                     OutPutFile.Dispose();
                 }

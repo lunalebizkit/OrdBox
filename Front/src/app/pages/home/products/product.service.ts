@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ApiService } from './../../../common/services/api.base.service';
 import { Observable } from 'rxjs';
-import { ProductsModel } from './model/product.model';
 import { ProductAddModel } from './model/product.add.model';
 
 @Injectable({
@@ -67,7 +66,9 @@ export class ProductService {
     }
   }
 
-
+public productsReport(){
+  return this.api.post(`product/productreport`, false)
+}
 
 }
 

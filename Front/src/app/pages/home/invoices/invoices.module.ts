@@ -33,6 +33,7 @@ import { ReceiptEditComponent } from './receipt-edit/receipt-edit.component';
 import { ReceiptSupplierSearchComponent } from './receipt-supplier-search/receipt-supplier-search.component';
 import { ReceiptViewDrawerComponent } from './receipt-view-drawer/receipt-view-drawer.component';
 import { ReceiptProformaViewComponent } from './receipt-Proforma-view/receipt-Proforma-view.component';
+import { InvoicesReportComponent } from './invoices-report/invoices-report.component';
 @NgModule({
   imports: [
     AppCommonModule,
@@ -64,6 +65,7 @@ import { ReceiptProformaViewComponent } from './receipt-Proforma-view/receipt-Pr
     InvoiceProductSearchComponent,
     InvoicesListComponent,
     InvoicesViewDrawerComponent,
+    InvoicesReportComponent,
     ReceiptListComponent,
     ReceiptEditComponent,
     ReceiptSupplierSearchComponent,

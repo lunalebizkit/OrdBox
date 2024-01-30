@@ -7,13 +7,14 @@ using Kiltex.SistemaGestion.SDK.Error;
 using Kiltex.SistemaGestion.Services.Common;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace Kiltex.SistemaGestion.Services.Services
 {
     public class BrandService : BaseService
     {
-        public BrandService(ErrorManager logger, DBContext context, IMapper maper) :
-            base(logger, context, maper)
+        public BrandService(ErrorManager logger, DBContext context, IMapper maper, IConfiguration configuration) :
+            base(logger, context, maper, configuration)
         {}
         public async Task<OperationResponse<DtoResponseBrand>> GetById(long id)
         {

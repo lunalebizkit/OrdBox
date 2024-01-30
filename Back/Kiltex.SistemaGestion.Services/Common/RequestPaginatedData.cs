@@ -37,6 +37,12 @@ namespace Kiltex.SistemaGestion.Services.Common
     public class PeriodFilter
     {
         public DateTime Date { get; set; }
+    } 
+    public class StoredProcedureFilter
+    {
+        public Nullable<DateTime> DateFrom { get; set; }
+        public Nullable<DateTime> DateTo { get; set; }
+        public int? CategoryId { get; set; }
     }
 
 }

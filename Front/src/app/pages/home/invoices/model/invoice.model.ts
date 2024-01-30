@@ -1,3 +1,4 @@
+import { time } from "console";
 
 export interface InvoiceModel {
     id: number;
@@ -9,9 +10,9 @@ export interface InvoiceModel {
     customerAddress: string;
     observation: string;
     dateTime: Date;
-    iva21:number;
-    iva27:number;
-    iva10:number;
+    iva21: number;
+    iva27: number;
+    iva10: number;
     total: number;
     ivaTotal: number;
     type: number;
@@ -23,45 +24,63 @@ export interface InvoiceDetails {
     invoiceId: number;
     productId: number;
     productName: string;
-    productCode:number | null;
+    productCode: number | null;
     quantity: number;
     price: number;
     iva: number;
-    
-  
+
+
 }
 export interface InvoiceDetailList {
     stock: number,
-    productId:number;
-    ownCode : number;
-    code : number;
+    productId: number;
+    ownCode: number;
+    code: number;
     productName: string;
     quantity: number;
     price: number;
     subTotal: number;
-    iva: number ;
-    
+    iva: number;
+
 }
 export function invoiceGridParser(value: any, iva: number, price: number) {
     return {
-      stock: value.quantity,
-      productId: value.id,
-      code: value.code,
-      ownCode: value.id,
-      productName: value.description,
-      price: price,
-      quantity: 1,
-      subTotal: price,
-      iva: iva
-    }}
-    export function invoiceDetailParser(value: any, iva: number, price: number) {
-        return {
-          id: 0,
-          invoiceId: 0,
-          productId: value.id,
-          productName: value.description,
-          productCode: value.code,
-          price: price,
-          quantity: 1,
-         iva: iva
-        }}
+        stock: value.quantity,
+        productId: value.id,
+        code: value.code,
+        ownCode: value.id,
+        productName: value.description,
+        price: price,
+        quantity: 1,
+        subTotal: price,
+        iva: iva
+    }
+}
+export function invoiceDetailParser(value: any, iva: number, price: number) {
+    return {
+        id: 0,
+        invoiceId: 0,
+        productId: value.id,
+        productName: value.description,
+        productCode: value.code,
+        price: price,
+        quantity: 1,
+        iva: iva
+    }
+}
+export interface InvoiceReportTotal {
+    invoiceDate : Date;
+    totalQuantity: number;
+    totalPrice: number;
+    totalSubTotal : number;
+    invoicesReports: InvoiceReport[]
+
+}
+export interface InvoiceReport {
+    date : Date;
+    productName: string;
+    customerName: string;
+    quantity : number;
+    price: number; 
+    subTotal: number; 
+}

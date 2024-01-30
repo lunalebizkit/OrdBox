@@ -42,7 +42,7 @@ namespace Kiltex.SistemaGestion.Services.Services
         IConfiguration configuration,
         IWebHostEnvironment webHost,
     IMapper mapper) :
-        base(logger, context, /*queryManager, cacheManager, indexNames,*/ mapper)
+        base(logger, context, /*queryManager, cacheManager, indexNames,*/ mapper, configuration)
     {
         _googleStorage = googleStorage;
         _configImages = configImages;

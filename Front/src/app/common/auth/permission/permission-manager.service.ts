@@ -188,6 +188,12 @@ export class PermissionService {
         permissions: [Permission.GetQuittance, Permission.CreateQuittance],
       },
       //#endrregion
+      {
+        url: new RegExp('/home/products/report'),
+        permissions: [Permission.ViewProduct,
+          Permission.CreateProduct,
+          Permission.EditProduct,],
+      },
 
   ];
 

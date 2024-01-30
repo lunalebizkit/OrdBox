@@ -7,14 +7,15 @@ using Kiltex.SistemaGestion.Services.Models.Dtos;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
 
 namespace Kiltex.SistemaGestion.Services.Services
 {
     public class RolService : BaseService
     {
-        public RolService(ErrorManager logger, DBContext context, IMapper maper) :
-            base(logger, context, maper)
+        public RolService(ErrorManager logger, DBContext context, IMapper maper, IConfiguration configuration) :
+            base(logger, context, maper, configuration)
         { }
 
         public async Task<OperationResponse<IdResponse<long>>> Add(RequestAddRol model, CancellationToken ct = default)

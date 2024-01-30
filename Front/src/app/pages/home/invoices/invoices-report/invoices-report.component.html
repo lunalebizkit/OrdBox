@@ -1,0 +1,123 @@
+<nz-layout>
+  <nz-page-header class="list-header">
+    <nz-page-header-title>Reporte de venta</nz-page-header-title>
+  </nz-page-header>
+  <nz-content>
+    <div>
+      <nz-collapse>
+        <nz-collapse-panel nzSize="small" nzHeader="Filtros" [nzActive]="true">
+          <form nz-form>
+            <div nz-row>
+              <div nz-col [nzSpan]="12">
+                <div nz-row class="invoiceReportFilter" nzJustify="space-evenly">
+                  <div nz-col nzSpan="10">
+                    <nz-form-item style=" font-weight: bold;">
+                      <nz-form-label>Fecha Desde</nz-form-label>
+                      <nz-form-control>
+                        <nz-date-picker nzFormat="dd/MM/yyyy" [(ngModel)]="queryParams.filter.dateFrom" name="dateFrom"
+                          [nzPlaceHolder]="'Fecha'" [nzAllowClear]="true"
+                          (ngModelChange)='changeDate($event)'></nz-date-picker>
+                      </nz-form-control>
+                    </nz-form-item>
+                  </div>
+                  <div nz-col nzSpan="10" nzOffset="2">
+                    <nz-form-item class="marginLeft" style=" font-weight: bold">
+                      <nz-form-label>Fecha Hasta</nz-form-label>
+                      <nz-form-control>
+                        <nz-date-picker nzFormat="dd/MM/yyyy" [(ngModel)]="queryParams.filter.dateTo" name="dateTo"
+                          [nzPlaceHolder]="'Fecha'" [nzAllowClear]="true"
+                          (ngModelChange)='changeEndDate($event)'></nz-date-picker>
+                      </nz-form-control>
+                    </nz-form-item>
+                  </div>
+
+                </div>
+                <div nz-row nzJustify="center">
+                  <div nz-col nzSpan="18">
+
+                    <nz-form-item>
+                      <nz-form-label style="font-weight: bold" nzFor="category">Categoría </nz-form-label>
+                      <nz-form-control>
+                        <nz-select nzPlaceHolder="Ingrese una categoria" nzAllowClear
+                          [(ngModel)]="queryParams.filter.categoryId" [ngModelOptions]="{ standalone: true }"
+                          (ngModelChange)="categorySelectedChange($event)">
+                          <ng-container *ngFor="let category of categoryList">
+                            <nz-option [nzValue]="category.id" [nzLabel]="category.description"></nz-option>
+                          </ng-container>
+                        </nz-select>
+                      </nz-form-control>
+                    </nz-form-item>
+                  </div>
+                </div>
+              </div>
+
+              <div nz-col [nzSpan]="12" class="height-50" nzAlign="middle">
+                <div nz-row nzJustify="center">
+                  <button nz-tooltip nzTooltipTitle="Generar Reporte de Venta" nz-button nzType="primary"
+                    (click)="invoicesReport()"
+                    [nzLoading]="loading">Generar Reporte de Venta                    
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </nz-collapse-panel>
+      </nz-collapse>
+      <nz-collapse>
+        <nz-collapse-panel nzHeader="Ventas {{ this.formaterDate(data.invoiceDate) }}" [nzActive]="true"
+          [nzShowArrow]="true" *ngFor="let data of invoicesReportList;" style="background-color: var(--blue-light);">
+          <div style="margin-left: 84%;">
+            <tr *ngIf="invoicesReportList">
+              <th style="background-color: white "></th>
+              <th style="background-color: white  "></th>
+              <th style="background-color: white  "></th>
+              <th *ngIf="invoicesReportList"
+                style="background-color:  var(--backg-B); font-size:small; padding: 15px; margin-left: 150px;">
+                <b>PrecioTotal: </b><span
+                  style="color: blue; font-size: small; font-weight: bold;">{{this.currencyFormat(data.totalSubTotal)}}
+                </span>
+              </th>
+              <th style="background-color: white "></th>
+            </tr>
+          </div>
+          <nz-table nzShowPagination="false" style="overflow: auto" [nzData]="data.invoicesReports" class="tabla"
+            nzBordered="false" [nzLoading]="loading" [nzSize]="'small'">
+            <thead>
+              <tr>
+                <th nzEllipsis nzWidth="260px">Producto</th>
+                <th nzEllipsis nzWidth="90px">Proveedor</th>
+                <th nzEllipsis nzWidth="50px" style="text-align: center">Cantidad</th>
+                <th nzEllipsis nzWidth="70px" style="text-align: right">Subtotal</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let info of data.invoicesReports">
+                <td>{{info.productName}}</td>
+                <td nzEllipsis>{{info.customerName}}</td>
+                <td style="text-align: center">{{info.quantity}}</td>
+                <td nzEllipsis style="font-weight: bold; text-align: right">{{ this.currencyFormat(info.subTotal)}}</td>
+              </tr>
+            </tbody>
+          </nz-table>
+          <div class="contBoxGree">
+            <tr>
+              <td>
+                <b>Cantidad: </b><span
+                  style="color: blue; font-size: 15px; font-weight: bold; margin-right: 50px;">{{data.totalQuantity}}
+                </span>
+              </td>
+              <td>
+                <b>SubTotal: </b>
+                <span
+                  style="color: blue; font-size: 15px ; font-weight: bold;margin-right: 50px;">{{this.currencyFormat(data.totalPrice)}}
+                </span>
+              </td>
+            </tr>
+
+          </div>
+
+        </nz-collapse-panel>
+      </nz-collapse>
+    </div>
+  </nz-content>
+</nz-layout>

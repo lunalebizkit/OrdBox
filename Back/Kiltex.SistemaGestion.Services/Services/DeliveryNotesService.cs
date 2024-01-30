@@ -1,21 +1,18 @@
 ﻿using AutoMapper;
 using Kiltex.SistemaGestion.Domain;
-using Kiltex.SistemaGestion.Domain.Enum;
 using Kiltex.SistemaGestion.Domain.Model;
 using Kiltex.SistemaGestion.SDK.Error;
 using Kiltex.SistemaGestion.Services.Common;
-using Kiltex.SistemaGestion.Services.ImpresoraFiscal;
-using Kiltex.SistemaGestion.Services.ImpresoraFiscal.Printer250F;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
 using Microsoft.EntityFrameworkCore;
-using System.Text.RegularExpressions;
+using Microsoft.Extensions.Configuration;
 
 namespace Kiltex.SistemaGestion.Services.Services
 {
     public class DeliveryNotesService : BaseService
     {
-        public DeliveryNotesService(ErrorManager logger, DBContext context, IMapper maper) :
-            base(logger, context, maper)
+        public DeliveryNotesService(ErrorManager logger, DBContext context, IMapper maper, IConfiguration configuration) :
+            base(logger, context, maper, configuration)
         { }
         public async Task<OperationResponse<DtoRequestDeliveryNotes>> GetById(long id)
         {
