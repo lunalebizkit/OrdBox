@@ -54,7 +54,8 @@
               <div nz-col [nzSpan]="12" class="height-50" nzAlign="middle">
                 <div nz-row nzJustify="center">
                   <button nz-tooltip nzTooltipTitle="Generar Reporte de Venta" nz-button nzType="primary"
-                    (click)="invoicesReport()">Generar Reporte de Venta
+                    (click)="invoicesReport()"
+                    [nzLoading]="loading">Generar Reporte de Venta                    
                   </button>
                 </div>
               </div>
