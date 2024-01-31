@@ -21,6 +21,7 @@ export class UsersListComponent extends BaseComponent implements OnInit {
   index!: number;
   permissions = Permission;
   userRol!: string | null;
+  @ViewChild('popup') popupComponent!: PopupConfirmationComponent;
 
   constructor(
     private service: UserService,
@@ -201,4 +202,18 @@ export class UsersListComponent extends BaseComponent implements OnInit {
       }
     }
   }
+
+  handleOk() {
+    this.service.deleteUser(this.popupComponent.elementSelectedToDelete).subscribe(
+     {next: (r) => {
+        this.popupComponent.isDeleteConfirmationVisible = false;
+        this.search();
+      },
+      error:(r) => { 
+        this.showMessageError(r.error.descripcion);
+        this.popupComponent.isDeleteConfirmationVisible = false;
+      }
+  });
+  }
+
 }
