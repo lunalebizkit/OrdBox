@@ -24,7 +24,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                                  .Include(x => x.EmailEntities)
                                  .Include(x => x.PhoneEntities)
                                  .AsNoTracking()
-                                 .FirstOrDefaultAsync(p => p.Id == id)
+                                 .FirstOrDefaultAsync(p => p.Id == id && !p.IsInactive)
                                  .ConfigureAwait(false);
                 if (proveedor == null)
                 {
@@ -62,7 +62,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                 var entidad = await _contextSql
                                     .Suppliers
                                     .AsNoTracking()
-                                    .FirstOrDefaultAsync(p => p.Cuit == cuit)
+                                    .FirstOrDefaultAsync(p => p.Cuit == cuit && !p.IsInactive)
                                     .ConfigureAwait(false);
                 if (entidad == null)
                 {
@@ -85,13 +85,13 @@ namespace Kiltex.SistemaGestion.Services.Services
             try
             {
                 var query = _contextSql
-                                    .Entities.OfType<Supplier>()
+                                    .Entities.Where(y => !y.IsInactive).OfType<Supplier>()
                                     .AsNoTracking()
                                     .Include(p => p.EmailEntities)
                                     .Include(p => p.PhoneEntities)
                                     .Where(p => p.Name.ToLower().Contains(request.Filter ?? "") || 
                                         p.Dni.ToString().Contains(request.Filter ?? "") ||
-                                       p.Cuit.ToLower().Contains(request.Filter ?? ""));
+                                       p.Cuit.ToLower().Contains(request.Filter ?? "") && !p.IsInactive);
 
                 var count = await query.CountAsync().ConfigureAwait(false);
 
@@ -283,7 +283,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                                     .Include(x=> x.EmailEntities)
                                     .Include(x=> x.PhoneEntities)
                                     .AsNoTracking()                           
-                                    .FirstOrDefaultAsync(p => p.Id == id)
+                                    .FirstOrDefaultAsync(p => p.Id == id && !p.IsInactive)
                                     .ConfigureAwait(false);
                 if (entidad == null)
                 {
@@ -322,7 +322,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                 var entidad = await _contextSql
                                     .Customers                                
                                     .AsNoTracking()                           
-                                    .FirstOrDefaultAsync(p => p.Cuit == cuit)
+                                    .FirstOrDefaultAsync(p => p.Cuit == cuit && !p.IsInactive)
                                     .ConfigureAwait(false);
                 if (entidad == null)
                 {
@@ -478,7 +478,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             try
             {
                 var query = _contextSql
-                                    .Entities.OfType<Customer>()
+                                    .Entities.Where(y => !y.IsInactive).OfType<Customer>()
                                     .AsNoTracking()
                                     .Include(p =>p.EmailEntities)
                                     .Include(p =>p.PhoneEntities)
@@ -527,6 +527,36 @@ namespace Kiltex.SistemaGestion.Services.Services
                     return Error<IdResponse<long>>(new OperationExceptions("001", "Datos incompletos"));
                 }
                 return await AddOrUpdate(model, ct).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
+                throw;
+            }
+        }
+        //Elimianr usuario
+        public async Task<OperationResponse<IdResponse<long>>> DeleteEntity(long id, CancellationToken ct = default)
+        {
+            try
+            {
+                var user = await _contextSql
+                                             .Entities
+                                             .FirstOrDefaultAsync(p => p.Id == id && !p.IsInactive, ct)
+                                             .ConfigureAwait(false);
+                if (user != null)
+                {
+                    user.IsInactive = true;
+
+                    await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
+                }
+                else
+                {
+                    _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_002_CLIENTE_INACTIVO));
+                    return Error<IdResponse<long>>(new OperationExceptions(ErrorsCodes.C_002_CLIENTE_INACTIVO, ErrorsMessages.GetMessage(ErrorsCodes.C_002_CLIENTE_INACTIVO)));
+                }
+
+                return Ok(new IdResponse<long>(id));
+
             }
             catch (Exception ex)
             {

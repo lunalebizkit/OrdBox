@@ -102,7 +102,10 @@ export class CustomersEditDrawerComponent extends BaseComponent implements OnIni
                 });
                 this.isLoading = false
             },
-            error: () => { this.isLoading = false; }
+            error: (r) => { 
+                this.isLoading = false;
+                this.showMessageError(r.error.descripcion);
+                this.drawerRef.close(); }
         })
     };
 
