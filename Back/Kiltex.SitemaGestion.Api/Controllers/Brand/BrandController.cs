@@ -65,5 +65,17 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Brand
         {
             return Return(await _service.ListBrands(filter).ConfigureAwait(false));
         }
+        /// <summary>
+        /// Borra una Marca buscandolos por el ID.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpDelete]
+        [Route("{id}")]
+        [AllowAccess(Permission = new EPermission[] { EPermission.DeleteBrand })]
+        public async Task<IActionResult> Delete(long id)
+        {
+            return Return(await _service.Delete(id).ConfigureAwait(false));
+        }
     }
 }

@@ -52,7 +52,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                 _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
                 throw;
             }
-            
+
         }
 
         public async Task<OperationResponse<DtoEntity>> GetSupplierByCuit(string cuit)
@@ -89,7 +89,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                                     .AsNoTracking()
                                     .Include(p => p.EmailEntities)
                                     .Include(p => p.PhoneEntities)
-                                    .Where(p => p.Name.ToLower().Contains(request.Filter ?? "") || 
+                                    .Where(p => p.Name.ToLower().Contains(request.Filter ?? "") ||
                                         p.Dni.ToString().Contains(request.Filter ?? "") ||
                                        p.Cuit.ToLower().Contains(request.Filter ?? "") && !p.IsInactive);
 
@@ -271,7 +271,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                 _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
                 throw;
             }
-            
+
         }
 
         public async Task<OperationResponse<DtoEntity>> GetById(long id)
@@ -280,9 +280,9 @@ namespace Kiltex.SistemaGestion.Services.Services
             {
                 var entidad = await _contextSql
                                     .Customers
-                                    .Include(x=> x.EmailEntities)
-                                    .Include(x=> x.PhoneEntities)
-                                    .AsNoTracking()                           
+                                    .Include(x => x.EmailEntities)
+                                    .Include(x => x.PhoneEntities)
+                                    .AsNoTracking()
                                     .FirstOrDefaultAsync(p => p.Id == id && !p.IsInactive)
                                     .ConfigureAwait(false);
                 if (entidad == null)
@@ -297,14 +297,14 @@ namespace Kiltex.SistemaGestion.Services.Services
                     Dni = entidad.Dni,
                     Cuit = entidad.Cuit,
                     Name = entidad.Name,
-                    Address = entidad.Address,  
+                    Address = entidad.Address,
                     Observation = entidad.Observation,
                     EmailEntity = entidad.EmailEntities.Select(p => p.Email
                     ).ToList(),
-                    PhoneEntity = entidad.PhoneEntities.Select(p => 
-      
+                    PhoneEntity = entidad.PhoneEntities.Select(p =>
+
                        p.PhoneNumber
-                    ).ToList(),             
+                    ).ToList(),
                 };
 
                 return new OperationResponse<DtoEntity>(result);
@@ -314,14 +314,14 @@ namespace Kiltex.SistemaGestion.Services.Services
                 _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
                 throw;
             }
-        }       
+        }
         public async Task<OperationResponse<DtoEntity>> GetCustomerByCuit(string cuit)
         {
             try
             {
                 var entidad = await _contextSql
-                                    .Customers                                
-                                    .AsNoTracking()                           
+                                    .Customers
+                                    .AsNoTracking()
                                     .FirstOrDefaultAsync(p => p.Cuit == cuit && !p.IsInactive)
                                     .ConfigureAwait(false);
                 if (entidad == null)
@@ -330,7 +330,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                     return Error<DtoEntity>(new OperationExceptions("000", $"Cliente no encontrado CUIT: {cuit}"));
                 }
 
-                var result = _mapper.Map<DtoEntity>(entidad);         
+                var result = _mapper.Map<DtoEntity>(entidad);
 
                 return new OperationResponse<DtoEntity>(result);
             }
@@ -341,7 +341,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             }
         }
 
-      
+
         public async Task<OperationResponse<IdResponse<long>>> Add(DtoEntity model, CancellationToken ct = default)
         {
             try
@@ -470,7 +470,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                 _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
                 throw;
             }
-            
+
         }
 
         public async Task<OperationResponse<DtoPagination<DtoEntityList>>> List(RequestPaginatedData<string> request)
@@ -480,25 +480,25 @@ namespace Kiltex.SistemaGestion.Services.Services
                 var query = _contextSql
                                     .Entities.Where(y => !y.IsInactive).OfType<Customer>()
                                     .AsNoTracking()
-                                    .Include(p =>p.EmailEntities)
-                                    .Include(p =>p.PhoneEntities)
-                                    .Where(p => p.Name.ToLower().Contains(request.Filter ?? "") 
-                                    || p.Dni.ToString().Contains( request.Filter ?? "") 
+                                    .Include(p => p.EmailEntities)
+                                    .Include(p => p.PhoneEntities)
+                                    .Where(p => p.Name.ToLower().Contains(request.Filter ?? "")
+                                    || p.Dni.ToString().Contains(request.Filter ?? "")
                                     || p.Cuit.ToLower().Contains(request.Filter ?? ""));
 
-               
+
 
                 var count = await query.CountAsync().ConfigureAwait(false);
-            
-                var list = await query.OrderBy(p => p.Name)                
+
+                var list = await query.OrderBy(p => p.Name)
                                       .Skip(request.Page * request.PageSize)
                                       .Take(request.PageSize)
                                       .ToListAsync()
                                       .ConfigureAwait(false);
 
                 var result = _mapper.Map<List<DtoEntityList>>(list);
-            
-       
+
+
                 return new OperationResponse<DtoPagination<DtoEntityList>>(new DtoPagination<DtoEntityList>
                 {
                     Data = result,
@@ -516,12 +516,12 @@ namespace Kiltex.SistemaGestion.Services.Services
         {
             try
             {
-                if (model.Id == 0 )
+                if (model.Id == 0)
                 {
                     _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
                     return Error<IdResponse<long>>(new OperationExceptions("000", "El cliente no tiene ID"));
                 }
-                if ( String.IsNullOrEmpty(model.Address) || model.Dni == 0 || String.IsNullOrEmpty(model.Name))
+                if (String.IsNullOrEmpty(model.Address) || model.Dni == 0 || String.IsNullOrEmpty(model.Name))
                 {
                     _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_S001_TOKEN_INVALIDO));
                     return Error<IdResponse<long>>(new OperationExceptions("001", "Datos incompletos"));
@@ -542,7 +542,13 @@ namespace Kiltex.SistemaGestion.Services.Services
                 var user = await _contextSql
                                              .Entities
                                              .FirstOrDefaultAsync(p => p.Id == id && !p.IsInactive, ct)
-                                             .ConfigureAwait(false);
+                                              .ConfigureAwait(false);
+                if (user.Name.ToLower() == "admin")
+                {
+                    _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
+                    return Error<IdResponse<long>>(new OperationExceptions(ErrorsCodes.C_002_CLIENTE_INACTIVO, "La entidad Admin no se puede eliminar"));
+
+                }
                 if (user != null)
                 {
                     user.IsInactive = true;
