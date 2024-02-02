@@ -207,6 +207,7 @@ export class UsersListComponent extends BaseComponent implements OnInit {
     this.service.deleteUser(this.popupComponent.elementSelectedToDelete).subscribe(
      {next: (r) => {
         this.popupComponent.isDeleteConfirmationVisible = false;
+        this.showMessageSuccess("Entidad eliminada");
         this.search();
       },
       error:(r) => { 

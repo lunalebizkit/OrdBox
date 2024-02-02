@@ -38,4 +38,12 @@ export class BrandsService {
           return this.api.put(`brand`, model, false);
         }
       }
+      /**
+     * Elimina una marca por Id
+     * @param id
+     * @returns
+     */
+     public delete(id: number): Observable<any> {
+      return this.api.delete(`brand/${id}`, false);
+    }
 }

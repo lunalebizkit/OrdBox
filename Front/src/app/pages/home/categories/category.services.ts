@@ -38,4 +38,12 @@ export class CategoriesService {
           return this.api.put(`category`, model, false);
         }
       }
+        /**
+     * Elimina una categoria por Id
+     * @param id
+     * @returns
+     */
+     public delete(id: number): Observable<any> {
+      return this.api.delete(`category/${id}`, false);
+    }
 }

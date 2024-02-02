@@ -1,19 +1,24 @@
 import { formatCurrency } from '@angular/common';
-import { Component, Inject, LOCALE_ID, OnInit } from '@angular/core';
+import { Component, ElementRef, Inject, LOCALE_ID, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { NzDrawerService } from 'ng-zorro-antd/drawer';
 import { Permission } from 'src/app/common/auth/models/permissions.enum';
 import { ProductsModel } from '../model/product.model';
 import { ProductService } from '../product.service';
 import { ProductsEditDrawerComponent } from '../products-edit-drawer/products-edit.drawer.component';
+import { BaseComponent } from 'src/app/common/components/base/base.component';
+import { NzNotificationService } from 'ng-zorro-antd/notification';
+import { NzMessageService } from 'ng-zorro-antd/message';
+import { PopupConfirmationComponent } from 'src/app/common/components/popup-confirmation/popup-confirmation.component';
 
 @Component({
   selector: 'app-products-list',
   templateUrl: './products-list.component.html',
   styleUrls: ['./products-list.component.css'],
 })
-export class ProductsListComponent implements OnInit {
+export class ProductsListComponent extends BaseComponent implements OnInit {
   permissions = Permission;
+  @ViewChild('popup') popupComponent!: PopupConfirmationComponent;
 
   /*
    ** Listado de los productos
@@ -67,7 +72,10 @@ export class ProductsListComponent implements OnInit {
     private service: ProductService,
     private drawerService: NzDrawerService,
     @Inject(LOCALE_ID) public locale: string,
-  ) {}
+    notificacionService: NzNotificationService,
+    el: ElementRef,
+    message: NzMessageService,
+  ) { super( notificacionService, el, message)}
 
   selectedIndex!: number;
   selectedProduct: any;
@@ -231,7 +239,22 @@ export class ProductsListComponent implements OnInit {
       },
     });
   }
+
   currencyFormat(data: any):string  {    
     return formatCurrency(data, this.locale, '$', 'ARS', '1.1-2')
+  }
+
+  handleOk() {
+    this.service.delete(this.popupComponent.elementSelectedToDelete).subscribe(
+     {next: (r) => {
+        this.popupComponent.isDeleteConfirmationVisible = false;
+        this.showMessageSuccess("Product eliminada");
+        this.search();
+      },
+      error:(r) => { 
+        this.showMessageError(r.error.descripcion);
+        this.popupComponent.isDeleteConfirmationVisible = false;
+      }
+  });
   }
 }

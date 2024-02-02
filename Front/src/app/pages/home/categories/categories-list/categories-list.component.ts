@@ -1,17 +1,20 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { NzDrawerService } from 'ng-zorro-antd/drawer';
 import { Permission } from 'src/app/common/auth/models/permissions.enum';
 import { PopupConfirmationComponent } from 'src/app/common/components/popup-confirmation/popup-confirmation.component';
 import { CategoryEditDrawerComponent } from '../categories-edit-drawer/categories-edit-drawer.component';
 import { CategoriesService } from '../category.services';
 import { CategoryModel } from '../model/category.model';
+import { BaseComponent } from 'src/app/common/components/base/base.component';
+import { NzNotificationService } from 'ng-zorro-antd/notification';
+import { NzMessageService } from 'ng-zorro-antd/message';
 
 @Component({
   selector: 'app-categories-list',
   templateUrl: './categories-list.component.html',
   styleUrls: ['./categories-list.component.css'],
 })
-export class CategoriesListComponent implements OnInit {
+export class CategoriesListComponent extends BaseComponent implements OnInit {
   @ViewChild('popup') popupComponent!: PopupConfirmationComponent;
   permissions = Permission;
   /*
@@ -32,8 +35,11 @@ export class CategoriesListComponent implements OnInit {
 
   constructor(
     private service: CategoriesService,
-    private drawerService: NzDrawerService
-  ) {}
+    private drawerService: NzDrawerService,
+    notificacionService: NzNotificationService,
+    el: ElementRef,
+    message: NzMessageService,
+  ) { super( notificacionService, el, message)}
 
   ngOnInit(): void {
     this.getData(this.queryData);
@@ -146,7 +152,19 @@ export class CategoriesListComponent implements OnInit {
     }
   }
 
-  handleOk() {}
+  handleOk() {
+    this.service.delete(this.popupComponent.elementSelectedToDelete).subscribe(
+     {next: (r) => {
+        this.popupComponent.isDeleteConfirmationVisible = false;
+        this.showMessageSuccess("Categoría eliminada");
+        this.search();
+      },
+      error:(r) => { 
+        this.showMessageError(r.error.descripcion);
+        this.popupComponent.isDeleteConfirmationVisible = false;
+      }
+  });
+  }
 
   openComponentCategoryEdit(): void {
     const drawerRefCustomer = this.drawerService.create<

@@ -201,6 +201,7 @@ export class SuppliersListComponent extends BaseComponent implements OnInit {
     this.service.deleteCustomer(this.popupComponent.elementSelectedToDelete).subscribe(
      {next: (r) => {
         this.popupComponent.isDeleteConfirmationVisible = false;
+        this.showMessageSuccess("Entidad eliminada");
         this.search();
       },
       error:(r) => { 

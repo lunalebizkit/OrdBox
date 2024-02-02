@@ -73,6 +73,7 @@
           <th nzEllipsis nzWidth="70px" style="text-align: right;">P.Contado</th>
           <th nzEllipsis nzWidth="70px"  style="text-align: right">P.Tarjeta</th>
           <th nzEllipsis nzWidth="45px" style="text-align: right">Código</th>
+          <th nzEllipsis nzWidth="45px" style="text-align: center;" *authPermission="[permissions.DeleteProduct]">Acción</th>
         </tr>
       </thead> 
       <tbody>
@@ -108,8 +109,22 @@
           {{ this.currencyFormat(product.cardSalePrice) }}
           </td>
           <td nzEllipsis style="text-align: right">{{ product.code }}</td>
+          <td style="text-align: center;" *authPermission="[permissions.DeleteBrand]">
+            <nz-space [nzSplit]="spaceSplit">
+              <ng-template #spaceSplit>
+              </ng-template>                
+              <a *nzSpaceItem (click)="popup.showDeleteConfirmation(product.id)">
+                <i nz-tooltip nzTooltipTitle="Eliminar" nz-icon nzType="delete" [nzTheme]="'twotone'"
+                  [nzTwotoneColor]="'#FF0000'"></i>
+              </a>
+            </nz-space>
+          </td>
         </tr>
       </tbody>
     </nz-table>
   </div>
 </nz-layout>
+<app-popup-confirmation #popup [title]="'Confirmar eliminación'"
+  [header]="'¿Está seguro de que desea eliminar la marca seleccionada?'"
+  [message]="'Esta acción no se puede revertir'" (handleOk)="handleOk()">
+</app-popup-confirmation>
