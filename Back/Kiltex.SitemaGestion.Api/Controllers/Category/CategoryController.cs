@@ -61,5 +61,17 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Category
             return Return(await _service.ListCategory(filter).ConfigureAwait(false));
         }
 
+        /// <summary>
+        /// Borra una Categoría buscandolos por el ID.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpDelete]
+        [Route("{id}")]
+        [AllowAccess(Permission = new EPermission[] { EPermission.DeleteBrand })]
+        public async Task<IActionResult> Delete(long id)
+        {
+            return Return(await _service.Delete(id).ConfigureAwait(false));
+        }
     }
 }

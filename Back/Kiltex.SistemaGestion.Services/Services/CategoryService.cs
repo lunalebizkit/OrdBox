@@ -1,11 +1,14 @@
 ﻿
 
 using AutoMapper;
+using Dapper;
 using Kiltex.SistemaGestion.Domain;
 using Kiltex.SistemaGestion.Domain.Model;
 using Kiltex.SistemaGestion.SDK.Error;
 using Kiltex.SistemaGestion.Services.Common;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
+using Kiltex.SistemaGestion.Services.Scripts;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
@@ -137,6 +140,48 @@ namespace Kiltex.SistemaGestion.Services.Services
                 throw;
             }
 
+        }
+        //Elimianr Categoría
+        public async Task<OperationResponse<IdResponse<long>>> Delete(long id, CancellationToken ct = default)
+        {
+            using (var connection = new SqlConnection(ConnectionString))
+            {
+                try
+                {
+                    var category = connection.Query(SqlScripts.GetCategoryById, new { @categoryid = id }).FirstOrDefault();
+
+                    if (category != null)
+                    {
+                        _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_010_ERROR_EXCEPTION));
+                        return Error<IdResponse<long>>(new OperationExceptions(ErrorsCodes.C_010_ERROR_EXCEPTION, "La Categoría tiene productos asociados"));
+                    }
+                    else
+                    {
+                        var savedCategory = await _contextSql.Category.FirstOrDefaultAsync(p => p.Id == id, ct).ConfigureAwait(false);
+
+                        if (savedCategory != null)
+                        {
+                            _contextSql.Category.Remove(savedCategory);
+
+                            await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
+
+                            return Ok(new IdResponse<long>(id));
+                        }
+                        else
+                        {
+                            _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_004_ELEMENT_NOT_FOUND));
+                            return Error<IdResponse<long>>(new OperationExceptions(ErrorsCodes.C_004_ELEMENT_NOT_FOUND, ErrorsMessages.GetMessage(ErrorsCodes.C_004_ELEMENT_NOT_FOUND)));
+                        }
+                    }
+
+
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
+                    throw;
+                }
+            }
         }
     }
 }

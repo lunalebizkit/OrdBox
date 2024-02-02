@@ -88,4 +88,12 @@ export class EntityService {
       return this.api.put(`Customer`, model, false);
     }
   }
+  /**
+     * Elimina un cliente por Id
+     * @param id
+     * @returns
+     */
+  public deleteCustomer(id: number): Observable<any> {
+    return this.api.delete(`entity/${id}`, false);
+  }
 }

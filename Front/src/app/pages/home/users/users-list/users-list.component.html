@@ -74,6 +74,7 @@
             <th nzEllipsis nzWidth="45px">Usuario</th>
             <th nzEllipsis nzWidth="85px">Email</th>
             <th nzEllipsis nzWidth="45px">Rol</th>
+            <th nzEllipsis nzWidth="45px" style="text-align: center;" *authPermission="[permissions.DeleteUser]">Acción</th>
           </tr>
         </thead>
         <tbody>
@@ -93,9 +94,24 @@
             <td nzEllipsis>{{ user.userName }}</td>
             <td nzEllipsis>{{ user.email }}</td>
             <td nzEllipsis>{{ this.getRolName(user.roleId) }}</td>
+            <td style="text-align: center;" *authPermission="[permissions.DeleteUser]">
+              <nz-space [nzSplit]="spaceSplit">
+                <ng-template #spaceSplit>
+                </ng-template>                
+                <a *nzSpaceItem (click)="popup.showDeleteConfirmation(user.id)">
+                  <i nz-tooltip nzTooltipTitle="Eliminar" nz-icon nzType="delete" [nzTheme]="'twotone'"
+                    [nzTwotoneColor]="'#FF0000'"></i>
+                </a>
+              </nz-space>
+            </td>
           </tr>
         </tbody>
       </nz-table>
     </div>
   </nz-content>
 </nz-layout>
+<app-popup-confirmation #popup [title]="'Confirmar eliminación'"
+  [header]="'¿Está seguro de que desea eliminar el usuario seleccionado?'"
+  [message]="'Esta acción no se puede revertir'" (handleOk)="handleOk()">
+</app-popup-confirmation>
+

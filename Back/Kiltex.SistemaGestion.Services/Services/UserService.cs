@@ -12,7 +12,7 @@ using Microsoft.Extensions.Configuration;
 namespace Kiltex.SistemaGestion.Services.Services
 {
     public class UserService : BaseService
-           
+
     {
         private readonly EmailService _emailService;
         public UserService(ErrorManager logger, DBContext context, IMapper maper, IConfiguration configuration, EmailService emailService) :
@@ -28,13 +28,13 @@ namespace Kiltex.SistemaGestion.Services.Services
             {
                 var user = await _contextSql
                          .Users
-                         .AsNoTracking()                         
+                         .AsNoTracking()
                          .Include(x => x.Rol)
                          .ThenInclude(y => y.PermissionXRols)
                          .ThenInclude(y => y.Permission)
                          .FirstOrDefaultAsync(x => x.UserName == userName && !x.IsDeleted)
                          .ConfigureAwait(false);
-               
+
 
                 if (user == null || !SecurePasswordHasher.Verify(password, user.Password))
                 {
@@ -49,7 +49,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                 _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
                 throw;
             }
-         
+
         }
         //Agregar usuario nuevo
         public async Task<OperationResponse<IdResponse<long>>> Add(RequestAddUser model, CancellationToken ct = default)
@@ -59,8 +59,8 @@ namespace Kiltex.SistemaGestion.Services.Services
         }
         //Get usuario
         public async Task<OperationResponse<DtoResponseUser>> GetById(long id)
-        {   
-            try 
+        {
+            try
             {
                 var user = await _contextSql
                                     .Users
@@ -75,7 +75,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                     return Error<DtoResponseUser>(new OperationExceptions("001", "El usuario no es valido"));
                 }
 
-                var result = _mapper.Map<DtoResponseUser>(user);           
+                var result = _mapper.Map<DtoResponseUser>(user);
                 return new OperationResponse<DtoResponseUser>(result);
             }
             catch (Exception ex)
@@ -87,10 +87,10 @@ namespace Kiltex.SistemaGestion.Services.Services
         //get Lista Usuario
         public async Task<OperationResponse<DtoPagination<DtoResponseUser>>> ListUsers(RequestPaginatedData<string> request)
         {
-            try 
+            try
             {
                 var query = _contextSql
-                                    .Users.Include(P=>P.Rol)
+                                    .Users.Include(P => P.Rol)
                                     .AsNoTracking()
                                     .Where(p => ((p.FirstName.ToLower().Contains(request.Filter ?? "")) || (p.LastName.ToLower().Contains(request.Filter ?? "")))
                                                   && !p.IsDeleted);
@@ -112,7 +112,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                     TotalCount = count
                 });
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
                 throw;
@@ -122,7 +122,7 @@ namespace Kiltex.SistemaGestion.Services.Services
         //Agregar o actualizar usuario
         public async Task<OperationResponse<IdResponse<long>>> AddOrUpdate(RequestAddUser model, CancellationToken ct = default)
         {
-            try 
+            try
             {
                 var countEmails = await _contextSql
                                     .Users
@@ -141,8 +141,8 @@ namespace Kiltex.SistemaGestion.Services.Services
                 if (usermodel.Id == 0)
                 {
                     usermodel.Password = SecurePasswordHasher.Hash(usermodel.Password, 100);
-                    await _contextSql.Users.AddAsync(usermodel, ct).ConfigureAwait(false);               
-                    
+                    await _contextSql.Users.AddAsync(usermodel, ct).ConfigureAwait(false);
+
                 }
                 else
                 {
@@ -167,9 +167,9 @@ namespace Kiltex.SistemaGestion.Services.Services
                 }
                 await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
 
-                return Ok(new IdResponse<long>(usermodel.Id));          
+                return Ok(new IdResponse<long>(usermodel.Id));
 
-               
+
             }
             catch (Exception ex)
             {
@@ -181,7 +181,7 @@ namespace Kiltex.SistemaGestion.Services.Services
         //Actualizar usuario
         public async Task<OperationResponse<IdResponse<long>>> Update(RequestAddUser model, CancellationToken ct = default)
         {
-            try 
+            try
             {
                 if (model.Id <= 0)
                 {
@@ -190,9 +190,9 @@ namespace Kiltex.SistemaGestion.Services.Services
                 }
 
                 return await AddOrUpdate(model, ct).ConfigureAwait(false);
-            
+
             }
-            catch(Exception ex) 
+            catch (Exception ex)
             {
                 _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
                 throw;
@@ -201,7 +201,7 @@ namespace Kiltex.SistemaGestion.Services.Services
         //Elimianr usuario
         public async Task<OperationResponse<IdResponse<long>>> Delete(long id, CancellationToken ct = default)
         {
-            try 
+            try
             {
                 var user = await _contextSql
                                              .Users
@@ -213,23 +213,22 @@ namespace Kiltex.SistemaGestion.Services.Services
 
                     await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
                 }
-
-                if( user == null) 
+                else
                 {
-                    _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_009_ERROR_DUPLICATE));
-                    return Error<IdResponse<long>>(new OperationExceptions("009", "Ya existe un usuario con ese correo"));
+                    _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_002_CLIENTE_INACTIVO));
+                    return Error<IdResponse<long>>(new OperationExceptions(ErrorsCodes.C_002_CLIENTE_INACTIVO, ErrorsMessages.GetMessage(ErrorsCodes.C_002_CLIENTE_INACTIVO)));
                 }
 
                 return Ok(new IdResponse<long>(id));
-            
+
             }
             catch (Exception ex)
             {
                 _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
                 throw;
             }
-       }
+        }
 
-  
+
     }
 }

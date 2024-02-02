@@ -13,6 +13,7 @@ namespace Kiltex.SistemaGestion.Domain.Enum
         ViewBrand = 5,
         CreateBrand = 6,
         EditBrand = 7,
+        DeleteBrand = 47,
         //Category
         ViewCategory = 8,
         CreateCategory = 9,
@@ -33,6 +34,7 @@ namespace Kiltex.SistemaGestion.Domain.Enum
         ViewProduct = 19,
         CreateProduct = 20,
         EditProduct = 21,
+        DeleteProduct = 48,
         //Supplier
         ViewSupplier = 22,
         EditSupplier = 23,

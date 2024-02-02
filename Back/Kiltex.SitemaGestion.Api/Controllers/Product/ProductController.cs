@@ -77,6 +77,17 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Product
         {
             return Return(await _service.GetProductReport().ConfigureAwait(false));
         }
-
+        /// <summary>
+        /// Borra un producto buscandolos por el ID.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpDelete]
+        [Route("{id}")]
+        [AllowAccess(Permission = new EPermission[] { EPermission.DeleteProduct })]
+        public async Task<IActionResult> Delete(long id)
+        {
+            return Return(await _service.Delete(id).ConfigureAwait(false));
+        }
     }
 }

@@ -61,20 +61,60 @@ namespace Kiltex.SistemaGestion.Services.Scripts {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a DECLARE @TOTALINVOICES TABLE (  [product_name] NVARCHAR(100), [quantity]INT, [price] DECIMAL(18,2), [subTotal]DECIMAL(18,2), [customer_name] NVARCHAR(100), [dateTime] DATETIME);
-        ///;With Invoices as (SELECT [in].[id]
-        ///      ,[in].[customer_name]
-        ///      ,[in].[customer_cuit]
-        ///      ,[in].[dateTime]
-        ///      ,[in].[total]
-        ///      ,[in].[iva_total]
-        ///      ,[in].[type]
-        ///	  ,[ind].[product_name]
-        ///	  ,[ind].[quantity]
-        ///	  ,[ind].[price]
-        ///  FROM [invoice] [in]
-        ///  INNER JOIN
-        ///  [invoice_detail] [ind] ON [in].[id] = [ind [resto de la cadena truncado]&quot;;.
+        ///   Busca una cadena traducida similar a   SELECT TOP(1) B.id, B.description FROM [brand] B
+        ///  INNER JOIN [product] P
+        ///  ON P.brand_id = B.id
+        ///  WHERE B.id = @brandid
+        ///  AND P.[is_deleted] = 0.
+        /// </summary>
+        internal static string GetBrandById {
+            get {
+                return ResourceManager.GetString("GetBrandById", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a   SELECT TOP(1) * FROM [category] C
+        ///  INNER JOIN [product] P
+        ///  ON P.[category_id] = C.id
+        ///  WHERE C.id = @categoryid
+        ///  AND P.[is_deleted] = 0.
+        /// </summary>
+        internal static string GetCategoryById {
+            get {
+                return ResourceManager.GetString("GetCategoryById", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a  SELECT TOP(1) * FROM [product] P
+        ///  INNER JOIN [brand] B
+        ///  ON P.brand_id = B.id
+        ///  WHERE P.id = @productid
+        ///  AND P.[is_deleted] = 0.
+        /// </summary>
+        internal static string GetProductById {
+            get {
+                return ResourceManager.GetString("GetProductById", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a SELECT	[p].[id], 
+        ///		[p].[description], 
+        ///		[p].[code], 
+        ///		[B].[description] AS [brandName], 
+        ///		[p].[quantity],
+        ///		[p].[purchase_price],
+        ///		CONVERT (DECIMAL(18,2), ([p].[quantity] * [p].[purchase_price])) AS [subTotal]
+        ///
+        ///FROM [product] [p] 
+        ///
+        ///JOIN [brand] [B]
+        ///ON [B].[id] = [p].[brand_id]
+        ///
+        ///WHERE [quantity] &gt; 0 AND [is_deleted] = 0
+        ///ORDER BY [p].[description].
         /// </summary>
         internal static string GetProductReport {
             get {

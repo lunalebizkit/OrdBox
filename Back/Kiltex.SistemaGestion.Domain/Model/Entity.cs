@@ -22,6 +22,9 @@ namespace Kiltex.SistemaGestion.Domain.Model
         [Column("address")]
         public string? Address { get; set; }
 
+        [Column("isInactive")]
+        public bool IsInactive { get; set; }
+
 
         public string EmailsStrings { 
             get

@@ -1,11 +1,14 @@
 ﻿
 
 using AutoMapper;
+using Dapper;
 using Kiltex.SistemaGestion.Domain;
 using Kiltex.SistemaGestion.Domain.Model;
 using Kiltex.SistemaGestion.SDK.Error;
 using Kiltex.SistemaGestion.Services.Common;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
+using Kiltex.SistemaGestion.Services.Scripts;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
@@ -15,27 +18,27 @@ namespace Kiltex.SistemaGestion.Services.Services
     {
         public BrandService(ErrorManager logger, DBContext context, IMapper maper, IConfiguration configuration) :
             base(logger, context, maper, configuration)
-        {}
+        { }
         public async Task<OperationResponse<DtoResponseBrand>> GetById(long id)
         {
-            try 
+            try
             {
                 var marca = await _contextSql
                                    .Brands
                                    .AsNoTracking()
                                    .FirstOrDefaultAsync(p => p.Id == id)
                                    .ConfigureAwait(false);
-                if (marca == null) 
+                if (marca == null)
                 {
                     _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
                     return Error<DtoResponseBrand>(new OperationExceptions("000", $"Marca no encontrada Id: {id}"));
-                    
+
                 }
 
                 var result = _mapper.Map<DtoResponseBrand>(marca);
 
                 return new OperationResponse<DtoResponseBrand>(result);
-            
+
             }
             catch (Exception ex)
             {
@@ -50,7 +53,7 @@ namespace Kiltex.SistemaGestion.Services.Services
         }
         public async Task<OperationResponse<IdResponse<long>>> AddOrUpdate(DtoResponseBrand model, CancellationToken ct = default)
         {
-            try 
+            try
             {
                 var countBrands = await _contextSql
                                     .Brands
@@ -59,11 +62,11 @@ namespace Kiltex.SistemaGestion.Services.Services
                 if (countBrands > 0)
                 {
                     _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_009_ERROR_DUPLICATE));
-                    return Error < IdResponse<long>>(new OperationExceptions("009", "Ya existe una marca con ese nombre"));
+                    return Error<IdResponse<long>>(new OperationExceptions("009", "Ya existe una marca con ese nombre"));
                 }
 
                 var brandModel = _mapper.Map<Brand>(model);
-            
+
                 if (brandModel.Id == 0)
                 {
                     await _contextSql.Brands.AddAsync(brandModel, ct).ConfigureAwait(false);
@@ -80,7 +83,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                 await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
 
                 return Ok(new IdResponse<long>(brandModel.Id));
-            
+
             }
             catch (Exception ex)
             {
@@ -92,7 +95,7 @@ namespace Kiltex.SistemaGestion.Services.Services
         public async Task<OperationResponse<IdResponse<long>>> Update(DtoResponseBrand model, CancellationToken ct = default)
         {
 
-            try 
+            try
             {
                 if (model.Id <= 0)
                 {
@@ -101,7 +104,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                 }
 
                 return await AddOrUpdate(model, ct).ConfigureAwait(false);
-            
+
             }
             catch (Exception ex)
             {
@@ -111,8 +114,7 @@ namespace Kiltex.SistemaGestion.Services.Services
         }
         public async Task<OperationResponse<DtoPagination<DtoResponseBrand>>> ListBrands(RequestPaginatedData<string> request)
         {
-
-            try 
+            try
             {
                 var query = _contextSql
                                     .Brands
@@ -134,7 +136,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                     PageSize = request.PageSize,
                     TotalCount = count
                 });
-            
+
             }
             catch (Exception ex)
             {
@@ -142,6 +144,48 @@ namespace Kiltex.SistemaGestion.Services.Services
                 throw;
             }
         }
-      
+        //Elimianr Marca
+        public async Task<OperationResponse<IdResponse<long>>> Delete(long id, CancellationToken ct = default)
+        {
+            using (var connection = new SqlConnection(ConnectionString))
+            {
+                try
+                {
+                    var brand = connection.Query(SqlScripts.GetBrandById, new { @brandid = id }).FirstOrDefault();
+
+                    if (brand != null)
+                    {
+                        _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_010_ERROR_EXCEPTION));
+                        return Error<IdResponse<long>>(new OperationExceptions(ErrorsCodes.C_010_ERROR_EXCEPTION, "La Marca tiene productos asociados"));
+                    }
+                    else
+                    {
+                        var savedBrand = await _contextSql.Brands.FirstOrDefaultAsync(p => p.Id == id, ct).ConfigureAwait(false);
+
+                        if (savedBrand != null)
+                        {
+                            _contextSql.Brands.Remove(savedBrand);
+
+                            await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
+
+                            return Ok(new IdResponse<long>(id));
+                        }
+                        else
+                        {
+                            _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_004_ELEMENT_NOT_FOUND));
+                            return Error<IdResponse<long>>(new OperationExceptions(ErrorsCodes.C_004_ELEMENT_NOT_FOUND, ErrorsMessages.GetMessage(ErrorsCodes.C_004_ELEMENT_NOT_FOUND)));
+                        }
+                    }
+
+
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
+                    throw;
+                }
+            }
+        }
+
     }
 }

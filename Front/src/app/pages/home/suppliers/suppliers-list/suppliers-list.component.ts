@@ -1,19 +1,24 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { NzDrawerService } from 'ng-zorro-antd/drawer';
 import { Permission } from 'src/app/common/auth/models/permissions.enum';
 import { EntityService } from '../../customers/customer.service';
 import { CustomerModel } from '../../customers/model/customer.model';
 import { SuppliersEditDrawerComponent } from '../suppliers-edit-drawer/suppliers-edit.drawer.component';
+import { BaseComponent } from 'src/app/common/components/base/base.component';
+import { NzNotificationService } from 'ng-zorro-antd/notification';
+import { NzMessageService } from 'ng-zorro-antd/message';
+import { PopupConfirmationComponent } from 'src/app/common/components/popup-confirmation/popup-confirmation.component';
 
 @Component({
   selector: 'app-suppliers-list',
   templateUrl: './suppliers-list.component.html',
   styleUrls: ['./suppliers-list.component.css'],
 })
-export class SuppliersListComponent implements OnInit {
+export class SuppliersListComponent extends BaseComponent implements OnInit {
   selectedIndex: number = 0;
   selectedSuppliers: any;
   permissions = Permission;
+  @ViewChild('popup') popupComponent!: PopupConfirmationComponent;
   /*
    ** Catidad total de entidades
    */
@@ -42,8 +47,12 @@ export class SuppliersListComponent implements OnInit {
    */
   constructor(
     private service: EntityService,
-    private drawerService: NzDrawerService
-  ) {}
+    private drawerService: NzDrawerService,
+    notificacionService: NzNotificationService,
+    el: ElementRef,
+    message: NzMessageService,
+
+  ) {super( notificacionService, el, message)}
   /*
    ** Evento de inicio de angular
    */
@@ -186,5 +195,19 @@ export class SuppliersListComponent implements OnInit {
         });
       }
     }
+  }
+
+  handleOk() {
+    this.service.deleteCustomer(this.popupComponent.elementSelectedToDelete).subscribe(
+     {next: (r) => {
+        this.popupComponent.isDeleteConfirmationVisible = false;
+        this.showMessageSuccess("Entidad eliminada");
+        this.search();
+      },
+      error:(r) => { 
+        this.showMessageError(r.error.descripcion);
+        this.popupComponent.isDeleteConfirmationVisible = false;
+      }
+  });
   }
 }

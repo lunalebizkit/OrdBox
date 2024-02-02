@@ -25,5 +25,5 @@ INSERT INTO [dbo].[permission]
 		   ('ListadoPeriodo','GetPeriod',33),('CrearPeriodo','CreatePeriod',34),('EditarPeriodo','EditPeriod',35),('EliminarPeriodo','DeletePeriod',36),
 		   ('ListadoNotaCreditoYDebito','GetMemo', 37),('CrearNotaCreditoYDebito','CreateMemo',38),('ControldeRoles','RolControl',39),('ReportZ','ReportZ', 40),
 		   ('ListadoPresupuesto','GetBudget', 41),('CrearPresupuesto','CreateBudget', 42),('ListadoRemito','GetRemito', 43),('CrearRemito','CreateRemito', 44),
-		   ('ListadoRecibos','GetQuittance',45),('CrearRecibos','CreateQuittance',46)
+		   ('ListadoRecibos','GetQuittance',45),('CrearRecibos','CreateQuittance',46),('EliminarMarca','DeleteBrand',47),('EliminarProducto','DeleteProduct',48)
 GO
