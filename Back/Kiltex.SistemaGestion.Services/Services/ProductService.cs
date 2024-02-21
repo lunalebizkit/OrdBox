@@ -40,7 +40,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                     return Error<DtoResponseProduct>(new OperationExceptions("000", $"Producto no encontrado ID: {id}"));
                 };
 
-                var result= _mapper.Map<DtoResponseProduct>(producto);
+                var result = _mapper.Map<DtoResponseProduct>(producto);
 
                 return new OperationResponse<DtoResponseProduct>(result);
             }
@@ -69,7 +69,7 @@ namespace Kiltex.SistemaGestion.Services.Services
         {
             try
             {
-                var productModel= _mapper.Map<Product>(model);
+                var productModel = _mapper.Map<Product>(model);
 
                 if (productModel.Id == 0)
                 {
@@ -96,22 +96,18 @@ namespace Kiltex.SistemaGestion.Services.Services
             }
         }
 
-        public async Task<OperationResponse<DtoPagination<DtoResponseProduct>>> List(RequestPaginatedData<string> request)
+        public async Task<OperationResponse<DtoPagination<DtoResponseProduct>>> List(RequestPaginatedData<ProductFilter> request)
         {
             try
             {
                 var query = _contextSql
                                     .Products.Where(p => !p.IsDeleted)
                                     .AsNoTracking()
-                                    .Include(p => p.Category)
-                                    .Include(p => p.Brand)
-                                    .Include(p => p.Supplier)
-                                    .Where(p => (p.Description.ToLower().Contains(request.Filter ?? "") ||
-                                    p.Category.Description.ToLower().Contains(request.Filter ?? "") ||              
-                                    p.Supplier.Name.ToLower().Contains(request.Filter ?? "") ||
-                                    p.Brand.Description.ToLower().Contains(request.Filter ?? "") ||
-                                    p.Code.ToLower().Contains(request.Filter ?? "")
-                                    ));
+                                    .Where(p => (!string.IsNullOrEmpty(request.Filter.Product) ? p.Description.ToLower().Contains(request.Filter.Product) : true) &&
+                                    ((request.Filter.Brand.HasValue && request.Filter.Brand != 0) ? p.BrandId == request.Filter.Brand : true) &&
+                                     ((request.Filter.Category.HasValue && request.Filter.Category != 0) ? p.CategoryId == request.Filter.Category : true) &&
+                                     (!string.IsNullOrEmpty(request.Filter.Product) ? p.Description.ToLower().Contains(request.Filter.Product) : true)
+                                    );
 
                 var count = await query.CountAsync().ConfigureAwait(false);
 
@@ -123,7 +119,7 @@ namespace Kiltex.SistemaGestion.Services.Services
 
 
                 var dto = _mapper.Map<List<DtoResponseProduct>>(list);
-    
+
 
                 return new OperationResponse<DtoPagination<DtoResponseProduct>>(new DtoPagination<DtoResponseProduct>
                 {
@@ -199,7 +195,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                                     &&
                                      ((request.Filter.Category.HasValue && request.Filter.Category != 0) ? p.CategoryId == request.Filter.Category : true)
                                     &&
-                                     (request.Filter.Supplier.Count > 0  ? request.Filter.Supplier.Contains(p.SupplierId) : true) );
+                                     (request.Filter.Supplier.Count > 0 ? request.Filter.Supplier.Contains(p.SupplierId) : true));
 
                 var count = await query.CountAsync().ConfigureAwait(false);
 
@@ -233,12 +229,12 @@ namespace Kiltex.SistemaGestion.Services.Services
                 if (model.Id == 0)
                 {
                     _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
-                    return Error<IdResponse<long>>(new OperationExceptions("000", "El prodcuto no tiene ID"));   
+                    return Error<IdResponse<long>>(new OperationExceptions("000", "El prodcuto no tiene ID"));
                 }
                 return await AddOrUpdate(model, ct).ConfigureAwait(false);
 
             }
-            catch (Exception ex)    
+            catch (Exception ex)
             {
                 _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
                 throw;
@@ -255,7 +251,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                     return Error<bool>("000", "El producto no tiene Id");
                 }
                 var productos = _contextSql
-                                   .Products                               
+                                   .Products
                                    .Include(p => p.Category)
                                    .Include(p => p.Brand)
                                    .Include(p => p.Supplier)
@@ -267,8 +263,9 @@ namespace Kiltex.SistemaGestion.Services.Services
                                    &&
                                     (model.Supplier.Count > 0 ? model.Supplier.Contains(p.SupplierId) : true));
 
-            
-                foreach (var item in productos) {
+
+                foreach (var item in productos)
+                {
                     switch (model.IdPrice)
                     {
                         case (int)ePriceProduct.PurchasePrice:
@@ -280,8 +277,8 @@ namespace Kiltex.SistemaGestion.Services.Services
                         case (int)ePriceProduct.SalePercentage:
                             item.UpdatePrecentage(model.Value, model.IdPrice);
                             break;
-                    }                    
-                
+                    }
+
                 }
                 await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
                 return Ok<bool>(true);
@@ -293,14 +290,14 @@ namespace Kiltex.SistemaGestion.Services.Services
             }
         }
 
-       public async Task<OperationResponse<DtoResponseProductReportTotal>> GetProductReport()
+        public async Task<OperationResponse<DtoResponseProductReportTotal>> GetProductReport()
         {
             DtoResponseProductReportTotal productReportTotal = new DtoResponseProductReportTotal();
             IEnumerable<DtoResponseProductReport> productReport = new List<DtoResponseProductReport>();
 
             using (var connection = new SqlConnection(ConnectionString))
             {
-                productReport =await connection.QueryAsync<DtoResponseProductReport>(SqlScripts.GetProductReport);
+                productReport = await connection.QueryAsync<DtoResponseProductReport>(SqlScripts.GetProductReport);
             }
             if (productReport != null && productReport.Count() > 0)
             {
@@ -308,7 +305,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                 productReportTotal.Date = DateTime.Now;
                 productReportTotal.Products = productReport.ToList();
             }
-             
+
 
             return new OperationResponse<DtoResponseProductReportTotal>(productReportTotal);
         }

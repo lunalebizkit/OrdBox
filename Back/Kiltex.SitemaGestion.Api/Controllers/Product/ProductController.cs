@@ -49,7 +49,7 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Product
         [HttpPost]
         [AllowAccess(Permission = new EPermission[] { EPermission.ViewProduct })]
         [Route("[action]")]
-        public async Task<IActionResult> List([FromBody] RequestPaginatedData<string> filter)
+        public async Task<IActionResult> List([FromBody] RequestPaginatedData<ProductFilter> filter)
         {
             return Return(await _service.List(filter).ConfigureAwait(false));
         }
