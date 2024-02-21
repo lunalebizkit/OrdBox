@@ -10,6 +10,11 @@ import { BaseComponent } from 'src/app/common/components/base/base.component';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { PopupConfirmationComponent } from 'src/app/common/components/popup-confirmation/popup-confirmation.component';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { CategoriesService } from '../../categories/category.services';
+import { BrandsService } from '../../brands/brands.services';
+import { CategoryModel } from '../../categories/model/category.model';
+import { BrandsModel } from '../../brands/model/brands.model';
 
 @Component({
   selector: 'app-products-list',
@@ -24,12 +29,14 @@ export class ProductsListComponent extends BaseComponent implements OnInit {
    ** Listado de los productos
    */
   productList: ProductsModel[] = [];
+  categorieList: CategoryModel [] = [];
+  brandList: BrandsModel [] = [];
   /*
    ** id del usuario a editar, si es nuevo...
    */
   id!: number;
   clickId!: number;
-
+  formSearch!: FormGroup;
   /*
    ** Indicador de carga de la grilla
    */
@@ -54,15 +61,31 @@ export class ProductsListComponent extends BaseComponent implements OnInit {
    ** Indicador de carga de marcas y lineas
    */
   loadingBrands!: boolean;
+  isLoading!: boolean;
 
   /*
    ** Parametros de busqueda
    */
+  /*
+  ** Parametros de busqueda
+  */
   queryParams = {
+    filter: {
+      product:'',
+      brand: 0,
+      category: 0,
+      status: 0,
+      supplier:[]},
+    page: 0,
+    pageSize: 50
+  };
+
+  queryData = {
     filter: '',
     page: 0,
-    PageSize: 50,
+    pageSize: 50
   };
+
   formProductsEditComponent: any;
 
   /*
@@ -71,11 +94,20 @@ export class ProductsListComponent extends BaseComponent implements OnInit {
   constructor(
     private service: ProductService,
     private drawerService: NzDrawerService,
+    private serviceCategory: CategoriesService,
+    private serviceBrand: BrandsService,
     @Inject(LOCALE_ID) public locale: string,
     notificacionService: NzNotificationService,
+    private fb: FormBuilder, 
     el: ElementRef,
     message: NzMessageService,
-  ) { super( notificacionService, el, message)}
+  ) { super( notificacionService, el, message);
+    this.formSearch = this.fb.group({
+      product: ['', ],
+      brand: [0, ],
+       supplier: [[], ],
+       category: [0, ]     
+    })}
 
   selectedIndex!: number;
   selectedProduct: any;
@@ -180,7 +212,7 @@ export class ProductsListComponent extends BaseComponent implements OnInit {
       this.queryParams.page = this.queryParams.page + 1;
       if (
         this.totalItems === undefined ||
-        this.queryParams.page * this.queryParams.PageSize <= this.totalItems
+        this.queryParams.page * this.queryParams.pageSize <= this.totalItems
       ) {
         this.service.getProducts(this.queryParams).subscribe({
           next: (r) => {
@@ -248,7 +280,7 @@ export class ProductsListComponent extends BaseComponent implements OnInit {
     this.service.delete(this.popupComponent.elementSelectedToDelete).subscribe(
      {next: (r) => {
         this.popupComponent.isDeleteConfirmationVisible = false;
-        this.showMessageSuccess("Product eliminada");
+        this.showMessageSuccess("Producto eliminado");
         this.search();
       },
       error:(r) => { 
@@ -257,4 +289,62 @@ export class ProductsListComponent extends BaseComponent implements OnInit {
       }
   });
   }
+
+   //Busca por marca
+   onSearchBrand(data: string): void {
+    if (data.length > 2) {
+      this.queryData.page = 0;
+      this.queryData.filter = data;
+      this.getBrand(this.queryData);
+    }
+  }
+
+  getBrand(params:any):void{
+    this.loadingBrands = true;
+    this.serviceBrand.getByFilter(params).subscribe({
+      next: (r) => {
+        this.brandList = r.data;
+        this.totalItems = r.totalCount;
+        this.loadingBrands = false;
+      },
+      error: () => {
+        this.loadingBrands = false;
+        this.brandList = [];
+      },
+    });
+  }
+
+  brandSelectedChange(id: any): void {
+    this.queryParams.filter.brand= id;
+    
+  }
+  
+  categorySelectedChange(id: any): void {
+    this.queryParams.filter.category= id;
+      
+  }
+
+    //Busca por categoria
+    onSearchCategory(data: string): void {
+      if (data.length > 2) {
+        this.queryData.page = 0;
+        this.queryData.filter = data;
+        this.getCategory(this.queryData);
+      }
+    }
+
+    getCategory(params:any):void{
+      this.loading = true;
+      this.serviceCategory.getByFilter(params).subscribe({
+        next: (r) => {
+          this.categorieList = r.data;
+          this.totalItems = r.totalCount;
+          this.loading = false;
+        },
+        error: () => {
+          this.loading = false;
+          this.categorieList = [];
+        },
+      });
+    }
 }

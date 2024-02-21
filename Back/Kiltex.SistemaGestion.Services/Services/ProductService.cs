@@ -103,6 +103,9 @@ namespace Kiltex.SistemaGestion.Services.Services
                 var query = _contextSql
                                     .Products.Where(p => !p.IsDeleted)
                                     .AsNoTracking()
+                                      .Include(p => p.Category)
+                                    .Include(p => p.Brand)
+                                    .Include(p => p.Supplier)
                                     .Where(p => (!string.IsNullOrEmpty(request.Filter.Product) ? p.Description.ToLower().Contains(request.Filter.Product) : true) &&
                                     ((request.Filter.Brand.HasValue && request.Filter.Brand != 0) ? p.BrandId == request.Filter.Brand : true) &&
                                      ((request.Filter.Category.HasValue && request.Filter.Category != 0) ? p.CategoryId == request.Filter.Category : true) &&
