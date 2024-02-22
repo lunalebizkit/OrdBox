@@ -5,6 +5,8 @@ import { NzDrawerRef } from 'ng-zorro-antd/drawer';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { ProductsModel } from '../../products/model/product.model';
 import { ProductService } from '../../products/product.service';
+import { BrandsService } from '../../brands/brands.services';
+import { BrandsModel } from '../../brands/model/brands.model';
 
 @Component({
   selector: 'app-invoice-product-search',
@@ -13,21 +15,36 @@ import { ProductService } from '../../products/product.service';
 })
 export class InvoiceProductSearchComponent implements OnInit {
   @Input() set filter(value: string){
-    this.queryParams.filter = value;
+    this.queryParams.filter.product = value;
   };
 
   childrenVisible = false;
+  loadingBrands!: boolean;
   /*
   ** Listado de los productos
   */
   productList: ProductsModel[] = [];
   product!: ProductsModel;
   productId!: number;
-
+  /*
+   ** Lista de marcas
+   */
+   brandList: BrandsModel [] = [];
   /*
   ** Parametros de busqueda
-  */
+  */  
   queryParams = {
+    filter: {
+      product:'',
+      brand: 0,
+      category: 0,
+      status: 0,
+      supplier:[]},
+    page: 0,
+    pageSize: 50
+  };
+
+  queryData = {
     filter: '',
     page: 0,
     pageSize: 50
@@ -43,6 +60,7 @@ export class InvoiceProductSearchComponent implements OnInit {
   constructor(
     private drawerRef: NzDrawerRef<string>,
     private service: ProductService,
+    private serviceBrand: BrandsService,
     @Inject(LOCALE_ID) public locale: string,
     private fb: FormBuilder) { }
 
@@ -98,4 +116,33 @@ export class InvoiceProductSearchComponent implements OnInit {
   currencyFormat(data: any): string {
     return formatCurrency(data, this.locale, '$', 'ARS', '1.1-2');
   }
+
+     //Busca por marca
+     onSearchBrand(data: string): void {
+      if (data.length > 2) {
+        this.queryData.page = 0;
+        this.queryData.filter = data;
+        this.getBrand(this.queryData);
+      }
+    }
+
+    getBrand(params:any):void{
+      this.loadingBrands = true;
+      this.serviceBrand.getByFilter(params).subscribe({
+        next: (r) => {
+          this.brandList = r.data;
+          this.totalItems = r.totalCount;
+          this.loadingBrands = false;
+        },
+        error: () => {
+          this.loadingBrands = false;
+          this.brandList = [];
+        },
+      });
+    }
+
+    brandSelectedChange(id: any): void {
+      this.queryParams.filter.brand= id;
+      
+    }
 }

@@ -1,17 +1,3 @@
-<!--<app-header-op-buttons
-  #header
-  [btnCancelText]="'Volver'"
-  [hideSave]="true"
-  [hideTag]="false"
-  [hideCerrar]="true"
-  [hideFacturaPro]="true"
-  [iconTitle]="'container'"
-  [title]="'Comprobante'"
-  [iconBack]="'rollback'"
-  [iconUpdate]="'check'"
-  (onCancelClick)="back()"
->
-</app-header-op-buttons>-->
 <nz-page-header class="list-header">
   <nz-page-header-title>
     <i nz-icon nzType="container" nzTheme="outline" style="color: #52c41a;"></i> Comprobante</nz-page-header-title>
@@ -173,7 +159,7 @@
             <nz-form-control [nzSm]="14" [nzXs]="14">
               <nz-input-group [nzSuffix]="clearQuery">
                 <input nz-input formControlName="productSearchFilter"
-                  placeholder="Ingrese Marca, Código, Categoría o Producto" nzSize="small"
+                  placeholder="Ingrese producto" nzSize="small"
                   (keydown.enter)="searchProduct(); $event.preventDefault()" />
 
               </nz-input-group>

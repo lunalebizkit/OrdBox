@@ -27,9 +27,9 @@ import { ePayment } from "../../invoices/model/invoice-payment.Enum";
 })
 
 export class BudgetsEditComponent extends BaseComponent implements OnInit {
-direccion() {
-throw new Error('Method not implemented.');
-}
+  direccion() {
+    throw new Error('Method not implemented.');
+  }
 
   @ViewChild('header') headerComponent!: HeaderOperationsButtonsComponent;
   @ViewChild('popup') popupComponent!: PopupConfirmationComponent;
@@ -67,9 +67,15 @@ throw new Error('Method not implemented.');
   ** Parametros de busqueda
   */
   queryParams = {
-    filter: '',
+    filter: {
+      product: '',
+      brand: 0,
+      category: 0,
+      status: 0,
+      supplier: []
+    },
     page: 0,
-    pageSize: 10
+    pageSize: 50
   };
 
   selectedDni: boolean = false;
@@ -280,10 +286,10 @@ throw new Error('Method not implemented.');
 
   }
   disabledDate = (current: Date): boolean =>
-    
+
     differenceInCalendarDays(current, this.today) > 0;
 
-    
+
   msjConfirmOk() {
     try {
       this.budgetDetailsList = this.budgetDetailsList.
@@ -363,7 +369,7 @@ throw new Error('Method not implemented.');
   searchProduct(): void {
 
     this.product = this.formProductSearch.controls['productSearchFilter'].value;
-    this.queryParams.filter = this.product;
+    this.queryParams.filter.product = this.product;
     if (this.product.length > 0) {
       this.serviceProduct.getProducts(this.queryParams).subscribe({
         next: (r) => {
@@ -396,7 +402,7 @@ throw new Error('Method not implemented.');
               /* Parseo dato a Dto Factura Detalle */
               const modelDetail: BudgetDetails = BudgetDetailParser(product, this.bindPrice(product));
               this.budgetDetails.push(modelDetail);
-              this.budgetDetailsList = this.budgetDetailsTest    
+              this.budgetDetailsList = this.budgetDetailsTest
               this.totalCalculate();
               this.isLoading = false;
               this.formProductSearch.controls['productSearchFilter'].setValue('');
@@ -415,7 +421,7 @@ throw new Error('Method not implemented.');
       })
     } else {
       this.isLoading = false;
-      this.queryParams.filter = '';
+      this.queryParams.filter.product = '';
       this.openComponentProduct();
     }
   };
@@ -475,30 +481,30 @@ throw new Error('Method not implemented.');
     })
   }
 
-handleOk() {
+  handleOk() {
     try {
-        this.budgetDetailsTest = this.budgetDetailsList.filter(element => element.ownCode != this.popupComponent.elementSelectedToDelete);
-        this.budgetDetails = this.budgetDetails.filter(element => element.id != this.popupComponent.elementSelectedToDelete);
-        this.popupComponent.isDeleteConfirmationVisible = false;
-   
-        if (this.budgetDetailsList.length == 0) {
+      this.budgetDetailsTest = this.budgetDetailsList.filter(element => element.ownCode != this.popupComponent.elementSelectedToDelete);
+      this.budgetDetails = this.budgetDetails.filter(element => element.id != this.popupComponent.elementSelectedToDelete);
+      this.popupComponent.isDeleteConfirmationVisible = false;
 
-          this.budgetDetailsList = [];
-        } else { 
+      if (this.budgetDetailsList.length == 0) {
 
-          this.budgetDetailsList = this.budgetDetailsTest;
+        this.budgetDetailsList = [];
+      } else {
 
-        }
+        this.budgetDetailsList = this.budgetDetailsTest;
 
-        this.totalCalculate();  
+      }
+
+      this.totalCalculate();
     } catch (error) {
-        console.log(error);
+      console.log(error);
     }
 
-}
-direction() {
-  this.router.navigate(['/home/budgets']);
-}
+  }
+  direction() {
+    this.router.navigate(['/home/budgets']);
+  }
 
 
 }

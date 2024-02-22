@@ -43,24 +43,6 @@
               </nz-form-control>
             </nz-form-item>
           </div>
-          <!-- <div nz-col nzSpan="18" style="width: 240px">
-          <nz-form-item>
-            <nz-form-label nzRequired nzFor="paid">Pagado</nz-form-label>
-            <nz-form-control>
-              <nz-select
-                formControlName="paid"
-                (ngModelChange)="selectPaid($event)"
-              >
-              <nz-switch class="mb-2" formControlName="paid" [ngModel]="switchValue"
-              nzCheckedChildren="seleccionado" nzUnCheckedChildren="No seleccionado"></nz-switch>
-               <nz-option nzValue="SI" nzLabel=" SI "></nz-option>
-              <nz-option nzValue="NO" nzLabel=" NO "></nz-option> 
-              </nz-select>
-
-            </nz-form-control>
-          </nz-form-item>
-        </div>
-      </div> -->
 
           <div nzSpan="18" style="width: 240px">
             <nz-form-item>
@@ -93,22 +75,7 @@
           </form>
         </nz-form-item>
 
-        <!-- <nz-form-item >
-           <nz-form-label [nzSm]="6" [nzXs]="14" nzFor="supplierDni" 
-              >Dni
-            </nz-form-label>
-            <nz-form-control [nzSm]="14" [nzXs]="14">
-            <input
-              nz-input
-              maxlength="8"
-              nzSize="small"
-              formControlName="supplierDni"
-              />
-            </nz-form-control>
-              <nz-switch style="margin-left: 5px;"
-               nzCheckedChildren="seleccionado" nzUnCheckedChildren="No seleccionado" 
-            ></nz-switch>
-      </nz-form-item> -->
+        
         <nz-form-item>
           <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="supplierCuit">Cuit - Cuil
           </nz-form-label>
@@ -143,7 +110,7 @@
             <nz-form-control [nzSm]="14" [nzXs]="14">
               <nz-input-group [nzSuffix]="clearQuery">
                 <input nz-input formControlName="productSearchFilter"
-                  placeholder="Ingrese Marca, Código, Categoría o Producto" nzSize="small"
+                  placeholder="Ingrese producto" nzSize="small"
                   (keydown.enter)="searchProduct(); $event.preventDefault()" />
               </nz-input-group>
 

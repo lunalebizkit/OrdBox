@@ -62,10 +62,7 @@ export class ProductsListComponent extends BaseComponent implements OnInit {
    */
   loadingBrands!: boolean;
   isLoading!: boolean;
-
-  /*
-   ** Parametros de busqueda
-   */
+  
   /*
   ** Parametros de busqueda
   */

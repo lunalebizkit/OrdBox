@@ -1,58 +1,84 @@
-    <nz-content>       
-        <nz-collapse class="list-header">
-           <form nz-form >    
- 
-               <div nz-col nzSpan="24" style="margin-bottom: -20px;">
-                 <nz-form-item>
-                   <nz-form-label>Búsqueda</nz-form-label>
-                   <nz-form-control>                  
-                     <nz-input-group [nzSuffix]="clearQuery">
-                       <input [ngModelOptions]="{standalone: true}" type="text" placeholder="Ingrese Marca, Categoria o Producto" nz-input
-                         (keydown.enter)="search()" [(ngModel)]="queryParams.filter" />
-                     </nz-input-group>
-                     
-                     <ng-template #clearQuery>
-                       <i nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle"
-                         *ngIf="queryParams.filter" (click)="queryParams.filter = ''; search()"></i>
-                     </ng-template>
-                   </nz-form-control>
-                 </nz-form-item>
-               </div>            
- 
-           </form>
-       </nz-collapse> 
- 
-       <!-- Tabla -->
-    
-     <div>
-       <nz-table class="tablaProduct" nzShowSizeChanger [nzData]="productList" nzBordered=true [nzSize]="'small'" [nzLoading]="loading"
-         [nzTotal]="totalItems" [nzPageSize]="queryParams.pageSize" [nzPageIndex]="1" [nzFrontPagination]="false"
-         [nzPaginationType]="'small'"  (nzQueryParams)="onQueryParamsChange($event)">
-         <thead>
-           <tr> 
-            <th>Código</th> 
-             <th>Marca</th>
-             <th>Producto</th> 
-             <th>Precio Costo</th>           
-             <th>Stock</th>
-             <th [nzWidth]="'30px'"></th>
-           </tr>
-         </thead>
-         <tbody>
-           <tr *ngFor="let data of productList" class="small-text" id="{{data.id}}" (click)="selecccion($event)" >
-            <td >{{data.code}}</td>
-            <td >{{data.brandName}}</td> 
-             <td nzBreakWord>{{data.description}}</td> 
-             <td>{{this.currencyFormat(data.purchasePrice)}}</td> 
-             <td [style.color]="data.quantity >= 0 ? '' : ' brown' ">{{data.quantity}}             
-            </td>           
-             <td>
-              <i nz-icon nzType="exclamation-circle" nzTheme="outline" *ngIf="data.quantity <= 0"
-              [title]="'Este producto no cuenta con stock'"
-              style="color: brown;"></i>
-             </td> 
-           </tr>
-         </tbody>
-       </nz-table>
-     </div>
-   </nz-content>
+<nz-content>
+  <nz-collapse class="list-header">
+    <form nz-form>
+
+      <div nz-col nzSpan="20" style="margin-bottom: -20px;">
+        <nz-form-item>
+          <nz-form-label>Búsqueda</nz-form-label>
+          <nz-form-control>
+            <nz-input-group [nzSuffix]="clearQuery">
+              <input [ngModelOptions]="{standalone: true}" type="text" placeholder="Ingrese producto"
+                nz-input (keydown.enter)="search()" [(ngModel)]="queryParams.filter.product" />
+            </nz-input-group>
+
+            <ng-template #clearQuery>
+              <i nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle"
+                *ngIf="queryParams.filter.product" (click)="queryParams.filter.product= ''; search()"></i>
+            </ng-template>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div nz-col nzSpan="18" style="margin: 25px;">
+        <nz-form-item>
+          <nz-form-label>Marca</nz-form-label>
+          <nz-form-control [nzSm]="18">
+            <nz-select nzPlaceHolder="Ingrese una marca" nzAllowClear nzShowSearch nzServerSearch
+              (nzOnSearch)="onSearchBrand($event)" [(ngModel)]="queryParams.filter.brand"
+              (ngModelChange)="brandSelectedChange($event)" [ngModelOptions]="{standalone: true}">
+              <ng-container *ngFor="let o of brandList">
+                <nz-option *ngIf="!loadingBrands" [nzValue]="o.id" [nzLabel]="o.description"></nz-option>
+              </ng-container>
+              <nz-option *ngIf="loadingBrands" nzDisabled nzCustomContent>
+                <span nz-icon nzType="loading" class="loading-icon"></span>
+                Cargando ...
+              </nz-option>
+            </nz-select>
+            <ng-template #clearQuery>
+              <i nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle"
+                *ngIf="queryParams.filter.brand > 0" (click)="queryParams.filter.brand = 0"></i>
+            </ng-template>
+          </nz-form-control>
+          <button nz-button nzType="primary" (click)="search()" style="margin-left: 50px;">
+            <i nz-icon nzType="search"></i>
+            Buscar
+          </button>
+        </nz-form-item>
+      </div>
+
+    </form>
+  </nz-collapse>
+
+  <!-- Tabla -->
+
+  <div>
+    <nz-table class="tablaProduct" nzShowSizeChanger [nzData]="productList" nzBordered=true [nzSize]="'small'"
+      [nzLoading]="loading" [nzTotal]="totalItems" [nzPageSize]="queryParams.pageSize" [nzPageIndex]="1"
+      [nzFrontPagination]="false" [nzPaginationType]="'small'" (nzQueryParams)="onQueryParamsChange($event)">
+      <thead>
+        <tr>
+          <th>Código</th>
+          <th>Marca</th>
+          <th>Producto</th>
+          <th>Precio Costo</th>
+          <th>Stock</th>
+          <th [nzWidth]="'30px'"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let data of productList" class="small-text" id="{{data.id}}" (click)="selecccion($event)">
+          <td>{{data.code}}</td>
+          <td>{{data.brandName}}</td>
+          <td nzBreakWord>{{data.description}}</td>
+          <td>{{this.currencyFormat(data.purchasePrice)}}</td>
+          <td [style.color]="data.quantity >= 0 ? '' : ' brown' ">{{data.quantity}}
+          </td>
+          <td>
+            <i nz-icon nzType="exclamation-circle" nzTheme="outline" *ngIf="data.quantity <= 0"
+              [title]="'Este producto no cuenta con stock'" style="color: brown;"></i>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </div>
+</nz-content>

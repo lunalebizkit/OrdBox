@@ -1,18 +1,3 @@
-<!--<app-header-op-buttons
-  #header
-  [btnCancelText]="'Volver'"
-  [hideSave]="true"
-  [hideTag]="false"
-  [hideFacturaPro]="true"
-  [hideCerrar]="true"
-  [iconTitle]="'container'"
-  [title]="'Factura de compra'"
-  [iconBack]="'rollback'"
-  [iconUpdate]="'check'"
-  [hideCerrar]="true" 
-  [hideFacturaPro]="true"
->
-</app-header-op-buttons>-->
 <nz-page-header class="list-header">
   <nz-page-header-title>
     <i nz-icon nzType="container" nzTheme="outline" style="color: #52c41a;"></i> Factura de compra</nz-page-header-title>
@@ -189,7 +174,7 @@
                 <input
                   nz-input
                   formControlName="productSearchFilter"
-                  placeholder="Ingrese Marca, Código, Categoría o Producto"
+                  placeholder="Ingrese producto"
                   nzSize="small"
                   (keydown.enter)="searchProduct(); $event.preventDefault()"
                 />
