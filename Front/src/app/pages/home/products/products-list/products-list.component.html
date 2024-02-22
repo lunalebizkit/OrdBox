@@ -11,8 +11,8 @@
   <nz-collapse>
     <nz-collapse-panel nzSize="small" nzHeader="Filtros" [nzActive]="true">
       <form nz-form [formGroup]="formSearch">
-        <div nz-row nzJustify="space-around">
-          <div nz-col nzSpan="12">
+        <div nz-row style="margin-left:70px ;">
+          <div nz-col nzSpan="17">
             <nz-form-item>
               <nz-form-label>Producto</nz-form-label>
               <nz-form-control>
@@ -20,7 +20,6 @@
                   <input formControlName="product" type="text" placeholder="Producto" nz-input
                     [(ngModel)]="queryParams.filter.product" />
                 </nz-input-group>
-
                 <ng-template #clearQuery>
                   <i nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle"
                     *ngIf="formSearch.get('invoice')?.value" (click)="formSearch.get('invoice')?.setValue('')"></i>
@@ -28,7 +27,7 @@
               </nz-form-control>
             </nz-form-item>
           </div>
-          <div>
+          <div style="margin-left:80px ;">
             <button nz-button nzType="primary" (click)="search()">
               <i nz-icon nzType="search"></i>
               Buscar
@@ -36,8 +35,8 @@
           </div>
         </div>
 
-          <div nz-row nzJustify="space-around">
-            <div nz-col nzSpan="8">
+          <div nz-row style="margin-left:70px ;">
+            <div nz-col nzSpan="11">
               <nz-form-item>
                 <nz-form-label nzFor="category">Categoría </nz-form-label>
                 <nz-form-control [nzSm]="24">
@@ -60,7 +59,7 @@
                 </nz-form-control>
               </nz-form-item>
             </div>
-            <div nz-col nzSpan="8">
+            <div nz-col nzSpan="11" style="margin-left:30px ;">
               <nz-form-item>
                 <nz-form-label>Marca</nz-form-label>
                 <nz-form-control [nzSm]="24">
