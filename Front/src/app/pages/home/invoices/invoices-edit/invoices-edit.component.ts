@@ -23,6 +23,7 @@ import { ProductService } from "../../products/product.service";
 import { AuthService } from "src/app/common/auth/interceptors/auth.service";
 import { PeriodsService } from "../../periods/periods.service";
 import { IvaType } from "../model/iva-type.Enum";
+import { isNil } from "ng-zorro-antd/core/util";
 
 
 
@@ -193,7 +194,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
         if (data != undefined) {
           this.customerId = data.id;
           this.formInvoice.controls['address'].setValue(data.address);
-          this.formInvoice.controls['customerCuit'].setValue(data.cuit);
+          this.formInvoice.controls['customerCuit'].setValue(!isNil(data.cuit) ? data.cuit.replace(/[^a-zA-Z0-9 ]/g, '') : null);
           this.formInvoice.controls['customerName'].setValue(data.name);
           this.formInvoice.controls['customerDni'].setValue(data.dni)
         }

@@ -15,6 +15,7 @@ import { QuittanceService } from "../quittance.service";
 import { quittanceDetails, quittanceModel } from "../model";
 import { InvoiceCustomerSearchComponent } from "../../invoices/invoice-customer-search/invoice-customer-search.component";
 import { CustomerModel } from "../../customers/model/customer.model";
+import { isNil } from "ng-zorro-antd/core/util";
 
 
 @Component({
@@ -256,7 +257,7 @@ removeCheck( e: MouseEvent, index: any): void {
         if (data != undefined) {
           this.customerId = data.id;
           this.formQuittance.controls['address'].setValue(data.address);
-          this.formQuittance.controls['customerCuit'].setValue(data.cuit);
+          this.formQuittance.controls['customerCuit'].setValue(!isNil(data.cuit) ? data.cuit.replace(/[^a-zA-Z0-9 ]/g, '') : null);
           this.formQuittance.controls['customerName'].setValue(data.name);
         }
       },

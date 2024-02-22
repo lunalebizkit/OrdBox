@@ -22,6 +22,7 @@ import { ProductsModel } from '../../products/model/product.model';
 import { ProductService } from '../../products/product.service';
 import { debitMemoDetailFromInvoiceParser, DebitMemoDetailList, debitMemoDetailParser, DebitMemoDetails, debitMemoGridFromInvoiceParser, debitMemoGridParser, DebitMemoModel } from '../model/debitMemo.model';
 import { NoteService } from '../notes.service';
+import { isNil } from 'ng-zorro-antd/core/util';
 
 @Component({
   selector: 'app-debit-memo',
@@ -318,7 +319,7 @@ export class debitMemoComponent extends BaseComponent implements OnInit {
         if (data != undefined) {
           this.customerId = data.id;
           this.formDebitMemo.controls['address'].setValue(data.address);
-          this.formDebitMemo.controls['customerCuit'].setValue(data.cuit);
+          this.formDebitMemo.controls['customerCuit'].setValue(!isNil(data.cuit) ? data.cuit.replace(/[^a-zA-Z0-9 ]/g, '') : null);
           this.formDebitMemo.controls['customerName'].setValue(data.name);
           this.formDebitMemo.controls['customerDni'].setValue(data.dni)
         }

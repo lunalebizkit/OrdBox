@@ -22,6 +22,7 @@ import { ProductsModel } from '../../products/model/product.model';
 import { ProductService } from '../../products/product.service';
 import { creditMemoDetailFromInvoiceParser, CreditMemoDetailList, creditMemoDetailParser, CreditMemoDetails, creditMemoGridFromInvoiceParser, creditMemoGridParser, CreditMemoModel } from '../model/creditMemo.model';
 import { NoteService } from '../notes.service';
+import { isNil } from 'ng-zorro-antd/core/util';
 
 
 @Component({
@@ -300,10 +301,10 @@ constructor(@Inject(LOCALE_ID) public locale: string,
     });
     drawerRefCustomer.afterClose.subscribe({
       next: (data) => {
-        if (data != undefined) {
+        if (data != undefined) {          
           this.customerId = data.id;
           this.formCreditMemo.controls['address'].setValue(data.address);
-          this.formCreditMemo.controls['customerCuit'].setValue(data.cuit);
+          this.formCreditMemo.controls['customerCuit'].setValue( !isNil(data.cuit) ? data.cuit.replace(/[^a-zA-Z0-9 ]/g, '') : null);
           this.formCreditMemo.controls['customerName'].setValue(data.name);
           this.formCreditMemo.controls['customerDni'].setValue(data.dni)
         }

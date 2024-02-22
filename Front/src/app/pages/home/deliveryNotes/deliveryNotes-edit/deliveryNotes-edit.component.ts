@@ -21,6 +21,7 @@ import { CustomerAddModel } from "../../customers/model/customer.add.model";
 import { deliveryNotesService } from "../deliveryNotes.service";
 import { pStatusType, statusType } from "../model/status.model";
 import { disableDebugTools } from "@angular/platform-browser";
+import { isNil } from "ng-zorro-antd/core/util";
 
 
 
@@ -424,7 +425,7 @@ export class DeliveryNotesEditComponent extends BaseComponent implements OnInit 
         if (data != undefined) {
           this.supplierId = data.id;
           this.formDeliveryNotes.controls['supplierAddress'].setValue(data.address);
-          this.formDeliveryNotes.controls['supplierCuit'].setValue(data.cuit);
+          this.formDeliveryNotes.controls['supplierCuit'].setValue(!isNil(data.cuit) ? data.cuit.replace(/[^a-zA-Z0-9 ]/g, '') : null);
           this.formDeliveryNotes.controls['supplierName'].setValue(data.name);
           this.formDeliveryNotes.controls['supplierDni'].setValue(data.dni)
         }

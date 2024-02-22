@@ -34,6 +34,7 @@ import { ProductsModel } from '../../products/model/product.model';
 import { InvoiceProductSearchComponent } from '../invoice-product-search/invoice-product-search.component';
 import { ReceiptSupplierSearchComponent } from '../receipt-supplier-search/receipt-supplier-search.component';
 import { IvaType } from '../model/iva-type.Enum';
+import { isNil } from 'ng-zorro-antd/core/util';
 
 @Component({
   selector: 'app-receipt-edit',
@@ -249,7 +250,7 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
         if (data != undefined) {
           this.supplierId = data.id;
           this.formReceipt.controls['supplierAddress'].setValue(data.address);
-          this.formReceipt.controls['supplierCuit'].setValue(data.cuit);
+          this.formReceipt.controls['supplierCuit'].setValue(!isNil(data.cuit) ? data.cuit.replace(/[^a-zA-Z0-9 ]/g, '') : null);
           this.formReceipt.controls['supplierName'].setValue(data.name);
           this.formReceipt.controls['supplierDni'].setValue(data.dni)
         }
