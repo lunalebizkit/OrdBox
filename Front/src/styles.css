@@ -22,22 +22,6 @@
     --btn-txt-hover: #67b7f0;
 }
 
-@media (prefers-color-scheme: dark) {
-    :root {
-        color-scheme: dark;
-        --backg-A: rgba(118, 233, 195, 0.653);
-        --backg-B: rgba(135, 206, 250, 0.614);
-        --backg-C: rgba(255, 182, 193, 0.562);
-        --background: var(--body-background-dark);
-        --text: #f8f8f8;
-        --btn-green: #27AE60;
-        --btn-green-hover: #35c370;
-        --box-shadow: #a3a1a3;
-        --btn-txt: #3daeff;
-        --btn-txt-hover: #67b7f0;
-    }
-}
- 
 
 
 .btn-txt-export {
