@@ -333,7 +333,7 @@ export class debitMemoComponent extends BaseComponent implements OnInit {
 
   openComponentProduct(): void {
     if (this.isValidForm(this.formDebitMemo)) {
-      const drawerRefProduct = this.drawerService.create<InvoiceProductSearchComponent, { filter: string }, ProductsModel>({
+      const drawerRefProduct = this.drawerService.create<InvoiceProductSearchComponent, { filter: string }, [ProductsModel]>({
         nzTitle: 'Productos',
         nzContent: InvoiceProductSearchComponent,
         nzWidth: '90%',
@@ -345,18 +345,19 @@ export class debitMemoComponent extends BaseComponent implements OnInit {
       });
       drawerRefProduct.afterClose.subscribe({
 
-        next: (data: ProductsModel) => {
+        next: (data: [ProductsModel]) => {
           if (data != undefined) {
-            if (this.debitMemoDetails.find(item => item.productId == data.id)) {
+            data.forEach((productItem) =>{
+            if (this.debitMemoDetails.find(item => item.productId == productItem.id)) {
               /*Actualizo la lista que envio al back */
-              this.debitMemoDetails.filter(item => item.productId == data.id)[0]
+              this.debitMemoDetails.filter(item => item.productId == productItem.id)[0]
                 .quantity += 1;
 
               /*Actualizo la lista de la tabla */
-              let newListElement = this.debitMemoList.filter(item => item.ownCode == data.id)[0];
+              let newListElement = this.debitMemoList.filter(item => item.ownCode == productItem.id)[0];
 
               newListElement.quantity += 1;
-              newListElement.subTotal += data.cashSalePrice * newListElement.quantity;
+              newListElement.subTotal += productItem.cashSalePrice * newListElement.quantity;
               /**cashSalePrice es el precio de Costo */
 
               this.totalCalculate();
@@ -365,18 +366,19 @@ export class debitMemoComponent extends BaseComponent implements OnInit {
             } else {
 
               /* Parseo dato a la grilla de Tabla */
-              const model: DebitMemoDetailList = debitMemoGridParser(data, this.iva);
+              const model: DebitMemoDetailList = debitMemoGridParser(productItem, this.iva);
               this.debitMemoListTest.push(model)
 
               this.debitMemoList = this.debitMemoListTest;
               /* Parseo dato a Dto Factura Detalle */
-              const modelDetail: DebitMemoDetails = debitMemoDetailParser(data, this.iva);
+              const modelDetail: DebitMemoDetails = debitMemoDetailParser(productItem, this.iva);
               this.debitMemoDetails.push(modelDetail);
 
               this.totalCalculate();
               this.isLoading = false;
               this.formProductSearch.controls['productSearchFilter'].setValue('');
             }
+          })
           }
         },
         error: () => {

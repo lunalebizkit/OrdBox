@@ -428,7 +428,7 @@ export class BudgetsEditComponent extends BaseComponent implements OnInit {
 
   openComponentProduct(): void {
 
-    const drawerRefProduct = this.drawerService.create<InvoiceProductSearchComponent, { filter: string }, ProductsModel>({
+    const drawerRefProduct = this.drawerService.create<InvoiceProductSearchComponent, { filter: string }, [ProductsModel]>({
       nzTitle: 'Productos',
       nzContent: InvoiceProductSearchComponent,
       nzSize: 'large',
@@ -439,17 +439,19 @@ export class BudgetsEditComponent extends BaseComponent implements OnInit {
       nzClosable: false
     });
     drawerRefProduct.afterClose.subscribe({
-      next: (data: ProductsModel) => {
+      next: (data: [ProductsModel]) => {
 
         if (data != undefined) {
-          if (this.budgetDetails.find(item => item.productId == data.id)) {
+
+          data.forEach((productItem) =>{
+          if (this.budgetDetails.find(item => item.productId == productItem.id)) {
             /*Actualizo la lista que envio al back*/
-            this.budgetDetails.filter(item => item.productId == data.id)[0].quantity += 1;
+            this.budgetDetails.filter(item => item.productId == productItem.id)[0].quantity += 1;
 
             /*Actualizo la lista de la tabla*/
-            let newListElement = this.budgetDetailsList.filter(item => item.ownCode == data.id)[0];
+            let newListElement = this.budgetDetailsList.filter(item => item.ownCode == productItem.id)[0];
             newListElement.quantity += 1;
-            newListElement.subTotal += this.bindPrice(data) * newListElement.quantity;
+            newListElement.subTotal += this.bindPrice(productItem) * newListElement.quantity;
 
             this.totalCalculate();
             this.isLoading = false;
@@ -458,12 +460,12 @@ export class BudgetsEditComponent extends BaseComponent implements OnInit {
           } else {
 
             /*Parseo dato a la grilla de tabla */
-            const model: BudgetDetailList = BudgetGridParser(data, this.bindPrice(data));
+            const model: BudgetDetailList = BudgetGridParser(productItem, this.bindPrice(productItem));
             this.budgetDetailsTest.push(model);
             this.budgetDetailsList = this.budgetDetailsTest;
 
             /*Parseo dato a DTO  */
-            const modelDetail: BudgetDetails = BudgetDetailParser(data, this.bindPrice(data));
+            const modelDetail: BudgetDetails = BudgetDetailParser(productItem, this.bindPrice(productItem));
             this.budgetDetails.push(modelDetail);
 
             this.totalCalculate();
@@ -471,6 +473,7 @@ export class BudgetsEditComponent extends BaseComponent implements OnInit {
             this.formProductSearch.controls['productSearchFilter'].setValue('');
 
           }
+        })
         }
       }, error: () => {
         this.isLoading = false;

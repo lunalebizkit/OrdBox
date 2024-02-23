@@ -469,7 +469,7 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
     const drawerRefProduct = this.drawerService.create<
       InvoiceProductSearchComponent,
       { filter: string },
-      ProductsModel
+      [ProductsModel]
     >({
       nzTitle: 'Productos',
       nzContent: InvoiceProductSearchComponent,
@@ -482,24 +482,25 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
     });
     drawerRefProduct.afterClose.subscribe({
 
-      next: (data: ProductsModel) => {
+      next: (data: [ProductsModel]) => {
         if (data != undefined) {
 
-          if (this.receiptDetails.find((item) => item.productId == data.id)) {
+          data.forEach((productItem) =>{
+          if (this.receiptDetails.find((item) => item.productId == productItem.id)) {
 
             /*Actualizo la lista que envio al back */
             this.receiptDetails.filter(
-              (item) => item.productId == data.id
+              (item) => item.productId == productItem.id
             )[0].quantity += 1;
 
             /*Actualizo la lista de la tabla */
             let newListElement = this.receiptDetailsGrid.filter(
-              (item) => item.productId == data.id
+              (item) => item.productId == productItem.id
             )[0];
 
             newListElement.quantity += 1;
             newListElement.subTotal +=
-              data.purchasePrice * newListElement.quantity;
+            productItem.purchasePrice * newListElement.quantity;
 
             this.totalCalculate();
 
@@ -510,7 +511,7 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
           } else {
             /* Parseo dato a la grilla de Tabla */
             const model: receiptDetailsGrid = receiptGridParser(
-              data,
+              productItem,
               this.iva
             );
             this.receiptDetailsGridTest.push(model);
@@ -518,7 +519,7 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
 
             /* Parseo dato a Dto Factura Detalle */
             const modelDetail: receiptDetails = receiptDetailParser(
-              data,
+              productItem,
               this.iva
             );
             this.receiptDetails.push(modelDetail);
@@ -530,6 +531,7 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
               ''
             );
           }
+        })
         }
       },
       error: () => {

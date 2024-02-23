@@ -261,7 +261,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let data of receiptDetailsGrid" class="small-text">
+          <tr id="{{data.productId}}" *ngFor="let data of receiptDetailsGrid" class="small-text">
             <td>{{ data.productId }}</td>
 
             <td>
@@ -276,7 +276,7 @@
               >
                 {{ data.quantity }}
               </div>
-              <nz-input-number
+              <nz-input-number id="{{data.productId}}"
                 [hidden]="editId !== data.productId"
                 [nzMin]="1"
                 [nzMax]="10000"
@@ -296,6 +296,7 @@
             {{data.iva}}
            </div> 
                 <nz-select
+                id="{{data.productId}}"
                 [hidden]="editIdIva !== data.productId"
                  [nzOptions]="ivaType"                 
                  (ngModelChange)="changeIvaValue($event, data.productId)"

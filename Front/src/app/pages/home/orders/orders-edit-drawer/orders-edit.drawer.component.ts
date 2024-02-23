@@ -468,7 +468,7 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
       const drawerRefProduct = this.drawerService.create<
         InvoiceProductSearchComponent,
         { filter: string },
-        ProductsModel
+        [ProductsModel]
       >({
         nzTitle: 'Productos',
         nzContent: InvoiceProductSearchComponent,
@@ -481,37 +481,39 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
       });
 
       drawerRefProduct.afterClose.subscribe({
-        next: (data: ProductsModel) => {
+        next: (data: [ProductsModel]) => {
           if (data != undefined) {
-            if (this.orderDetail.find((item) => item.productId == data.id)) {
+
+            data.forEach((productItem) =>{
+            if (this.orderDetail.find((item) => item.productId == productItem.id)) {
               /*Actualizo la lista que envio al back */
               this.orderDetail.filter(
-                (item) => item.productId == data.id
+                (item) => item.productId == productItem.id
               )[0].orderedQuantity += 1;
 
               /*Actualizo la lista de la tabla */
               let newListElement = this.orderDetailGrid.filter(
-                (item) => item.id == data.id
+                (item) => item.id == productItem.id
               )[0];
 
               newListElement.orderedQuantity += 1;
               newListElement.subTotal +=
-                data.purchasePrice * newListElement.orderedQuantity;
+              productItem.purchasePrice * newListElement.orderedQuantity;
 
               this.totalCalculate();
             } else {
               /* Parseo dato Producto a la grilla de Tabla */
-              const model: OrderDetailGrid = orderGridProductParser(data);
-              
+              const model: OrderDetailGrid = orderGridProductParser(productItem);     
               this.orderListGridTest.push(model);
               this.orderDetailGrid = this.orderListGridTest;
               /* Parseo dato a Dto Order Detalle */
-              const modelDetail: NewOrderDetail = orderNewProductParser(data);
+              const modelDetail: NewOrderDetail = orderNewProductParser(productItem);
               this.orderDetail.push(modelDetail);
-              this.totalCalculate();
+              this.totalCalculate();               
             }
-          }
-        },
+          })
+        
+        }},
         error: () => {
           this.orderDetailGrid = [];
         },
