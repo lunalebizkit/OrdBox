@@ -24,6 +24,7 @@ import { BrandsModel } from '../../brands/model/brands.model';
 export class ProductsListComponent extends BaseComponent implements OnInit {
   permissions = Permission;
   @ViewChild('popup') popupComponent!: PopupConfirmationComponent;
+  @ViewChild('popupActive') popupActiveComponent!: PopupConfirmationComponent;
 
   /*
    ** Listado de los productos
@@ -137,6 +138,22 @@ export class ProductsListComponent extends BaseComponent implements OnInit {
       },
     });
   }
+  getInactiveData(params: any): void {
+    this.loading = true;
+    this.service.getInactivesProducts(params).subscribe({
+      next: (r) => {
+        this.productList = r.data;
+        this.totalItems = r.totalCount;
+        this.loading = false;
+        this.selectedIndex = 0;
+        this.selectedProduct = this.productList[this.selectedIndex];
+      },
+      error: () => {
+        this.loading = false;
+        this.productList = [];
+      },
+    });
+  }
   /*
    ** Evento al presionar buscar o presionar enter
    */
@@ -144,6 +161,10 @@ export class ProductsListComponent extends BaseComponent implements OnInit {
   search(): void {
     this.queryParams.page = 0;
     this.getData(this.queryParams);
+  }
+  searchInactive(): void {
+    this.queryParams.page = 0;
+    this.getInactiveData(this.queryParams);
   }
   onDoubleClicked(datos: ProductsModel) {
     this.id = datos.id;
@@ -283,6 +304,20 @@ export class ProductsListComponent extends BaseComponent implements OnInit {
       error:(r) => { 
         this.showMessageError(r.error.descripcion);
         this.popupComponent.isDeleteConfirmationVisible = false;
+      }
+  });
+  }
+
+  handleActiveOk() {
+    this.service.activate(this.popupActiveComponent.elementSelectedToDelete).subscribe(
+     {next: (r) => {
+        this.popupActiveComponent.isDeleteConfirmationVisible = false;
+        this.showMessageSuccess("Producto activado");
+        this.searchInactive();
+      },
+      error:(r) => { 
+        this.showMessageError(r.error.descripcion);
+        this.popupActiveComponent.isDeleteConfirmationVisible = false;
       }
   });
   }

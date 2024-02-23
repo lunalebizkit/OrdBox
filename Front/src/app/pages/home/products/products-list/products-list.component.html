@@ -33,6 +33,12 @@
               Buscar
             </button>
           </div>
+          <div *authPermission="[permissions.DeleteProduct]" style="margin-left: 5px;">
+            <button nz-button nzType="primary" (click)="searchInactive()" style="background-color: #912a49; border-color: #912a49;">
+              <i nz-icon nzType="eye-invisible"></i>
+              Ver Inactivos
+            </button>
+          </div>
         </div>
 
           <div nz-row style="margin-left:70px ;">
@@ -130,9 +136,13 @@
             <nz-space [nzSplit]="spaceSplit">
               <ng-template #spaceSplit>
               </ng-template>
-              <a *nzSpaceItem (click)="popup.showDeleteConfirmation(product.id)">
+              <a *ngIf="product.isDeleted == false" nzSpaceItem (click)="popup.showDeleteConfirmation(product.id)">
                 <i nz-tooltip nzTooltipTitle="Eliminar" nz-icon nzType="delete" [nzTheme]="'twotone'"
                   [nzTwotoneColor]="'#FF0000'"></i>
+              </a>
+              <a *ngIf="product.isDeleted === true" nzSpaceItem (click)="popupActiveComponent.showDeleteConfirmation(product.id)">
+                <i nz-tooltip nzTooltipTitle="Agregar" nz-icon nzType="check"
+                  [nzIconfont]="'#52c41a'"></i>
               </a>
             </nz-space>
           </td>
@@ -142,6 +152,10 @@
   </div>
 </nz-layout>
 <app-popup-confirmation #popup [title]="'Confirmar eliminación'"
-  [header]="'¿Está seguro de que desea eliminar la marca seleccionada?'" [message]="'Esta acción no se puede revertir'"
+  [header]="'¿Está seguro de que desea eliminar el producto seleccionado?'" 
   (handleOk)="handleOk()">
+</app-popup-confirmation>
+<app-popup-confirmation #popupActive [title]="'Confirmar Activar'"
+  [header]="'¿Está seguro de que desea activar el producto seleccionado?'"
+  (handleOk)="handleActiveOk()">
 </app-popup-confirmation>

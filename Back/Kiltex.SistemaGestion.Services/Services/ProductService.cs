@@ -136,8 +136,8 @@ namespace Kiltex.SistemaGestion.Services.Services
                 _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
                 throw;
             }
-        } 
-        
+        }
+
         public async Task<OperationResponse<DtoPagination<DtoResponseProduct>>> ListInactive(RequestPaginatedData<ProductFilter> request)
         {
             try
@@ -191,11 +191,6 @@ namespace Kiltex.SistemaGestion.Services.Services
 
                     if (product != null)
                     {
-                        _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_010_ERROR_EXCEPTION));
-                        return Error<IdResponse<long>>(new OperationExceptions(ErrorsCodes.C_010_ERROR_EXCEPTION, "El producto tiene marcas asociadas"));
-                    }
-                    else
-                    {
                         var savedProduct = await _contextSql.Products.FirstOrDefaultAsync(p => p.Id == id, ct).ConfigureAwait(false);
 
                         if (savedProduct != null)
@@ -211,6 +206,11 @@ namespace Kiltex.SistemaGestion.Services.Services
                             _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_004_ELEMENT_NOT_FOUND));
                             return Error<IdResponse<long>>(new OperationExceptions(ErrorsCodes.C_004_ELEMENT_NOT_FOUND, ErrorsMessages.GetMessage(ErrorsCodes.C_004_ELEMENT_NOT_FOUND)));
                         }
+                    }
+                    else
+                    {
+                        _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_010_ERROR_EXCEPTION));
+                        return Error<IdResponse<long>>(new OperationExceptions(ErrorsCodes.C_010_ERROR_EXCEPTION, "El producto tiene marcas asociadas"));
                     }
 
 
@@ -248,9 +248,9 @@ namespace Kiltex.SistemaGestion.Services.Services
                     }
                     else
                     {
-                            _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_004_ELEMENT_NOT_FOUND));
-                            return Error<IdResponse<long>>(new OperationExceptions(ErrorsCodes.C_004_ELEMENT_NOT_FOUND, ErrorsMessages.GetMessage(ErrorsCodes.C_004_ELEMENT_NOT_FOUND)));
-                        
+                        _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_004_ELEMENT_NOT_FOUND));
+                        return Error<IdResponse<long>>(new OperationExceptions(ErrorsCodes.C_004_ELEMENT_NOT_FOUND, ErrorsMessages.GetMessage(ErrorsCodes.C_004_ELEMENT_NOT_FOUND)));
+
                     }
 
 

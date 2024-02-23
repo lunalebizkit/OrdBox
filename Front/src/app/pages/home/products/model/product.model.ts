@@ -14,7 +14,8 @@ export interface ProductsModel {
     cardSalePercentage: number,
     pointOrder: number,
     observation: string,
-    supplierName: string
+    supplierName: string,
+    isDeleted: boolean
 }
 export interface Image {
     uid: string;
