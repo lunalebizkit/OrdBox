@@ -34,5 +34,6 @@ namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse
         public string Observation { get; set; }
 
         public string SupplierName { get; set; }
+        public bool IsDeleted { get; set; }
     }
 }

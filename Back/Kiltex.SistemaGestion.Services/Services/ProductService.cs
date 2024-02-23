@@ -101,7 +101,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             try
             {
                 var query = _contextSql
-                                    .Products.Where(p => !p.IsDeleted)
+                                    .Products.Where(p => p.IsDeleted == false)
                                     .AsNoTracking()
                                       .Include(p => p.Category)
                                     .Include(p => p.Brand)
@@ -110,7 +110,49 @@ namespace Kiltex.SistemaGestion.Services.Services
                                     ((request.Filter.Brand.HasValue && request.Filter.Brand != 0) ? p.BrandId == request.Filter.Brand : true) &&
                                      ((request.Filter.Category.HasValue && request.Filter.Category != 0) ? p.CategoryId == request.Filter.Category : true) &&
                                      (!string.IsNullOrEmpty(request.Filter.Product) ? p.Description.ToLower().Contains(request.Filter.Product) : true)
-                                    );
+                                    && p.IsDeleted == false);
+
+                var count = await query.CountAsync().ConfigureAwait(false);
+
+                var list = await query.OrderBy(p => p.Id)
+                                      .Skip(request.Page * request.PageSize)
+                                      .Take(request.PageSize)
+                                      .ToListAsync()
+                                      .ConfigureAwait(false);
+
+
+                var dto = _mapper.Map<List<DtoResponseProduct>>(list);
+
+
+                return new OperationResponse<DtoPagination<DtoResponseProduct>>(new DtoPagination<DtoResponseProduct>
+                {
+                    Data = dto,
+                    PageSize = request.PageSize,
+                    TotalCount = count
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
+                throw;
+            }
+        } 
+        
+        public async Task<OperationResponse<DtoPagination<DtoResponseProduct>>> ListInactive(RequestPaginatedData<ProductFilter> request)
+        {
+            try
+            {
+                var query = _contextSql
+                                    .Products.Where(p => p.IsDeleted)
+                                    .AsNoTracking()
+                                      .Include(p => p.Category)
+                                    .Include(p => p.Brand)
+                                    .Include(p => p.Supplier)
+                                    .Where(p => (!string.IsNullOrEmpty(request.Filter.Product) ? p.Description.ToLower().Contains(request.Filter.Product) : true) &&
+                                    ((request.Filter.Brand.HasValue && request.Filter.Brand != 0) ? p.BrandId == request.Filter.Brand : true) &&
+                                     ((request.Filter.Category.HasValue && request.Filter.Category != 0) ? p.CategoryId == request.Filter.Category : true) &&
+                                     (!string.IsNullOrEmpty(request.Filter.Product) ? p.Description.ToLower().Contains(request.Filter.Product) : true)
+                                    && p.IsDeleted);
 
                 var count = await query.CountAsync().ConfigureAwait(false);
 
@@ -169,6 +211,46 @@ namespace Kiltex.SistemaGestion.Services.Services
                             _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_004_ELEMENT_NOT_FOUND));
                             return Error<IdResponse<long>>(new OperationExceptions(ErrorsCodes.C_004_ELEMENT_NOT_FOUND, ErrorsMessages.GetMessage(ErrorsCodes.C_004_ELEMENT_NOT_FOUND)));
                         }
+                    }
+
+
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
+                    throw;
+                }
+            }
+        }
+
+        //Activar Producto
+        public async Task<OperationResponse<IdResponse<long>>> Active(long id, CancellationToken ct = default)
+        {
+            using (var connection = new SqlConnection(ConnectionString))
+            {
+                try
+                {
+                    var product = connection.Query(SqlScripts.GetProductById, new { @productid = id }).FirstOrDefault();
+
+                    if (product != null)
+                    {
+                        var savedProduct = await _contextSql.Products.FirstOrDefaultAsync(p => p.Id == id, ct).ConfigureAwait(false);
+
+                        if (savedProduct != null)
+                        {
+                            savedProduct.IsDeleted = false;
+
+                            await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
+
+                            return Ok(new IdResponse<long>(id));
+                        }
+                        return Error<IdResponse<long>>(new OperationExceptions(ErrorsCodes.C_004_ELEMENT_NOT_FOUND, ErrorsMessages.GetMessage(ErrorsCodes.C_004_ELEMENT_NOT_FOUND)));
+                    }
+                    else
+                    {
+                            _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_004_ELEMENT_NOT_FOUND));
+                            return Error<IdResponse<long>>(new OperationExceptions(ErrorsCodes.C_004_ELEMENT_NOT_FOUND, ErrorsMessages.GetMessage(ErrorsCodes.C_004_ELEMENT_NOT_FOUND)));
+                        
                     }
 
 
