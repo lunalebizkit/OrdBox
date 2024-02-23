@@ -24,8 +24,12 @@ export class InvoiceProductSearchComponent implements OnInit {
   ** Listado de los productos
   */
   productList: ProductsModel[] = [];
-  product!: ProductsModel;
+  product: ProductsModel[] = [];
   productId!: number;
+
+  checked = false;
+  indeterminate = false;
+  setOfCheckedId = new Set<number>()
   /*
    ** Lista de marcas
    */
@@ -77,13 +81,9 @@ export class InvoiceProductSearchComponent implements OnInit {
   }
 
 
-  selecccion(dato: any) {
-    if ( dato.composedPath()[1].id != null ||  dato.composedPath()[1].id != undefined) {
-      this.productId= dato.composedPath()[1].id; 
-     this.product= this.productList.filter( t => t.id == this.productId)[0];
-     this.close();
- 
-    }
+  selecccion() {    
+    this.product = this.productList.filter(({id}) => this.setOfCheckedId.has(id));
+    this.close();
    }
 
  
@@ -144,5 +144,29 @@ export class InvoiceProductSearchComponent implements OnInit {
     brandSelectedChange(id: any): void {
       this.queryParams.filter.brand= id;
       
+    }
+
+    onAllChecked(checked: boolean): void {
+      this.productList
+        .forEach(({ id }) => this.updateCheckedSet(id, checked));
+      this.refreshCheckedStatus();
+    }
+
+    updateCheckedSet(id: number, checked: boolean): void {
+      if (checked) {
+        this.setOfCheckedId.add(id);
+      } else {
+        this.setOfCheckedId.delete(id);
+      }
+    }
+
+    refreshCheckedStatus(): void {
+      this.checked = this.productList.every(({ id }) => this.setOfCheckedId.has(id));
+      this.indeterminate = this.productList.some(({ id }) => this.setOfCheckedId.has(id)) && !this.checked;
+    }
+
+    onItemChecked(id: number, checked: boolean): void {
+      this.updateCheckedSet(id, checked);
+      this.refreshCheckedStatus();
     }
 }
