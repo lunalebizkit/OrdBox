@@ -15,7 +15,8 @@ export interface ProductsModel {
     pointOrder: number,
     observation: string,
     supplierName: string,
-    isDeleted: boolean
+    isDeleted: boolean,
+    barCode: string
 }
 export interface Image {
     uid: string;

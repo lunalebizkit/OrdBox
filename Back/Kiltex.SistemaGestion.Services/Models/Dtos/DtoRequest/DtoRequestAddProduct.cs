@@ -33,6 +33,7 @@ namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest
         public int PointOrder { get; set; }
 
         public string Observation { get; set; }
+        public string BarCode { get; set; }
 
         public long SupplierId { get; set; }
 
