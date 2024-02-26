@@ -71,6 +71,8 @@ export class ProductsListComponent extends BaseComponent implements OnInit {
     filter: {
       product:'',
       brand: 0,
+      code: '',
+      barCode:'',
       category: 0,
       status: 0,
       supplier:[]},
@@ -102,6 +104,7 @@ export class ProductsListComponent extends BaseComponent implements OnInit {
   ) { super( notificacionService, el, message);
     this.formSearch = this.fb.group({
       product: ['', ],
+      code: ['', ],
       brand: [0, ],
        supplier: [[], ],
        category: [0, ]     

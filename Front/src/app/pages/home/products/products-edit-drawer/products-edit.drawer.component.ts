@@ -13,6 +13,10 @@ import { CategoriesService } from '../../categories/category.services';
 import { EntityService } from '../../customers/customer.service';
 import { ProductAddModel } from '../model/product.add.model';
 import { ProductService } from '../product.service';
+import { ProductCodeBarModal } from '../products-barcode-modal/products-barcode-modal.component';
+import { NzModalService } from 'ng-zorro-antd/modal';
+import { isNil } from 'ng-zorro-antd/core/util';
+import { isEmpty } from 'rxjs';
 
 @Component({
   selector: 'app-products-edit-drawer',
@@ -23,15 +27,15 @@ export class ProductsEditDrawerComponent extends BaseComponent implements OnInit
     this.id = value;
   };
 
+  @Input() codeBar!: string;
+
   @ViewChild('header') headerComponent!: HeaderOperationsButtonsComponent;
   @ViewChild('popup') popupComponent!: PopupConfirmationComponent;
   @ViewChild('pop') popComponent!: PopupConfirmationComponent;
-
   @HostListener('document:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
     if (event.key === 'F4') {
-      alert('La tecla F4 ha sido presionada en Angular.');
-      // Puedes ejecutar aquí cualquier otra acción que desees
+      this.createComponentModal();       
     }
   }
   /*
@@ -93,6 +97,7 @@ export class ProductsEditDrawerComponent extends BaseComponent implements OnInit
     private fb: FormBuilder,
     private drawerRef: NzDrawerRef<string>,
     @Inject(LOCALE_ID) public locale: string,
+    private modalService: NzModalService
   ) {
     super(notificacionService, el, message);
     this.form = this.fb.group({
@@ -344,5 +349,22 @@ export class ProductsEditDrawerComponent extends BaseComponent implements OnInit
   }
   currencyFormat(data: any): string {
     return formatCurrency(data, this.locale, '$', 'ARS', '1.1-2')
+  }
+
+  createComponentModal(): void {
+    const modal = this.modalService.create({
+      nzTitle: 'Codigo de Barra',
+      nzContent: ProductCodeBarModal  
+    });    
+  
+    const instance = modal.getContentComponent();
+    // Return a result when closed
+    modal.afterClose.subscribe({
+      next: (data: string) =>{
+        if (!isNil(data) && (data))
+        this.form.controls['barCode'].setValue(data);
+      }, 
+      error: e => {console.log(e);}      
+    })    
   }
 }

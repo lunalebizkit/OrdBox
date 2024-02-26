@@ -1,5 +1,5 @@
 import { formatCurrency } from '@angular/common';
-import { Component, Inject, Input, LOCALE_ID, OnInit } from '@angular/core';
+import { Component, HostListener, Inject, Input, LOCALE_ID, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { NzDrawerRef } from 'ng-zorro-antd/drawer';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
@@ -7,6 +7,9 @@ import { ProductsModel } from '../../products/model/product.model';
 import { ProductService } from '../../products/product.service';
 import { BrandsService } from '../../brands/brands.services';
 import { BrandsModel } from '../../brands/model/brands.model';
+import { isNil } from 'ng-zorro-antd/core/util';
+import { NzModalService } from 'ng-zorro-antd/modal';
+import { ProductCodeBarModal } from '../../products/products-barcode-modal/products-barcode-modal.component';
 
 @Component({
   selector: 'app-invoice-product-search',
@@ -17,7 +20,12 @@ export class InvoiceProductSearchComponent implements OnInit {
   @Input() set filter(value: string){
     this.queryParams.filter.product = value;
   };
-
+  @HostListener('document:keydown', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent) {
+    if (event.key === 'F4') {
+      this.createComponentModal();       
+    }
+  }
   childrenVisible = false;
   loadingBrands!: boolean;
   /*
@@ -40,6 +48,8 @@ export class InvoiceProductSearchComponent implements OnInit {
   queryParams = {
     filter: {
       product:'',
+      code: '',
+      barCode: '',
       brand: 0,
       category: 0,
       status: 0,
@@ -66,7 +76,8 @@ export class InvoiceProductSearchComponent implements OnInit {
     private service: ProductService,
     private serviceBrand: BrandsService,
     @Inject(LOCALE_ID) public locale: string,
-    private fb: FormBuilder) { }
+    private fb: FormBuilder,
+    private modalService: NzModalService) { }
 
   ngOnInit(): void { 
   }
@@ -168,5 +179,25 @@ export class InvoiceProductSearchComponent implements OnInit {
     onItemChecked(id: number, checked: boolean): void {
       this.updateCheckedSet(id, checked);
       this.refreshCheckedStatus();
+    }
+
+    createComponentModal(): void {
+      const modal = this.modalService.create({
+        nzTitle: 'Código de Barra',
+        nzContent: ProductCodeBarModal  
+      });    
+    
+      const instance = modal.getContentComponent();
+      // Return a result when closed
+      modal.afterClose.subscribe({
+        next: (data: string) =>{
+          this.queryParams.filter.barCode= '';
+          if (!isNil(data) && (data)){
+            this.queryParams.filter.barCode = data;
+          }
+          this.getData(this.queryParams);
+        }, 
+        error: e => {console.log(e);}      
+      })    
     }
 }
