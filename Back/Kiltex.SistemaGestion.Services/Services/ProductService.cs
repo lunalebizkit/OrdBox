@@ -109,7 +109,9 @@ namespace Kiltex.SistemaGestion.Services.Services
                                     .Where(p => (!string.IsNullOrEmpty(request.Filter.Product) ? p.Description.ToLower().Contains(request.Filter.Product) : true) &&
                                     ((request.Filter.Brand.HasValue && request.Filter.Brand != 0) ? p.BrandId == request.Filter.Brand : true) &&
                                      ((request.Filter.Category.HasValue && request.Filter.Category != 0) ? p.CategoryId == request.Filter.Category : true) &&
-                                     (!string.IsNullOrEmpty(request.Filter.Product) ? p.Description.ToLower().Contains(request.Filter.Product) : true)
+                                     (!string.IsNullOrEmpty(request.Filter.Product) ? p.Description.ToLower().Contains(request.Filter.Product) : true) &&
+                                     (!string.IsNullOrEmpty(request.Filter.Code) ? p.Code.ToLower().Contains(request.Filter.Code) : true) &&
+                                     (!string.IsNullOrEmpty(request.Filter.BarCode) ? p.BarCode.ToLower().Contains(request.Filter.BarCode) : true)
                                     && p.IsDeleted == false);
 
                 var count = await query.CountAsync().ConfigureAwait(false);
@@ -151,7 +153,9 @@ namespace Kiltex.SistemaGestion.Services.Services
                                     .Where(p => (!string.IsNullOrEmpty(request.Filter.Product) ? p.Description.ToLower().Contains(request.Filter.Product) : true) &&
                                     ((request.Filter.Brand.HasValue && request.Filter.Brand != 0) ? p.BrandId == request.Filter.Brand : true) &&
                                      ((request.Filter.Category.HasValue && request.Filter.Category != 0) ? p.CategoryId == request.Filter.Category : true) &&
-                                     (!string.IsNullOrEmpty(request.Filter.Product) ? p.Description.ToLower().Contains(request.Filter.Product) : true)
+                                     (!string.IsNullOrEmpty(request.Filter.Product) ? p.Description.ToLower().Contains(request.Filter.Product) : true) &&
+                                     (!string.IsNullOrEmpty(request.Filter.Code) ? p.Code.ToLower().Contains(request.Filter.Code) : true) &&
+                                     (!string.IsNullOrEmpty(request.Filter.BarCode) ? p.BarCode.ToLower().Contains(request.Filter.BarCode) : true)
                                     && p.IsDeleted);
 
                 var count = await query.CountAsync().ConfigureAwait(false);
