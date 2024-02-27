@@ -34,11 +34,27 @@
                 Cargando ...
               </nz-option>
             </nz-select>
-            <ng-template #clearQuery>
+            <ng-template #clearBrand>
               <i nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle"
                 *ngIf="queryParams.filter.brand > 0" (click)="queryParams.filter.brand = 0"></i>
             </ng-template>
           </nz-form-control>
+
+          <nz-form-item style="margin-left: 10px;">
+            <nz-form-label>Código</nz-form-label>
+            <nz-form-control [nzSm]="18">
+              <nz-input-group [nzSuffix]="clearCode">
+                <input [ngModelOptions]="{standalone: true}" type="text" placeholder="Ingrese código"
+                  nz-input [(ngModel)]="queryParams.filter.code" />
+              </nz-input-group>
+  
+              <ng-template #clearCode>
+                <i nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle"
+                  *ngIf="queryParams.filter.code" (click)="queryParams.filter.code= '';"></i>
+              </ng-template>
+            </nz-form-control>
+          </nz-form-item>
+
           <button nz-button nzType="primary" (click)="search()" style="margin-left: 50px; margin-top: 3px;">
             <i nz-icon nzType="search"></i>
             Buscar

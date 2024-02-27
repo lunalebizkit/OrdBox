@@ -1,19 +1,21 @@
-import { Component, EventEmitter, OnInit, Output } from "@angular/core";
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { NzModalRef, NzModalService } from "ng-zorro-antd/modal";
+import { Component, AfterViewInit, ViewChild, ElementRef } from "@angular/core";
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { NzModalRef } from "ng-zorro-antd/modal";
 
 
 @Component({
   selector: 'app-products-barcode-modal',
   templateUrl: './products-barcode-modal.component.html',
 })
-export class ProductCodeBarModal {
+export class ProductCodeBarModal implements AfterViewInit {
   
-  @Output() clickevent = new EventEmitter<string>()
+  @ViewChild('barcodefocus') barCodeFocus!: ElementRef<HTMLInputElement>;
+
   form!: FormGroup;
   barCode!: string;
+  barCodeAutofocus= true;
   constructor(private modal: NzModalRef,
-    private fb: FormBuilder,) {
+    private fb: FormBuilder) {
     this.form = this.fb.group({
       barCode: ['',]
     })
@@ -26,4 +28,11 @@ export class ProductCodeBarModal {
       this.barCode= this.form.controls['barCode'].value;  
       this.modal.close(this.barCode)
   }
+  ngAfterViewInit() {
+    setTimeout(() => {
+      this.barCodeFocus.nativeElement.focus();
+      
+    }, 500);
+  }
+  
 }

@@ -28,17 +28,19 @@
             </nz-form-item>
           </div>
           <div nz-col nzSpan="12">
-            <div style="margin-left:20px ;">
+            <div style="margin-left:30px ;">
               <button nz-button nzType="primary" (click)="search()">
                 <i nz-icon nzType="search"></i>
                 Buscar
               </button>
-              <button *authPermission="[permissions.DeleteProduct]" nz-button nzType="primary" (click)="searchInactive()"
-                style="background-color: #912a49; border-color: #912a49; margin-left: 5px;">
+              <button *authPermission="[permissions.DeleteProduct]" nz-button nzType="primary"
+                (click)="searchInactive()" style="background-color: #912a49; border-color: #912a49; margin-left: 5px;">
                 <i nz-icon nzType="eye-invisible"></i>
                 Buscar inactivos
               </button>
-            </div>            
+              <button nz-button nzType="dashed" [ngClass]="(haveFilterData() == false) ? 'btn-disabled' : 'btn-clearQuery'"
+                style="color: blueviolet; border-color: blueviolet; margin-left: 5px;" [disabled]="!haveFilterData()" (click)="clearQueryAndSearch()">Limpiar búsqueda</button>
+            </div>
           </div>
 
         </div>
