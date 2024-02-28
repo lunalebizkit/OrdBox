@@ -12,79 +12,104 @@
     <nz-collapse-panel nzSize="small" nzHeader="Filtros" [nzActive]="true">
       <form nz-form [formGroup]="formSearch">
         <div nz-row style="margin-left:70px ;">
-          <div nz-col nzSpan="17">
+          <div nz-col nzSpan="12">
             <nz-form-item>
               <nz-form-label>Producto</nz-form-label>
               <nz-form-control>
-                <nz-input-group [nzSuffix]="clearQuery">
+                <nz-input-group [nzSuffix]="clearProduct">
                   <input formControlName="product" type="text" placeholder="Producto" nz-input
                     [(ngModel)]="queryParams.filter.product" />
                 </nz-input-group>
-                <ng-template #clearQuery>
+                <ng-template #clearProduct>
                   <i nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle"
-                    *ngIf="formSearch.get('invoice')?.value" (click)="formSearch.get('invoice')?.setValue('')"></i>
+                    *ngIf="formSearch.get('product')?.value" (click)="formSearch.get('product')?.setValue('')"></i>
                 </ng-template>
               </nz-form-control>
             </nz-form-item>
           </div>
-          <div style="margin-left:80px ;">
-            <button nz-button nzType="primary" (click)="search()">
-              <i nz-icon nzType="search"></i>
-              Buscar
-            </button>
+          <div nz-col nzSpan="12">
+            <div style="margin-left:30px ;">
+              <button nz-button nzType="primary" (click)="search()">
+                <i nz-icon nzType="search"></i>
+                Buscar
+              </button>
+              <button *authPermission="[permissions.DeleteProduct]" nz-button nzType="primary"
+                (click)="searchInactive()" style="background-color: #912a49; border-color: #912a49; margin-left: 5px;">
+                <i nz-icon nzType="eye-invisible"></i>
+                Buscar inactivos
+              </button>
+              <button nz-button nzType="dashed" [ngClass]="(haveFilterData() == false) ? 'btn-disabled' : 'btn-clearQuery'"
+                style="color: blueviolet; border-color: blueviolet; margin-left: 5px;" [disabled]="!haveFilterData()" (click)="clearQueryAndSearch()">Limpiar búsqueda</button>
+            </div>
           </div>
+
         </div>
 
-          <div nz-row style="margin-left:70px ;">
-            <div nz-col nzSpan="11">
-              <nz-form-item>
-                <nz-form-label nzFor="category">Categoría </nz-form-label>
-                <nz-form-control [nzSm]="24">
-                  <nz-select nzPlaceHolder="Ingrese una categoria" nzAllowClear nzShowSearch nzServerSearch
-                    (nzOnSearch)="onSearchCategory($event)" formControlName="category"
-                    (ngModelChange)="categorySelectedChange($event)">
-                    <ng-container *ngFor="let o of categorieList">
-                      <nz-option *ngIf="!isLoading" [nzValue]="o.id" [nzLabel]="o.description"></nz-option>
-                    </ng-container>
-                    <nz-option *ngIf="isLoading" nzDisabled nzCustomContent>
-                      <span nz-icon nzType="loading" class="loading-icon"></span>
-                      Cargando ...
-                    </nz-option>
-                  </nz-select>
+        <div nz-row style="margin-left:70px ;">
+          <div nz-col nzSpan="8">
+            <nz-form-item>
+              <nz-form-label nzFor="category">Categoría </nz-form-label>
+              <nz-form-control [nzSm]="24">
+                <nz-select nzPlaceHolder="Ingrese una categoria" nzAllowClear nzShowSearch nzServerSearch
+                  (nzOnSearch)="onSearchCategory($event)" formControlName="category"
+                  (ngModelChange)="categorySelectedChange($event)">
+                  <ng-container *ngFor="let o of categorieList">
+                    <nz-option *ngIf="!isLoading" [nzValue]="o.id" [nzLabel]="o.description"></nz-option>
+                  </ng-container>
+                  <nz-option *ngIf="isLoading" nzDisabled nzCustomContent>
+                    <span nz-icon nzType="loading" class="loading-icon"></span>
+                    Cargando ...
+                  </nz-option>
+                </nz-select>
 
-                  <ng-template #clearQuery>
-                    <i nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle"
-                      *ngIf="formSearch.get('category')?.value" (click)="formSearch.get('category')?.setValue(0)"></i>
-                  </ng-template>
-                </nz-form-control>
-              </nz-form-item>
-            </div>
-            <div nz-col nzSpan="11" style="margin-left:30px ;">
-              <nz-form-item>
-                <nz-form-label>Marca</nz-form-label>
-                <nz-form-control [nzSm]="24">
-                  <nz-select nzPlaceHolder="Ingrese una marca" nzAllowClear nzShowSearch nzServerSearch
-                    (nzOnSearch)="onSearchBrand($event)" formControlName="brand"
-                    (ngModelChange)="brandSelectedChange($event)">
-                    <ng-container *ngFor="let o of brandList">
-                      <nz-option *ngIf="!loadingBrands" [nzValue]="o.id" [nzLabel]="o.description"></nz-option>
-                    </ng-container>
-                    <nz-option *ngIf="loadingBrands" nzDisabled nzCustomContent>
-                      <span nz-icon nzType="loading" class="loading-icon"></span>
-                      Cargando ...
-                    </nz-option>
-                  </nz-select>
-                  <ng-template #clearQuery>
-                    <i nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle"
-                      *ngIf="formSearch.get('brand')?.value" (click)="formSearch.get('brand')?.setValue(0)"></i>
-                  </ng-template>
-                </nz-form-control>
-              </nz-form-item>
-            </div>
-          </div>          
+                <ng-template #clearQuery>
+                  <i nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle"
+                    *ngIf="formSearch.get('category')?.value" (click)="formSearch.get('category')?.setValue(0)"></i>
+                </ng-template>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div nz-col nzSpan="8" style="margin-left:30px ;">
+            <nz-form-item>
+              <nz-form-label>Marca</nz-form-label>
+              <nz-form-control [nzSm]="24">
+                <nz-select nzPlaceHolder="Ingrese una marca" nzAllowClear nzShowSearch nzServerSearch
+                  (nzOnSearch)="onSearchBrand($event)" formControlName="brand"
+                  (ngModelChange)="brandSelectedChange($event)">
+                  <ng-container *ngFor="let o of brandList">
+                    <nz-option *ngIf="!loadingBrands" [nzValue]="o.id" [nzLabel]="o.description"></nz-option>
+                  </ng-container>
+                  <nz-option *ngIf="loadingBrands" nzDisabled nzCustomContent>
+                    <span nz-icon nzType="loading" class="loading-icon"></span>
+                    Cargando ...
+                  </nz-option>
+                </nz-select>
+                <ng-template #clearQuery>
+                  <i nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle"
+                    *ngIf="formSearch.get('brand')?.value" (click)="formSearch.get('brand')?.setValue(0)"></i>
+                </ng-template>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div nz-col nzSpan="6" style="margin-left:30px ;">
+            <nz-form-item>
+              <nz-form-label>Código</nz-form-label>
+              <nz-form-control>
+                <nz-input-group [nzSuffix]="clearCode">
+                  <input formControlName="code" type="text" placeholder="Código" nz-input
+                    [(ngModel)]="queryParams.filter.code" />
+                </nz-input-group>
+                <ng-template #clearCode>
+                  <i nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle"
+                    *ngIf="formSearch.get('code')?.value" (click)="formSearch.get('code')?.setValue('')"></i>
+                </ng-template>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
       </form>
     </nz-collapse-panel>
-  </nz-collapse> 
+  </nz-collapse>
   <div class="table" (scroll)="onScroll($event)">
     <nz-table class="tabla" [nzData]="productList" nzBordered="false" [nzLoading]="loading" [nzSize]="'small'"
       nzTableLayout="fixed" nzShowPagination="false">
@@ -130,9 +155,14 @@
             <nz-space [nzSplit]="spaceSplit">
               <ng-template #spaceSplit>
               </ng-template>
-              <a *nzSpaceItem (click)="popup.showDeleteConfirmation(product.id)">
+              <a *ngIf="product.isDeleted == false" nzSpaceItem (click)="popup.showDeleteConfirmation(product.id)">
                 <i nz-tooltip nzTooltipTitle="Eliminar" nz-icon nzType="delete" [nzTheme]="'twotone'"
                   [nzTwotoneColor]="'#FF0000'"></i>
+              </a>
+              <a nz-tooltip *ngIf="product.isDeleted === true" nzSpaceItem
+                (click)="popupActiveComponent.showDeleteConfirmation(product.id)" nzTooltipTitle="Agregar"
+                nzTooltipPlacement="rightTop">
+                <i nz-icon nzType="eye" [nzIconfont]="'#52c41a'"></i>
               </a>
             </nz-space>
           </td>
@@ -142,6 +172,8 @@
   </div>
 </nz-layout>
 <app-popup-confirmation #popup [title]="'Confirmar eliminación'"
-  [header]="'¿Está seguro de que desea eliminar la marca seleccionada?'" [message]="'Esta acción no se puede revertir'"
-  (handleOk)="handleOk()">
+  [header]="'¿Está seguro de que desea eliminar el producto seleccionado?'" (handleOk)="handleOk()">
+</app-popup-confirmation>
+<app-popup-confirmation #popupActive [title]="'Confirmar Activar'"
+  [header]="'¿Está seguro de que desea activar el producto seleccionado?'" (handleOk)="handleActiveOk()">
 </app-popup-confirmation>

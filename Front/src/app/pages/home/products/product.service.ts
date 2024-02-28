@@ -21,6 +21,15 @@ export class ProductService {
   public getProducts(queryParams: any): Observable<any> {
     return this.api.post(`product/list`, queryParams, false);
   }
+  
+  /**
+   * Obtiene todos los productos inactivos por query text
+   * @param queryParams
+   * @returns
+   */
+  public getInactivesProducts(queryParams: any): Observable<any> {
+    return this.api.post(`product/listinactive`, queryParams, false);
+  }
 
   /**
    *Actualiza los precios de los productos 
@@ -51,6 +60,9 @@ export class ProductService {
 
   delete(id: string | number): Observable<any> {
     return this.api.delete(`product/${id}`, false);
+  }
+  activate(id: string | number): Observable<any> {
+    return this.api.post(`product/activate/${id}`, false);
   }
 
   /**

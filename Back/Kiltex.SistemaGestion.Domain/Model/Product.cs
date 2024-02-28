@@ -58,6 +58,9 @@ namespace Kiltex.SistemaGestion.Domain.Model
 
         [Column("observation")]
         public string? Observation { get; set; } //Observaciones
+                                                 
+        [Column("bar_code")]
+        public string? BarCode { get; set; } //Observaciones
 
         [Column("supplier_id")]
         public long SupplierId { get; set; }

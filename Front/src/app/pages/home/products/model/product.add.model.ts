@@ -16,6 +16,7 @@ export interface ProductAddModel {
     pointOrder: number,
     observation: string,
     supplierid: number,
+    barCode: string
 }
 export interface Image {
     uid: string;

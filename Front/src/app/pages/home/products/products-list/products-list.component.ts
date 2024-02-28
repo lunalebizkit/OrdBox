@@ -1,5 +1,5 @@
 import { formatCurrency } from '@angular/common';
-import { Component, ElementRef, Inject, LOCALE_ID, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, Inject, LOCALE_ID, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { NzDrawerService } from 'ng-zorro-antd/drawer';
 import { Permission } from 'src/app/common/auth/models/permissions.enum';
@@ -15,6 +15,9 @@ import { CategoriesService } from '../../categories/category.services';
 import { BrandsService } from '../../brands/brands.services';
 import { CategoryModel } from '../../categories/model/category.model';
 import { BrandsModel } from '../../brands/model/brands.model';
+import { NzModalService } from 'ng-zorro-antd/modal';
+import { ProductCodeBarModal } from '../products-barcode-modal/products-barcode-modal.component';
+import { isNil } from 'ng-zorro-antd/core/util';
 
 @Component({
   selector: 'app-products-list',
@@ -24,7 +27,13 @@ import { BrandsModel } from '../../brands/model/brands.model';
 export class ProductsListComponent extends BaseComponent implements OnInit {
   permissions = Permission;
   @ViewChild('popup') popupComponent!: PopupConfirmationComponent;
-
+  @ViewChild('popupActive') popupActiveComponent!: PopupConfirmationComponent;
+  @HostListener('document:keydown', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent) {
+    if (event.key === 'F4' && !this.isDrawerOpen) {
+      this.createComponentModal();       
+    }
+  }
   /*
    ** Listado de los productos
    */
@@ -41,6 +50,7 @@ export class ProductsListComponent extends BaseComponent implements OnInit {
    ** Indicador de carga de la grilla
    */
   loading = false;
+  isDrawerOpen!: boolean;
 
   /*
    ** Catidad total de productos
@@ -70,6 +80,8 @@ export class ProductsListComponent extends BaseComponent implements OnInit {
     filter: {
       product:'',
       brand: 0,
+      code: '',
+      barCode:'',
       category: 0,
       status: 0,
       supplier:[]},
@@ -98,9 +110,11 @@ export class ProductsListComponent extends BaseComponent implements OnInit {
     private fb: FormBuilder, 
     el: ElementRef,
     message: NzMessageService,
+    private modalService: NzModalService
   ) { super( notificacionService, el, message);
     this.formSearch = this.fb.group({
       product: ['', ],
+      code: ['', ],
       brand: [0, ],
        supplier: [[], ],
        category: [0, ]     
@@ -137,6 +151,22 @@ export class ProductsListComponent extends BaseComponent implements OnInit {
       },
     });
   }
+  getInactiveData(params: any): void {
+    this.loading = true;
+    this.service.getInactivesProducts(params).subscribe({
+      next: (r) => {
+        this.productList = r.data;
+        this.totalItems = r.totalCount;
+        this.loading = false;
+        this.selectedIndex = 0;
+        this.selectedProduct = this.productList[this.selectedIndex];
+      },
+      error: () => {
+        this.loading = false;
+        this.productList = [];
+      },
+    });
+  }
   /*
    ** Evento al presionar buscar o presionar enter
    */
@@ -144,6 +174,10 @@ export class ProductsListComponent extends BaseComponent implements OnInit {
   search(): void {
     this.queryParams.page = 0;
     this.getData(this.queryParams);
+  }
+  searchInactive(): void {
+    this.queryParams.page = 0;
+    this.getInactiveData(this.queryParams);
   }
   onDoubleClicked(datos: ProductsModel) {
     this.id = datos.id;
@@ -229,6 +263,7 @@ export class ProductsListComponent extends BaseComponent implements OnInit {
     }
   }
   openComponentProductsEdit(): void {
+    this.isDrawerOpen = true;
     const drawerRefCustomer = this.drawerService.create<
       ProductsEditDrawerComponent,
       { filter: number },
@@ -242,12 +277,15 @@ export class ProductsListComponent extends BaseComponent implements OnInit {
       },
       nzClosable: false,
     });
+    
     drawerRefCustomer.afterClose.subscribe({
       next: (data) => {
+        this.isDrawerOpen = false;
         this.id = 0;
         if (data != undefined && data != 0) {
           this.service.getById(data).subscribe({
             next: (r: ProductsModel) => {
+              this.isDrawerOpen = false;
               this.productList[
                 this.productList.findIndex((r) => r.id == data)
               ] != undefined
@@ -259,12 +297,14 @@ export class ProductsListComponent extends BaseComponent implements OnInit {
             },
             error: () => {
               this.id = 0;
+              this.isDrawerOpen = false;
             },
           });
         }
       },
       error: () => {
         this.id = 0;
+        this.isDrawerOpen = false;
       },
     });
   }
@@ -283,6 +323,20 @@ export class ProductsListComponent extends BaseComponent implements OnInit {
       error:(r) => { 
         this.showMessageError(r.error.descripcion);
         this.popupComponent.isDeleteConfirmationVisible = false;
+      }
+  });
+  }
+
+  handleActiveOk() {
+    this.service.activate(this.popupActiveComponent.elementSelectedToDelete).subscribe(
+     {next: (r) => {
+        this.popupActiveComponent.isDeleteConfirmationVisible = false;
+        this.showMessageSuccess("Producto activado");
+        this.searchInactive();
+      },
+      error:(r) => { 
+        this.showMessageError(r.error.descripcion);
+        this.popupActiveComponent.isDeleteConfirmationVisible = false;
       }
   });
   }
@@ -343,5 +397,43 @@ export class ProductsListComponent extends BaseComponent implements OnInit {
           this.categorieList = [];
         },
       });
+    }
+    createComponentModal(): void {
+      const modal = this.modalService.create({
+        nzTitle: 'Código de Barra',
+        nzContent: ProductCodeBarModal  
+      });    
+    
+      const instance = modal.getContentComponent();
+      // Return a result when closed
+      modal.afterClose.subscribe({
+        next: (data: string) =>{
+          this.queryParams.filter.barCode= '';
+          if (!isNil(data) && (data)){
+            this.queryParams.filter.barCode = data;
+          }
+          this.getData(this.queryParams);
+        }, 
+        error: e => {console.log(e);}      
+      })    
+    }
+
+    haveFilterData(): boolean{
+      return (this.queryParams.filter.barCode != '' || this.queryParams.filter.brand > 0 || this.queryParams.filter.category > 0 || this.queryParams.filter.code != '' || this.queryParams.filter.product != '' || this.queryParams.filter.supplier.length > 0);
+    }
+
+    clearQueryAndSearch():void {
+      let newFilter =  {
+        product:'',
+        brand: 0,
+        code: '',
+        barCode:'',
+        category: 0,
+        status: 0,
+        supplier:[]};
+
+      this.queryParams.filter = newFilter;
+
+      this.getData(this.queryParams);
     }
 }

@@ -18,6 +18,8 @@ namespace Kiltex.SistemaGestion.Services.Common
     public class ProductFilter
     {
         public string? Product { get; set; }
+        public string? BarCode { get; set; }
+        public string? Code { get; set; }
         public long? Brand { get; set; }
         public long? Category { get; set; }
         public long? Status { get; set; }

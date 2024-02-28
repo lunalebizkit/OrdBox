@@ -53,6 +53,18 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Product
         {
             return Return(await _service.List(filter).ConfigureAwait(false));
         }
+        /// <summary>
+        /// Devuelve un listado de Productos creados, con paginado.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [AllowAccess(Permission = new EPermission[] { EPermission.DeleteProduct })]
+        [Route("ListInactive")]
+        public async Task<IActionResult> ListInactive([FromBody] RequestPaginatedData<ProductFilter> filter)
+        {
+            return Return(await _service.ListInactive(filter).ConfigureAwait(false));
+        }
 
         /// <summary>
         /// Edita un Producto y lo guarda modificado en la BASE DE DATOS.
@@ -88,6 +100,14 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Product
         public async Task<IActionResult> Delete(long id)
         {
             return Return(await _service.Delete(id).ConfigureAwait(false));
+        }
+
+        [HttpPost]
+        [Route("Activate/{id}")]
+        [AllowAccess(Permission = new EPermission[] { EPermission.CreateProduct })]
+        public async Task<IActionResult> Activate(long id)
+        {
+            return Return(await _service.Active(id).ConfigureAwait(false));
         }
     }
 }

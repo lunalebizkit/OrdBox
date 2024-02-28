@@ -234,7 +234,7 @@ export class DeliveryNotesEditComponent extends BaseComponent implements OnInit 
   openComponentProduct(): void {
     /*  if (this.isValidForm(this.formDeliveryNotes)) { */
     // this.isDisabled = true;
-    const drawerRefProduct = this.drawerService.create<InvoiceProductSearchComponent, { filter: string }, ProductsModel>({
+    const drawerRefProduct = this.drawerService.create<InvoiceProductSearchComponent, { filter: string }, [ProductsModel]>({
       nzTitle: 'Productos',
       nzContent: InvoiceProductSearchComponent,
       nzSize: 'large',
@@ -246,35 +246,37 @@ export class DeliveryNotesEditComponent extends BaseComponent implements OnInit 
     });
     drawerRefProduct.afterClose.subscribe({
 
-      next: (data: ProductsModel) => {
+      next: (data: [ProductsModel]) => {
 
         if (data != undefined) {
-          if (this.deliveryNotesDetails.find(item => item.productId == data.id)) {
-            /*Actualizo la lista que envio al back */
-            this.deliveryNotesDetails.filter(item => item.productId == data.id)[0]
-              .quantity += 1;
+          data.forEach((productItem) => {
+            if (this.deliveryNotesDetails.find(item => item.productId == productItem.id)) {
+              /*Actualizo la lista que envio al back */
+              this.deliveryNotesDetails.filter(item => item.productId == productItem.id)[0]
+                .quantity += 1;
 
-            /*Actualizo la lista de la tabla */
-            let newListElement = this.deliveryNotesDetailsList.filter(item => item.productId == data.id)[0];
-            newListElement.quantity += 1;
-            newListElement.subtotal += this.bindPrice(data) * newListElement.quantity;
+              /*Actualizo la lista de la tabla */
+              let newListElement = this.deliveryNotesDetailsList.filter(item => item.productId == productItem.id)[0];
+              newListElement.quantity += 1;
+              newListElement.subtotal += this.bindPrice(productItem) * newListElement.quantity;
 
-            this.totalCalculate();
-            this.isLoading = false;
-            this.formProductSearch.controls['productSearchFilter'].setValue('');
-          } else {
+              this.totalCalculate();
+              this.isLoading = false;
+              this.formProductSearch.controls['productSearchFilter'].setValue('');
+            } else {
 
-            /* Parseo dato a la grilla de Tabla */
-            const model: deliveryNotesDetailsList = deliveryNotesGridParser(data, this.bindPrice(data));
-            this.deliveryNotesDetailsTest.push(model)
-            this.deliveryNotesDetailsList = this.deliveryNotesDetailsTest;
-            /* Parseo dato a Dto Factura Detalle */
-            const modelDetail: DeliveryNotesDetails = deliveryNotesDetailParser(data, this.bindPrice(data));
-            this.deliveryNotesDetails.push(modelDetail);
-            this.totalCalculate();
-            this.isLoading = false;
-            this.formProductSearch.controls['productSearchFilter'].setValue('');
-          }
+              /* Parseo dato a la grilla de Tabla */
+              const model: deliveryNotesDetailsList = deliveryNotesGridParser(productItem, this.bindPrice(productItem));
+              this.deliveryNotesDetailsTest.push(model)
+              this.deliveryNotesDetailsList = this.deliveryNotesDetailsTest;
+              /* Parseo dato a Dto Factura Detalle */
+              const modelDetail: DeliveryNotesDetails = deliveryNotesDetailParser(productItem, this.bindPrice(productItem));
+              this.deliveryNotesDetails.push(modelDetail);
+              this.totalCalculate();
+              this.isLoading = false;
+              this.formProductSearch.controls['productSearchFilter'].setValue('');
+            }
+          })
         }
       },
       error: () => {

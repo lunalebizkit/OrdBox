@@ -84,3 +84,15 @@ nz-footer {
 .marginLeft {
     margin-left: 10px;
 }
+
+.btn-disabled{
+    color: #a3a1a3 !important;
+    background-color: #a3a1a3;
+    border-color: #a3a1a3 !important;
+    
+}
+
+.btn-clearQuery{
+    color: blueviolet;
+    border-color: blueviolet;
+}

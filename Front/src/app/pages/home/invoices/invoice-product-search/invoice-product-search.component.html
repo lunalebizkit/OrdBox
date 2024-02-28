@@ -34,14 +34,34 @@
                 Cargando ...
               </nz-option>
             </nz-select>
-            <ng-template #clearQuery>
+            <ng-template #clearBrand>
               <i nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle"
                 *ngIf="queryParams.filter.brand > 0" (click)="queryParams.filter.brand = 0"></i>
             </ng-template>
           </nz-form-control>
-          <button nz-button nzType="primary" (click)="search()" style="margin-left: 50px;">
+
+          <nz-form-item style="margin-left: 10px;">
+            <nz-form-label>Código</nz-form-label>
+            <nz-form-control [nzSm]="18">
+              <nz-input-group [nzSuffix]="clearCode">
+                <input [ngModelOptions]="{standalone: true}" type="text" placeholder="Ingrese código"
+                  nz-input [(ngModel)]="queryParams.filter.code" />
+              </nz-input-group>
+  
+              <ng-template #clearCode>
+                <i nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle"
+                  *ngIf="queryParams.filter.code" (click)="queryParams.filter.code= '';"></i>
+              </ng-template>
+            </nz-form-control>
+          </nz-form-item>
+
+          <button nz-button nzType="primary" (click)="search()" style="margin-left: 50px; margin-top: 3px;">
             <i nz-icon nzType="search"></i>
             Buscar
+          </button>
+          <button class="btn-excel-export" nz-button nzType="primary" style="margin-left: 50px;" [disabled]="setOfCheckedId.size == 0" (click)="selecccion()">
+            <i nz-icon nzType="check"></i>
+            Aceptar
           </button>
         </nz-form-item>
       </div>
@@ -52,11 +72,15 @@
   <!-- Tabla -->
 
   <div>
-    <nz-table class="tablaProduct" nzShowSizeChanger [nzData]="productList" nzBordered=true [nzSize]="'small'"
+    <nz-table  #rowSelectionTable class="tablaProduct" nzShowSizeChanger [nzData]="productList" nzBordered=true [nzSize]="'small'"
       [nzLoading]="loading" [nzTotal]="totalItems" [nzPageSize]="queryParams.pageSize" [nzPageIndex]="1"
       [nzFrontPagination]="false" [nzPaginationType]="'small'" (nzQueryParams)="onQueryParamsChange($event)">
       <thead>
         <tr>
+          <th [nzChecked]="checked"
+            [nzIndeterminate]="indeterminate"
+            nzLabel="Select all"
+            (nzCheckedChange)="onAllChecked($event)"></th>
           <th>Código</th>
           <th>Marca</th>
           <th>Producto</th>
@@ -66,7 +90,9 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let data of productList" class="small-text" id="{{data.id}}" (click)="selecccion($event)">
+        <tr *ngFor="let data of productList" class="small-text" id="{{data.id}}">
+          <td [nzChecked]="setOfCheckedId.has(data.id)"
+          (nzCheckedChange)="onItemChecked(data.id, $event)"></td>
           <td>{{data.code}}</td>
           <td>{{data.brandName}}</td>
           <td nzBreakWord>{{data.description}}</td>
