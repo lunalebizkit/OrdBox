@@ -18,6 +18,7 @@ import { BrandsModel } from '../../brands/model/brands.model';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { ProductCodeBarModal } from '../products-barcode-modal/products-barcode-modal.component';
 import { isNil } from 'ng-zorro-antd/core/util';
+import { EntityService } from '../../customers/customer.service';
 
 @Component({
   selector: 'app-products-list',
@@ -40,12 +41,15 @@ export class ProductsListComponent extends BaseComponent implements OnInit {
   productList: ProductsModel[] = [];
   categorieList: CategoryModel [] = [];
   brandList: BrandsModel [] = [];
+  allSuppliers: { value: string, label: string }[] = [];
+  supplierSelected:any= [];
   /*
    ** id del usuario a editar, si es nuevo...
    */
   id!: number;
   clickId!: number;
   formSearch!: FormGroup;
+  timeout!: any;
   /*
    ** Indicador de carga de la grilla
    */
@@ -105,6 +109,7 @@ export class ProductsListComponent extends BaseComponent implements OnInit {
     private drawerService: NzDrawerService,
     private serviceCategory: CategoriesService,
     private serviceBrand: BrandsService,
+    private serviceEntity: EntityService,
     @Inject(LOCALE_ID) public locale: string,
     notificacionService: NzNotificationService,
     private fb: FormBuilder, 
@@ -404,7 +409,6 @@ export class ProductsListComponent extends BaseComponent implements OnInit {
         nzContent: ProductCodeBarModal  
       });    
     
-      const instance = modal.getContentComponent();
       // Return a result when closed
       modal.afterClose.subscribe({
         next: (data: string) =>{
@@ -433,7 +437,39 @@ export class ProductsListComponent extends BaseComponent implements OnInit {
         supplier:[]};
 
       this.queryParams.filter = newFilter;
+      this.formSearch.controls['brand'].setValue(0);
+      this.formSearch.controls['category'].setValue(0);
 
       this.getData(this.queryParams);
-    }
+    };
+
+    getAllSupplier(): void {
+      this.serviceEntity.getSuppliers(this.queryData).subscribe({
+        next: (r) => {
+          this.allSuppliers = r.data.map((entity: { id: any, name: any }) => { return { value: entity.id, label: entity.name } });
+          this.isLoading = false;
+        },
+        error: () => {
+          this.allSuppliers = []
+        }
+      })
+    };
+    /*
+  ** Evento de busqueda datos en el server
+  */
+  onSearch(value: string): void {
+    clearTimeout(this.timeout);
+    this.timeout = setTimeout(()=>{
+      
+      if (value.length > 0){
+        this.allSuppliers= [];
+        this.queryData.filter= value;
+        this.getAllSupplier();
+      }  }, 1000);    
+  };
+
+  supplierSelectedChange(id: any): void {
+    this.queryParams.filter.supplier=this.formSearch.controls['supplier'].value;
+  
+ }
 }

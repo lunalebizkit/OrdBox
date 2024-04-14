@@ -91,6 +91,41 @@
               </nz-form-control>
             </nz-form-item>
           </div>
+        </div>
+        <div nz-row style="margin-left:70px ;">
+          <div nz-col nzSpan="8" class="mb-2">
+            <nz-form-item>
+              <nz-form-label>Proveedor</nz-form-label>
+              <nz-form-control>
+                <nz-select
+                  nzMode="tags"
+                  nzMode="multiple"
+                  nzPlaceHolder="Seleccione Proveedor"
+                  nzAllowClear
+                  nzShowSearch
+                  nzServerSearch
+                  (nzOnSearch)="onSearch($event)"
+                  formControlName="supplier"                  
+                  (ngModelChange)="supplierSelectedChange($event)"
+                >
+                  <nz-option
+                    *ngFor="let p of allSuppliers; let id = index"
+                    [nzValue]="p.value"
+                    [nzLabel]="p.label"
+                  ></nz-option>
+
+                  <nz-option *ngIf="isLoading" nzDisabled nzCustomContent>
+                    <span
+                      nz-icon
+                      nzType="loading"
+                      class="loading-icon"
+                    ></span>
+                    Loading Data...
+                  </nz-option>
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
           <div nz-col nzSpan="6" style="margin-left:30px ;">
             <nz-form-item>
               <nz-form-label>Código</nz-form-label>
