@@ -111,7 +111,8 @@ namespace Kiltex.SistemaGestion.Services.Services
                                      ((request.Filter.Category.HasValue && request.Filter.Category != 0) ? p.CategoryId == request.Filter.Category : true) &&
                                      (!string.IsNullOrEmpty(request.Filter.Product) ? p.Description.ToLower().Contains(request.Filter.Product) : true) &&
                                      (!string.IsNullOrEmpty(request.Filter.Code) ? p.Code.ToLower().Contains(request.Filter.Code) : true) &&
-                                     (!string.IsNullOrEmpty(request.Filter.BarCode) ? p.BarCode.ToLower().Contains(request.Filter.BarCode) : true)
+                                     (!string.IsNullOrEmpty(request.Filter.BarCode) ? p.BarCode.ToLower().Contains(request.Filter.BarCode) : true) &&
+                                     (request.Filter.Supplier.Count > 0 ? request.Filter.Supplier.Contains(p.SupplierId) : true)
                                     && p.IsDeleted == false);
 
                 var count = await query.CountAsync().ConfigureAwait(false);
