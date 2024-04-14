@@ -96,3 +96,16 @@ nz-footer {
     color: blueviolet;
     border-color: blueviolet;
 }
+
+.btn-footer-productSave {
+    position: relative;
+    margin: 10px;
+}
+.btn-footer-container{
+    width: 100%;
+    margin-top: 5px;
+    box-shadow: -1px 1px 5px 1px #a3a1a3;
+    display: flex;
+    justify-content: flex-end;
+    padding-right: 16px;
+}
