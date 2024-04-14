@@ -343,7 +343,7 @@ export class ProductsListComponent extends BaseComponent implements OnInit {
 
    //Busca por marca
    onSearchBrand(data: string): void {
-    if (data.length > 2) {
+    if (data.length > 0) {
       this.queryData.page = 0;
       this.queryData.filter = data;
       this.getBrand(this.queryData);
@@ -377,7 +377,7 @@ export class ProductsListComponent extends BaseComponent implements OnInit {
 
     //Busca por categoria
     onSearchCategory(data: string): void {
-      if (data.length > 2) {
+      if (data.length > 0) {
         this.queryData.page = 0;
         this.queryData.filter = data;
         this.getCategory(this.queryData);
