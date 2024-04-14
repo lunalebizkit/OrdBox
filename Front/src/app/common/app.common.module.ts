@@ -25,6 +25,7 @@ import { PermissionDirective } from './directives/permission.directive';
 import { AuthModalComponent } from './auth/auth-modal/auth-modal.component';
 import { CuitPipe } from './pipes/cuit.pipe';
 import { NoCommaPipe } from './pipes/no-comma.pipe';
+import { ButtonOperationFooter } from './components/footers/button.operation.footer.component';
 
 @NgModule({
   imports: [
@@ -66,7 +67,8 @@ import { NoCommaPipe } from './pipes/no-comma.pipe';
     AuthModule,
     PermissionDirective,
     CuitPipe,
-    NoCommaPipe
+    NoCommaPipe,
+    ButtonOperationFooter
   ],
   declarations: [
     HeaderOperationsButtonsComponent,
@@ -75,12 +77,14 @@ import { NoCommaPipe } from './pipes/no-comma.pipe';
     PermissionDirective,
     AuthModalComponent,
     CuitPipe,
-    NoCommaPipe
+    NoCommaPipe,
+    ButtonOperationFooter
   ],
   entryComponents: [
     HeaderOperationsButtonsComponent,
     BaseComponent,
     PopupConfirmationComponent,
+    ButtonOperationFooter,
   ],
   providers: [],
 })
