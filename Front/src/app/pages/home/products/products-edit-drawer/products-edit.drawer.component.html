@@ -178,10 +178,23 @@
     </form>
 </nz-spin>
 <div class="btn-footer-container">
+    <app-button-op-footer *authPermission="[permissions.DeleteBrand]" [className]="'btn-footer-productSave'" [iconSave]="'eye'" (onSaveClick)="popupActiveComponent.showConfirmation()"
+        [showSpinner]="isSaving" [btnSaveText]="'Activar'" [hidden]="!isDeleted">
+    </app-button-op-footer>
+    <app-button-op-footer *authPermission="[permissions.DeleteBrand]" [className]="'btn-footer-productSave'" (onSaveClick)="popupDelete.showDeleteConfirmation(id)"
+        [showSpinner]="isSaving" [btnSaveText]="'Eliminar'" [nzDanger]="true" [nzType]="'default'" [hidden]="isDeleted">
+    </app-button-op-footer>
     <app-button-op-footer [className]="'btn-footer-productSave'" [iconSave]="'save'" (onSaveClick)="msjConfirmOk()"
         [showSpinner]="isSaving" [btnSaveText]="'Guardar'">
     </app-button-op-footer>
 </div>
 <app-popup-confirmation #pop [title]="'Confirmar Producto'" [header]="'¿Está seguro que desea guardar producto?'"
     [message]="'Esta acción no se puede revertir'" (handleOk)="save()">
+</app-popup-confirmation>
+
+<app-popup-confirmation #popupDelete [title]="'Confirmar eliminación'"
+  [header]="'¿Está seguro de que desea eliminar el producto seleccionado?'" (handleOk)="handleOk()">
+</app-popup-confirmation>
+<app-popup-confirmation #popupActive [title]="'Confirmar Activar'"
+  [header]="'¿Está seguro de que desea activar el producto seleccionado?'" (handleOk)="handleActiveOk()">
 </app-popup-confirmation>

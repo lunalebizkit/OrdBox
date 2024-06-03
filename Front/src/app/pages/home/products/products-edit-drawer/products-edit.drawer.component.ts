@@ -17,6 +17,9 @@ import { ProductCodeBarModal } from '../products-barcode-modal/products-barcode-
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { isNil } from 'ng-zorro-antd/core/util';
 import { isEmpty } from 'rxjs';
+import { Permission } from 'src/app/common/auth/models/permissions.enum';
+import { PermissionService } from 'src/app/common/auth/permission/permission-manager.service';
+import { AuthService } from 'src/app/common/auth/interceptors/auth.service';
 
 @Component({
   selector: 'app-products-edit-drawer',
@@ -28,7 +31,9 @@ export class ProductsEditDrawerComponent extends BaseComponent implements OnInit
   };
 
   @Input() codeBar!: string;
-
+  permissions = Permission;
+  @ViewChild('popupDelete') popupDeleteComponent!: PopupConfirmationComponent;
+  @ViewChild('popupActive') popupActiveComponent!: PopupConfirmationComponent;
   @ViewChild('header') headerComponent!: HeaderOperationsButtonsComponent;
   @ViewChild('popup') popupComponent!: PopupConfirmationComponent;
   @ViewChild('pop') popComponent!: PopupConfirmationComponent;
@@ -64,6 +69,7 @@ export class ProductsEditDrawerComponent extends BaseComponent implements OnInit
    ** id del usuario a editar, si es nuevo...
    */
   id!: number;
+  isDeleted!: boolean;
   /*
 ** Formulario
 */
@@ -97,7 +103,8 @@ export class ProductsEditDrawerComponent extends BaseComponent implements OnInit
     private fb: FormBuilder,
     private drawerRef: NzDrawerRef<string>,
     @Inject(LOCALE_ID) public locale: string,
-    private modalService: NzModalService
+    private modalService: NzModalService,
+    private permissionService: AuthService
   ) {
     super(notificacionService, el, message);
     this.form = this.fb.group({
@@ -122,7 +129,7 @@ export class ProductsEditDrawerComponent extends BaseComponent implements OnInit
   }
 
   ngOnInit(): void {
-    if (this.id != null || this.id != undefined || this.id != 0) {
+     if (this.id != null || this.id != undefined || this.id != 0) {
       this.getProduct(this.id)
     }
   };
@@ -168,8 +175,8 @@ export class ProductsEditDrawerComponent extends BaseComponent implements OnInit
   getProduct(id: number): void {
     if (id != 0)
       this.service.getById(id).subscribe({
-        next: (r) => {
-
+        next: (r) => {         
+          this.isDeleted = r.isDeleted;
           Object.keys(this.form.controls).forEach((key: string) => {
             const ctr = this.form.controls[key];
             const value = r[key]
@@ -366,5 +373,38 @@ export class ProductsEditDrawerComponent extends BaseComponent implements OnInit
       }, 
       error: e => {console.log(e);}      
     })    
+  }
+
+  handleOk() {
+    this.service.delete(this.id).subscribe(
+     {next: (r) => {
+        this.popupDeleteComponent.isDeleteConfirmationVisible = false;
+        this.showMessageSuccess("Producto eliminado");
+        this.close(0);
+      },
+      error:(r) => { 
+        this.showMessageError(r.error.descripcion);
+        this.popupDeleteComponent.isDeleteConfirmationVisible = false;
+      }
+  });
+  }
+  
+ 
+  handleActiveOk() {
+    this.service.activate(this.id).subscribe(
+     {next: (r) => {
+        this.popupActiveComponent.isConfirmationvisible = false;
+        this.showMessageSuccess("Producto activado");
+        this.close(0);
+      },
+      error:(r) => { 
+        this.showMessageError(r.error.descripcion);
+        this.popupActiveComponent.isConfirmationvisible = false;
+      }
+  });
+  }
+
+  hasPermission(permissionId :Permission) : boolean{
+   return this.permissionService.currentUser.permission.includes(permissionId);   
   }
 }

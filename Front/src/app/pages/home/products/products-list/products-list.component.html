@@ -150,17 +150,15 @@
       nzTableLayout="fixed" nzShowPagination="false">
       <thead>
         <tr>
-          <th nzEllipsis nzWidth="275px">Producto</th>
+          <th nzEllipsis nzWidth="265px">Producto</th>
+          <th nzEllipsis nzWidth="125px" style="text-align: right">Código</th>
           <th nzEllipsis nzWidth="75px">Categoría</th>
           <th nzEllipsis nzWidth="70px">Marca</th>
           <th nzEllipsis nzWidth="50px" style="text-align: center">Cantidad</th>
           <th nzEllipsis nzWidth="70px" style="text-align: right">P.Costo</th>
           <th nzEllipsis nzWidth="70px" style="text-align: right">P.Lista</th>
           <th nzEllipsis nzWidth="70px" style="text-align: right;">P.Contado</th>
-          <th nzEllipsis nzWidth="70px" style="text-align: right">P.Tarjeta</th>
-          <th nzEllipsis nzWidth="45px" style="text-align: right">Código</th>
-          <th nzEllipsis nzWidth="45px" style="text-align: center;" *authPermission="[permissions.DeleteProduct]">Acción
-          </th>
+          <th nzEllipsis nzWidth="70px" style="text-align: right">P.Tarjeta</th>         
         </tr>
       </thead>
       <tbody>
@@ -169,6 +167,7 @@
             product === selectedProduct ? 'lightblue' : ''
           " (keydown.enter)="onEnter($event)" (dblclick)="onDoubleClicked(product)" autofocus>
           <td nzEllipsis>{{ product.description }}</td>
+          <td nzEllipsis style="text-align: right">{{ product.code }}</td>
           <td nzEllipsis>{{ product.categoryName }}</td>
           <td nzEllipsis>{{ product.brandName }}</td>
           <td nzEllipsis style="text-align: center" [style.color]="product.quantity >= 0 ? '' : 'red' ">{{
@@ -185,30 +184,8 @@
           <td style="text-align: right; font-weight: bold">
             {{ this.currencyFormat(product.cardSalePrice) }}
           </td>
-          <td nzEllipsis style="text-align: right">{{ product.code }}</td>
-          <td style="text-align: center;" *authPermission="[permissions.DeleteBrand]">
-            <nz-space [nzSplit]="spaceSplit">
-              <ng-template #spaceSplit>
-              </ng-template>
-              <a *ngIf="product.isDeleted == false" nzSpaceItem (click)="popup.showDeleteConfirmation(product.id)">
-                <i nz-tooltip nzTooltipTitle="Eliminar" nz-icon nzType="delete" [nzTheme]="'twotone'"
-                  [nzTwotoneColor]="'#FF0000'"></i>
-              </a>
-              <a nz-tooltip *ngIf="product.isDeleted === true" nzSpaceItem
-                (click)="popupActiveComponent.showDeleteConfirmation(product.id)" nzTooltipTitle="Agregar"
-                nzTooltipPlacement="rightTop">
-                <i nz-icon nzType="eye" [nzIconfont]="'#52c41a'"></i>
-              </a>
-            </nz-space>
-          </td>
         </tr>
       </tbody>
     </nz-table>
   </div>
 </nz-layout>
-<app-popup-confirmation #popup [title]="'Confirmar eliminación'"
-  [header]="'¿Está seguro de que desea eliminar el producto seleccionado?'" (handleOk)="handleOk()">
-</app-popup-confirmation>
-<app-popup-confirmation #popupActive [title]="'Confirmar Activar'"
-  [header]="'¿Está seguro de que desea activar el producto seleccionado?'" (handleOk)="handleActiveOk()">
-</app-popup-confirmation>
