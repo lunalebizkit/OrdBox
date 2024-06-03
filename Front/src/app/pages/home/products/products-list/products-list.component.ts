@@ -25,16 +25,14 @@ import { EntityService } from '../../customers/customer.service';
   templateUrl: './products-list.component.html',
   styleUrls: ['./products-list.component.css'],
 })
-export class ProductsListComponent extends BaseComponent implements OnInit {
-  permissions = Permission;
-  @ViewChild('popup') popupComponent!: PopupConfirmationComponent;
-  @ViewChild('popupActive') popupActiveComponent!: PopupConfirmationComponent;
+export class ProductsListComponent extends BaseComponent implements OnInit { 
   @HostListener('document:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
     if (event.key === 'F4' && !this.isDrawerOpen) {
       this.createComponentModal();       
     }
-  }
+  }  
+  permissions = Permission;
   /*
    ** Listado de los productos
    */
@@ -55,7 +53,7 @@ export class ProductsListComponent extends BaseComponent implements OnInit {
    */
   loading = false;
   isDrawerOpen!: boolean;
-
+  searchInactiveProduct = false;
   /*
    ** Catidad total de productos
    */
@@ -156,6 +154,7 @@ export class ProductsListComponent extends BaseComponent implements OnInit {
       },
     });
   }
+
   getInactiveData(params: any): void {
     this.loading = true;
     this.service.getInactivesProducts(params).subscribe({
@@ -177,11 +176,13 @@ export class ProductsListComponent extends BaseComponent implements OnInit {
    */
 
   search(): void {
-    this.queryParams.page = 0;
+    this.queryParams.page = 0;    
+    this.searchInactiveProduct = false;
     this.getData(this.queryParams);
   }
   searchInactive(): void {
     this.queryParams.page = 0;
+    this.searchInactiveProduct = true;
     this.getInactiveData(this.queryParams);
   }
   onDoubleClicked(datos: ProductsModel) {
@@ -237,20 +238,16 @@ export class ProductsListComponent extends BaseComponent implements OnInit {
     let scrollHeight = event.target.scrollHeight;
     let scrolltop = event.target.scrollTop;
     let client = event.target.clientHeight;
-    let ScrollPosition = Math.abs(
-      Math.round(scrollHeight - (scrolltop + client))
-    );
-    if (
-      ScrollPosition <= 5 &&
-      this.totalItems / this.queryParams.page > this.queryParams.page
-    ) {
+    let ScrollPosition = Math.abs(Math.round(scrollHeight - (scrolltop + client)));
+    if (ScrollPosition <= 5 && (this.totalItems / this.queryParams.page > this.queryParams.page)) {
       let page = this.queryParams.page;
       this.queryParams.page = this.queryParams.page + 1;
       if (
         this.totalItems === undefined ||
         this.queryParams.page * this.queryParams.pageSize <= this.totalItems
       ) {
-        this.service.getProducts(this.queryParams).subscribe({
+        (!this.searchInactiveProduct ? this.service.getProducts(this.queryParams) : this.service.getInactivesProducts(this.queryParams))
+        .subscribe({
           next: (r) => {
             r.data.map((product: ProductsModel) =>
               this.productList.push(product)
@@ -306,6 +303,9 @@ export class ProductsListComponent extends BaseComponent implements OnInit {
             },
           });
         }
+        if (data === 0){
+          this.search();
+        }
       },
       error: () => {
         this.id = 0;
@@ -317,35 +317,6 @@ export class ProductsListComponent extends BaseComponent implements OnInit {
   currencyFormat(data: any):string  {    
     return formatCurrency(data, this.locale, '$', 'ARS', '1.1-2')
   }
-
-  handleOk() {
-    this.service.delete(this.popupComponent.elementSelectedToDelete).subscribe(
-     {next: (r) => {
-        this.popupComponent.isDeleteConfirmationVisible = false;
-        this.showMessageSuccess("Producto eliminado");
-        this.search();
-      },
-      error:(r) => { 
-        this.showMessageError(r.error.descripcion);
-        this.popupComponent.isDeleteConfirmationVisible = false;
-      }
-  });
-  }
-
-  handleActiveOk() {
-    this.service.activate(this.popupActiveComponent.elementSelectedToDelete).subscribe(
-     {next: (r) => {
-        this.popupActiveComponent.isDeleteConfirmationVisible = false;
-        this.showMessageSuccess("Producto activado");
-        this.searchInactive();
-      },
-      error:(r) => { 
-        this.showMessageError(r.error.descripcion);
-        this.popupActiveComponent.isDeleteConfirmationVisible = false;
-      }
-  });
-  }
-
    //Busca por marca
    onSearchBrand(data: string): void {
     if (data.length > 0) {
@@ -376,8 +347,7 @@ export class ProductsListComponent extends BaseComponent implements OnInit {
   }
   
   categorySelectedChange(id: any): void {
-    this.queryParams.filter.category= id;
-      
+    this.queryParams.filter.category= id;      
   }
 
     //Busca por categoria
