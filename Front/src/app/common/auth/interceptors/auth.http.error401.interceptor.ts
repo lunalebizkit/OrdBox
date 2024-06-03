@@ -1,4 +1,4 @@
-import { Injectable, Injector } from '@angular/core';
+import { Injectable, Injector, OnDestroy } from '@angular/core';
 import {
   HttpInterceptor,
   HttpRequest,
@@ -12,11 +12,12 @@ import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { AuthModalComponent } from '../auth-modal/auth-modal.component';
 import { HttpAuthAddTokenInterceptor } from './auth.http.addtoken.interceptor';
 import { AuthService } from './auth.service';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
 })
-export class HttpAuth401ErrorInterceptor implements HttpInterceptor {
+export class HttpAuth401ErrorInterceptor implements HttpInterceptor{
   private modal!: NzModalRef;
   private current: number = 0;
   private requests!: Array<HttpRequest<any>>;
@@ -25,7 +26,9 @@ export class HttpAuth401ErrorInterceptor implements HttpInterceptor {
     private authService: AuthService,
     private modalService: NzModalService,
     private message: NzMessageService,
-    private injector: Injector
+    private injector: Injector,
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
 
   /**
@@ -37,8 +40,8 @@ export class HttpAuth401ErrorInterceptor implements HttpInterceptor {
   intercept(req: HttpRequest<any>, next: HttpHandler) {
     return next.handle(req).pipe(
       catchError((errorResponse: HttpErrorResponse) => {
-        if (errorResponse.status === 401) {
-            if (!this.modal) {
+        if (errorResponse.status === 401 && errorResponse.ok == false) {
+            if (!this.modal || this.modal.componentInstance == null) {
               this.logout();
               this.showModal();
               this.requests = [];
@@ -68,9 +71,14 @@ export class HttpAuth401ErrorInterceptor implements HttpInterceptor {
       nzOnOk: () => {
         this.afterSuccessfulLogin();
       },
+      nzOnCancel: () => {
+        this.logout();
+        this.router.navigate(['/auth/login'], { relativeTo: this.route });
+      },
       nzClosable: false,
       nzMaskClosable: false,
       nzFooter: null,
+      
     });
     this.modal.componentInstance.modal = this.modal;
   }
@@ -82,7 +90,7 @@ export class HttpAuth401ErrorInterceptor implements HttpInterceptor {
   private afterSuccessfulLogin() {
     this.modifyRequestsWithNewToken();
     this.modal.close();
-    // this.modal = null;
+    this.modal.destroy();
     this.current = 0;
   }
 
