@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import { NzButtonType } from "ng-zorro-antd/button";
 
 @Component({
     selector: 'app-button-op-footer',
@@ -18,9 +19,13 @@ export class ButtonOperationFooter implements OnInit {
         new EventEmitter<any>();
     //Spinner
     @Input('showSpinner') showSpinner!: boolean;
-
+    //Type
+    @Input('nzType') nzType: NzButtonType = 'primary';
     //Disabled
     @Input('disabled') disabled: boolean = false;
-
+    //Red Color
+    @Input('nzDanger') nzDanger: boolean = false;
+    //Hidden
+    @Input('hidden') hidden!: boolean;
     ngOnInit(): void { }
 };
