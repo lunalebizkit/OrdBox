@@ -87,6 +87,27 @@ namespace Kiltex.SistemaGestion.Services.Scripts {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a SELECT [p].[id]
+        ///      ,[p].[description] AS [description]
+        ///      ,[p].[code] AS [code]
+        ///      ,[c].[description] AS [categoryName]
+        ///      ,[b].[description] AS [brandName]
+        ///      ,[p].[quantity] AS [quantity]
+        ///      ,[p].[purchase_price] AS [purchasePrice]
+        ///      ,[p].[sale_price] AS [salePrice]
+        ///      ,[p].[sale_percentage] AS [salePercentage]
+        ///      ,[p].[card_sale_price] AS [cardSalePrice]
+        ///      ,[p].[card_sale_percentage] AS [cardSalePercentage]
+        ///      ,[p].[cash_sale_price] AS [cashSalePrice]
+        ///       [resto de la cadena truncado]&quot;;.
+        /// </summary>
+        internal static string GetCompleteProductById {
+            get {
+                return ResourceManager.GetString("GetCompleteProductById", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a  SELECT TOP(1) * FROM [product] P
         ///  
         ///  WHERE P.id = @productid.

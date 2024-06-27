@@ -124,6 +124,9 @@
   <data name="GetCategoryById" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>GetCategoryById.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
+  <data name="GetCompleteProductById" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>GetCompleteProductById.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
   <data name="GetProductById" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>GetProductById.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
