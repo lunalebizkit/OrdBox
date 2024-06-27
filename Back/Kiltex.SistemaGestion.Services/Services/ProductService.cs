@@ -26,23 +26,20 @@ namespace Kiltex.SistemaGestion.Services.Services
         {
             try
             {
-                var producto = await _contextSql
-                                    .Products
-                                    .AsNoTracking()
-                                    .Include(p => p.Category)
-                                    .Include(p => p.Supplier)
-                                    .Include(p => p.Brand)
-                                    .FirstOrDefaultAsync(p => p.Id == id)
-                                    .ConfigureAwait(false);
-                if (producto == null)
+                using (var connection = new SqlConnection(ConnectionString))
                 {
-                    _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
-                    return Error<DtoResponseProduct>(new OperationExceptions("000", $"Producto no encontrado ID: {id}"));
-                };
 
-                var result = _mapper.Map<DtoResponseProduct>(producto);
+                    var product = connection.QuerySingle<DtoResponseProduct>(SqlScripts.GetCompleteProductById, new { @productid = id });
 
-                return new OperationResponse<DtoResponseProduct>(result);
+                    if (product == null)
+                    {
+                        _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
+                        return Error<DtoResponseProduct>(new OperationExceptions("000", $"Producto no encontrado ID: {id}"));
+                    };
+
+                    return new OperationResponse<DtoResponseProduct>(product);
+                }
+
             }
             catch (Exception ex)
             {
