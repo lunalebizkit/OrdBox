@@ -167,7 +167,7 @@
             product === selectedProduct ? 'lightblue' : ''
           " (keydown.enter)="onEnter($event)" (dblclick)="onDoubleClicked(product)" autofocus>
           <td nzEllipsis>{{ product.description }}</td>
-          <td nzEllipsis style="text-align: right">{{ product.code }}</td>
+          <td style="text-align: right">{{ product.code }}</td>
           <td nzEllipsis>{{ product.categoryName }}</td>
           <td nzEllipsis>{{ product.brandName }}</td>
           <td nzEllipsis style="text-align: center" [style.color]="product.quantity >= 0 ? '' : 'red' ">{{
