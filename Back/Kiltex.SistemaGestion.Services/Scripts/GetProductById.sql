@@ -1,3 +1,3 @@
-﻿ SELECT TOP(1) * FROM [product] P
+﻿ SELECT (1) FROM [product] P
   
   WHERE P.id = @productid

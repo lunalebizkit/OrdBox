@@ -1,4 +1,4 @@
-﻿  SELECT TOP(1) B.id, B.description FROM [brand] B
+﻿  SELECT (1) FROM [brand] B
   INNER JOIN [product] P
   ON P.brand_id = B.id
   WHERE B.id = @brandid
