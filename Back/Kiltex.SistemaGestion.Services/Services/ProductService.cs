@@ -12,6 +12,7 @@ using Kiltex.SistemaGestion.Services.Scripts;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using System.Text.Json;
 
 namespace Kiltex.SistemaGestion.Services.Services
 {
@@ -66,25 +67,28 @@ namespace Kiltex.SistemaGestion.Services.Services
         {
             try
             {
-                var productModel = _mapper.Map<Product>(model);
+                //Log de Productos
+                _logger.LogInfo(ErrorsCodes.C_RQ_PRODUCT_REQUEST, model);
 
-                if (productModel.Id == 0)
+                var id = model.Id;
+                if (model.Id == 0)
                 {
+                    var productModel = _mapper.Map<Product>(model);
                     await _contextSql.Products.AddAsync(productModel, ct).ConfigureAwait(false);
                 }
                 else
                 {
-                    var oldProduct = await _contextSql
-                                    .Products
-                                    .AsNoTracking()
-                                    .FirstAsync(p => p.Id == productModel.Id)
-                                    .ConfigureAwait(false);
-                    _contextSql.Products.Update(productModel);
+                    var oldProduct = await _contextSql.Products.FirstOrDefaultAsync(p => p.Id == model.Id);
+                    if (oldProduct != null)
+                    {
+                        oldProduct = _mapper.Map(model, oldProduct);
+                        oldProduct.Id = model.Id;
+                    }
                 }
 
                 await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
 
-                return Ok(new IdResponse<long>(productModel.Id));
+                return Ok(new IdResponse<long>(id));
             }
             catch (Exception ex)
             {

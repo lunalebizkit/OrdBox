@@ -39,7 +39,7 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Authentication
             var token = JWTService.CreateDefaultToken(
                 configuration["Jwt:Issuer"],
                 configuration["Jwt:Audience"],
-                   120,
+                360,
                 configuration["Jwt:SecretKey"],
                 authClaims);
             return Ok(new
@@ -48,7 +48,7 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Authentication
                 userName = usuario.Data.UserName,
                 firstName = usuario.Data.FirstName,
                 rol = usuario.Data.Rol.Key,
-                permission = permission,
+                permission,
                 token = new JwtSecurityTokenHandler().WriteToken(token),
                 expiration = token.ValidTo
             });
