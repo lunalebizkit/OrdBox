@@ -177,46 +177,27 @@ export class ProductsEditDrawerComponent extends BaseComponent implements OnInit
       this.service.getById(id).subscribe({
         next: (r) => {         
           this.isDeleted = r.isDeleted;
+          this.allCategories = r.category;
+          this.allBrands = r.brand;
+          this.allSuppliers = r.supplier;
           Object.keys(this.form.controls).forEach((key: string) => {
             const ctr = this.form.controls[key];
             const value = r[key]
             if (value !== undefined && value !== null) {
               switch (key) {
                 case "categoryName":
-                  this.categorySelectedChange(r.categoryName);
-                  this.getAllCategories();
-                  clearTimeout(this.timeout);
-                  setTimeout(() => {
-                    ctr.setValue
-                      (this.allCategories
-                        .filter((v: { value: any, label: string }) => v.label.toLocaleLowerCase() == value.toLocaleLowerCase())
-                        .map((v: any) => v.value)[0]);
-                    this.isLoadingCategory = false;
-                  }, 800);
+                   if(r.category != null && r.category[0].value != null) 
+                    ctr.setValue(r.category[0].value);
                   break;
 
                 case "supplierName":
-                  this.entitySelectedChange(r.supplierName);
-                  this.getAllSupplier();
-                  clearTimeout(this.timeout);
-                  this.timeout = setTimeout(() => {
-                    ctr.setValue
-                      (this.allSuppliers
-                        .filter((v: { value: any, label: string }) => v.label.toLocaleLowerCase() == value.toLocaleLowerCase())
-                        .map((v: any) => v.value)[0]);
-                    this.isLoadingEntity = false;
-                  }, 1000); break;
+                  if(r.supplier != null && r.supplier[0].value != null) 
+                    ctr.setValue(r.supplier[0].value);
+                  break;
 
                 case "brandName":
-                  this.brandSelectedChange(r.brandName);
-                  this.getAllBrands();
-                  setTimeout(() => {
-                    ctr.setValue
-                      (this.allBrands
-                        .filter((v: { value: any, label: string }) => v.label.toLocaleLowerCase() == value.toLocaleLowerCase())
-                        .map((v: any) => v.value)[0]);
-                    this.isLoadingBrand = false;
-                  }, 900);
+                  if(r.brand != null && r.brand[0].value != null) 
+                    ctr.setValue(r.brand[0].value);
                   break;
                 default:
                   ctr.setValue(value)
