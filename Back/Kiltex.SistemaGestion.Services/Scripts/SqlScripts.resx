@@ -121,8 +121,14 @@
   <data name="GetBrandById" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>GetBrandById.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
+  <data name="GetBrandByIdForList" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>GetBrandByIdForList.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
   <data name="GetCategoryById" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>GetCategoryById.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="GetCategoryByIdForList" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>GetCategoryByIdForList.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
   <data name="GetCompleteProductById" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>GetCompleteProductById.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
@@ -132,5 +138,8 @@
   </data>
   <data name="GetProductReport" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>GetProductReport.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="GetSupplierByIdForList" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>GetSupplierByIdForList.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
 </root>

@@ -37,7 +37,12 @@ namespace Kiltex.SistemaGestion.Services.Services
                         _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
                         return Error<DtoResponseProduct>(new OperationExceptions("000", $"Producto no encontrado ID: {id}"));
                     };
-
+                    var category = connection.Query<DtoGenericResponse>(SqlScripts.GetCategoryByIdForList, new { @productid = id }).ToList();
+                    var brand = connection.Query<DtoGenericResponse>(SqlScripts.GetBrandByIdForList, new { @productid = id }).ToList();
+                    var supplier = connection.Query<DtoGenericResponse>(SqlScripts.GetSupplierByIdForList, new { @productid = id }).ToList();
+                    product.Category = category;
+                    product.Brand = brand;
+                    product.Supplier = supplier;
                     return new OperationResponse<DtoResponseProduct>(product);
                 }
 
@@ -81,6 +86,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                     var oldProduct = await _contextSql.Products.FirstOrDefaultAsync(p => p.Id == model.Id);
                     if (oldProduct != null)
                     {
+                        if (oldProduct.IsDeleted) { model.IsDeleted = true; }
                         oldProduct = _mapper.Map(model, oldProduct);
                         oldProduct.Id = model.Id;
                     }

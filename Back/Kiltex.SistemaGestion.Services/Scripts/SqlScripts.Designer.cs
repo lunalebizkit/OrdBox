@@ -61,7 +61,7 @@ namespace Kiltex.SistemaGestion.Services.Scripts {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a   SELECT TOP(1) B.id, B.description FROM [brand] B
+        ///   Busca una cadena traducida similar a   SELECT (1) FROM [brand] B
         ///  INNER JOIN [product] P
         ///  ON P.brand_id = B.id
         ///  WHERE B.id = @brandid
@@ -74,7 +74,21 @@ namespace Kiltex.SistemaGestion.Services.Scripts {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a   SELECT TOP(1) * FROM [category] C
+        ///   Busca una cadena traducida similar a SELECT [b].[id] AS [value]
+        ///      ,[b].[description] AS [label]
+        ///  FROM [brand] [b]
+        ///  INNER JOIN [product] [p]
+        ///  ON [p].[brand_id] = [b].[id]
+        ///  WHERE [p].[id] = @productid;.
+        /// </summary>
+        internal static string GetBrandByIdForList {
+            get {
+                return ResourceManager.GetString("GetBrandByIdForList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a   SELECT (1) FROM [category] C
         ///  INNER JOIN [product] P
         ///  ON P.[category_id] = C.id
         ///  WHERE C.id = @categoryid
@@ -83,6 +97,20 @@ namespace Kiltex.SistemaGestion.Services.Scripts {
         internal static string GetCategoryById {
             get {
                 return ResourceManager.GetString("GetCategoryById", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a SELECT [c].[id] AS [value]
+        ///      ,[c].[description] AS [label]
+        ///  FROM [category] [c]
+        ///  INNER JOIN [product] [p]
+        ///  ON [p].[category_id] = [c].[id]
+        ///  WHERE [p].[id] = @productid;.
+        /// </summary>
+        internal static string GetCategoryByIdForList {
+            get {
+                return ResourceManager.GetString("GetCategoryByIdForList", resourceCulture);
             }
         }
         
@@ -108,7 +136,7 @@ namespace Kiltex.SistemaGestion.Services.Scripts {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a  SELECT TOP(1) * FROM [product] P
+        ///   Busca una cadena traducida similar a  SELECT (1) FROM [product] P
         ///  
         ///  WHERE P.id = @productid.
         /// </summary>
@@ -138,6 +166,20 @@ namespace Kiltex.SistemaGestion.Services.Scripts {
         internal static string GetProductReport {
             get {
                 return ResourceManager.GetString("GetProductReport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a SELECT [s].[id] AS [value]
+        ///      ,[s].[name] AS [label]
+        ///  FROM [entity] [s]
+        ///  INNER JOIN [product] [p]
+        ///  ON [p].[supplier_id] = [s].[id]
+        ///  WHERE [p].[id] = @productid;.
+        /// </summary>
+        internal static string GetSupplierByIdForList {
+            get {
+                return ResourceManager.GetString("GetSupplierByIdForList", resourceCulture);
             }
         }
     }
