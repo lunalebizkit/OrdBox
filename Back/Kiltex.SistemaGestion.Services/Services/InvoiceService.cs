@@ -231,23 +231,32 @@ namespace Kiltex.SistemaGestion.Services.Services
             IEnumerable<DtoResponseInvoiceReportTotals> invoiceReports = new List<DtoResponseInvoiceReportTotals>();
 
             var parameters = new { dateFrom = request.Filter.DateFrom, dateTo = request.Filter.DateTo, categoryId = request.Filter.CategoryId == 0 ? null : request.Filter.CategoryId };
-            using (var connection = new SqlConnection(ConnectionString))
-            {                
-                var ventas = connection.Query<DtoResponseInviocesReport>( StoredProcedure.INVOICEREPORTS, parameters, commandType: CommandType.StoredProcedure);
-                
-                var totalVentas = connection.Query<DtoResponseInvoiceReportTotals>(StoredProcedure.INVOICEREPORTSTOTAL, parameters, commandType: CommandType.StoredProcedure);
-                
-                foreach (var item in totalVentas)
+            try
+            {
+                using (var connection = new SqlConnection(ConnectionString))
                 {
-                    item.InvoicesReports = new List<DtoResponseInviocesReport>();
-                    
-                    item.InvoicesReports = ventas.Where(yo => (DateTimeOffset)yo.Date.Date == (DateTimeOffset)item.InvoiceDate).ToList();
-                  
+                    var ventas = connection.Query<DtoResponseInviocesReport>(StoredProcedure.INVOICEREPORTS, parameters, commandType: CommandType.StoredProcedure);
+
+                    var totalVentas = connection.Query<DtoResponseInvoiceReportTotals>(StoredProcedure.INVOICEREPORTSTOTAL, parameters, commandType: CommandType.StoredProcedure);
+
+                    foreach (var item in totalVentas)
+                    {
+                        item.InvoicesReports = new List<DtoResponseInviocesReport>();
+
+                        item.InvoicesReports = ventas.Where(yo => (DateTimeOffset)yo.Date.Date == (DateTimeOffset)item.InvoiceDate).ToList();
+
+                    }
+                    invoiceReports = totalVentas;
+
                 }
-                invoiceReports = totalVentas;
-             
+                return new OperationResponse<IEnumerable<DtoResponseInvoiceReportTotals>>(invoiceReports);
             }
-            return new OperationResponse<IEnumerable<DtoResponseInvoiceReportTotals>>(invoiceReports);
+            catch (Exception ex)
+            {
+                _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
+                return Error<IEnumerable<DtoResponseInvoiceReportTotals>>(new OperationExceptions(ErrorsCodes.C_999_ERROR_GENERICO, ex.Message.ToString()));
+
+            }
         }
 
         #region Alicuota Digital
