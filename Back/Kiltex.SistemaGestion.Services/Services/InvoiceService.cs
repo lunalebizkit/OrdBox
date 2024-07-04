@@ -254,7 +254,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             catch (Exception ex)
             {
                 _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
-                return Error<IEnumerable<DtoResponseInvoiceReportTotals>>(new OperationExceptions(ErrorsCodes.C_999_ERROR_GENERICO, ex.Message.ToString()));
+                return Error<IEnumerable<DtoResponseInvoiceReportTotals>>(new OperationExceptions(ErrorsCodes.C_999_ERROR_GENERICO, ex?.Message.ToString()));
 
             }
         }

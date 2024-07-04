@@ -12,7 +12,6 @@ using Kiltex.SistemaGestion.Services.Scripts;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using System.Text.Json;
 
 namespace Kiltex.SistemaGestion.Services.Services
 {
@@ -391,20 +390,27 @@ namespace Kiltex.SistemaGestion.Services.Services
         {
             DtoResponseProductReportTotal productReportTotal = new DtoResponseProductReportTotal();
             IEnumerable<DtoResponseProductReport> productReport = new List<DtoResponseProductReport>();
-
-            using (var connection = new SqlConnection(ConnectionString))
+            try
             {
-                productReport = await connection.QueryAsync<DtoResponseProductReport>(SqlScripts.GetProductReport);
+                using (var connection = new SqlConnection(ConnectionString))
+                {
+                    productReport = await connection.QueryAsync<DtoResponseProductReport>(SqlScripts.GetProductReport);
+                }
+                if (productReport != null && productReport.Count() > 0)
+                {
+                    productReportTotal.Total = productReport?.Sum(p => (p.Quantity * p.Purchase_Price)) ?? 0m;
+                    productReportTotal.Date = DateTime.Now;
+                    productReportTotal.Products = productReport.ToList();
+                }
+
+
+                return new OperationResponse<DtoResponseProductReportTotal>(productReportTotal);
             }
-            if (productReport != null && productReport.Count() > 0)
+            catch (Exception ex)
             {
-                productReportTotal.Total = productReport?.Sum(p => (p.Quantity * p.Purchase_Price)) ?? 0m;
-                productReportTotal.Date = DateTime.Now;
-                productReportTotal.Products = productReport.ToList();
+                _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
+                return Error<DtoResponseProductReportTotal>(new OperationExceptions(ErrorsCodes.C_999_ERROR_GENERICO, ex?.Message.ToString()));
             }
-
-
-            return new OperationResponse<DtoResponseProductReportTotal>(productReportTotal);
         }
     }
 }
