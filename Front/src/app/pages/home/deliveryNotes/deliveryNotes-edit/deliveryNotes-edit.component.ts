@@ -4,9 +4,7 @@ import { NzMessageService } from "ng-zorro-antd/message";
 import { NzNotificationService } from "ng-zorro-antd/notification";
 import { BaseComponent } from "src/app/common/components/base/base.component";
 import { HeaderOperationsButtonsComponent } from "src/app/common/components/headers/buttons.oparations.header.component";
-import { environment } from '../../../../../environments/environment';
 import { NzDrawerRef, NzDrawerService } from 'ng-zorro-antd/drawer';
-import { CustomerModel } from "../../customers/model/customer.model";
 import { EntityService } from "../../customers/customer.service";
 import { ProductsModel } from "../../products/model/product.model";
 import { PopupConfirmationComponent } from "src/app/common/components/popup-confirmation/popup-confirmation.component";
@@ -16,13 +14,11 @@ import { Inject, LOCALE_ID } from '@angular/core';
 import { ProductService } from "../../products/product.service";
 import { InvoiceProductSearchComponent } from "../../invoices/invoice-product-search/invoice-product-search.component";
 import { DeliveryNotesDetails, DeliveryNotesModel, deliveryNotesDetailParser, deliveryNotesDetailsList, deliveryNotesGridFromParser, deliveryNotesGridParser } from "../model/deliveryNotes.model";
-import { ReceiptSupplierSearchComponent } from "../../invoices/receipt-supplier-search/receipt-supplier-search.component";
 import { CustomerAddModel } from "../../customers/model/customer.add.model";
 import { deliveryNotesService } from "../deliveryNotes.service";
 import { pStatusType, statusType } from "../model/status.model";
-import { disableDebugTools } from "@angular/platform-browser";
 import { isNil } from "ng-zorro-antd/core/util";
-
+import { InvoiceCustomerSearchComponent } from "../../invoices/invoice-customer-search/invoice-customer-search.component";
 
 
 
@@ -410,14 +406,14 @@ export class DeliveryNotesEditComponent extends BaseComponent implements OnInit 
 
   }
 
-  openComponentSupplier(): void {
+  openComponentCustomer(): void {
     const drawerRefSupplier = this.drawerService.create<
-      ReceiptSupplierSearchComponent,
+    InvoiceCustomerSearchComponent,
       {},
       CustomerAddModel
     >({
-      nzTitle: 'Proveedor',
-      nzContent: ReceiptSupplierSearchComponent,
+      nzTitle: 'Cliente',
+      nzContent: InvoiceCustomerSearchComponent,
       nzSize: 'large',
       nzWidth: '90%',
       nzClosable: false,
@@ -439,6 +435,7 @@ export class DeliveryNotesEditComponent extends BaseComponent implements OnInit 
   formaterDate(date: string | number | Date): string {
     return formatDate(date, 'MM/dd/YYYY', this.locale);
   }
+
   typeSelectedChange(id: any): void {
     this.typeSelectedId = id;
     if (id == 1) {
@@ -447,6 +444,7 @@ export class DeliveryNotesEditComponent extends BaseComponent implements OnInit 
       this.pagado = false;
     }
   }
+  
   direction() {
     this.router.navigate(['/home/deliveryNotes']);
   }
