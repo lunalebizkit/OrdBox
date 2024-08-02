@@ -1,7 +1,4 @@
 ﻿using AutoMapper;
-using Dapper;
-using DocumentFormat.OpenXml.Office2010.Excel;
-using DocumentFormat.OpenXml.Spreadsheet;
 using Kiltex.SistemaGestion.Domain;
 using Kiltex.SistemaGestion.Domain.Enum;
 using Kiltex.SistemaGestion.Domain.Model;
@@ -230,8 +227,6 @@ namespace Kiltex.SistemaGestion.Services.Services
 
         public async Task<OperationResponse<IEnumerable<DtoResponseInvoiceReportTotals>>> InvoiceReport(RequestPaginatedData<StoredProcedureFilter> request)
         {
-            var parameters = new { dateFrom = request.Filter.DateFrom, dateTo = request.Filter.DateTo, categoryId = request.Filter.CategoryId == 0 ? null : request.Filter.CategoryId };
-
             var dateFromParameter = new SqlParameter("@dateFrom", request.Filter.DateFrom.HasValue ? (object)request.Filter.DateFrom.Value : (object)DBNull.Value);
             var dateToParameter = new SqlParameter("@dateTo", request.Filter.DateTo.HasValue ? (object)request.Filter.DateTo.Value : (object)DBNull.Value);
             var categoryParameter = new SqlParameter("@categoryId", (request.Filter.CategoryId == 0 || !request.Filter.CategoryId.HasValue) ? (object)DBNull.Value : request.Filter.CategoryId.Value);
