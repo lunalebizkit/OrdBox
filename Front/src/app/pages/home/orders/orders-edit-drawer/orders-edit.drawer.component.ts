@@ -88,7 +88,7 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
   dateFormat = 'dd/MM/yyyy';
   today = new Date();
   newOrder=true;
-
+  supplierOrderNumber!:number;
   paymentSelected: any;
   supplierName!: string;
   supplierEmail!: string;
@@ -173,7 +173,8 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
       isPaid: [''],
       datetime: [new Date(), [Validators.required]],
       supplierEmail: new FormArray([]),
-      emailEntity: new FormArray([]),
+      emailEntity: new FormArray([]),      
+      supplierOrderNumber: [0]
     });
     this.formProductSearch = this.fb.group({
       productSearchFilter: ['', [Validators.required]],
@@ -249,7 +250,8 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
                 new FormControl(`${e}`, [Validators.required])
               );
             });
-        
+            this.form.controls['supplierOrderNumber'].setValue(r.supplierOrderNumber);
+            this.supplierOrderNumber = r.supplierOrderNumber;
           /*Bindeo detalles*/
           r.orderDetail.forEach((orderDetail: OrderDetailGrid) => {
             /**Parseo viejo Producto a Grid */
@@ -303,7 +305,8 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
           orderDetail: this.orderDetail,
           dateTime: this.form.controls['datetime'].value,
           supplierName: null,
-          supplierEmail:this.form.controls['emailEntity'].value
+          supplierEmail:this.form.controls['emailEntity'].value,
+          supplierOrderNumber: this.form.controls['supplierOrderNumber'].value
         };
         this.isSaving = true;
         this.ordersService.saveOrder(model).subscribe({
@@ -659,7 +662,8 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
           orderDetail: this.orderDetail,
           dateTime: this.form.controls['datetime'].value,
           supplierName: null,
-          supplierEmail:this.emailList
+          supplierEmail:this.emailList,          
+          supplierOrderNumber: this.form.controls['supplierOrderNumber'].value
         };
         this.isSaving = true;
         this.ordersService.saveOrderAndSendEmail(model).subscribe({

@@ -11,6 +11,7 @@
       <nz-content>
         <form nz-form [formGroup]="form">
           <div nz-row nzJustify="space-around">
+            <!-- Fecha -->
             <nz-form-item>
               <nz-form-label [nzSm]="10" [nzXs]="28" nzRequired nzFor="datetime">Fecha
               </nz-form-label>
@@ -25,14 +26,27 @@
                 </ng-template>
               </nz-form-control>
             </nz-form-item>
+            <!-- Numero de Factura -->
+            <div nzSpan="20" class="mb-2">
+              <nz-form-item>
+                <nz-form-label nzFor="supplierOrderNumber">Numero pedido
+                </nz-form-label>
+                <nz-form-control>
+                  <input *ngIf="!disabled; else elseSupplierOrderNumber" formControlName="supplierOrderNumber" nz-input id="supplierOrderNumber" maxlength="9" [disabled]="disabled">
+                </nz-form-control>
+                <ng-template #elseSupplierOrderNumber>
+                  <b>
+                    {{ this.supplierOrderNumber }}
+                  </b>
+                </ng-template>
+              </nz-form-item>
+            </div>
+            <!-- Proveedor -->
             <form nz-form [formGroup]="formSupplierSearch">
               <div nzSpan="20" class="mb-2">
                 <nz-form-item>
                   <nz-form-label nzRequired nzFor="supplierId">Proveedor
                   </nz-form-label>
-                  <div>
-                    
-                  </div>
                   <nz-select *ngIf="newOrder; else elseBlock" nzPlaceHolder="Ingrese un proveedor" nzAllowClear
                     nzShowSearch nzServerSearch (nzOnSearch)="onSearch($event)" formControlName="supplierId"
                     style="width: 400px" (ngModelChange)="onChange($event)">
@@ -148,7 +162,7 @@
               <th *ngIf="id != 0 ? true : editOrder">Cantidad Recibida</th>
               <th>Precio</th>
               <th>Subtotal</th>
-              <th *ngIf="statusId == 1 ? true : disableMail" [nzAlign]="'center'">Acción</th>
+              <th *ngIf="!disabled" [nzAlign]="'center'">Acción</th>
             </tr>
           </thead>
           <tbody>
@@ -187,7 +201,7 @@
               <td [nzAlign]="'right'">
                 {{ currencyFormat(data.subTotal) }}
               </td>
-              <td *ngIf="statusId == 1 ? true : disableMail" style="text-align: center">
+              <td *ngIf="!disabled" style="text-align: center">
                 <nz-space [nzSplit]="spaceSplit">
                   <ng-template #spaceSplit>
                     <nz-divider nzType="vertical"></nz-divider>

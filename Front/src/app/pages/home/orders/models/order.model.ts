@@ -2,6 +2,7 @@
 export interface NewOrder {
   id: number;
   supplierId: number;
+  supplierOrderNumber: number;
   supplierName: string | null;
   isPaid: boolean;
   dateTime: Date;
