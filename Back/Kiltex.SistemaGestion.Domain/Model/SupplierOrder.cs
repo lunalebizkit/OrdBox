@@ -22,6 +22,9 @@ namespace Kiltex.SistemaGestion.Domain.Model
         [Column("is_paid")]
         public bool IsPaid { get; set; }
 
+        [Column("observation")]
+        public string? Observation { get; set; }
+
         [Required]
         [Column("status_id")]
         public long StatusId { get; set; }
