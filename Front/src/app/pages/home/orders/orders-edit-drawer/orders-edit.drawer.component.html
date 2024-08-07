@@ -25,22 +25,7 @@
                   </b>
                 </ng-template>
               </nz-form-control>
-            </nz-form-item>
-            <!-- Numero de Factura -->
-            <div nzSpan="20" class="mb-2">
-              <nz-form-item>
-                <nz-form-label nzFor="supplierOrderNumber">Numero pedido
-                </nz-form-label>
-                <nz-form-control>
-                  <input *ngIf="!disabled; else elseSupplierOrderNumber" formControlName="supplierOrderNumber" nz-input id="supplierOrderNumber" maxlength="9" [disabled]="disabled">
-                </nz-form-control>
-                <ng-template #elseSupplierOrderNumber>
-                  <b>
-                    {{ this.supplierOrderNumber }}
-                  </b>
-                </ng-template>
-              </nz-form-item>
-            </div>
+            </nz-form-item>            
             <!-- Proveedor -->
             <form nz-form [formGroup]="formSupplierSearch">
               <div nzSpan="20" class="mb-2">
@@ -106,6 +91,16 @@
                   </div>
                 </div>
               </ng-container></ng-container>
+          </div>
+          <!-- Obervacion -->
+          <div nzSpan="20" class="mb-2">
+            <nz-form-item>
+              <nz-form-label nzFor="observation">Observacion
+              </nz-form-label>
+              <nz-form-control>
+                <input formControlName="observation" nz-input id="observation" maxlength="150" >
+              </nz-form-control>               
+            </nz-form-item>
           </div>
         </form>
       </nz-content>
@@ -232,12 +227,12 @@
   [message]="'Esta acción no se puede revertir'" (handleOk)="handleOk()">
 </app-popup-confirmation>
 <app-popup-confirmation #pop [title]="'Confirmar Pedido'" [header]="'¿Está seguro que desea guardar pedido?'"
-  [message]="'Esta acción no se puede revertir'" (handleOk)="save()">
+  [message]="'Esta acción no se puede revertir'" (handleOk)="save()"  [disabled]="isSaving">
 </app-popup-confirmation>
 <app-popup-confirmation #email [title]="'Confirmar Pedido y enviar mail'"
   [header]="'¿Está seguro que desea guardar pedido?'" [message]="'Esta acción no se puede revertir'"
-  (handleOk)="msjConfirmOkEmail()">
+  (handleOk)="msjConfirmOkEmail()"[disabled]="isSaving">
 </app-popup-confirmation>
 <app-popup-confirmation #onlyEmail [title]="'Enviar mail'" [header]="'¿Está seguro que desea enviar el mail?'"
-  [message]="'Esta acción no se puede revertir'" (handleOk)="msjConfirmOkEmailOnly()">
+  [message]="'Esta acción no se puede revertir'" (handleOk)="msjConfirmOkEmailOnly()"[disabled]="isSaving">
 </app-popup-confirmation>
