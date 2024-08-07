@@ -1,27 +1,14 @@
 ﻿using AutoMapper;
-using DocumentFormat.OpenXml.Drawing.Charts;
-using DocumentFormat.OpenXml.Office2010.Excel;
-using DocumentFormat.OpenXml.Wordprocessing;
 using Kiltex.SistemaGestion.Domain;
-using Kiltex.SistemaGestion.Domain.Model;
 using Kiltex.SistemaGestion.SDK.Error;
 using Kiltex.SistemaGestion.Services.Common;
-using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.Extensions.Configuration;
 using MimeKit;
 using MimeKit.Text;
-using SendGrid;
-using SendGrid.Helpers.Mail;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using System.Text;
-using System.Threading.Tasks;
-using static Microsoft.Extensions.Logging.EventSource.LoggingEventSource;
 
 namespace Kiltex.SistemaGestion.Services.Services
 {
@@ -79,7 +66,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                             "!</br> " +
                             "</h3>"+
                             "<p>" +
-                            "Enviamos a continuación detallamos el pedido" +
+                            "Enviamos a continuación el detalle del pedido" +
                             "</p>"+
                             "<p><strong>N° de Pedido</strong>: " +
                            $"{orderNumber}" +
@@ -94,7 +81,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                            $"{detallesCollection}" +
                             "</table>"+
                             "<p> Esperamos su respuesta.</p>" +
-                            "<p> Saludos! </p>" +
+                            "<p> Saludos cordiales! </p>" +
                             "</body>";
 
 
