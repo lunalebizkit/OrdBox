@@ -93,12 +93,12 @@
               </ng-container></ng-container>
           </div>
           <!-- Obervacion -->
-          <div nzSpan="20" class="mb-2">
+          <div nzSpan="20" class="mb-2" style="margin-left: 50px;" >
             <nz-form-item>
               <nz-form-label nzFor="observation">Observacion
               </nz-form-label>
-              <nz-form-control>
-                <input formControlName="observation" nz-input id="observation" maxlength="150" >
+              <nz-form-control [nzSm]="20" [nzXs]="24">
+                <input formControlName="observation" nz-input id="observation" maxlength="150">
               </nz-form-control>               
             </nz-form-item>
           </div>
