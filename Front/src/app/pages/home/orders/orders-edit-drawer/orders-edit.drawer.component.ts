@@ -561,7 +561,7 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
         this.orderDetail.length != 0) {
         this.popComponent.showConfirmation()
       } else {
-        this.showMessageError
+        this.showMessageError('No ha seleccionado producto');
       }
     } catch (error) {
       console.log(error);
@@ -578,7 +578,7 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
         || (this.orderDetailGrid.length === 0)) {
         this.saveAndSend();
       } else {
-        this.showMessageError('No ha seleccionado producto')
+        this.showMessageError('No ha seleccionado producto');
       }
     } catch (error) {
       console.log(error);
