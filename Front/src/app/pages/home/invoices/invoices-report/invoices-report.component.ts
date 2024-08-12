@@ -65,9 +65,10 @@ export class InvoicesReportComponent extends BaseComponent implements OnInit {
         this.invoicesReportList = r;
         this.loading = false;
       },
-      error: () => {
+      error: (r) => {
         this.loading = false;
         this.invoicesReportList = [];
+        this.showMessageError(r.error.descripcion);
       },
     });
   }

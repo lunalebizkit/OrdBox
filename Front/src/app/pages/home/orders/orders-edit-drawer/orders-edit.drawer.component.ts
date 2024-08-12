@@ -37,7 +37,6 @@ import {
   orderOldProductParser,
 } from '../models/order.model';
 import { OrdersService } from '../orders.service';
-import { differenceInCalendarDays, setHours } from 'date-fns';
 import { eStatus, StatusType } from '../models/status-type.enum';
 import { SendOrderEmail } from '../models/sendorderemail.model';
 
@@ -78,7 +77,7 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
    */
   switchValue!: boolean;
   switchSendValue!: boolean;
-  emailList: string[]=[];
+  emailList: string[] = [];
 
   /*
    ** Variables globales
@@ -87,13 +86,14 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
   product!: string;
   dateFormat = 'dd/MM/yyyy';
   today = new Date();
-  newOrder=true;
-
+  newOrder = true;
   paymentSelected: any;
   supplierName!: string;
   supplierEmail!: string;
   statusId!: number;
-  allStatus = StatusType;
+  allStatus: { value: number; label: string }[] = Object.entries(eStatus)
+    .filter(([key, value]) => typeof value === 'number')
+    .map(([key, value]) => ({ value: value as number, label: key }));
   status: number = 0;
   email!: string;
 
@@ -107,8 +107,8 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
   /*
    ** Si algunos campos son visibles o no
    */
-   /**Estado Rechazado y Aceptado (1) */
-  viewOrder: boolean= true;
+  /**Estado Rechazado y Aceptado (1) */
+  viewOrder: boolean = true;
   /**Estado Pendiente (1) */
   editOrder!: boolean;
   disableMail!: boolean;
@@ -149,11 +149,11 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
     page: 0,
     pageSize: 20,
   };
-   queryData = {
+  queryData = {
     filter: '',
     page: 0,
     pageSize: 20,
-  }; 
+  };
 
   constructor(
     notificacionService: NzNotificationService,
@@ -174,6 +174,7 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
       datetime: [new Date(), [Validators.required]],
       supplierEmail: new FormArray([]),
       emailEntity: new FormArray([]),
+      observation: [{ value: '', disabled: false }]
     });
     this.formProductSearch = this.fb.group({
       productSearchFilter: ['', [Validators.required]],
@@ -183,11 +184,11 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {    
-    
+  ngOnInit(): void {
+
     if (this.id != null || this.id != undefined || this.id != 0) {
-      this.getOrder(this.id);      
-      
+      this.getOrder(this.id);
+
     }
   }
 
@@ -226,7 +227,7 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
             );
           });
         },
-        error: () => {},
+        error: () => { },
       });
   }
 
@@ -237,19 +238,19 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
   getOrder(id: number): void {
     if (id != 0)
       this.ordersService.getById(id).subscribe({
-        next: (r) => {  
-          this.newOrder = false;      
+        next: (r) => {
+          this.newOrder = false;
           this.supplierName = r.supplierName;
           this.formSupplierSearch.controls['supplierId'].setValue(r.supplierId);
           this.dateTime = r.dateTime;
           this.form.controls['statusId'].setValue(r.statusId);
           this.form.controls['isPaid'].setValue(r.isPaid);
-            r.supplierEmail.forEach((e: any) => {
-              this.emailsArray.push(
-                new FormControl(`${e}`, [Validators.required])
-              );
-            });
-        
+          r.supplierEmail.forEach((e: any) => {
+            this.emailsArray.push(
+              new FormControl(`${e}`, [Validators.required])
+            );
+          });
+          this.form.controls['observation'].setValue(r.observation);
           /*Bindeo detalles*/
           r.orderDetail.forEach((orderDetail: OrderDetailGrid) => {
             /**Parseo viejo Producto a Grid */
@@ -261,18 +262,20 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
           if (r.statusId == 1) {
             this.editOrder = true;
             this.disabled = false;
+            this.form.controls['observation'].enable();
             this.disableMail = true;
             this.viewOrder = false;
           } else {
             this.viewOrder = true;
             this.editOrder = false;
             this.disabled = true;
-            this.disableMail = false;
-          }     
-          
+            this.form.controls['observation'].disable(),
+              this.disableMail = false;
+          }
+
           this.totalCalculate();
           this.loading = false;
-          this.newOrder= false;   
+          this.newOrder = false;
         },
         error: () => {
           this.loading = false;
@@ -303,7 +306,8 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
           orderDetail: this.orderDetail,
           dateTime: this.form.controls['datetime'].value,
           supplierName: null,
-          supplierEmail:this.form.controls['emailEntity'].value
+          supplierEmail: this.form.controls['emailEntity'].value,
+          observation: this.form.controls['observation'].value
         };
         this.isSaving = true;
         this.ordersService.saveOrder(model).subscribe({
@@ -313,8 +317,8 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
               `Se guardo correctamente el pedido`
             );
             this.isSaving = false;
-             this.close(r.id);
-           
+            this.close(r.id);
+
           },
           error: () => {
             this.isSaving = false;
@@ -404,7 +408,7 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
   }
 
   changeQuantityrecievedQuantity(quantity: number): void {
-    if (quantity==0 ||quantity == null ) {
+    if (quantity == 0 || quantity == null) {
       quantity = 0;
     }
     this.orderDetail.filter(
@@ -454,7 +458,7 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
             this.openComponentProduct();
           }
         },
-        error: () => {},
+        error: () => { },
       });
     }
   }
@@ -484,36 +488,37 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
         next: (data: [ProductsModel]) => {
           if (data != undefined) {
 
-            data.forEach((productItem) =>{
-            if (this.orderDetail.find((item) => item.productId == productItem.id)) {
-              /*Actualizo la lista que envio al back */
-              this.orderDetail.filter(
-                (item) => item.productId == productItem.id
-              )[0].orderedQuantity += 1;
+            data.forEach((productItem) => {
+              if (this.orderDetail.find((item) => item.productId == productItem.id)) {
+                /*Actualizo la lista que envio al back */
+                this.orderDetail.filter(
+                  (item) => item.productId == productItem.id
+                )[0].orderedQuantity += 1;
 
-              /*Actualizo la lista de la tabla */
-              let newListElement = this.orderDetailGrid.filter(
-                (item) => item.id == productItem.id
-              )[0];
+                /*Actualizo la lista de la tabla */
+                let newListElement = this.orderDetailGrid.filter(
+                  (item) => item.id == productItem.id
+                )[0];
 
-              newListElement.orderedQuantity += 1;
-              newListElement.subTotal +=
-              productItem.purchasePrice * newListElement.orderedQuantity;
+                newListElement.orderedQuantity += 1;
+                newListElement.subTotal +=
+                  productItem.purchasePrice * newListElement.orderedQuantity;
 
-              this.totalCalculate();
-            } else {
-              /* Parseo dato Producto a la grilla de Tabla */
-              const model: OrderDetailGrid = orderGridProductParser(productItem);     
-              this.orderListGridTest.push(model);
-              this.orderDetailGrid = this.orderListGridTest;
-              /* Parseo dato a Dto Order Detalle */
-              const modelDetail: NewOrderDetail = orderNewProductParser(productItem);
-              this.orderDetail.push(modelDetail);
-              this.totalCalculate();               
-            }
-          })
-        
-        }},
+                this.totalCalculate();
+              } else {
+                /* Parseo dato Producto a la grilla de Tabla */
+                const model: OrderDetailGrid = orderGridProductParser(productItem);
+                this.orderListGridTest.push(model);
+                this.orderDetailGrid = this.orderListGridTest;
+                /* Parseo dato a Dto Order Detalle */
+                const modelDetail: NewOrderDetail = orderNewProductParser(productItem);
+                this.orderDetail.push(modelDetail);
+                this.totalCalculate();
+              }
+            })
+
+          }
+        },
         error: () => {
           this.orderDetailGrid = [];
         },
@@ -546,58 +551,57 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
   }
 
 
-    msjConfirmOk(){
-      try {
-        this.orderDetail = this.orderDetail.
+  msjConfirmOk() {
+    try {
+      this.orderDetail = this.orderDetail.
         filter(element => element.productId != this.popupComponent.elementSelected);
-      this.popupComponent.isConfirmationvisible = false; 
+      this.popupComponent.isConfirmationvisible = false;
       if (
-        this.isValidForm(this.form) && this.isValidForm(this.formSupplierSearch) && 
-        this.orderDetail.length != 0) 
-      {
-        this.popComponent.showConfirmation() 
-      } else{
-        this.showMessageError
+        this.isValidForm(this.form) && this.isValidForm(this.formSupplierSearch) &&
+        this.orderDetail.length != 0) {
+        this.popComponent.showConfirmation()
+      } else {
+        this.showMessageError('No ha seleccionado producto');
       }
-      } catch (error) {
-        console.log(error);
-        
-      }
+    } catch (error) {
+      console.log(error);
+
     }
-    msjConfirmOkEmail(){
-      try {
-        this.orderDetail = this.orderDetail.
+  }
+  msjConfirmOkEmail() {
+    try {
+      this.orderDetail = this.orderDetail.
         filter(element => element.productId != this.popupComponent.elementSelected);
-      this.popupComponent.isConfirmationvisible = false; 
+      this.popupComponent.isConfirmationvisible = false;
       if (
         this.isValidForm(this.form)
-      || (this.orderDetailGrid.length === 0) ){
+        || (this.orderDetailGrid.length === 0)) {
         this.saveAndSend();
-      } else{
-        this.showMessageError('No ha seleccionado producto')
+      } else {
+        this.showMessageError('No ha seleccionado producto');
       }
-      } catch (error) {
-        console.log(error);
-        
-      }
+    } catch (error) {
+      console.log(error);
+
     }
-    msjConfirmOkEmailOnly(){
-      try {
-        this.orderDetail = this.orderDetail.
+  }
+  msjConfirmOkEmailOnly() {
+    try {
+      this.orderDetail = this.orderDetail.
         filter(element => element.productId != this.popupComponent.elementSelected);
-      this.popupComponent.isConfirmationvisible = false; 
+      this.popupComponent.isConfirmationvisible = false;
       if (
         this.isValidForm(this.form)
-      || (this.orderDetailGrid.length === 0) ){
+        || (this.orderDetailGrid.length === 0)) {
         this.sendEmail();
-      } else{
+      } else {
         this.showMessageError('No ha seleccionado producto')
       }
-      } catch (error) {
-        console.log(error);
-        
-      }
+    } catch (error) {
+      console.log(error);
+
     }
+  }
 
   getStatusName(id: number) {
     return eStatus[id];
@@ -608,31 +612,36 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
   }
 
   close(id: number | void): void {
-    this.drawerRef.close(id);  }
-/*
-   ** Enviar solo el email
-   */
-  sendEmail(){
-    if(this.emailList.length>0){
-    const model: SendOrderEmail = {
-      id: this.id,
-      emails: this.emailList
-    }
-    this.ordersService.sendEmail(model).subscribe({
-      next: (r) => {
-        this.showNotificationSuccess(
-          'Email enviado correctamente',
-          `Se realizo correctamente el envio del email`
-        );
-        this.isSaving = false;
-        this.close(r.id);
-      },
-      error: () => {
-        this.isSaving = false;
-        this.showMessageError('No se pudo realizar el envio del email');
-        this.close();
-      },
-    })} else {
+    this.drawerRef.close(id);
+  }
+  /*
+     ** Enviar solo el email
+     */
+  sendEmail() {
+    if (this.emailList.length > 0) {
+
+      this.isSaving = true;
+
+      const model: SendOrderEmail = {
+        id: this.id,
+        emails: this.emailList
+      }
+      this.ordersService.sendEmail(model).subscribe({
+        next: (r) => {
+          this.showNotificationSuccess(
+            'Email enviado correctamente',
+            `Se realizo correctamente el envio del email`
+          );
+          this.isSaving = false;
+          this.close(r.id);
+        },
+        error: () => {
+          this.isSaving = false;
+          this.showMessageError('No se pudo realizar el envio del email');
+          this.close();
+        },
+      })
+    } else {
       this.showMessageError('No hay emails seleccionados');
     }
   }
@@ -640,62 +649,64 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
    ** Guardar pedido y enviar email
    */
   saveAndSend(): void {
-    if(this.emailList.length>0){
-    if (
-      this.isValidForm(this.form) &&
-      this.isValidForm(this.formSupplierSearch)
-    ) {
-      if (this.orderDetail.length === 0) {
-        this.showMessageError('No hay Productos Seleccionados');
-      } else {
-        const model: NewOrder = {
-          id: this.id !== undefined ? this.id : 0,
-          supplierId: this.formSupplierSearch.controls['supplierId'].value,
-          isPaid: this.form.controls['isPaid'].value,
-          statusId:
-            this.id != undefined && this.id == 0
-              ? 1
-              : this.form.controls['statusId'].value,
-          orderDetail: this.orderDetail,
-          dateTime: this.form.controls['datetime'].value,
-          supplierName: null,
-          supplierEmail:this.emailList
-        };
-        this.isSaving = true;
-        this.ordersService.saveOrderAndSendEmail(model).subscribe({
-          next: (r) => {
-            this.showNotificationSuccess(
-              'Guardado y enviado correcto',
-              `Se guardo correctamente el pedido y se envio el email`
-            );
-            this.isSaving = false;
-            this.close(r.id);
-          },
-          error: () => {
-            this.isSaving = false;
-            this.showMessageError('No se pudo Guardar el pedido');
-            this.close();
-          },
-        });
+    if (this.emailList.length > 0) {
+      if (
+        this.isValidForm(this.form) &&
+        this.isValidForm(this.formSupplierSearch)
+      ) {
+        if (this.orderDetail.length === 0) {
+          this.showMessageError('No hay Productos Seleccionados');
+        } else {
+          this.isSaving = true;
+
+          const model: NewOrder = {
+            id: this.id !== undefined ? this.id : 0,
+            supplierId: this.formSupplierSearch.controls['supplierId'].value,
+            isPaid: this.form.controls['isPaid'].value,
+            statusId:
+              this.id != undefined && this.id == 0
+                ? 1
+                : this.form.controls['statusId'].value,
+            orderDetail: this.orderDetail,
+            dateTime: this.form.controls['datetime'].value,
+            supplierName: null,
+            supplierEmail: this.emailList,
+            observation: this.form.controls['observation'].value
+          };
+          this.ordersService.saveOrderAndSendEmail(model).subscribe({
+            next: (r) => {
+              this.showNotificationSuccess(
+                'Guardado y enviado correcto',
+                `Se guardo correctamente el pedido y se envio el email`
+              );
+              this.isSaving = false;
+              this.close(r.id);
+            },
+            error: () => {
+              this.isSaving = false;
+              this.showMessageError('No se pudo Guardar el pedido');
+              this.close();
+            },
+          });
+        }
       }
+    } else {
+      this.showMessageError('No hay emails seleccionados');
     }
-  } else {
-    this.showMessageError('No hay emails seleccionados');
-  }
   }
   /*
    ** Seleccionar email/s para enviar
    */
 
-  selectEmails(data:string,) {
+  selectEmails(data: string,) {
 
-    let isEmail=this.emailList.find((email:string)=> email == data);
-    
-    if (isEmail){
-      this.emailList= this.emailList.filter((email:string) => email != data)
-    }else{
+    let isEmail = this.emailList.find((email: string) => email == data);
+
+    if (isEmail) {
+      this.emailList = this.emailList.filter((email: string) => email != data)
+    } else {
       this.emailList.push(data);
     }
-    
+
   }
 }

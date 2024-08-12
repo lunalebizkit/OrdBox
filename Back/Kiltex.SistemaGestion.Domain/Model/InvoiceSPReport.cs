@@ -1,8 +1,9 @@
-﻿namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse
+﻿namespace Kiltex.SistemaGestion.Domain.Model
 {
-    public class DtoResponseInviocesReport
+    public class InvoiceSPReport
     {
-        public DateTime Date {  get; set; }
+        public int? Id { get; set; }
+        public DateTime? Date { get; set; }
         public string ProductName { get; set; }
         public string CustomerName { get; set; }
         public int Quantity { get; set; }

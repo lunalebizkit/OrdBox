@@ -14,6 +14,8 @@ namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse
 
         public long StatusId { get; set; }
 
+        public string? Observation { get; set; }
+
         public DateTime? DateTime { get; set; }
 
         public DateTime? ScheduledDate { get; set; }

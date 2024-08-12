@@ -19,7 +19,10 @@ namespace Kiltex.SistemaGestion.Services.Mapper
             CreateMap<Invoice, DtoRequestInvoice>();
 
             CreateMap<InvoiceDetail, DtoResponseInvoiceDetail>().ReverseMap();
-         
+
+            CreateMap<InvoiceSPReport, DtoResponseInviocesReport>().ReverseMap();
+
+            CreateMap<InvoiceSPReportTotal, DtoResponseInvoiceReportTotals>().ReverseMap();
 
         }
     }

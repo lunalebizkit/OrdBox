@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Dapper;
 using Kiltex.SistemaGestion.Domain;
 using Kiltex.SistemaGestion.Domain.Enum;
 using Kiltex.SistemaGestion.Domain.Model;
@@ -228,30 +227,38 @@ namespace Kiltex.SistemaGestion.Services.Services
 
         public async Task<OperationResponse<IEnumerable<DtoResponseInvoiceReportTotals>>> InvoiceReport(RequestPaginatedData<StoredProcedureFilter> request)
         {
-            IEnumerable<DtoResponseInvoiceReportTotals> invoiceReports = new List<DtoResponseInvoiceReportTotals>();
+            var dateFromParameter = new SqlParameter("@dateFrom", request.Filter.DateFrom.HasValue ? (object)request.Filter.DateFrom.Value : (object)DBNull.Value);
+            var dateToParameter = new SqlParameter("@dateTo", request.Filter.DateTo.HasValue ? (object)request.Filter.DateTo.Value : (object)DBNull.Value);
+            var categoryParameter = new SqlParameter("@categoryId", (request.Filter.CategoryId == 0 || !request.Filter.CategoryId.HasValue) ? (object)DBNull.Value : request.Filter.CategoryId.Value);
 
-            var parameters = new { dateFrom = request.Filter.DateFrom, dateTo = request.Filter.DateTo, categoryId = request.Filter.CategoryId == 0 ? null : request.Filter.CategoryId };
+            string invoiceSPname = StoredProcedure.INVOICEREPORTS;
+            string invoiceRPTname = StoredProcedure.INVOICEREPORTSTOTAL;
             try
             {
-                using (var connection = new SqlConnection(ConnectionString))
+                var invoices = await _contextSql.InvoiceSPReports
+                .FromSqlRaw($"EXEC {invoiceSPname} @dateFrom, @dateTo, @categoryId", dateFromParameter, dateToParameter, categoryParameter)
+                .ToListAsync();
+
+                var invoiceReportTotal = await _contextSql.InvoiceSPReportTotals
+                .FromSqlRaw($"EXEC {invoiceRPTname} @dateFrom, @dateTo, @categoryId", dateFromParameter, dateToParameter, categoryParameter)
+                .ToListAsync();
+                
+                if ((invoices == null || invoiceReportTotal == null) || (!invoices.Any() || !invoiceReportTotal.Any()))
                 {
-                    var ventas = connection.Query<DtoResponseInviocesReport>(StoredProcedure.INVOICEREPORTS, parameters, commandType: CommandType.StoredProcedure);
-
-                    var totalVentas = connection.Query<DtoResponseInvoiceReportTotals>(StoredProcedure.INVOICEREPORTSTOTAL, parameters, commandType: CommandType.StoredProcedure);
-
-                    if (ventas != null && totalVentas != null && ventas.Any() && totalVentas.Any())
-                    {
-                        foreach (var item in totalVentas)
-                        {
-                            item.InvoicesReports = new List<DtoResponseInviocesReport>();
-
-                            item.InvoicesReports = ventas.Where(yo => (DateTimeOffset)yo.Date.Date == (DateTimeOffset)item.InvoiceDate).ToList();
-
-                        }
-                        invoiceReports = totalVentas;
-                    }
+                    return Error<IEnumerable<DtoResponseInvoiceReportTotals>>(new OperationExceptions("000", $"El reporte no encontro registros"));
                 }
-                return new OperationResponse<IEnumerable<DtoResponseInvoiceReportTotals>>(invoiceReports);
+                List<DtoResponseInvoiceReportTotals> invoiceReportTotals = _mapper.Map<List<DtoResponseInvoiceReportTotals>>(invoiceReportTotal);
+                List<DtoResponseInviocesReport> invoiceReport = _mapper.Map<List<DtoResponseInviocesReport>>(invoices);
+
+
+                foreach (var item in invoiceReportTotals)
+                {
+                    item.InvoicesReports = new List<DtoResponseInviocesReport>();
+
+                    item.InvoicesReports = invoiceReport.Where(y => y.Date.Date == item.InvoiceDate.Value).ToList();
+                }
+
+                return new OperationResponse<IEnumerable<DtoResponseInvoiceReportTotals>>(invoiceReportTotals);
             }
             catch (Exception ex)
             {
