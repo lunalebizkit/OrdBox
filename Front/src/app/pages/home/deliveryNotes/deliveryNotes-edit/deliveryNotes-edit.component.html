@@ -64,10 +64,10 @@
           <nz-form-control [nzSm]="14" [nzXs]="14" [nzErrorTip]="cuit">
             <input nz-input nzSize="small" formControlName="supplierName" />
           </nz-form-control>
-          <!-- Boton que abre el buscador de CLiente en drawer -->
+          <!-- Boton que abre el buscador de Cliente en drawer -->
           <form nz-form [formGroup]="formSupplierSearch">
             <div style="margin: 3px">
-              <button nz-button nzSize="small" nzType="primary" (click)="openComponentSupplier()" class="ml-5"
+              <button nz-button nzSize="small" nzType="primary" (click)="openComponentCustomer()" class="ml-5"
                 [disabled]="isDisabled">
                 <i nz-icon nzType="search" nzTheme="outline"></i>Buscar
               </button>

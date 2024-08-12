@@ -11,7 +11,7 @@ namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest
         public long SupplierOrderNumber { get; set; }
         public long StatusId { get; set; }
         public List<string> SupplierEmail { get; set; }
-
+        public string? Observation { get; set; }
         public List<DtoRequestOrderDetail> OrderDetail { get; set; }
 
 

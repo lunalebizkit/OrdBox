@@ -2,7 +2,7 @@
 {
     public class DtoResponseInvoiceReportTotals
     {
-        public DateTimeOffset? InvoiceDate { get; set; }
+        public DateTime? InvoiceDate { get; set; }
         public decimal TotalQuantity { get; set; }
         public decimal? TotalPrice { get; set; }
         public decimal? TotalSubTotal { get; set; }

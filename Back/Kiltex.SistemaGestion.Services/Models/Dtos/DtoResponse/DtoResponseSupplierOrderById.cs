@@ -20,6 +20,7 @@ namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse
         public DateTime? DateTime { get; set; }
 
         public DateTime? ScheduledDate { get; set; }
+        public string? Observation { get; set; }
 
         public List<DtoResponseOrderByIdDetail> OrderDetail { get; set; }
 
