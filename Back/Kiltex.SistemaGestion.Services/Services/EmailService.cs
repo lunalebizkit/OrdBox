@@ -57,7 +57,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                             "<style>" +
                             ".table, th, td {width: 30%; align-items:center; border: 1px solid black;}" +
                             "</style> " +
-                           "<div style =\"font-size:37px\"> REFRIGERACIONES DANTE <img  style=\"heigth:50px;width:50px;margin-left:100px\" src = https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTWa5Ib3MGd8kiDLloC7s3FaDQfJfRw1oaqOJwBj261Nz0uOOZf1jJ3VZRePSC3IR6KtMw&usqp=CAU></div>"+ 
+                           "<div style =\"font-size:37px\"> REFRIGERACIONES DANTE<img style=\"heigth:50px;width:50px;margin-left:100px\" src= https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTWa5Ib3MGd8kiDLloC7s3FaDQfJfRw1oaqOJwBj261Nz0uOOZf1jJ3VZRePSC3IR6KtMw&usqp=CAU></div>"+ 
                             "</head>" +
                              "<body>" +
                             "<h1>Orden de Pedido</h1>" +

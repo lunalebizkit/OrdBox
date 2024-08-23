@@ -1,21 +1,14 @@
 ﻿
 using iTextSharp.text;
 using iTextSharp.text.pdf;
+using Kiltex.SistemaGestion.Services.Common;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-using Path = System.IO.Path;
 using Document = iTextSharp.text.Document;
 using Font = iTextSharp.text.Font;
 using Paragraph = iTextSharp.text.Paragraph;
-using Aspose.Words.XAttr;
-using DocumentFormat.OpenXml.Spreadsheet;
-using Kiltex.SistemaGestion.Services.Common;
-using System.IO;
-using Newtonsoft.Json;
-using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
-using Microsoft.AspNetCore.Html;
-using Aspose.Words.Tables;
+using Path = System.IO.Path;
 
 namespace Kiltex.SistemaGestion.Services.Services
 {
@@ -30,7 +23,8 @@ namespace Kiltex.SistemaGestion.Services.Services
         private bool mostrarIvaB;
         public PdfService(IConfiguration configuration, IWebHostEnvironment env)
 
-        { _configuration = configuration;
+        {
+            _configuration = configuration;
             _Env = env;
         }
 
@@ -41,9 +35,13 @@ namespace Kiltex.SistemaGestion.Services.Services
                 Document document = new Document();
 
                 // Establecer el nombre y ubicación del archivo PDF resultante
-                string filePath = _configuration.GetSection("Archivos:Pdf").Value;
+                string filePath = Path.Combine(_Env.ContentRootPath, "PDF_Factura");
                 string fileName = $"archivo_{DateTime.Now.ToString("yyyyMMdd")}.pdf";
                 string fullPath = Path.Combine(filePath, fileName);
+                if (!Directory.Exists(filePath))
+                {
+                    Directory.CreateDirectory(filePath);
+                }
 
                 try
                 {
@@ -70,6 +68,10 @@ namespace Kiltex.SistemaGestion.Services.Services
                 {
                     document.Dispose();
                     stream.Dispose();
+                    if (File.Exists(fullPath))
+                    {
+                        File.Delete(fullPath);
+                    }
                 }
             }
         }
@@ -83,8 +85,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             string nombre_apellido = _configuration.GetSection("Pdf:Nombre").Value;
             string email = _configuration.GetSection("Pdf:Email").Value;
 
-            string imagePath = Path.Combine(_Env.ContentRootPath,"Assets", "dantesLogo1.png");
-            Console.WriteLine(imagePath);
+            string imagePath = Path.Combine(_Env.ContentRootPath, "Assets", "dantesLogo1.png");
             // Crear el objeto de imagen
             iTextSharp.text.Image image = iTextSharp.text.Image.GetInstance(imagePath);
 
@@ -101,7 +102,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             Chunk titleChunk = new Chunk(titulo, titleFont);
 
             Font titleFont2 = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 13, BaseColor.Black);
-            Chunk titleComprobante = new(model.TituloComprobante, titleFont2);      
+            Chunk titleComprobante = new(model.TituloComprobante, titleFont2);
             Chunk numero = new(model.NumeroComprobante, titleFont2);
 
             phrase.Add(new Chunk(titleChunk));
@@ -126,9 +127,9 @@ namespace Kiltex.SistemaGestion.Services.Services
             PdfPCell textCell = new PdfPCell(phrase)
             {
                 Border = PdfPCell.NO_BORDER,
-                PaddingTop = 20f,   
+                PaddingTop = 20f,
                 VerticalAlignment = Element.ALIGN_LEFT,
-            };          
+            };
             // Establecer alineación y tamaño de fuente para el título
             textCell.HorizontalAlignment = Element.ALIGN_LEFT;
             textCell.Phrase.Font.Size = 16;
@@ -166,11 +167,11 @@ namespace Kiltex.SistemaGestion.Services.Services
                 CUIT = resumen.Cuit.ToString();
             }
 
-            string Cliente = resumen.Nombre;        
+            string Cliente = resumen.Nombre;
             string Dirección = resumen.Direccion;
             string Observacion = resumen.Observacion;
             DateTime fecha = resumen.Fecha;
-            
+
 
             // Mover la declaración fuera del bucle
             Phrase textoIzquierda = new()
@@ -193,11 +194,11 @@ namespace Kiltex.SistemaGestion.Services.Services
                 HorizontalAlignment = Element.ALIGN_LEFT
             };
 
-             mostrarIvaTotal = string.Equals(resumen.Tipo, "B", StringComparison.OrdinalIgnoreCase);
-             mostrarIvaTotal2 = string.Equals(resumen.Tipo, "A", StringComparison.OrdinalIgnoreCase);
+            mostrarIvaTotal = string.Equals(resumen.Tipo, "B", StringComparison.OrdinalIgnoreCase);
+            mostrarIvaTotal2 = string.Equals(resumen.Tipo, "A", StringComparison.OrdinalIgnoreCase);
 
-             mostrarIvaA = string.Equals(resumen.Tipo, "1" ,StringComparison.OrdinalIgnoreCase);
-             mostrarIvaB = string.Equals(resumen.Tipo, "2" ,StringComparison.OrdinalIgnoreCase);
+            mostrarIvaA = string.Equals(resumen.Tipo, "1", StringComparison.OrdinalIgnoreCase);
+            mostrarIvaB = string.Equals(resumen.Tipo, "2", StringComparison.OrdinalIgnoreCase);
 
             //Segunda Columna
             Phrase textoDerecha = new()
@@ -373,7 +374,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             {
                 if (resumen.Iva10 != 0)
                 {
-                    
+
                     table2.AddCell(new PdfPCell(new Phrase("Iva 10: "))
                     {
                         HorizontalAlignment = Element.ALIGN_LEFT,
@@ -402,7 +403,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                         Border = PdfPCell.LEFT_BORDER | PdfPCell.BOTTOM_BORDER | PdfPCell.TOP_BORDER
                     });
 
-                 
+
                     table2.AddCell(new PdfPCell(new Phrase(string.Format("{0,7:##.00}", "$" + resumen.Iva21)))
                     {
                         HorizontalAlignment = Element.ALIGN_RIGHT,
@@ -415,11 +416,11 @@ namespace Kiltex.SistemaGestion.Services.Services
 
                 if (resumen.Iva27 != 0)
                 {
-                  
+
                     table2.AddCell(emptyCell);
                     table2.AddCell(emptyCell);
                     table2.AddCell(emptyCell);
-                   
+
                     table2.AddCell(new PdfPCell(new Phrase("Iva 27: "))
                     {
                         HorizontalAlignment = Element.ALIGN_LEFT,
@@ -435,8 +436,8 @@ namespace Kiltex.SistemaGestion.Services.Services
                     table2.AddCell(emptyCell);
                 }
 
-            }            
-                              
+            }
+
 
             table2.AddCell(emptyCell);
             table2.AddCell(emptyCell);
@@ -444,7 +445,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             table2.AddCell(emptyCell);
 
             var subTotal = resumen.Total - resumen.IvaTotal;
-            if (mostrarIvaTotal != true )
+            if (mostrarIvaTotal != true)
             {
                 table2.AddCell(emptyCell);
                 table2.AddCell(emptyCell);
@@ -498,15 +499,15 @@ namespace Kiltex.SistemaGestion.Services.Services
                     Border = PdfPCell.RIGHT_BORDER | PdfPCell.BOTTOM_BORDER | PdfPCell.TOP_BORDER,
                 });
             }
-           
+
 
             table2.AddCell(emptyCell);
 
-           
+
 
             if (mostrarIvaTotal2 != true)
             {
-                table2.AddCell(emptyCell); 
+                table2.AddCell(emptyCell);
                 table2.AddCell(emptyCell);
                 table2.AddCell(emptyCell);
 
@@ -521,7 +522,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                     Border = PdfPCell.RIGHT_BORDER | PdfPCell.BOTTOM_BORDER | PdfPCell.TOP_BORDER,
                 });
             }
-      
+
             table2.AddCell(emptyCell);
             table2.AddCell(emptyCell);
 
@@ -530,7 +531,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             paragraph.Add(paragraphTotal);
 
             return paragraph;
-            
+
         }
 
         public async Task<Paragraph> DetalleRecibo(DtoRequestDetallePDF model)
@@ -539,7 +540,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             PdfPTable table = new PdfPTable(5);
 
             // Establecer el ancho de las columnas
-            float[] columnWidths = { 3f, 3f, 3f, 2f,3f }; // Ancho entre columnas
+            float[] columnWidths = { 3f, 3f, 3f, 2f, 3f }; // Ancho entre columnas
             table.SetWidths(columnWidths);
 
             //Le agrego color a la letra de la tabla y tamaño
@@ -581,7 +582,7 @@ namespace Kiltex.SistemaGestion.Services.Services
 
             table.AddCell(new PdfPCell(new Phrase("Total: ", font))
             {
-                Border = PdfPCell.LEFT_BORDER| PdfPCell.BOTTOM_BORDER,
+                Border = PdfPCell.LEFT_BORDER | PdfPCell.BOTTOM_BORDER,
                 HorizontalAlignment = Element.ALIGN_CENTER,
                 PaddingBottom = 10f,
                 PaddingTop = 5f
@@ -595,7 +596,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                 foreach (var item in resumen.QuittanceDetails)
                 {
                     Chunk cashChunk = new Chunk(model.Cash.ToString(), font2);
-                    table.AddCell(new PdfPCell(new Phrase("$"+ cashChunk))
+                    table.AddCell(new PdfPCell(new Phrase("$" + cashChunk))
                     {
                         HorizontalAlignment = Element.ALIGN_RIGHT,
                         Border = PdfPCell.RIGHT_BORDER,
@@ -616,7 +617,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                         PaddingTop = 10f
                     });
 
-                    table.AddCell(new PdfPCell(new Phrase("N°"+item.CheckNumber, font2))
+                    table.AddCell(new PdfPCell(new Phrase("N°" + item.CheckNumber, font2))
                     {
                         HorizontalAlignment = Element.ALIGN_RIGHT,
                         Border = PdfPCell.RIGHT_BORDER,
@@ -631,7 +632,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                         PaddingTop = 10f
                     });
                 }
-               
+
             }
             paragraph.Add(table);
             return paragraph;
@@ -642,7 +643,7 @@ namespace Kiltex.SistemaGestion.Services.Services
         {
 
             Paragraph paragraph = new Paragraph();
-            PdfPTable table = new PdfPTable(4);       
+            PdfPTable table = new PdfPTable(4);
 
             // Establecer el ancho de las columnas
             float[] columnWidths = { 6f, 2f, 3f, 2f }; // Ancho entre columnas
@@ -731,14 +732,14 @@ namespace Kiltex.SistemaGestion.Services.Services
             }
 
             Tabla(resumen);
-         
+
             paragraph.Add(table);
 
             Paragraph saltoDeLinea1 = new Paragraph("");
             paragraph.Add(saltoDeLinea1);
 
             paragraph.Add(Tabla(resumen));
-           
+
             return paragraph;
 
         }
@@ -759,7 +760,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                 Border = PdfPCell.NO_BORDER
             };
 
-            var resumen = model; 
+            var resumen = model;
 
             var subTotal = resumen.Total - resumen.IvaTotal;
 
@@ -929,10 +930,10 @@ namespace Kiltex.SistemaGestion.Services.Services
                     Border = PdfPCell.RIGHT_BORDER | PdfPCell.BOTTOM_BORDER | PdfPCell.TOP_BORDER,
                 });
             }
-          
+
 
             paragraph.Add(table2);
-           
+
             return paragraph;
         }
 
@@ -1003,7 +1004,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                         Border = PdfPCell.RIGHT_BORDER,
                         PaddingTop = 10f
                     });
-                    
+
                 }
             }
             //var subTotal = resumen.Total * resumen.Quantity;
@@ -1057,10 +1058,10 @@ namespace Kiltex.SistemaGestion.Services.Services
             PdfPTable table2 = new PdfPTable(4);
 
 
-            float[] columnWidths2 = { 1f, 2f,1f,1f }; // Ancho relativo de cada columna
-            table2.SetWidths(columnWidths2);          
+            float[] columnWidths2 = { 1f, 2f, 1f, 1f }; // Ancho relativo de cada columna
+            table2.SetWidths(columnWidths2);
 
-   
+
 
             table2.AddCell(emptyCell);
             table2.AddCell(emptyCell);

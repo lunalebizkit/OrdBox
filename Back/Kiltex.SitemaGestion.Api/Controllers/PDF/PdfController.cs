@@ -66,7 +66,6 @@ namespace Kiltex.SistemaGestion.Api.Controllers.PDF
             paragraph.Add(Detalle);
 
             var contenido = await _service.Imprimir(paragraph).ConfigureAwait(false);
-            //string json = JsonConvert.SerializeObject(_service.Imprimir(paragraph));
             return File(contenido.Data, "application/pdf", $"FacturaProforma_{DateTime.Now:dd-MM-yyyy}.pdf");
         } 
 
