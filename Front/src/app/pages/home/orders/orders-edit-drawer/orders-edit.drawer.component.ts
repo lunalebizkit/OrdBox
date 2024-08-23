@@ -219,6 +219,7 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
 
   onChange(id: number) {
     if (id != 0 && id != null)
+      this.emailsEntityArray.controls = [];
       this.entityService.getSupplierById(id).subscribe({
         next: (r) => {
           r.emailEntity.forEach((e: any) => {
@@ -228,7 +229,7 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
           });
         },
         error: () => { },
-      });
+      }); 
   }
 
   /*
