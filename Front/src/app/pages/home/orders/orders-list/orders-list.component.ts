@@ -56,7 +56,7 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
       product: '',
       brand: 0,
       category: 0,
-      status: 0,
+      status: 1,
       date: '',
       supplier: [0],
       
@@ -94,7 +94,7 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
   ) {
     super(notificacionService, el, message);
     this.formSearch = this.fb.group({
-      status: [0],
+      status: [1],
       supplier: [[]],
       category: [0],
       date: ['']
