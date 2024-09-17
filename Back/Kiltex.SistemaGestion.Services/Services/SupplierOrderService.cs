@@ -158,7 +158,7 @@ namespace Kiltex.SistemaGestion.Services.Services
 
 
 
-                    if (newOrder.StatusId == (int)ESupplierOrderStatuses.Aceptado)
+                    if (newOrder.StatusId == (int)ESupplierOrderStatuses.Aceptado && oldOrder.StatusId != (int)ESupplierOrderStatuses.Aceptado)
                     {
                         foreach (var detail in newOrder.SupplierOrderDetail)
                         {

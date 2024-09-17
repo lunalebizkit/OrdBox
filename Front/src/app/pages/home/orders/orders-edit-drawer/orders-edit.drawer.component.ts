@@ -263,16 +263,14 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
           if (r.statusId == 1) {
             this.editOrder = true;
             this.disabled = false;
-            this.form.controls['observation'].enable();
             this.disableMail = true;
             this.viewOrder = false;
           } else {
             this.viewOrder = true;
             this.editOrder = false;
             this.disabled = true;
-            this.form.controls['observation'].disable(),
-              this.disableMail = false;
-          }
+            this.disableMail = false;
+          } 
 
           this.totalCalculate();
           this.loading = false;

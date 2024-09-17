@@ -2,7 +2,7 @@
   [btnSendEmail]="'Enviar'" [hideSend]="id != 0" [title]="'Pedidos'" [iconBack]="'rollback'" [iconSave]="'save'"
   [iconTitle]="'shopping-cart'" [iconSend]="'mail'" (onSaveClick)="  msjConfirmOk()"
   (onSendClick)="email.showConfirmation()" (onSendEmailClick)="onlyEmail.showConfirmation()" (onCloseClick)="close()"
-  [hideClose]="true" [hideEmail]="id == 0" [hideBack]="true" [disabled]="this.disabled" [hideCerrar]="true" [hideFacturaPro]="true">
+  [hideClose]="true" [hideEmail]="id == 0" [hideBack]="true"  [hideCerrar]="true" [hideFacturaPro]="true">
 </app-header-op-buttons>
 
 <div class="site-page-header-ghost-wrapper">
@@ -79,7 +79,7 @@
                 <nz-form-label nzRequired nzFor="isPaid">Pagado
                 </nz-form-label>
                 <nz-switch class="mb-2" formControlName="isPaid" [ngModel]="switchValue"
-                  [nzDisabled]="disabled"></nz-switch>
+                  ></nz-switch>
               </nz-form-item>
             </div>
           </div>
@@ -97,7 +97,7 @@
                   </div>
                   <div nz-col>
                     <nz-switch style="margin-left: 5px;" nzCheckedChildren="Enviar" nzUnCheckedChildren="No enviar"
-                      (click)="selectEmails(data.value)" [nzDisabled]="statusId == 1 ? true : disabled"></nz-switch>
+                      (click)="selectEmails(data.value)"></nz-switch>
                   </div>
                 </div>
               </ng-container></ng-container>
