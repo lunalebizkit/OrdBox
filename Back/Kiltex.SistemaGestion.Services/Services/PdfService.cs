@@ -1,6 +1,7 @@
 ﻿
 using iTextSharp.text;
 using iTextSharp.text.pdf;
+using Kiltex.SistemaGestion.SDK.Error;
 using Kiltex.SistemaGestion.Services.Common;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
 using Microsoft.AspNetCore.Hosting;
@@ -16,16 +17,18 @@ namespace Kiltex.SistemaGestion.Services.Services
     {
         private IConfiguration _configuration;
         private IWebHostEnvironment _Env;
+        private ErrorManager _logger;
 
         private bool mostrarIvaTotal;
         private bool mostrarIvaTotal2;
         private bool mostrarIvaA;
         private bool mostrarIvaB;
-        public PdfService(IConfiguration configuration, IWebHostEnvironment env)
+        public PdfService(ErrorManager logger, IConfiguration configuration, IWebHostEnvironment env)
 
         {
             _configuration = configuration;
             _Env = env;
+            _logger = logger;
         }
 
         public async Task<OperationResponse<byte[]>> Imprimir(Paragraph paragraph)
@@ -62,6 +65,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                 }
                 catch (Exception ex)
                 {
+                    _logger.LogError(ErrorsCodes.C_010_ERROR_EXCEPTION, ex: ex);
                     throw;
                 }
                 finally
@@ -206,8 +210,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                (resumen.Tipo != null) ? new Chunk("Tipo: " + resumen.Tipo) : null,
                 Chunk.Newline,
                 new Chunk("Fecha: " + fecha.ToString("yyyy-MM-dd")),
-                Chunk.Newline,
-                new Chunk("Observación: "+ Observacion)
+                Chunk.Newline
             };
 
             PdfPCell cell2 = new PdfPCell(textoDerecha)
@@ -217,8 +220,29 @@ namespace Kiltex.SistemaGestion.Services.Services
                 PaddingBottom = 10f,
                 HorizontalAlignment = Element.ALIGN_RIGHT
             };
+
             table.AddCell(cell1);
             table.AddCell(cell2);
+
+            if (!string.IsNullOrEmpty(Observacion))
+            {
+                //Parrafo Observacion
+                Phrase pObservacion = new()
+                {
+                    new Chunk("Observación: "+ Observacion)
+                };
+
+                PdfPCell cObservacion = new PdfPCell(pObservacion)
+                {
+                    Border = PdfPCell.TOP_BORDER | PdfPCell.BOTTOM_BORDER,
+                    PaddingTop = 10f,
+                    PaddingBottom = 10f,
+                    HorizontalAlignment = Element.ALIGN_RIGHT
+                };
+
+                table.AddCell(cObservacion);
+            }
+
             parrafo.Add(table);
             return parrafo;
         }
