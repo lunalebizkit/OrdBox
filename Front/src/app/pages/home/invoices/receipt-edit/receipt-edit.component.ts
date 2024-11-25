@@ -219,11 +219,12 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
       return;
     } else {
       if (this.cuit.length >= 6) {
-        this.serviceEntity.getByCuit(this.cuit).subscribe({
+        this.serviceEntity.getSupplierByCuit(this.cuit).subscribe({
           next: (data: any) => {
             this.formReceipt.controls['supplierAddress'].setValue(data.address);
             this.formReceipt.controls['supplierCuit'].setValue(data.cuit);
             this.formReceipt.controls['supplierName'].setValue(data.name);
+            this.supplierId = data?.id;
           },
           error: () => {
             this.showMessageError('No se encontro Proveedor');
@@ -551,12 +552,10 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
       this.dni = null;
     }
   }
+
   direction() {
     this.router.navigate(['/home/invoices/receipt']);
   }
-  
-
-
   
 }
 

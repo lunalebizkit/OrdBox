@@ -34,7 +34,7 @@ export class EntityService {
    * @returns
    */
   public getSupplierByCuit(cuit: string | number): Observable<any> {
-    return this.api.get(`Customer/GetSupplierByCuit?cuit=${cuit}`, false);
+    return this.api.get(`supplier/GetSupplierByCuit?cuit=${cuit}`, false);
   }
 
   /**
