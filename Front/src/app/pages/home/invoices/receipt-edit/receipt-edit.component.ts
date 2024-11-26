@@ -167,12 +167,15 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
   startEditIva(id: number): void {
     this.editIdIva = id;
   }
+  
   stopEdit(): void {
     this.editId = null;
   }
+
   stopEditIva(): void {
     this.editIdIva = null;
   }
+
   changeIvaValue(iva: number, productId: number): void {
     let newIva = Number(iva);
     try {

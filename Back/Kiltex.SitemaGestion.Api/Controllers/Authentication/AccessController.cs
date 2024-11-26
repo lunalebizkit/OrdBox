@@ -8,6 +8,11 @@ using System.Security.Claims;
 using Newtonsoft.Json;
 using Kiltex.SistemaGestion.SDK.Jwt;
 using Kiltex.SistemaGestion.Api.Extension;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Kiltex.SistemaGestion.Domain.Model;
+using Usuario = Kiltex.SistemaGestion.Domain.Model.User;
+using Kiltex.SistemaGestion.Services.Common;
 
 namespace Kiltex.SistemaGestion.Api.Controllers.Authentication
 {
@@ -26,22 +31,16 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Authentication
                 return Forbid();
                  
             }
-            var authClaims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.Name, usuario.Data.FirstName),
-                    new Claim(ClaimTypes.Role, usuario.Data.Rol.Key),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-                };
-            
-            var permission = usuario.Data.Rol.PermissionXRols.Select(y => y.Permission.EnumPermission).ToArray();
-            authClaims.Add(new Claim(UserExtension.claimPermission,  JsonConvert.SerializeObject(permission)));
 
+            var permission = usuario.Data.Rol.PermissionXRols.Select(y => y.Permission.EnumPermission).ToArray();
+                        
             var token = JWTService.CreateDefaultToken(
                 configuration["Jwt:Issuer"],
                 configuration["Jwt:Audience"],
                 360,
                 configuration["Jwt:SecretKey"],
-                authClaims);
+                GenerateClaims(usuario));
+
             return Ok(new
             {
                 id = usuario.Data.Id,
@@ -50,8 +49,20 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Authentication
                 rol = usuario.Data.Rol.Key,
                 permission,
                 token = new JwtSecurityTokenHandler().WriteToken(token),
-                expiration = token.ValidTo
+            expiration = token.ValidTo
             });
+
+        }
+        private static ClaimsIdentity GenerateClaims(OperationResponse<Usuario> usuario)
+        {
+            var claims = new ClaimsIdentity();
+            claims.AddClaim(new Claim(ClaimTypes.Name, usuario.Data.FirstName));
+            claims.AddClaim(new Claim(ClaimTypes.Role, usuario.Data.Rol.Key));
+            var permission = usuario.Data.Rol.PermissionXRols.Select(y => y.Permission.EnumPermission).ToArray();
+            claims.AddClaim(new Claim(UserExtension.claimPermission,  JsonConvert.SerializeObject(permission)));
+
+
+            return claims;
         }
     }
 }
