@@ -7,7 +7,7 @@ import { ProductsModel } from '../../products/model/product.model';
 import { ProductService } from '../../products/product.service';
 import { BrandsService } from '../../brands/brands.services';
 import { BrandsModel } from '../../brands/model/brands.model';
-import { isNil } from 'ng-zorro-antd/core/util';
+import { isNil, isNonEmptyString } from 'ng-zorro-antd/core/util';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { ProductCodeBarModal } from '../../products/products-barcode-modal/products-barcode-modal.component';
 
@@ -19,6 +19,13 @@ import { ProductCodeBarModal } from '../../products/products-barcode-modal/produ
 export class InvoiceProductSearchComponent implements OnInit {
   @Input() set filter(value: string){
     this.queryParams.filter.product = value;
+  };
+  
+  @Input() set supplierId(entityId: number){
+    if(!isNil(entityId) || isNonEmptyString(entityId) ){
+      if (entityId > 0) {
+       this.queryParams.filter.supplier.push(entityId)};
+      }
   };
   @HostListener('document:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
@@ -53,7 +60,7 @@ export class InvoiceProductSearchComponent implements OnInit {
       brand: 0,
       category: 0,
       status: 0,
-      supplier:[]},
+      supplier: [] as Number []},
     page: 0,
     pageSize: 50
   };

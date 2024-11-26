@@ -472,7 +472,7 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
   openComponentProduct(): void {
     const drawerRefProduct = this.drawerService.create<
       InvoiceProductSearchComponent,
-      { filter: string },
+      { filter: string, supplierId : number | null },
       [ProductsModel]
     >({
       nzTitle: 'Productos',
@@ -481,6 +481,7 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
       nzWidth: '90%',
       nzContentParams: {
         filter: this.formProductSearch.controls['productSearchFilter'].value,
+        supplierId: this.supplierId
       },
       nzClosable: false,
     });
