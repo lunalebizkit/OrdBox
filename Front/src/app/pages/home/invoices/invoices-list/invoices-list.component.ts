@@ -223,8 +223,8 @@ export class InvoicesListComponent implements OnInit {
     });
   }
 
-  reimprimirInvoice(id: number): void {
-    const fileName = `Factura_Proforma`
+  reimprimirInvoice(id: number, invoiceNumber: number): void {
+    const fileName = `Factura_Proforma_${invoiceNumber}`;
     this.service.Reprintinvoice(id).subscribe({
       next: (r) => { this.downloadFile(r, fileName); }
 

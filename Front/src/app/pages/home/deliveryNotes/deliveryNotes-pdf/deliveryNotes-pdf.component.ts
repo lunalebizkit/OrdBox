@@ -16,10 +16,6 @@ import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import jsPDF from 'jspdf';
 
 (pdfMake as any).vfs = pdfFonts.pdfMake.vfs;
-import { Document, ImageRun, Paragraph, TextRun } from "docx";
-import { Packer } from 'docx';
-import saveAs from 'file-saver';
-import DOMPurify from 'dompurify';
 import { deliveryNotesService } from '../deliveryNotes.service';
 import { DeliveryNotesDetails, DeliveryNotesModel } from '../model/deliveryNotes.model';
 
