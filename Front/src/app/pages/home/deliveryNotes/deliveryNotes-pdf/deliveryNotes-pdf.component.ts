@@ -15,7 +15,7 @@ import html2canvas from 'html2canvas';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import jsPDF from 'jspdf';
 
-(pdfMake as any).vfs = pdfFonts.pdfMake.vfs;
+// (pdfMake as any).vfs = pdfFonts.pdfMake.vfs;
 import { deliveryNotesService } from '../deliveryNotes.service';
 import { DeliveryNotesDetails, DeliveryNotesModel } from '../model/deliveryNotes.model';
 
