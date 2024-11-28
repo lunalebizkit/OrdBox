@@ -1,6 +1,8 @@
 ﻿
 using AutoMapper;
 using Dapper;
+using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
+using DocumentFormat.OpenXml.Wordprocessing;
 using Kiltex.SistemaGestion.Domain;
 using Kiltex.SistemaGestion.Domain.Enum;
 using Kiltex.SistemaGestion.Domain.Model;
@@ -410,6 +412,42 @@ namespace Kiltex.SistemaGestion.Services.Services
             {
                 _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
                 return Error<DtoResponseProductReportTotal>(new OperationExceptions(ErrorsCodes.C_999_ERROR_GENERICO, ex?.Message.ToString()));
+            }
+        }
+
+        public async Task UpdateProductStockById(long productId, int stock)
+        {
+            var parameters = new
+            {
+                recievedquantity = stock,
+                productid = productId
+            };
+
+            using (var connection = new SqlConnection(ConnectionString))
+            {
+                await connection.OpenAsync();
+
+                using (var transaction = connection.BeginTransaction())
+                {
+                    try
+                    {
+                        var rowAffected = await connection.ExecuteAsync(SqlScripts.UpdateProductStockById, parameters,transaction: transaction,commandType: System.Data.CommandType.Text);
+
+                        if (rowAffected == 0)
+                        {
+                            _logger.LogWarning($"No se encontró el producto con ID {productId} para actualizar el stock.");
+                        }
+
+                        transaction.Commit();
+
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        _logger.LogError(ErrorsCodes.C_010_ERROR_EXCEPTION, ex: ex);
+                        throw;
+                    }
+                }
             }
         }
     }

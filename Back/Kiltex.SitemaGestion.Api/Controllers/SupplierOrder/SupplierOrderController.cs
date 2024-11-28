@@ -51,7 +51,7 @@ namespace Kiltex.SistemaGestion.Api.Controllers.SupplierOrder
         [Route("orderAndEmail")]
         public async Task<IActionResult> NewWithEmail([FromBody] DtoRequestSupplierOrder model)
         {
-            return Return(await _service.AddOrUpdateEmail(model).ConfigureAwait(false));
+            return Return(await _service.AddOrUpdate(model, true).ConfigureAwait(false));
         }
 
         /// <summary>
