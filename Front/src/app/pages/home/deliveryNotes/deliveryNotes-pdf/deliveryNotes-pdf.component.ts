@@ -7,8 +7,6 @@ import { environment } from '../../../../../environments/environment';
 import { formatCurrency, formatDate } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 
-//import { HtmlComponentRenderer } from 'docx-html';
-
 declare var require: any;
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import html2canvas from 'html2canvas';
