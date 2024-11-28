@@ -19,8 +19,8 @@
     "@angular/platform-browser": "~13.2.0",
     "@angular/platform-browser-dynamic": "~13.2.0",
     "@angular/router": "~13.2.0",
-    "ag-grid-angular": "^28.1.1",
-    "ag-grid-community": "^28.1.1",
+    "ag-grid-angular": "^32.3.3",
+    "ag-grid-community": "^32.3.3",
     "docx": "^8.0.2",
     "docx-html": "^1.0.5",
     "file-saver": "^2.0.5",
@@ -36,8 +36,8 @@
     "zone.js": "~0.11.4"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "~13.2.3",
-    "@angular/cli": "~13.2.3",
+    "@angular-devkit/build-angular": "^19.0.2",
+    "@angular/cli": "^19.0.2",
     "@angular/compiler-cli": "~13.2.0",
     "@types/dompurify": "^3.0.1",
     "@types/file-saver": "^2.0.5",
