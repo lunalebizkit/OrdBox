@@ -1,4 +1,4 @@
-import { Component, ElementRef, Inject, Renderer2 , LOCALE_ID, OnInit, ViewChild }  from '@angular/core';
+import { Component, ElementRef, Inject, LOCALE_ID, OnInit, ViewChild }  from '@angular/core';
 import { BaseComponent } from 'src/app/common/components/base/base.component';
 import { HeaderOperationsButtonsComponent } from 'src/app/common/components/headers/buttons.oparations.header.component';
 import { BudgetDetails, BudgetsModel } from '../model/budgets.model';
@@ -6,18 +6,11 @@ import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { BudgetsService } from '../budgets.services';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { environment } from '../../../../../environments/environment';
-import { formatCurrency, formatDate } from '@angular/common';
+import { formatCurrency } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 
-//import { HtmlComponentRenderer } from 'docx-html';
-
-declare var require: any;
-import * as pdfMake from 'pdfmake/build/pdfmake';
 import html2canvas from 'html2canvas';
-import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import jsPDF from 'jspdf';
-
-(pdfMake as any).vfs = pdfFonts.pdfMake.vfs;
 
 @Component({
     selector: 'app-budgets-view',
@@ -25,13 +18,10 @@ import jsPDF from 'jspdf';
     styleUrls: ['./budgets-view.component.css'],
   })
 
-  export class BudgetsViewComponent extends BaseComponent implements OnInit{
-    
-    
-   
+  export class BudgetsViewComponent extends BaseComponent implements OnInit{ 
 
     @ViewChild('header') headerComponent!: HeaderOperationsButtonsComponent;
-     @ViewChild('pdfTable') pdfTable!: ElementRef;
+    @ViewChild('pdfTable') pdfTable!: ElementRef;
      
     // variables Generales
     isLoading=true;
@@ -126,8 +116,6 @@ import jsPDF from 'jspdf';
         });
    
     }
-
-
 }
 
 
