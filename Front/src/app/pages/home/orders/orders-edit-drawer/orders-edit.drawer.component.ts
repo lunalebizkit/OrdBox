@@ -470,7 +470,7 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
     if (true) {
       const drawerRefProduct = this.drawerService.create<
         InvoiceProductSearchComponent,
-        { filter: string },
+        { filter: string; supplierId: number },
         [ProductsModel]
       >({
         nzTitle: 'Productos',
@@ -479,6 +479,7 @@ export class OrdersEditDrawerComponent extends BaseComponent implements OnInit {
         nzWidth: '90%',
         nzContentParams: {
           filter: this.formProductSearch.controls['productSearchFilter'].value,
+          supplierId :  this.formSupplierSearch.controls['supplierId'].value
         },
         nzClosable: false,
       });

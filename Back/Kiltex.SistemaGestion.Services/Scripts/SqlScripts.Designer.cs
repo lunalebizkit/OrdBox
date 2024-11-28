@@ -182,5 +182,14 @@ namespace Kiltex.SistemaGestion.Services.Scripts {
                 return ResourceManager.GetString("GetSupplierByIdForList", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a UPDATE [product] SET quantity = quantity + @recievedquantity WHERE Id = @productid.
+        /// </summary>
+        internal static string UpdateProductStockById {
+            get {
+                return ResourceManager.GetString("UpdateProductStockById", resourceCulture);
+            }
+        }
     }
 }
