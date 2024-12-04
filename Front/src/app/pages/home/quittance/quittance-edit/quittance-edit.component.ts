@@ -195,10 +195,6 @@ removeCheck( e: MouseEvent, index: any): void {
       } else {
        const model = this.formQuittance.getRawValue();
         model.id = this.id;  
-       
-        
-        
-         
         this.isSaving = true;
         this.service.saveQuittance(model)
           .subscribe({
