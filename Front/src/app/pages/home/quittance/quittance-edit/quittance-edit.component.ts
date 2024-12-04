@@ -270,7 +270,7 @@ removeCheck( e: MouseEvent, index: any): void {
 
   msjConfirmOk() {
     try {
-      if (this.isValidForm(this.formCustomerSearch)) {
+      if (this.isValidForm(this.formQuittance)) {
         this.popComponent.showConfirmation()
       } else {
         this.showMessageError('Error de formulario');
