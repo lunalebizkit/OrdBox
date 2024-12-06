@@ -174,9 +174,7 @@ reimprimirBudgets(id:number):void{
 downloadFile(response: any, fileName: string){
   const dataType= response.type;
   const binaryData = [];
-
   binaryData.push(response);
-
   const filtePath = window.URL.createObjectURL(new Blob(binaryData, {type: dataType}))
   const downloadLink = document.createElement('a');
   downloadLink.href = filtePath;
