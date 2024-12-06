@@ -215,7 +215,14 @@ export class QuittanceListComponent implements OnInit {
     });
   }
   reimprimirQuittance(id:number):void{
-    const fileName = `Recibo`
+    let fecha: Date = new Date();
+    let año: string = fecha.getFullYear().toString();
+    let mes = (fecha.getMonth() + 1).toString().padStart(2, '0');
+    let dia = fecha.getDate().toString().padStart(2, '0');
+    let hora: string = fecha.getHours().toString().padStart(2, '0');
+    let minutos: string = fecha.getMinutes().toString().padStart(2, '0');
+    let segundos: string = fecha.getSeconds().toString().padStart(2, '0');
+    const fileName = `Recibo_${año}${mes}${dia}${hora}${minutos}${segundos}`;
     this.service.ReprintQuittance(id).subscribe({
       next:(r)=>{  this.downloadFile(r, fileName);}
       

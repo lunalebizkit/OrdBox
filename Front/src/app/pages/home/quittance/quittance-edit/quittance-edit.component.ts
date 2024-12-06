@@ -195,10 +195,6 @@ removeCheck( e: MouseEvent, index: any): void {
       } else {
        const model = this.formQuittance.getRawValue();
         model.id = this.id;  
-       
-        
-        
-         
         this.isSaving = true;
         this.service.saveQuittance(model)
           .subscribe({
@@ -270,7 +266,7 @@ removeCheck( e: MouseEvent, index: any): void {
 
   msjConfirmOk() {
     try {
-      if (this.isValidForm(this.formCustomerSearch)) {
+      if (this.isValidForm(this.formQuittance)) {
         this.popComponent.showConfirmation()
       } else {
         this.showMessageError('Error de formulario');
