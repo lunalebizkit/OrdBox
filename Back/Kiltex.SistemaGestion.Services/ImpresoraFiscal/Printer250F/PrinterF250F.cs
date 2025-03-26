@@ -30,7 +30,7 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
             {
                 Method = HttpMethod.Get,
                 RequestUri = new Uri(_config.Ip),
-                Content = new StringContent(data, Encoding.UTF8, MediaTypeNames.Application.Json /* or "application/json" in older versions */),
+                Content = new StringContent(data, Encoding.UTF8, "application/json"),
             };
 
             var response = await client.SendAsync(requestPrinter).ConfigureAwait(false);
