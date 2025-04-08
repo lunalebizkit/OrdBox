@@ -1,10 +1,15 @@
 import { formatCurrency } from '@angular/common';
-import { Component, Inject, Input, LOCALE_ID, OnInit } from '@angular/core';
+import { Component, HostListener, Inject, Input, LOCALE_ID, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { NzDrawerRef } from 'ng-zorro-antd/drawer';
 import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { ProductsModel } from '../../products/model/product.model';
 import { ProductService } from '../../products/product.service';
+import { BrandsService } from '../../brands/brands.services';
+import { BrandsModel } from '../../brands/model/brands.model';
+import { isNil, isNonEmptyString } from 'ng-zorro-antd/core/util';
+import { NzModalService } from 'ng-zorro-antd/modal';
+import { ProductCodeBarModal } from '../../products/products-barcode-modal/products-barcode-modal.component';
 
 @Component({
   selector: 'app-invoice-product-search',
@@ -13,21 +18,54 @@ import { ProductService } from '../../products/product.service';
 })
 export class InvoiceProductSearchComponent implements OnInit {
   @Input() set filter(value: string){
-    this.queryParams.filter = value;
+    this.queryParams.filter.product = value;
   };
-
+  
+  @Input() set supplierId(entityId: number){
+    if(!isNil(entityId) || isNonEmptyString(entityId) ){
+      if (entityId > 0) {
+       this.queryParams.filter.supplier.push(entityId)};
+      }
+  };
+  @HostListener('document:keydown', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent) {
+    if (event.key === 'F4') {
+      this.createComponentModal();       
+    }
+  }
   childrenVisible = false;
+  loadingBrands!: boolean;
   /*
   ** Listado de los productos
   */
   productList: ProductsModel[] = [];
-  product!: ProductsModel;
+  product: ProductsModel[] = [];
   productId!: number;
 
+  checked = false;
+  indeterminate = false;
+  setOfCheckedId = new Set<number>()
+  /*
+   ** Lista de marcas
+   */
+   brandList: BrandsModel [] = [];
   /*
   ** Parametros de busqueda
-  */
+  */  
   queryParams = {
+    filter: {
+      product:'',
+      code: '',
+      barCode: '',
+      brand: 0,
+      category: 0,
+      status: 0,
+      supplier: [] as Number []},
+    page: 0,
+    pageSize: 50
+  };
+
+  queryData = {
     filter: '',
     page: 0,
     pageSize: 50
@@ -43,8 +81,10 @@ export class InvoiceProductSearchComponent implements OnInit {
   constructor(
     private drawerRef: NzDrawerRef<string>,
     private service: ProductService,
+    private serviceBrand: BrandsService,
     @Inject(LOCALE_ID) public locale: string,
-    private fb: FormBuilder) { }
+    private fb: FormBuilder,
+    private modalService: NzModalService) { }
 
   ngOnInit(): void { 
   }
@@ -59,13 +99,9 @@ export class InvoiceProductSearchComponent implements OnInit {
   }
 
 
-  selecccion(dato: any) {
-    if ( dato.composedPath()[1].id != null ||  dato.composedPath()[1].id != undefined) {
-      this.productId= dato.composedPath()[1].id; 
-     this.product= this.productList.filter( t => t.id == this.productId)[0];
-     this.close();
- 
-    }
+  selecccion() {    
+    this.product = this.productList.filter(({id}) => this.setOfCheckedId.has(id));
+    this.close();
    }
 
  
@@ -98,4 +134,77 @@ export class InvoiceProductSearchComponent implements OnInit {
   currencyFormat(data: any): string {
     return formatCurrency(data, this.locale, '$', 'ARS', '1.1-2');
   }
+
+     //Busca por marca
+     onSearchBrand(data: string): void {
+      if (data.length > 2) {
+        this.queryData.page = 0;
+        this.queryData.filter = data;
+        this.getBrand(this.queryData);
+      }
+    }
+
+    getBrand(params:any):void{
+      this.loadingBrands = true;
+      this.serviceBrand.getByFilter(params).subscribe({
+        next: (r) => {
+          this.brandList = r.data;
+          this.totalItems = r.totalCount;
+          this.loadingBrands = false;
+        },
+        error: () => {
+          this.loadingBrands = false;
+          this.brandList = [];
+        },
+      });
+    }
+
+    brandSelectedChange(id: any): void {
+      this.queryParams.filter.brand= id;
+      
+    }
+
+    onAllChecked(checked: boolean): void {
+      this.productList
+        .forEach(({ id }) => this.updateCheckedSet(id, checked));
+      this.refreshCheckedStatus();
+    }
+
+    updateCheckedSet(id: number, checked: boolean): void {
+      if (checked) {
+        this.setOfCheckedId.add(id);
+      } else {
+        this.setOfCheckedId.delete(id);
+      }
+    }
+
+    refreshCheckedStatus(): void {
+      this.checked = this.productList.every(({ id }) => this.setOfCheckedId.has(id));
+      this.indeterminate = this.productList.some(({ id }) => this.setOfCheckedId.has(id)) && !this.checked;
+    }
+
+    onItemChecked(id: number, checked: boolean): void {
+      this.updateCheckedSet(id, checked);
+      this.refreshCheckedStatus();
+    }
+
+    createComponentModal(): void {
+      const modal = this.modalService.create({
+        nzTitle: 'Código de Barra',
+        nzContent: ProductCodeBarModal  
+      });    
+    
+      const instance = modal.getContentComponent();
+      // Return a result when closed
+      modal.afterClose.subscribe({
+        next: (data: string) =>{
+          this.queryParams.filter.barCode= '';
+          if (!isNil(data) && (data)){
+            this.queryParams.filter.barCode = data;
+          }
+          this.getData(this.queryParams);
+        }, 
+        error: e => {console.log(e);}      
+      })    
+    }
 }

@@ -22,6 +22,7 @@ import { ProductsModel } from '../../products/model/product.model';
 import { ProductService } from '../../products/product.service';
 import { creditMemoDetailFromInvoiceParser, CreditMemoDetailList, creditMemoDetailParser, CreditMemoDetails, creditMemoGridFromInvoiceParser, creditMemoGridParser, CreditMemoModel } from '../model/creditMemo.model';
 import { NoteService } from '../notes.service';
+import { isNil } from 'ng-zorro-antd/core/util';
 
 
 @Component({
@@ -300,10 +301,10 @@ constructor(@Inject(LOCALE_ID) public locale: string,
     });
     drawerRefCustomer.afterClose.subscribe({
       next: (data) => {
-        if (data != undefined) {
+        if (data != undefined) {          
           this.customerId = data.id;
           this.formCreditMemo.controls['address'].setValue(data.address);
-          this.formCreditMemo.controls['customerCuit'].setValue(data.cuit);
+          this.formCreditMemo.controls['customerCuit'].setValue( !isNil(data.cuit) ? data.cuit.replace(/[^a-zA-Z0-9 ]/g, '') : null);
           this.formCreditMemo.controls['customerName'].setValue(data.name);
           this.formCreditMemo.controls['customerDni'].setValue(data.dni)
         }
@@ -317,7 +318,7 @@ constructor(@Inject(LOCALE_ID) public locale: string,
 
   openComponentProduct(): void {
     if (this.isValidForm(this.formCreditMemo)) {
-      const drawerRefProduct = this.drawerService.create<InvoiceProductSearchComponent, { filter: string }, ProductsModel>({
+      const drawerRefProduct = this.drawerService.create<InvoiceProductSearchComponent, { filter: string }, [ProductsModel]>({
         nzTitle: 'Productos',
         nzContent: InvoiceProductSearchComponent,
         nzSize: 'large',
@@ -329,38 +330,38 @@ constructor(@Inject(LOCALE_ID) public locale: string,
       });   
       drawerRefProduct.afterClose.subscribe({
 
-        next: (data: ProductsModel) => {
-          
+        next: (data: [ProductsModel]) => {
           if (data != undefined) {
-            if (this.creditMemoDetails.find(item => item.productId == data.id)) {
+            data.forEach((productItem) =>{
+            if (this.creditMemoDetails.find(item => item.productId == productItem.id)) {
                 /*Actualizo la lista que envio al back */
-                   this.creditMemoDetails.filter(item => item.productId == data.id)[0]
+                   this.creditMemoDetails.filter(item => item.productId == productItem.id)[0]
                   .quantity += 1;                        
 
                    /*Actualizo la lista de la tabla */
-                  let newListElement = this.creditMemoList.filter(item => item.ownCode == data.id)[0];
+                  let newListElement = this.creditMemoList.filter(item => item.ownCode == productItem.id)[0];
                
                   newListElement.quantity += 1;
-                  newListElement.subTotal += data.cashSalePrice * newListElement.quantity;
+                  newListElement.subTotal += productItem.cashSalePrice * newListElement.quantity;
                   /**cashSalePrice es el precio de Costo */
                   this.totalCalculate();
-                  this.changePrice(data.cardSalePrice)  
+                  this.changePrice(productItem.cardSalePrice)  
                   this.isLoading= false;
                   this.formProductSearch.controls['productSearchFilter'].setValue(''); 
                 }else {
 
                   /* Parseo dato a la grilla de Tabla */
-              const model: CreditMemoDetailList = creditMemoGridParser(data, this.iva);
+              const model: CreditMemoDetailList = creditMemoGridParser(productItem, this.iva);
              this.creditMemoListTest.push(model)   
              this.creditMemoList = this.creditMemoListTest;
              /* Parseo dato a Dto Factura Detalle */
-             const modelDetail : CreditMemoDetails = creditMemoDetailParser(data, this.iva);
+             const modelDetail : CreditMemoDetails = creditMemoDetailParser(productItem, this.iva);
              this.creditMemoDetails.push(modelDetail);  
                        
             this.totalCalculate();
             this.isLoading= false;
             this.formProductSearch.controls['productSearchFilter'].setValue(''); 
-             }
+             }});
           }},
           error: () => {
             this.isLoading= false;

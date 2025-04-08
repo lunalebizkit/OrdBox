@@ -23,6 +23,7 @@ import { ProductService } from "../../products/product.service";
 import { AuthService } from "src/app/common/auth/interceptors/auth.service";
 import { PeriodsService } from "../../periods/periods.service";
 import { IvaType } from "../model/iva-type.Enum";
+import { isNil } from "ng-zorro-antd/core/util";
 
 
 
@@ -193,7 +194,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
         if (data != undefined) {
           this.customerId = data.id;
           this.formInvoice.controls['address'].setValue(data.address);
-          this.formInvoice.controls['customerCuit'].setValue(data.cuit);
+          this.formInvoice.controls['customerCuit'].setValue(!isNil(data.cuit) ? data.cuit.replace(/[^a-zA-Z0-9 ]/g, '') : null);
           this.formInvoice.controls['customerName'].setValue(data.name);
           this.formInvoice.controls['customerDni'].setValue(data.dni)
         }
@@ -207,7 +208,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
 
   openComponentProduct(): void {
     
-      const drawerRefProduct = this.drawerService.create<InvoiceProductSearchComponent, { filter: string }, ProductsModel>({
+      const drawerRefProduct = this.drawerService.create<InvoiceProductSearchComponent, { filter: string }, [ProductsModel]>({
         nzTitle: 'Productos',
         nzContent: InvoiceProductSearchComponent,
         nzSize: 'large',
@@ -219,18 +220,19 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
       });      
       drawerRefProduct.afterClose.subscribe({
 
-        next: (data: ProductsModel) => {
+        next: (data: [ProductsModel]) => {
           
           if (data != undefined) {
-            if (this.invoiceDetails.find(item => item.productId == data.id)) {
+            data.forEach((productItem) =>{
+            if (this.invoiceDetails.find(item => item.productId == productItem.id)) {
                 /*Actualizo la lista que envio al back */
-                  this.invoiceDetails.filter(item => item.productId == data.id)[0]
+                  this.invoiceDetails.filter(item => item.productId == productItem.id)[0]
                   .quantity += 1;                        
 
                    /*Actualizo la lista de la tabla */
-                  let newListElement = this.invoiceDetailsList.filter(item => item.ownCode == data.id)[0];
+                  let newListElement = this.invoiceDetailsList.filter(item => item.ownCode == productItem.id)[0];
                   newListElement.quantity += 1;
-                  newListElement.subTotal += this.bindPrice(data) * newListElement.quantity;
+                  newListElement.subTotal += this.bindPrice(productItem) * newListElement.quantity;
                 
                   this.totalCalculate();
                   this.isLoading= false;
@@ -238,16 +240,17 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
                 }else {
 
                   /* Parseo dato a la grilla de Tabla */
-              const model: InvoiceDetailList = invoiceGridParser(data, this.iva, this.bindPrice(data));
+              const model: InvoiceDetailList = invoiceGridParser(productItem, this.iva, this.bindPrice(productItem));
              this.invoiceListTest.push(model)
              this.invoiceDetailsList = this.invoiceListTest;
              /* Parseo dato a Dto Factura Detalle */
-             const modelDetail : InvoiceDetails = invoiceDetailParser(data, this.iva, this.bindPrice(data));
+             const modelDetail : InvoiceDetails = invoiceDetailParser(productItem, this.iva, this.bindPrice(productItem));
              this.invoiceDetails.push(modelDetail);                
             this.totalCalculate();
             this.isLoading= false;
             this.formProductSearch.controls['productSearchFilter'].setValue('');
              }
+            })
           }},
           error: () => {
             this.isLoading= false;
@@ -451,7 +454,6 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
           invoiceDetails: this.invoiceDetails,
         };
         this.isSaving = true;
-        console.log(model)
         this.serviceInvoice.saveInvoice(model)
           .subscribe({
             next: (r) => {            

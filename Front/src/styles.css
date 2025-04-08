@@ -1,21 +1,111 @@
 /* You can add global styles to this file, and also import other style files */
 /* @import 'ag-grid-community/styles/ag-grid.css'; */
 /* @import 'ag-grid-community/styles/ag-theme-alpine.css'; */
+/* general colors */
+*{
+    --blue: blue;
+    
+    --blue-light: rgb(217, 239, 254);
+}
+
 :root {
+    color-scheme: light;
     --backg-A: rgba(118, 233, 194, 0.829);
     --backg-B: rgba(135, 206, 250, 0.788);
     --backg-C: rgba(255, 182, 193, 0.781);
+    --background: var(--body-background-light);
+    --text: #666;
+    --btn-green: #27AE60;
+    --btn-green-hover: #35c370;
+    --box-shadow: #a3a1a3;
+    --btn-txt: #3daeff;
+    --btn-txt-hover: #67b7f0;
 }
-.btn-export{
-    background-color: #27AE60;
+
+
+
+.btn-txt-export {
+    background-color: var(--btn-txt);
     border: none;
+    margin-left: 30px;
+    margin-top: 3px;
 }
-.btn-export:hover{
-    background-color: #35c370;
+
+.btn-txt-export:hover {
+    background-color: var(--btn-txt-hover)
 }
-.ml-5{
+
+.btn-excel-export {
+    background-color: var(--btn-green);
+    border: none;
+    margin-left: 30px;
+    margin-top: 3px;
+}
+
+.btn-excel-export:hover {
+    background-color: var(--btn-green-hover)
+}
+
+.btn-reprint {
+    background-color: #24ce41;
+    color: var(--background);
+}
+
+.btn-reprint:hover {
+    background-color: var(--btn-green-hover)
+}
+
+.ml-5 {
     margin-left: 5px;
 }
-body{
-    font-family: Trebuchet MS
+
+body {
+    font-family: Trebuchet MS;
+    font: var(--text);
+    background-color: var(--background);
+}
+
+.list-header {
+    position: relative;
+    height: 64px;
+    padding: 10px;
+    background: var(--background);
+    box-shadow: -1px 1px 5px 1px var(--box-shadow);
+    margin-bottom: 10px;
+}
+nz-footer {
+    text-align: center;
+    background-color: var(--background);
+}
+.invoiceReportFilter{    
+    display: flex;
+    flex-flow: row;
+}
+.marginLeft {
+    margin-left: 10px;
+}
+
+.btn-disabled{
+    color: #a3a1a3 !important;
+    background-color: #a3a1a3;
+    border-color: #a3a1a3 !important;
+    
+}
+
+.btn-clearQuery{
+    color: blueviolet;
+    border-color: blueviolet;
+}
+
+.btn-footer-productSave {
+    position: relative;
+    margin: 10px;
+}
+.btn-footer-container{
+    width: 100%;
+    margin-top: 5px;
+    box-shadow: -1px 1px 5px 1px #a3a1a3;
+    display: flex;
+    justify-content: flex-end;
+    padding-right: 16px;
 }

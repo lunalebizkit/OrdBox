@@ -44,7 +44,8 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                     dni = table.Column<int>(type: "int", nullable: true),
                     cuit = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    address = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    address = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    isInactive = table.Column<bool>(type: "bool", nullable: false),
                 },
                 constraints: table =>
                 {

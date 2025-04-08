@@ -23,6 +23,11 @@ import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { AgGridModule } from 'ag-grid-angular';
 import { NzIconModule } from "ng-zorro-antd/icon";
 import { ProductsEditDrawerComponent } from "./products-edit-drawer/products-edit.drawer.component";
+import { ProductsReportComponent } from "./products-report/products-report.component";
+import { InfiniteScrollModule } from "ngx-infinite-scroll";
+import { NzToolTipModule } from "ng-zorro-antd/tooltip";
+import { ProductCodeBarModal } from "./products-barcode-modal/products-barcode-modal.component";
+import { NzModalModule } from "ng-zorro-antd/modal";
 
 @NgModule({
     imports: [CommonModule,
@@ -46,8 +51,11 @@ import { ProductsEditDrawerComponent } from "./products-edit-drawer/products-edi
     NzUploadModule,
     NzSpaceModule,
     NzImageModule,
-    AgGridModule  
+    AgGridModule,
+    NzToolTipModule,
+    InfiniteScrollModule,
+    NzModalModule  
     ],
-    declarations:[ ProductsListComponent, UpdatePriceProductsComponent, ProductsEditDrawerComponent]
+    declarations:[ ProductsListComponent, UpdatePriceProductsComponent, ProductsEditDrawerComponent, ProductsReportComponent, ProductCodeBarModal]
 })
 export class ProductsModule {}

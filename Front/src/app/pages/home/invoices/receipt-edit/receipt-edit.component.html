@@ -1,18 +1,3 @@
-<!--<app-header-op-buttons
-  #header
-  [btnCancelText]="'Volver'"
-  [hideSave]="true"
-  [hideTag]="false"
-  [hideFacturaPro]="true"
-  [hideCerrar]="true"
-  [iconTitle]="'container'"
-  [title]="'Factura de compra'"
-  [iconBack]="'rollback'"
-  [iconUpdate]="'check'"
-  [hideCerrar]="true" 
-  [hideFacturaPro]="true"
->
-</app-header-op-buttons>-->
 <nz-page-header class="list-header">
   <nz-page-header-title>
     <i nz-icon nzType="container" nzTheme="outline" style="color: #52c41a;"></i> Factura de compra</nz-page-header-title>
@@ -78,7 +63,7 @@
           </div>
         </div>
 
-        <!-- Datos del Cliente -->
+        <!-- Datos del Proveedor -->
         <nz-divider
           nzText="Proveedor"
           nzOrientation="left"
@@ -189,7 +174,7 @@
                 <input
                   nz-input
                   formControlName="productSearchFilter"
-                  placeholder="Ingrese Marca, Código, Categoría o Producto"
+                  placeholder="Ingrese producto"
                   nzSize="small"
                   (keydown.enter)="searchProduct(); $event.preventDefault()"
                 />
@@ -276,7 +261,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let data of receiptDetailsGrid" class="small-text">
+          <tr id="{{data.productId}}" *ngFor="let data of receiptDetailsGrid" class="small-text">
             <td>{{ data.productId }}</td>
 
             <td>
@@ -291,7 +276,7 @@
               >
                 {{ data.quantity }}
               </div>
-              <nz-input-number
+              <nz-input-number id="{{data.productId}}"
                 [hidden]="editId !== data.productId"
                 [nzMin]="1"
                 [nzMax]="10000"
@@ -311,6 +296,7 @@
             {{data.iva}}
            </div> 
                 <nz-select
+                id="{{data.productId}}"
                 [hidden]="editIdIva !== data.productId"
                  [nzOptions]="ivaType"                 
                  (ngModelChange)="changeIvaValue($event, data.productId)"

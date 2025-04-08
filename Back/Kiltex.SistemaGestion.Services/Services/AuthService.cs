@@ -5,13 +5,14 @@ using Kiltex.SistemaGestion.SDK.Error;
 using Kiltex.SistemaGestion.SDK.Security;
 using Kiltex.SistemaGestion.Services.Common;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace Kiltex.SistemaGestion.Services.Services
 {
     public class AuthService : BaseService
     {
-        public AuthService(ErrorManager logger, DBContext context, IMapper mapper) :
-           base(logger, context, mapper)
+        public AuthService(ErrorManager logger, DBContext context, IMapper mapper, IConfiguration config) :
+           base(logger, context, mapper, config)
         { }
 
         public async Task<OperationResponse<User>> GetUserLogin(string email, string password)

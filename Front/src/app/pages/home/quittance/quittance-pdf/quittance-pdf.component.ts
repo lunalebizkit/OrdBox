@@ -15,11 +15,7 @@ import html2canvas from 'html2canvas';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import jsPDF from 'jspdf';
 
-(pdfMake as any).vfs = pdfFonts.pdfMake.vfs;
-import { Document, ImageRun, Paragraph, TextRun } from "docx";
-import { Packer } from 'docx';
-import saveAs from 'file-saver';
-import DOMPurify from 'dompurify';
+// (pdfMake as any).vfs = pdfFonts.pdfMake.vfs;
 import { quittanceDetails, quittanceModel } from '../model';
 import { QuittanceService } from '../quittance.service';
 
@@ -107,8 +103,7 @@ import { QuittanceService } from '../quittance.service';
                 this.concept= r.concept
                 this.quittanceNumber = r.quittanceNumber,
                 this.customerAddress = r.address
-                this.total=r.total
-                console.log(r);
+                this.total=r.total;
                 
             },
             error:() => {this.isLoading = false;}

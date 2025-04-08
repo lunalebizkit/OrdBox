@@ -5,6 +5,7 @@ using Kiltex.SistemaGestion.Services.ImpresoraFiscal.Printer250F;
 using Kiltex.SistemaGestion.Services.ImpresoraFiscal;
 using Kiltex.SistemaGestion.Domain;
 using Kiltex.SistemaGestion.Domain.Enum;
+using Microsoft.Extensions.Configuration;
 
 namespace Kiltex.SistemaGestion.Services.Services
 {
@@ -13,9 +14,9 @@ namespace Kiltex.SistemaGestion.Services.Services
         private readonly IPrinter _printer;
         private readonly PrinterStatus _config;
 
-        public ReimprimirDocService(ErrorManager logger, DBContext context, IMapper maper, IPrinter printer,
+        public ReimprimirDocService(ErrorManager logger, DBContext context, IMapper maper, IConfiguration configuration, IPrinter printer,
             PrinterStatus config) :
-            base(logger, context, maper)
+            base(logger, context, maper, configuration)
         {
             _config = config;
             _printer = printer;

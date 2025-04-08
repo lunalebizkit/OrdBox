@@ -16,12 +16,19 @@ namespace Kiltex.SistemaGestion.Domain
         }
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            builder.Entity<Budget>()
+                .Property(i => i.Total)
+                .HasColumnType("decimal(18, 2)");
+            
+            builder.Entity<BudgetDetail>()
+                .Property(i => i.Price)
+                .HasColumnType("decimal(18, 2)");
+
             builder.Entity<SupplierOrder>()
                 .HasMany(i => i.SupplierOrderDetail)
                 .WithOne(i => i.SupplierOrder)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            //base.OnModelCreating(builder);
             builder.Entity<Receipt>()
                 .HasMany(i => i.ReceiptDetails)
                 .WithOne(i => i.Receipt)
@@ -32,11 +39,119 @@ namespace Kiltex.SistemaGestion.Domain
                .WithOne(i => i.Quittance)
                .OnDelete(DeleteBehavior.NoAction);
 
-            //base.OnModelCreating(builder);
             builder.Entity<CreditMemo>()
                 .HasMany(i => i.CreditMemoDetail)
-                .WithOne(i => i.CreditMemo)
+                .WithOne(i => i.CreditMemo)                
                 .OnDelete(DeleteBehavior.NoAction);
+            builder.Entity<CreditMemo>()
+                .Property(i => i.IvaTotal)
+                .HasColumnType("decimal(18, 2)");
+            builder.Entity<CreditMemo>()
+                .Property(i => i.Total)
+                .HasColumnType("decimal(18, 2)");
+            
+            builder.Entity<CreditMemoDetail>()
+                .Property(i => i.Iva)
+                .HasColumnType("decimal(18, 2)");
+            
+            builder.Entity<CreditMemoDetail>()
+                .Property(i => i.Price)
+                .HasColumnType("decimal(18, 2)");
+            
+            builder.Entity<DebitMemo>()
+                .Property(i => i.IvaTotal)
+                .HasColumnType("decimal(18, 2)");
+            
+            builder.Entity<DebitMemo>()
+                .Property(i => i.Total)
+                .HasColumnType("decimal(18, 2)");
+            
+            builder.Entity<DebitMemoDetails>()
+                .Property(i => i.Iva)
+                .HasColumnType("decimal(18, 2)");
+            
+            builder.Entity<DebitMemoDetails>()
+                .Property(i => i.Price)
+                .HasColumnType("decimal(18, 2)");
+            
+            builder.Entity<DeliveryNotes>()
+                .Property(i => i.ImportTotal)
+                .HasColumnType("decimal(18, 2)");
+            
+            builder.Entity<DeliveryNotesDetails>()
+                .Property(i => i.Price)
+                .HasColumnType("decimal(18, 2)");
+            
+            builder.Entity<Invoice>()
+                .Property(i => i.IvaTotal)
+                .HasColumnType("decimal(18, 2)");
+            
+            builder.Entity<Invoice>()
+                .Property(i => i.Total)
+                .HasColumnType("decimal(18, 2)");
+            
+            builder.Entity<InvoiceDetail>()
+                .Property(i => i.Iva)
+                .HasColumnType("decimal(18, 2)");
+            
+            builder.Entity<InvoiceDetail>()
+                .Property(i => i.Price)
+                .HasColumnType("decimal(18, 2)");
+            
+            builder.Entity<Product>()
+                .Property(i => i.CardSalePercentage)
+                .HasColumnType("decimal(18, 2)");
+            builder.Entity<Product>()
+                .Property(i => i.CashSalePercentage)
+                .HasColumnType("decimal(18, 2)");
+            builder.Entity<Product>()
+                .Property(i => i.CardSalePrice)
+                .HasColumnType("decimal(18, 2)");
+            builder.Entity<Product>()
+                .Property(i => i.CashSalePrice)
+                .HasColumnType("decimal(18, 2)");
+            builder.Entity<Product>()
+                .Property(i => i.PurchasePrice)
+                .HasColumnType("decimal(18, 2)");
+            builder.Entity<Product>()
+                .Property(i => i.SalePrice)
+                .HasColumnType("decimal(18, 2)");
+
+            builder.Entity<Quittance>()
+                .Property(i => i.Cash)
+                .HasColumnType("decimal(18, 2)");
+            builder.Entity<Quittance>()
+                .Property(i => i.Total)
+                .HasColumnType("decimal(18, 2)");
+            builder.Entity<QuittanceDetails>()
+                .Property(i => i.Total)
+                .HasColumnType("decimal(18, 2)");
+
+            builder.Entity<Receipt>()
+                .Property(i => i.ConcNoGravado)
+                .HasColumnType("decimal(18, 2)");
+            builder.Entity<Receipt>()
+                .Property(i => i.IvaTotal)
+                .HasColumnType("decimal(18, 2)");
+            builder.Entity<Receipt>()
+                .Property(i => i.PercIngBrutos)
+                .HasColumnType("decimal(18, 2)");
+            builder.Entity<Receipt>()
+                .Property(i => i.PercIva)
+                .HasColumnType("decimal(18, 2)");
+            builder.Entity<Receipt>()
+                .Property(i => i.Total)
+                .HasColumnType("decimal(18, 2)");
+
+            builder.Entity<ReceiptDetails>()
+                .Property(i => i.Iva)
+                .HasColumnType("decimal(18, 2)");
+            builder.Entity<ReceiptDetails>()
+                .Property(i => i.Price)
+                .HasColumnType("decimal(18, 2)");
+            builder.Entity<ReceiptDetails>()
+                .Property(i => i.Price)
+                .HasColumnType("decimal(18, 2)");
 
             builder.Entity<Rol>().HasData(
                new Rol()
@@ -101,39 +216,8 @@ namespace Kiltex.SistemaGestion.Domain
         public virtual DbSet<Quittance> Quittance { get; set; }
         public virtual DbSet<QuittanceDetails> QuittanceDetails { get; set; }
 
-
-
-        //private static void InitialRoles(ModelBuilder modelBuilder)
-        //{
-        //    modelBuilder.Entity<Rol>().HasData(
-        //        new Rol()
-        //        {
-        //            Id = Enums.Rols.Admin,
-        //            Name = Enums.ERols.Admin
-        //        }
-        //    );
-        //};
-        //private static void InitialAdmin(ModelBuilder modelBuilder) 
-        //{
-        //    modelBuilder.Entity<Rol>().HasData(
-        //        new Rol()
-        //        {
-        //            Id=1,
-        //            Key="Admin",
-        //            Name= "Admin",
-        //        });
-        //    modelBuilder.Entity<User>().HasData(
-        //        new User()
-        //        {
-        //            Id = 1,
-        //            FirstName= "admin",
-        //            LastName= "admin",
-        //            Email= "admin",
-        //            Password= SecurePasswordHasher.Hash("admin123", 100),
-        //            IsDeleted= false,   
-        //            RoleId= 1,
-        //        });
-        //}
+        public virtual DbSet<InvoiceSPReport> InvoiceSPReports { get; set; }
+        public virtual DbSet<InvoiceSPReportTotal> InvoiceSPReportTotals { get; set; }   
 
     }
 }

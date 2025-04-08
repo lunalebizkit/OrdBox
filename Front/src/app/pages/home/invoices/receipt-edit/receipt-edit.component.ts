@@ -34,6 +34,7 @@ import { ProductsModel } from '../../products/model/product.model';
 import { InvoiceProductSearchComponent } from '../invoice-product-search/invoice-product-search.component';
 import { ReceiptSupplierSearchComponent } from '../receipt-supplier-search/receipt-supplier-search.component';
 import { IvaType } from '../model/iva-type.Enum';
+import { isNil } from 'ng-zorro-antd/core/util';
 
 @Component({
   selector: 'app-receipt-edit',
@@ -166,12 +167,15 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
   startEditIva(id: number): void {
     this.editIdIva = id;
   }
+  
   stopEdit(): void {
     this.editId = null;
   }
+
   stopEditIva(): void {
     this.editIdIva = null;
   }
+
   changeIvaValue(iva: number, productId: number): void {
     let newIva = Number(iva);
     try {
@@ -218,11 +222,12 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
       return;
     } else {
       if (this.cuit.length >= 6) {
-        this.serviceEntity.getByCuit(this.cuit).subscribe({
+        this.serviceEntity.getSupplierByCuit(this.cuit).subscribe({
           next: (data: any) => {
             this.formReceipt.controls['supplierAddress'].setValue(data.address);
             this.formReceipt.controls['supplierCuit'].setValue(data.cuit);
             this.formReceipt.controls['supplierName'].setValue(data.name);
+            this.supplierId = data?.id;
           },
           error: () => {
             this.showMessageError('No se encontro Proveedor');
@@ -249,7 +254,7 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
         if (data != undefined) {
           this.supplierId = data.id;
           this.formReceipt.controls['supplierAddress'].setValue(data.address);
-          this.formReceipt.controls['supplierCuit'].setValue(data.cuit);
+          this.formReceipt.controls['supplierCuit'].setValue(!isNil(data.cuit) ? data.cuit.replace(/[^a-zA-Z0-9 ]/g, '') : null);
           this.formReceipt.controls['supplierName'].setValue(data.name);
           this.formReceipt.controls['supplierDni'].setValue(data.dni)
         }
@@ -467,8 +472,8 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
   openComponentProduct(): void {
     const drawerRefProduct = this.drawerService.create<
       InvoiceProductSearchComponent,
-      { filter: string },
-      ProductsModel
+      { filter: string, supplierId : number | null },
+      [ProductsModel]
     >({
       nzTitle: 'Productos',
       nzContent: InvoiceProductSearchComponent,
@@ -476,29 +481,31 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
       nzWidth: '90%',
       nzContentParams: {
         filter: this.formProductSearch.controls['productSearchFilter'].value,
+        supplierId: this.supplierId
       },
       nzClosable: false,
     });
     drawerRefProduct.afterClose.subscribe({
 
-      next: (data: ProductsModel) => {
+      next: (data: [ProductsModel]) => {
         if (data != undefined) {
 
-          if (this.receiptDetails.find((item) => item.productId == data.id)) {
+          data.forEach((productItem) =>{
+          if (this.receiptDetails.find((item) => item.productId == productItem.id)) {
 
             /*Actualizo la lista que envio al back */
             this.receiptDetails.filter(
-              (item) => item.productId == data.id
+              (item) => item.productId == productItem.id
             )[0].quantity += 1;
 
             /*Actualizo la lista de la tabla */
             let newListElement = this.receiptDetailsGrid.filter(
-              (item) => item.productId == data.id
+              (item) => item.productId == productItem.id
             )[0];
 
             newListElement.quantity += 1;
             newListElement.subTotal +=
-              data.purchasePrice * newListElement.quantity;
+            productItem.purchasePrice * newListElement.quantity;
 
             this.totalCalculate();
 
@@ -509,7 +516,7 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
           } else {
             /* Parseo dato a la grilla de Tabla */
             const model: receiptDetailsGrid = receiptGridParser(
-              data,
+              productItem,
               this.iva
             );
             this.receiptDetailsGridTest.push(model);
@@ -517,7 +524,7 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
 
             /* Parseo dato a Dto Factura Detalle */
             const modelDetail: receiptDetails = receiptDetailParser(
-              data,
+              productItem,
               this.iva
             );
             this.receiptDetails.push(modelDetail);
@@ -529,6 +536,7 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
               ''
             );
           }
+        })
         }
       },
       error: () => {
@@ -548,12 +556,10 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
       this.dni = null;
     }
   }
+
   direction() {
     this.router.navigate(['/home/invoices/receipt']);
   }
-  
-
-
   
 }
 

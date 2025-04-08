@@ -32,7 +32,12 @@ namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse
         public int PointOrder { get; set; }
 
         public string Observation { get; set; }
+        public string BarCode { get; set; }
 
         public string SupplierName { get; set; }
+        public bool IsDeleted { get; set; }
+        public List<DtoGenericResponse> Category { get; set; }
+        public List<DtoGenericResponse> Brand { get; set; }
+        public List<DtoGenericResponse> Supplier { get; set; }
     }
 }

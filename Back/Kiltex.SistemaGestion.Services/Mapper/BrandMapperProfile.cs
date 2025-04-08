@@ -13,6 +13,11 @@ namespace Kiltex.SistemaGestion.Services.Mapper
                 {
                     d.Description = d.Description.ToUpper();
                 });
+            CreateMap<DtoResponseBrand, Brand>()
+                 .AfterMap((o, d, c) =>
+                 {
+                     d.Description = d.Description.ToUpper();
+                 });
         }
     }
 }

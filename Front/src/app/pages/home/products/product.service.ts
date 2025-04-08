@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ApiService } from './../../../common/services/api.base.service';
 import { Observable } from 'rxjs';
-import { ProductsModel } from './model/product.model';
 import { ProductAddModel } from './model/product.add.model';
 
 @Injectable({
@@ -21,6 +20,15 @@ export class ProductService {
    */
   public getProducts(queryParams: any): Observable<any> {
     return this.api.post(`product/list`, queryParams, false);
+  }
+  
+  /**
+   * Obtiene todos los productos inactivos por query text
+   * @param queryParams
+   * @returns
+   */
+  public getInactivesProducts(queryParams: any): Observable<any> {
+    return this.api.post(`product/listinactive`, queryParams, false);
   }
 
   /**
@@ -53,6 +61,9 @@ export class ProductService {
   delete(id: string | number): Observable<any> {
     return this.api.delete(`product/${id}`, false);
   }
+  activate(id: string | number): Observable<any> {
+    return this.api.post(`product/activate/${id}`, false);
+  }
 
   /**
    * Guarda un producto
@@ -67,7 +78,9 @@ export class ProductService {
     }
   }
 
-
+public productsReport(){
+  return this.api.post(`product/productreport`, false)
+}
 
 }
 

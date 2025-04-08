@@ -7,19 +7,13 @@ import { environment } from '../../../../../environments/environment';
 import { formatCurrency, formatDate } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 
-//import { HtmlComponentRenderer } from 'docx-html';
-
 declare var require: any;
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import html2canvas from 'html2canvas';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import jsPDF from 'jspdf';
 
-(pdfMake as any).vfs = pdfFonts.pdfMake.vfs;
-import { Document, ImageRun, Paragraph, TextRun } from "docx";
-import { Packer } from 'docx';
-import saveAs from 'file-saver';
-import DOMPurify from 'dompurify';
+// (pdfMake as any).vfs = pdfFonts.pdfMake.vfs;
 import { deliveryNotesService } from '../deliveryNotes.service';
 import { DeliveryNotesDetails, DeliveryNotesModel } from '../model/deliveryNotes.model';
 

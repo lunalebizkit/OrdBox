@@ -1,20 +1,3 @@
-<!--<app-header-op-buttons 
-#header 
-[btnCancelText]="'Volver'" 
-[btnSaveText]="'Guardar'" 
-[hideSave]="true" 
-[hideTag]="true"
-[hideClose]="false"
-[hideFacturaPro]="true"
-[hideCerrar]="true" 
-[iconTitle]="'container'"
-[title]="'Presupuesto'" 
-[showSpinner]="isSaving" 
-[iconBack]="'rollback'" 
-[iconSave]="'save'" 
-(onSaveClick)="save()">
-</app-header-op-buttons>-->
-
 <nz-page-header class="list-header">
   <nz-page-header-title>
     <i nz-icon nzType="container" nzTheme="outline" style="color: #ff7875;"></i> Presupuesto</nz-page-header-title>
@@ -119,7 +102,7 @@
             <nz-form-control [nzSm]="14" [nzXs]="14">
               <nz-input-group [nzSuffix]="clearQuery">
                 <input nz-input formControlName="productSearchFilter"
-                  placeholder="Ingrese Marca, Código, Categoría o Producto" nzSize="small"
+                  placeholder="Ingrese producto" nzSize="small"
                   (keydown.enter)="searchProduct(); $event.preventDefault()" />
 
               </nz-input-group>

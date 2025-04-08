@@ -34,7 +34,7 @@ export class EntityService {
    * @returns
    */
   public getSupplierByCuit(cuit: string | number): Observable<any> {
-    return this.api.get(`Customer/GetSupplierByCuit?cuit=${cuit}`, false);
+    return this.api.get(`supplier/GetSupplierByCuit?cuit=${cuit}`, false);
   }
 
   /**
@@ -87,5 +87,13 @@ export class EntityService {
     } else {
       return this.api.put(`Customer`, model, false);
     }
+  }
+  /**
+     * Elimina un cliente por Id
+     * @param id
+     * @returns
+     */
+  public deleteCustomer(id: number): Observable<any> {
+    return this.api.delete(`entity/${id}`, false);
   }
 }

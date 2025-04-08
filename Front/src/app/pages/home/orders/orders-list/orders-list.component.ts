@@ -56,7 +56,7 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
       product: '',
       brand: 0,
       category: 0,
-      status: 0,
+      status: 1,
       date: '',
       supplier: [0],
       
@@ -94,7 +94,7 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
   ) {
     super(notificacionService, el, message);
     this.formSearch = this.fb.group({
-      status: [0],
+      status: [1],
       supplier: [[]],
       category: [0],
       date: ['']
@@ -104,10 +104,8 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
     });
   }
   ngOnInit(): void {
-   // this.getAllCategories();
     this.getAllOrders();
     this.getStatusName(this.id)
-    //this.search()
   }
   /*
    ** Indicador de carga de marcas y lineas
@@ -365,48 +363,12 @@ export class OrdersListComponent extends BaseComponent implements OnInit {
     drawerRefCustomer.afterClose.subscribe({
       next: (data) => {
         this.orderDetailList = [];
+        this.queryParams.page = 0;
         this.id = 0;
         this.ngOnInit()
         if (data != undefined && data != 0) {
           this.ngOnInit(); 
         }
-        /**Comento estas Lineas para que actualice la grilla de listados de ordenes ya que, de la siguiente manera
-         * actualizaba la lista pero no el Estado (nombre de estado) 
-         * ALe
-         */
-
-
-        //   this.serviceOrders.getById(data).subscribe({
-        //     next: (r: NewOrder) => {
-        //       let order =
-        //         this.allOrders[this.allOrders.findIndex((r) => r.id == data)];
-        //       if (order != undefined) {
-        //         let newDetalle: NewOrderDetail[] = [];
-        //         r.orderDetail.forEach((e: NewOrderDetail) => {
-        //           newDetalle.push(orderDetailbyIdParser(e));
-        //         });
-        //         this.allOrders[this.allOrders.findIndex((r) => r.id == data)] =
-        //           order;
-        //         this.allOrders[
-        //           this.allOrders.findIndex((r) => r.id == data)
-        //         ].orderDetail = newDetalle;
-        //       } else {
-        //         let newDetalle: NewOrderDetail[] = [];
-        //         r.orderDetail.forEach((e: NewOrderDetail) => {
-        //           newDetalle.push(orderDetailbyIdParser(e));
-        //         });
-        //         r.orderDetail = newDetalle;
-        //         this.allOrders.push(r);
-        //         this.allOrders.forEach(e =>{
-        //           this.getStatusName(e.statusId)
-        //         })
-        //       }
-        //     },
-        //     error: () => {
-        //       this.id = 0;
-        //     },
-        //   });
-        // }
       },
       error: () => {
         this.orderDetailList = [];

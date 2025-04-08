@@ -53,16 +53,16 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Entity
         }
 
         /// <summary>
-        /// Devuelve un listado de Entidades creadas, con paginado.
+        /// Borra una Entidad buscandolos por el ID.
         /// </summary>
-        /// <param name="filter"></param>
+        /// <param name="id"></param>
         /// <returns></returns>
-        //[HttpPost]
-        //[Route("[action]")]
-        //[AllowAccess(Permission = new EPermission[] { EPermission.ViewEntity })]
-        //public async Task<IActionResult> List([FromBody] RequestPaginatedData<string> filter)
-        //{
-        //    return Return(await _service.List(filter).ConfigureAwait(false));
-        //}
-}
+        [HttpDelete]
+        [Route("{id}")]
+        [AllowAccess(Permission = new EPermission[] { EPermission.DeleteUser })]
+        public async Task<IActionResult> DeleteEntity(long id)
+        {
+            return Return(await _service.DeleteEntity(id).ConfigureAwait(false));
+        }
+    }
 }

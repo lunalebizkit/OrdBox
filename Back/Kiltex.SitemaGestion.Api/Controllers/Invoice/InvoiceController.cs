@@ -78,6 +78,18 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Invoice
         {
             return Return(await _service.NewInvoice(model).ConfigureAwait(false));
         }
-    
+
+        /// <summary>
+        /// Devuelve un listado de Facturas creadas, con paginado.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("[action]")]
+        [AllowAccess(Permission = new EPermission[] { EPermission.GetInvoice })]
+        public async Task<IActionResult> InvoiceReport([FromBody] RequestPaginatedData<StoredProcedureFilter> filter)
+        {
+            return Return(await _service.InvoiceReport(filter).ConfigureAwait(false));
+        }
     }
 }

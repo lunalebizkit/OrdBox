@@ -7,16 +7,24 @@ namespace Kiltex.SistemaGestion.SDK.Jwt
 {
     public class JWTService
     {
-        public static JwtSecurityToken CreateDefaultToken(string issuer, string audience, int minutesExpire, string key, List<Claim> claims)
+        public static SecurityToken CreateDefaultToken(string issuer, string audience, int minutesExpire, string key, ClaimsIdentity claims)
         {
-            var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
-            var token = new JwtSecurityToken(
-               issuer: issuer,
-               audience: audience,
-               expires: DateTime.Now.AddMinutes(minutesExpire),
-               claims: claims,
-               signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
-               );
+            var handler = new JwtSecurityTokenHandler();
+
+            var encodedKey = Encoding.ASCII.GetBytes(key);
+
+            var credentials = new SigningCredentials(
+                new SymmetricSecurityKey(encodedKey),
+                SecurityAlgorithms.HmacSha256Signature);
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = claims,
+                Expires = DateTime.UtcNow.AddMinutes(360),
+                SigningCredentials = credentials,
+            };
+
+            var token = handler.CreateToken(tokenDescriptor);
 
             return token;
         }

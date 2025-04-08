@@ -13,7 +13,8 @@
 [(nzVisible)]="isConfirmationvisible"
 [nzTitle]="title"
 (nzOnCancel)="handleCance()"
-(nzOnOk)="handleOk.emit($event)">
+(nzOnOk)="handleOk.emit($event)"
+[nzOkDisabled]="disabled">
   <ng-container *nzModalContent>
     <h3>{{header}}</h3>
     <p>{{message}}</p>

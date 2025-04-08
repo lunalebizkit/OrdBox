@@ -234,7 +234,7 @@ export class UpdatePriceProductsComponent extends BaseComponent implements OnIni
     clearTimeout(this.timeout);
     this.timeout = setTimeout(()=>{
       
-      if (value.length > 2){
+      if (value.length > 0){
         this.allSuppliers= [];
         this.queryData.filter= value;
         this.getAllSupplier();

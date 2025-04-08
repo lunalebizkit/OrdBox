@@ -1,35 +1,59 @@
 import { formatCurrency } from '@angular/common';
-import { Component, Inject, LOCALE_ID, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, Inject, LOCALE_ID, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { NzDrawerService } from 'ng-zorro-antd/drawer';
 import { Permission } from 'src/app/common/auth/models/permissions.enum';
 import { ProductsModel } from '../model/product.model';
 import { ProductService } from '../product.service';
 import { ProductsEditDrawerComponent } from '../products-edit-drawer/products-edit.drawer.component';
+import { BaseComponent } from 'src/app/common/components/base/base.component';
+import { NzNotificationService } from 'ng-zorro-antd/notification';
+import { NzMessageService } from 'ng-zorro-antd/message';
+import { PopupConfirmationComponent } from 'src/app/common/components/popup-confirmation/popup-confirmation.component';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { CategoriesService } from '../../categories/category.services';
+import { BrandsService } from '../../brands/brands.services';
+import { CategoryModel } from '../../categories/model/category.model';
+import { BrandsModel } from '../../brands/model/brands.model';
+import { NzModalService } from 'ng-zorro-antd/modal';
+import { ProductCodeBarModal } from '../products-barcode-modal/products-barcode-modal.component';
+import { isNil } from 'ng-zorro-antd/core/util';
+import { EntityService } from '../../customers/customer.service';
 
 @Component({
   selector: 'app-products-list',
   templateUrl: './products-list.component.html',
   styleUrls: ['./products-list.component.css'],
 })
-export class ProductsListComponent implements OnInit {
+export class ProductsListComponent extends BaseComponent implements OnInit { 
+  @HostListener('document:keydown', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent) {
+    if (event.key === 'F4' && !this.isDrawerOpen) {
+      this.createComponentModal();       
+    }
+  }  
   permissions = Permission;
-
   /*
    ** Listado de los productos
    */
   productList: ProductsModel[] = [];
+  categorieList: CategoryModel [] = [];
+  brandList: BrandsModel [] = [];
+  allSuppliers: { value: string, label: string }[] = [];
+  supplierSelected:any= [];
   /*
    ** id del usuario a editar, si es nuevo...
    */
   id!: number;
   clickId!: number;
-
+  formSearch!: FormGroup;
+  timeout!: any;
   /*
    ** Indicador de carga de la grilla
    */
   loading = false;
-
+  isDrawerOpen!: boolean;
+  searchInactiveProduct = false;
   /*
    ** Catidad total de productos
    */
@@ -49,15 +73,30 @@ export class ProductsListComponent implements OnInit {
    ** Indicador de carga de marcas y lineas
    */
   loadingBrands!: boolean;
-
+  isLoading!: boolean;
+  
   /*
-   ** Parametros de busqueda
-   */
+  ** Parametros de busqueda
+  */
   queryParams = {
+    filter: {
+      product:'',
+      brand: 0,
+      code: '',
+      barCode:'',
+      category: 0,
+      status: 0,
+      supplier:[]},
+    page: 0,
+    pageSize: 50
+  };
+
+  queryData = {
     filter: '',
     page: 0,
-    PageSize: 50,
+    pageSize: 50
   };
+
   formProductsEditComponent: any;
 
   /*
@@ -66,8 +105,23 @@ export class ProductsListComponent implements OnInit {
   constructor(
     private service: ProductService,
     private drawerService: NzDrawerService,
+    private serviceCategory: CategoriesService,
+    private serviceBrand: BrandsService,
+    private serviceEntity: EntityService,
     @Inject(LOCALE_ID) public locale: string,
-  ) {}
+    notificacionService: NzNotificationService,
+    private fb: FormBuilder, 
+    el: ElementRef,
+    message: NzMessageService,
+    private modalService: NzModalService
+  ) { super( notificacionService, el, message);
+    this.formSearch = this.fb.group({
+      product: ['', ],
+      code: ['', ],
+      brand: [0, ],
+       supplier: [[], ],
+       category: [0, ]     
+    })}
 
   selectedIndex!: number;
   selectedProduct: any;
@@ -100,13 +154,36 @@ export class ProductsListComponent implements OnInit {
       },
     });
   }
+
+  getInactiveData(params: any): void {
+    this.loading = true;
+    this.service.getInactivesProducts(params).subscribe({
+      next: (r) => {
+        this.productList = r.data;
+        this.totalItems = r.totalCount;
+        this.loading = false;
+        this.selectedIndex = 0;
+        this.selectedProduct = this.productList[this.selectedIndex];
+      },
+      error: () => {
+        this.loading = false;
+        this.productList = [];
+      },
+    });
+  }
   /*
    ** Evento al presionar buscar o presionar enter
    */
 
   search(): void {
-    this.queryParams.page = 0;
+    this.queryParams.page = 0;    
+    this.searchInactiveProduct = false;
     this.getData(this.queryParams);
+  }
+  searchInactive(): void {
+    this.queryParams.page = 0;
+    this.searchInactiveProduct = true;
+    this.getInactiveData(this.queryParams);
   }
   onDoubleClicked(datos: ProductsModel) {
     this.id = datos.id;
@@ -161,20 +238,16 @@ export class ProductsListComponent implements OnInit {
     let scrollHeight = event.target.scrollHeight;
     let scrolltop = event.target.scrollTop;
     let client = event.target.clientHeight;
-    let ScrollPosition = Math.abs(
-      Math.round(scrollHeight - (scrolltop + client))
-    );
-    if (
-      ScrollPosition <= 5 &&
-      this.totalItems / this.queryParams.page > this.queryParams.page
-    ) {
+    let ScrollPosition = Math.abs(Math.round(scrollHeight - (scrolltop + client)));
+    if (ScrollPosition <= 5 && (this.totalItems / this.queryParams.page > this.queryParams.page)) {
       let page = this.queryParams.page;
       this.queryParams.page = this.queryParams.page + 1;
       if (
         this.totalItems === undefined ||
-        this.queryParams.page * this.queryParams.PageSize <= this.totalItems
+        this.queryParams.page * this.queryParams.pageSize <= this.totalItems
       ) {
-        this.service.getProducts(this.queryParams).subscribe({
+        (!this.searchInactiveProduct ? this.service.getProducts(this.queryParams) : this.service.getInactivesProducts(this.queryParams))
+        .subscribe({
           next: (r) => {
             r.data.map((product: ProductsModel) =>
               this.productList.push(product)
@@ -192,6 +265,7 @@ export class ProductsListComponent implements OnInit {
     }
   }
   openComponentProductsEdit(): void {
+    this.isDrawerOpen = true;
     const drawerRefCustomer = this.drawerService.create<
       ProductsEditDrawerComponent,
       { filter: number },
@@ -205,12 +279,15 @@ export class ProductsListComponent implements OnInit {
       },
       nzClosable: false,
     });
+    
     drawerRefCustomer.afterClose.subscribe({
       next: (data) => {
+        this.isDrawerOpen = false;
         this.id = 0;
         if (data != undefined && data != 0) {
           this.service.getById(data).subscribe({
             next: (r: ProductsModel) => {
+              this.isDrawerOpen = false;
               this.productList[
                 this.productList.findIndex((r) => r.id == data)
               ] != undefined
@@ -222,16 +299,147 @@ export class ProductsListComponent implements OnInit {
             },
             error: () => {
               this.id = 0;
+              this.isDrawerOpen = false;
             },
           });
+        }
+        if (data === 0){
+          this.search();
         }
       },
       error: () => {
         this.id = 0;
+        this.isDrawerOpen = false;
       },
     });
   }
+
   currencyFormat(data: any):string  {    
     return formatCurrency(data, this.locale, '$', 'ARS', '1.1-2')
   }
+   //Busca por marca
+   onSearchBrand(data: string): void {
+    if (data.length > 0) {
+      this.queryData.page = 0;
+      this.queryData.filter = data;
+      this.getBrand(this.queryData);
+    }
+  }
+
+  getBrand(params:any):void{
+    this.loadingBrands = true;
+    this.serviceBrand.getByFilter(params).subscribe({
+      next: (r) => {
+        this.brandList = r.data;
+        this.totalItems = r.totalCount;
+        this.loadingBrands = false;
+      },
+      error: () => {
+        this.loadingBrands = false;
+        this.brandList = [];
+      },
+    });
+  }
+
+  brandSelectedChange(id: any): void {
+    this.queryParams.filter.brand= id;
+    
+  }
+  
+  categorySelectedChange(id: any): void {
+    this.queryParams.filter.category= id;      
+  }
+
+    //Busca por categoria
+    onSearchCategory(data: string): void {
+      if (data.length > 0) {
+        this.queryData.page = 0;
+        this.queryData.filter = data;
+        this.getCategory(this.queryData);
+      }
+    }
+
+    getCategory(params:any):void{
+      this.loading = true;
+      this.serviceCategory.getByFilter(params).subscribe({
+        next: (r) => {
+          this.categorieList = r.data;
+          this.totalItems = r.totalCount;
+          this.loading = false;
+        },
+        error: () => {
+          this.loading = false;
+          this.categorieList = [];
+        },
+      });
+    }
+    createComponentModal(): void {
+      const modal = this.modalService.create({
+        nzTitle: 'Código de Barra',
+        nzContent: ProductCodeBarModal  
+      });    
+    
+      // Return a result when closed
+      modal.afterClose.subscribe({
+        next: (data: string) =>{
+          this.queryParams.filter.barCode= '';
+          if (!isNil(data) && (data)){
+            this.queryParams.filter.barCode = data;
+          }
+          this.getData(this.queryParams);
+        }, 
+        error: e => {console.log(e);}      
+      })    
+    }
+
+    haveFilterData(): boolean{
+      return (this.queryParams.filter.barCode != '' || this.queryParams.filter.brand > 0 || this.queryParams.filter.category > 0 || this.queryParams.filter.code != '' || this.queryParams.filter.product != '' || this.queryParams.filter.supplier.length > 0);
+    }
+
+    clearQueryAndSearch():void {
+      let newFilter =  {
+        product:'',
+        brand: 0,
+        code: '',
+        barCode:'',
+        category: 0,
+        status: 0,
+        supplier:[]};
+
+      this.queryParams.filter = newFilter;
+      this.formSearch.controls['brand'].setValue(0);
+      this.formSearch.controls['category'].setValue(0);
+
+      this.getData(this.queryParams);
+    };
+
+    getAllSupplier(): void {
+      this.serviceEntity.getSuppliers(this.queryData).subscribe({
+        next: (r) => {
+          this.allSuppliers = r.data.map((entity: { id: any, name: any }) => { return { value: entity.id, label: entity.name } });
+          this.isLoading = false;
+        },
+        error: () => {
+          this.allSuppliers = []
+        }
+      })
+    };
+    /*
+  ** Evento de busqueda datos en el server
+  */
+  onSearch(value: string): void {
+    clearTimeout(this.timeout);
+    this.timeout = setTimeout(()=>{
+      
+      if (value.length > 0){
+        this.allSuppliers= [];
+        this.queryData.filter= value;
+        this.getAllSupplier();
+      }  }, 1000);    
+  };
+
+  supplierSelectedChange(id: any): void {
+    this.queryParams.filter.supplier=this.formSearch.controls['supplier'].value;
+  
+ }
 }

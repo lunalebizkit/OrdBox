@@ -2,7 +2,7 @@
   [btnSendEmail]="'Enviar'" [hideSend]="id != 0" [title]="'Pedidos'" [iconBack]="'rollback'" [iconSave]="'save'"
   [iconTitle]="'shopping-cart'" [iconSend]="'mail'" (onSaveClick)="  msjConfirmOk()"
   (onSendClick)="email.showConfirmation()" (onSendEmailClick)="onlyEmail.showConfirmation()" (onCloseClick)="close()"
-  [hideClose]="true" [hideEmail]="id == 0" [hideBack]="true" [disabled]="this.disabled" [hideCerrar]="true" [hideFacturaPro]="true">
+  [hideClose]="true" [hideEmail]="id == 0" [hideBack]="true"  [hideCerrar]="true" [hideFacturaPro]="true">
 </app-header-op-buttons>
 
 <div class="site-page-header-ghost-wrapper">
@@ -11,6 +11,17 @@
       <nz-content>
         <form nz-form [formGroup]="form">
           <div nz-row nzJustify="space-around">
+            <nz-form-item *ngIf="this.id != 0">
+              <nz-form-label nzRequired > Número de pedido
+              </nz-form-label>
+              <nz-form-control [nzSm]="20" [nzXs]="24">
+                <b>
+                 {{this.id}}
+                </b>
+              </nz-form-control>
+             
+            </nz-form-item>
+            <!-- Fecha -->
             <nz-form-item>
               <nz-form-label [nzSm]="10" [nzXs]="28" nzRequired nzFor="datetime">Fecha
               </nz-form-label>
@@ -24,15 +35,13 @@
                   </b>
                 </ng-template>
               </nz-form-control>
-            </nz-form-item>
+            </nz-form-item>            
+            <!-- Proveedor -->
             <form nz-form [formGroup]="formSupplierSearch">
               <div nzSpan="20" class="mb-2">
                 <nz-form-item>
                   <nz-form-label nzRequired nzFor="supplierId">Proveedor
                   </nz-form-label>
-                  <div>
-                    
-                  </div>
                   <nz-select *ngIf="newOrder; else elseBlock" nzPlaceHolder="Ingrese un proveedor" nzAllowClear
                     nzShowSearch nzServerSearch (nzOnSearch)="onSearch($event)" formControlName="supplierId"
                     style="width: 400px" (ngModelChange)="onChange($event)">
@@ -70,36 +79,46 @@
                 <nz-form-label nzRequired nzFor="isPaid">Pagado
                 </nz-form-label>
                 <nz-switch class="mb-2" formControlName="isPaid" [ngModel]="switchValue"
-                  [nzDisabled]="disabled"></nz-switch>
+                  ></nz-switch>
               </nz-form-item>
             </div>
           </div>
           
           <!-- Va creando divs segun la cantidad de mails creados que tenga el proveedor en caso de una orden existente  -->
-          <div nz-row nzJustify="space-around">
+          <div nz-row nzJustify="space-around" >
            
             <!-- Va creando divs segun la cantidad de mails creados que tenga el proveedor en caso de una orden nueva  -->
 
-            <ng-container formArrayName="emailEntity">
+            <ng-container formArrayName="emailEntity" >
               <ng-container *ngFor="let data of emailsEntityControls; let i = index">
-                <div nz-row style="margin: 10px;">
+                <div nz-row style="margin: 10px; margin-bottom: 20px;" >
                   <div nz-col nzSpan="28">
                       <span>Email {{ i + 1 }}: {{data.value}}</span>
                   </div>
                   <div nz-col>
                     <nz-switch style="margin-left: 5px;" nzCheckedChildren="Enviar" nzUnCheckedChildren="No enviar"
-                      (click)="selectEmails(data.value)" [nzDisabled]="statusId == 1 ? true : disabled"></nz-switch>
+                      (click)="selectEmails(data.value)"></nz-switch>
                   </div>
                 </div>
               </ng-container></ng-container>
+          </div>
+          <!-- Obervacion -->
+          <div nzSpan="20" class="mb-4" style="margin-left: 50px;" >
+            <nz-form-item>
+              <nz-form-label nzFor="observation">Observación
+              </nz-form-label>
+              <nz-form-control [nzSm]="20" [nzXs]="24">
+                <input formControlName="observation" nz-input id="observation" maxlength="150">
+              </nz-form-control>               
+            </nz-form-item>
           </div>
         </form>
       </nz-content>
 
       <!-- Buscador de Productos -->
-      <nz-divider [hidden]="editOrder" nzText="Seleccionar productos" nzOrientation="left"></nz-divider>
+      <nz-divider [hidden]="disabled" nzText="Seleccionar productos" nzOrientation="left"></nz-divider>
 
-      <div [hidden]="editOrder" nz-row [nzGutter]="[8, 1]">
+      <div [hidden]="disabled" nz-row [nzGutter]="[8, 1]">
         <form nz-form [formGroup]="formProductSearch" nz-col nzSpan="18">
           <div>
             <nz-form-item>
@@ -148,7 +167,7 @@
               <th *ngIf="id != 0 ? true : editOrder">Cantidad Recibida</th>
               <th>Precio</th>
               <th>Subtotal</th>
-              <th *ngIf="statusId == 1 ? true : disableMail" [nzAlign]="'center'">Acción</th>
+              <th *ngIf="!disabled" [nzAlign]="'center'">Acción</th>
             </tr>
           </thead>
           <tbody>
@@ -187,7 +206,7 @@
               <td [nzAlign]="'right'">
                 {{ currencyFormat(data.subTotal) }}
               </td>
-              <td *ngIf="statusId == 1 ? true : disableMail" style="text-align: center">
+              <td *ngIf="!disabled" style="text-align: center">
                 <nz-space [nzSplit]="spaceSplit">
                   <ng-template #spaceSplit>
                     <nz-divider nzType="vertical"></nz-divider>
@@ -218,12 +237,12 @@
   [message]="'Esta acción no se puede revertir'" (handleOk)="handleOk()">
 </app-popup-confirmation>
 <app-popup-confirmation #pop [title]="'Confirmar Pedido'" [header]="'¿Está seguro que desea guardar pedido?'"
-  [message]="'Esta acción no se puede revertir'" (handleOk)="save()">
+  [message]="'Esta acción no se puede revertir'" (handleOk)="save()"  [disabled]="isSaving">
 </app-popup-confirmation>
 <app-popup-confirmation #email [title]="'Confirmar Pedido y enviar mail'"
   [header]="'¿Está seguro que desea guardar pedido?'" [message]="'Esta acción no se puede revertir'"
-  (handleOk)="msjConfirmOkEmail()">
+  (handleOk)="msjConfirmOkEmail()"[disabled]="isSaving">
 </app-popup-confirmation>
 <app-popup-confirmation #onlyEmail [title]="'Enviar mail'" [header]="'¿Está seguro que desea enviar el mail?'"
-  [message]="'Esta acción no se puede revertir'" (handleOk)="msjConfirmOkEmailOnly()">
+  [message]="'Esta acción no se puede revertir'" (handleOk)="msjConfirmOkEmailOnly()"[disabled]="isSaving">
 </app-popup-confirmation>

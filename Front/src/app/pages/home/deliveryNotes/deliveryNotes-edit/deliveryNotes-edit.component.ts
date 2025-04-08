@@ -4,9 +4,7 @@ import { NzMessageService } from "ng-zorro-antd/message";
 import { NzNotificationService } from "ng-zorro-antd/notification";
 import { BaseComponent } from "src/app/common/components/base/base.component";
 import { HeaderOperationsButtonsComponent } from "src/app/common/components/headers/buttons.oparations.header.component";
-import { environment } from '../../../../../environments/environment';
 import { NzDrawerRef, NzDrawerService } from 'ng-zorro-antd/drawer';
-import { CustomerModel } from "../../customers/model/customer.model";
 import { EntityService } from "../../customers/customer.service";
 import { ProductsModel } from "../../products/model/product.model";
 import { PopupConfirmationComponent } from "src/app/common/components/popup-confirmation/popup-confirmation.component";
@@ -16,12 +14,11 @@ import { Inject, LOCALE_ID } from '@angular/core';
 import { ProductService } from "../../products/product.service";
 import { InvoiceProductSearchComponent } from "../../invoices/invoice-product-search/invoice-product-search.component";
 import { DeliveryNotesDetails, DeliveryNotesModel, deliveryNotesDetailParser, deliveryNotesDetailsList, deliveryNotesGridFromParser, deliveryNotesGridParser } from "../model/deliveryNotes.model";
-import { ReceiptSupplierSearchComponent } from "../../invoices/receipt-supplier-search/receipt-supplier-search.component";
 import { CustomerAddModel } from "../../customers/model/customer.add.model";
 import { deliveryNotesService } from "../deliveryNotes.service";
 import { pStatusType, statusType } from "../model/status.model";
-import { disableDebugTools } from "@angular/platform-browser";
-
+import { isNil } from "ng-zorro-antd/core/util";
+import { InvoiceCustomerSearchComponent } from "../../invoices/invoice-customer-search/invoice-customer-search.component";
 
 
 
@@ -233,7 +230,7 @@ export class DeliveryNotesEditComponent extends BaseComponent implements OnInit 
   openComponentProduct(): void {
     /*  if (this.isValidForm(this.formDeliveryNotes)) { */
     // this.isDisabled = true;
-    const drawerRefProduct = this.drawerService.create<InvoiceProductSearchComponent, { filter: string }, ProductsModel>({
+    const drawerRefProduct = this.drawerService.create<InvoiceProductSearchComponent, { filter: string }, [ProductsModel]>({
       nzTitle: 'Productos',
       nzContent: InvoiceProductSearchComponent,
       nzSize: 'large',
@@ -245,35 +242,37 @@ export class DeliveryNotesEditComponent extends BaseComponent implements OnInit 
     });
     drawerRefProduct.afterClose.subscribe({
 
-      next: (data: ProductsModel) => {
+      next: (data: [ProductsModel]) => {
 
         if (data != undefined) {
-          if (this.deliveryNotesDetails.find(item => item.productId == data.id)) {
-            /*Actualizo la lista que envio al back */
-            this.deliveryNotesDetails.filter(item => item.productId == data.id)[0]
-              .quantity += 1;
+          data.forEach((productItem) => {
+            if (this.deliveryNotesDetails.find(item => item.productId == productItem.id)) {
+              /*Actualizo la lista que envio al back */
+              this.deliveryNotesDetails.filter(item => item.productId == productItem.id)[0]
+                .quantity += 1;
 
-            /*Actualizo la lista de la tabla */
-            let newListElement = this.deliveryNotesDetailsList.filter(item => item.productId == data.id)[0];
-            newListElement.quantity += 1;
-            newListElement.subtotal += this.bindPrice(data) * newListElement.quantity;
+              /*Actualizo la lista de la tabla */
+              let newListElement = this.deliveryNotesDetailsList.filter(item => item.productId == productItem.id)[0];
+              newListElement.quantity += 1;
+              newListElement.subtotal += this.bindPrice(productItem) * newListElement.quantity;
 
-            this.totalCalculate();
-            this.isLoading = false;
-            this.formProductSearch.controls['productSearchFilter'].setValue('');
-          } else {
+              this.totalCalculate();
+              this.isLoading = false;
+              this.formProductSearch.controls['productSearchFilter'].setValue('');
+            } else {
 
-            /* Parseo dato a la grilla de Tabla */
-            const model: deliveryNotesDetailsList = deliveryNotesGridParser(data, this.bindPrice(data));
-            this.deliveryNotesDetailsTest.push(model)
-            this.deliveryNotesDetailsList = this.deliveryNotesDetailsTest;
-            /* Parseo dato a Dto Factura Detalle */
-            const modelDetail: DeliveryNotesDetails = deliveryNotesDetailParser(data, this.bindPrice(data));
-            this.deliveryNotesDetails.push(modelDetail);
-            this.totalCalculate();
-            this.isLoading = false;
-            this.formProductSearch.controls['productSearchFilter'].setValue('');
-          }
+              /* Parseo dato a la grilla de Tabla */
+              const model: deliveryNotesDetailsList = deliveryNotesGridParser(productItem, this.bindPrice(productItem));
+              this.deliveryNotesDetailsTest.push(model)
+              this.deliveryNotesDetailsList = this.deliveryNotesDetailsTest;
+              /* Parseo dato a Dto Factura Detalle */
+              const modelDetail: DeliveryNotesDetails = deliveryNotesDetailParser(productItem, this.bindPrice(productItem));
+              this.deliveryNotesDetails.push(modelDetail);
+              this.totalCalculate();
+              this.isLoading = false;
+              this.formProductSearch.controls['productSearchFilter'].setValue('');
+            }
+          })
         }
       },
       error: () => {
@@ -407,14 +406,14 @@ export class DeliveryNotesEditComponent extends BaseComponent implements OnInit 
 
   }
 
-  openComponentSupplier(): void {
+  openComponentCustomer(): void {
     const drawerRefSupplier = this.drawerService.create<
-      ReceiptSupplierSearchComponent,
+    InvoiceCustomerSearchComponent,
       {},
       CustomerAddModel
     >({
-      nzTitle: 'Proveedor',
-      nzContent: ReceiptSupplierSearchComponent,
+      nzTitle: 'Cliente',
+      nzContent: InvoiceCustomerSearchComponent,
       nzSize: 'large',
       nzWidth: '90%',
       nzClosable: false,
@@ -424,7 +423,7 @@ export class DeliveryNotesEditComponent extends BaseComponent implements OnInit 
         if (data != undefined) {
           this.supplierId = data.id;
           this.formDeliveryNotes.controls['supplierAddress'].setValue(data.address);
-          this.formDeliveryNotes.controls['supplierCuit'].setValue(data.cuit);
+          this.formDeliveryNotes.controls['supplierCuit'].setValue(!isNil(data.cuit) ? data.cuit.replace(/[^a-zA-Z0-9 ]/g, '') : null);
           this.formDeliveryNotes.controls['supplierName'].setValue(data.name);
           this.formDeliveryNotes.controls['supplierDni'].setValue(data.dni)
         }
@@ -436,6 +435,7 @@ export class DeliveryNotesEditComponent extends BaseComponent implements OnInit 
   formaterDate(date: string | number | Date): string {
     return formatDate(date, 'MM/dd/YYYY', this.locale);
   }
+
   typeSelectedChange(id: any): void {
     this.typeSelectedId = id;
     if (id == 1) {
@@ -444,6 +444,7 @@ export class DeliveryNotesEditComponent extends BaseComponent implements OnInit 
       this.pagado = false;
     }
   }
+  
   direction() {
     this.router.navigate(['/home/deliveryNotes']);
   }

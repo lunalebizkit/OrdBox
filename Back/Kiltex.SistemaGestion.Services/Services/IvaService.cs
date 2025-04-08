@@ -2,25 +2,18 @@
 using ClosedXML.Excel;
 using Kiltex.SistemaGestion.Domain;
 using Kiltex.SistemaGestion.Domain.Enum;
-using Kiltex.SistemaGestion.Domain.Model;
 using Kiltex.SistemaGestion.SDK.Error;
 using Kiltex.SistemaGestion.Services.Common;
-using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
 namespace Kiltex.SistemaGestion.Services.Services
 {
     public class IvaService : BaseService
     {
-        public IvaService(ErrorManager logger, DBContext context, IMapper maper) :
-            base(logger, context, maper)
+        public IvaService(ErrorManager logger, DBContext context, IMapper maper, IConfiguration configuration) :
+            base(logger, context, maper, configuration)
         { }
 
         public async Task<OperationResponse<DtoResponseIvaInvoice>> ListIvaVenta(DateTime from, DateTime to, CancellationToken ct = default)

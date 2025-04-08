@@ -1,22 +1,26 @@
-import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { NzDrawerRef, NzDrawerService } from 'ng-zorro-antd/drawer';
 import { Permission } from 'src/app/common/auth/models/permissions.enum';
 import { BrandsEditDrawerComponent } from '../brands-edit-drawer/brands-edit.drawer.component';
 import { BrandsService } from '../brands.services';
 import { BrandsModel } from '../model/brands.model';
+import { BaseComponent } from 'src/app/common/components/base/base.component';
+import { NzNotificationService } from 'ng-zorro-antd/notification';
+import { NzMessageService } from 'ng-zorro-antd/message';
+import { PopupConfirmationComponent } from 'src/app/common/components/popup-confirmation/popup-confirmation.component';
 
 @Component({
   selector: 'app-brands-list',
   templateUrl: './brands-list.component.html',
   styleUrls: ['./brands-list.component.css'],
 })
-export class BrandsListComponent implements OnInit {
+export class BrandsListComponent extends BaseComponent implements OnInit {
   @ViewChild('drawerTemplate', { static: false }) drawerTemplate?: TemplateRef<{
     $implicit: { filter: number };
     drawerRef: NzDrawerRef<string>;
   }>;
-
+  @ViewChild('popup') popupComponent!: PopupConfirmationComponent;
   permissions = Permission;
 
   brandList: BrandsModel[] = [];
@@ -35,8 +39,11 @@ export class BrandsListComponent implements OnInit {
 
   constructor(
     private service: BrandsService,
-    private drawerService: NzDrawerService
-  ) {}
+    private drawerService: NzDrawerService,
+    notificacionService: NzNotificationService,
+    el: ElementRef,
+    message: NzMessageService,
+  ) { super( notificacionService, el, message)}
 
   ngOnInit(): void {
     this.getBrand(this.queryData);
@@ -179,5 +186,19 @@ export class BrandsListComponent implements OnInit {
         this.id = 0;
       },
     });
+  }
+
+  handleOk() {
+    this.service.delete(this.popupComponent.elementSelectedToDelete).subscribe(
+     {next: (r) => {
+        this.popupComponent.isDeleteConfirmationVisible = false;
+        this.showMessageSuccess("Marca eliminada");
+        this.search();
+      },
+      error:(r) => { 
+        this.showMessageError(r.error.descripcion);
+        this.popupComponent.isDeleteConfirmationVisible = false;
+      }
+  });
   }
 }

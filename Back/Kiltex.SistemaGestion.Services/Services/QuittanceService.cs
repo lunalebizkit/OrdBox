@@ -1,28 +1,19 @@
 ﻿using AutoMapper;
-using DocumentFormat.OpenXml.Spreadsheet;
 using Kiltex.SistemaGestion.Domain;
 using Kiltex.SistemaGestion.Domain.Model;
 using Kiltex.SistemaGestion.SDK.Error;
 using Kiltex.SistemaGestion.Services.Common;
-using Kiltex.SistemaGestion.Services.Mapper;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kiltex.SistemaGestion.Services.Services
 {
     public class QuittanceService : BaseService
     {
-        private IConfiguration _configuration;
-        public QuittanceService(ErrorManager logger, DBContext context, IMapper mapper, IConfiguration config) : base(logger, context, mapper)
+        public QuittanceService(ErrorManager logger, DBContext context, IMapper mapper, IConfiguration configuration) : base(logger, context, mapper, configuration)
         {
-            _configuration = config;
         }
 
         public async Task<OperationResponse<DtoResponseQuittance>> GetById(long id)
