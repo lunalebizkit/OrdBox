@@ -138,10 +138,10 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
       dateTime: [new Date(this.startDate), Validators.required],
       type: [1, Validators.required],
       payment: ['', Validators.required],
-      address: ['', Validators.required],
-      customerCuit: ['', Validators.required],
+      address: ['', ],
+      customerCuit: ['',],
       customerDni:['',],
-      customerName: ['', Validators.required],    
+      customerName: ['',],    
       observation: ['']
     });   
     this.formCustomerSearch = this.fb.group({})
@@ -177,6 +177,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
       this.invoiceA= false;
     }    
   }
+
   paymentSelectedChange(id: any): void {
     this.paymentSelected = id;
   }
@@ -266,9 +267,9 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
     this.cuit =
       this.formInvoice.controls['customerCuit'].value;
     if (this.cuit === '00'){
-      this.formInvoice.controls['address'].setValue('S/D');
-      this.formInvoice.controls['customerCuit'].setValue('00');
-      this.formInvoice.controls['customerName'].setValue('Admin');
+      this.formInvoice.controls['address'].setValue('');
+      this.formInvoice.controls['customerCuit'].setValue('');
+      this.formInvoice.controls['customerName'].setValue('');
       this.customerId= 0;
       return;
     }else{
@@ -438,9 +439,9 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
           customerId: this.customerId,
           userId:this.userId,
           invoiceNumber: this.totalItems,
-          customerName: this.formInvoice.controls['customerName'].value,         
-          customerCuit: this.selectedDni? this.dni.toString() : this.formInvoice.controls['customerCuit'].value,  
-          customerAddress: this.formInvoice.controls['address'].value,          
+          customerName: this.formInvoice.controls['customerName'].value,     
+          customerCuit: this.selectedDni? this.dni.toString() : this.formInvoice.controls['customerCuit'].value,
+          customerAddress: this.formInvoice.controls['address'].value,
           observation: this.formInvoice.controls['observation'].value,
           dateTime: this.formInvoice.controls['dateTime'].value,
           iva21: this.iva21Undefined,

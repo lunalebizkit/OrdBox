@@ -28,8 +28,6 @@ export interface InvoiceDetails {
     quantity: number;
     price: number;
     iva: number;
-
-
 }
 export interface InvoiceDetailList {
     stock: number,
