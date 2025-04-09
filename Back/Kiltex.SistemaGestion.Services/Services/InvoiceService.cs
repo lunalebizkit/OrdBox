@@ -68,12 +68,7 @@ namespace Kiltex.SistemaGestion.Services.Services
         {
             try
             {
-                model.Id = 0;
-                if (String.IsNullOrEmpty(model.CustomerName))
-                {
-                    _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
-                    return Error<IdResponse<long>>(new OperationExceptions("000", "Datos incompletos"));
-                }
+                model.Id = 0;                
                 return await AddOrUpdate(model, ct).ConfigureAwait(false);
             }
             catch (Exception ex)
