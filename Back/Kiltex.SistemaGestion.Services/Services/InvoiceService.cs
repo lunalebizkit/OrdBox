@@ -136,11 +136,18 @@ namespace Kiltex.SistemaGestion.Services.Services
 
                     foreach (var detail in invoiceModel.InvoiceDetails)
                     {
-                        var oldProduct = await _contextSql.Products.AsNoTracking().FirstAsync(p => p.Id == detail.ProductId).ConfigureAwait(false);
+                        if (detail.ProductId > 0)
+                        {
+                            var oldProduct = await _contextSql.Products.AsNoTracking().FirstAsync(p => p.Id == detail.ProductId).ConfigureAwait(false);
 
-                        newProduct = oldProduct;
-                        newProduct.UpdateStock(-detail.Quantity);
-                        _contextSql.Products.Update(newProduct);
+                            newProduct = oldProduct;
+                            newProduct.UpdateStock(-detail.Quantity);
+                            _contextSql.Products.Update(newProduct);
+                        }
+                        if (detail.ProductId < 0)
+                        {
+                            detail.ProductId = -1;
+                        }
                     }
 
                     if (_config.Status)
