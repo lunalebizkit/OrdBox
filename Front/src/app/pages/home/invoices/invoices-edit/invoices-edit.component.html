@@ -353,14 +353,24 @@
                 this.currencyFormat(this.subtotal)
               }}</b>
             </td>
-            <td colspan="1">
-              <b>Total </b
-              ><b style="color: red ; font-size: 15px;">
-                <input id="total" name="total" [(ngModel)]="this.total"
-              />
-                {{ this.currencyFormat(this.total) }}</b>
+            <td colspan="1" [nzAlign]="'right'">
+              <b>Total </b>
             </td>
-            <td></td>
+            <td>
+              <div
+              [hidden]="editTotal"
+              (click)="editTotal = !editTotal">
+              <b style="color: red ; font-size: 15px;">{{ this.currencyFormat(this.total) }}</b>
+              </div>
+              <nz-input-number
+                [hidden]="!editTotal"
+                [nzMin]="0"
+                [(ngModel)]="this.total"
+                (nzBlur)="editTotal = !editTotal"
+                (ngModelChange)="changeTotalEdit($event)"
+              ></nz-input-number>
+                
+            </td>
             <td colspan="2" [nzAlign]="'right'">
               <button
                 id="actualizarbutton"
