@@ -287,18 +287,31 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
 
   searchProduct():void {
     this.product= this.formProductSearch.controls['productSearchFilter'].value;
-    this.queryParams.filter= this.product; 
+    const productParams = {
+      filter: {
+        product:this.product,
+        code: '',
+        barCode: '',
+        brand: 0,
+        category: 0,
+        status: 0,
+        supplier: [] as Number []},
+      page: 0,
+      pageSize: 50
+    };
+
     if (this.isValidForm(this.formInvoice)){ 
-    if (this.product.length > 0) {
-      this.serviceProduct.getProducts(this.queryParams).subscribe({
-        next: (r) => { 
-          this.isLoading= true;      
-          if (r.data.length == 1) {
-            const model : ProductsModel= r.data[0];            
-            if (this.invoiceDetails.find(item => item.productId == model.id)) {
-              /*Actualizo la lista que envio al back */
-                 this.invoiceDetails.filter(item => item.productId == model.id)[0]
-                .quantity += 1;                        
+
+      if (this.product.length > 0) {
+        this.serviceProduct.getProducts(productParams).subscribe({
+          next: (r) => { 
+            this.isLoading= true;      
+            if (r.data.length == 1) {
+              const model : ProductsModel= r.data[0];            
+              if (this.invoiceDetails.find(item => item.productId == model.id)) {
+                /*Actualizo la lista que envio al back */
+                  this.invoiceDetails.filter(item => item.productId == model.id)[0]
+                  .quantity += 1;                        
 
                  /*Actualizo la lista de la tabla */
                 this.invoiceDetailsList.filter(item => item.ownCode == model.id)[0]
