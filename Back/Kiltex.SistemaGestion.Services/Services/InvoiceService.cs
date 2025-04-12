@@ -138,7 +138,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                     {
                         if (detail.ProductId > 0)
                         {
-                            var oldProduct = await _contextSql.Products.AsNoTracking().FirstAsync(p => p.Id == detail.ProductId).ConfigureAwait(false);
+                            var oldProduct = await _contextSql.Products.FirstAsync(p => p.Id == detail.ProductId).ConfigureAwait(false);
 
                             newProduct = oldProduct;
                             newProduct.UpdateStock(-detail.Quantity);

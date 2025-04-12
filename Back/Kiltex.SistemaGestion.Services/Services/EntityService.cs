@@ -101,6 +101,8 @@ namespace Kiltex.SistemaGestion.Services.Services
                                       .ToListAsync()
                                       .ConfigureAwait(false);
 
+                list =list.Where(p => p.Id > 0).ToList();
+
                 var result = _mapper.Map<List<DtoEntityList>>(list);
 
 
