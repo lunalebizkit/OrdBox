@@ -121,7 +121,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                                      (!string.IsNullOrEmpty(request.Filter.Code) ? p.Code.ToLower().Contains(request.Filter.Code) : true) &&
                                      (!string.IsNullOrEmpty(request.Filter.BarCode) ? p.BarCode.ToLower().Contains(request.Filter.BarCode) : true) &&
                                      (request.Filter.Supplier.Count > 0 ? request.Filter.Supplier.Contains(p.SupplierId) : true)
-                                    && p.IsDeleted == false);
+                                    && p.IsDeleted == false && p.Id > 0);
 
                 var count = await query.CountAsync().ConfigureAwait(false);
 
@@ -165,7 +165,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                                      (!string.IsNullOrEmpty(request.Filter.Product) ? p.Description.ToLower().Contains(request.Filter.Product) : true) &&
                                      (!string.IsNullOrEmpty(request.Filter.Code) ? p.Code.ToLower().Contains(request.Filter.Code) : true) &&
                                      (!string.IsNullOrEmpty(request.Filter.BarCode) ? p.BarCode.ToLower().Contains(request.Filter.BarCode) : true)
-                                    && p.IsDeleted);
+                                    && p.IsDeleted && p.Id > 0);
 
                 var count = await query.CountAsync().ConfigureAwait(false);
 

@@ -279,7 +279,11 @@
         <tbody>
           <tr *ngFor="let data of debitMemoList" class="small-text">
             <td>{{ data.code }}</td>
-            <td>{{ data.ownCode }}</td>
+            <td> <span *ngIf="data.ownCode > 0; else isEditProduct">
+              {{ data.ownCode }}
+            </span>
+            <ng-template #isEditProduct>                
+            </ng-template></td>
             <td nzBreakWord>{{ data.productName }}</td>
             <td>
               <div

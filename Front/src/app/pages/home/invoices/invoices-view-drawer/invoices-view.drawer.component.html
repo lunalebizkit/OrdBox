@@ -55,35 +55,6 @@
     </div>
   </nz-collapse-panel>
 
-  <!-- <nz-collapse-panel nzHeader="Datos Comprobante" [nzActive]="true">
-    <nz-descriptions nzSize="small" [nzColumn]="3" style=  "margin-left: 100px; padding: 5px;">
-
-      <nz-descriptions-item nzTitle=" * Fecha">
-        <a>{{ dateTime ? (dateTime | date : "YYYY-MM-dd") : "N/A" }} </a>
-      </nz-descriptions-item>
-      <nz-descriptions-item nzTitle="* Tipo">
-        <nz-page-header-tags>
-          <nz-tag [nzColor]="'blue'">{{ this.invoiceType(type) }}</nz-tag>
-        </nz-page-header-tags>
-      </nz-descriptions-item>
-      <nz-descriptions-item nzTitle="* Número de Factura" >
-        {{ this.invoiceNumber }}</nz-descriptions-item>
-      <nz-descriptions-item  nzTitle=" * Cliente " >
-        {{ customerName }}</nz-descriptions-item
-      >
-      <nz-descriptions-item nzTitle="* Cuit" >
-        {{ customerCuit  | cuit }}</nz-descriptions-item
-      >
-      <nz-descriptions-item nzTitle=" * Dirección" >
-        {{ customerAddress }}
-      </nz-descriptions-item>
-      <nz-descriptions-item nzTitle=" * Observación" >
-        {{ observation }}
-      </nz-descriptions-item>
-    </nz-descriptions>
-  </nz-collapse-panel>
-</nz-collapse>-->
-
   <nz-collapse>
     <nz-collapse-panel
       nzHeader="Detalle"
@@ -107,7 +78,11 @@
           <tbody>
             <tr *ngFor="let data of invoiceDetail">
               <td>{{ data.productCode }}</td>
-              <td>{{ data.productId }}</td>
+              <td> <span *ngIf="data.productId > 0; else isEditProduct">
+                {{ data.productId }}
+              </span>
+              <ng-template #isEditProduct>                
+              </ng-template></td>
               <td>{{ data.productName }}</td>
               <td [nzAlign]="'right'">{{ data.quantity }}</td>
               <td [nzAlign]="'right'">{{ this.currencyFormat(data.price) }}</td>

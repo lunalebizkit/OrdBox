@@ -68,12 +68,7 @@ namespace Kiltex.SistemaGestion.Services.Services
         {
             try
             {
-                model.Id = 0;
-                if (String.IsNullOrEmpty(model.CustomerName))
-                {
-                    _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
-                    return Error<IdResponse<long>>(new OperationExceptions("000", "Datos incompletos"));
-                }
+                model.Id = 0;                
                 return await AddOrUpdate(model, ct).ConfigureAwait(false);
             }
             catch (Exception ex)
@@ -125,7 +120,7 @@ namespace Kiltex.SistemaGestion.Services.Services
         {
             var transaction = _contextSql.Database.BeginTransaction();
             var invoiceModel = _mapper.Map<Invoice>(model);
-            var productDetail = new Product();
+            var newProduct = new Product();
             try
             {
                 if (invoiceModel.Id == 0)
@@ -139,44 +134,52 @@ namespace Kiltex.SistemaGestion.Services.Services
                     var regex = new Regex(@"^-?[0-9][0-9,\.]+$");
 
 
-                    #region VERIFICACIONES
-                    //Verifico que el DNI O CUIT no tenga letras
-                    if (!regex.IsMatch(model.CustomerCuit))
-                    {
-                        _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
-                        return Error<IdResponse<long>>(new OperationExceptions("000", "Error al cargar cliente, El CUIT/DNI tiene que ser numerico"));
-                    }
-                    //Verifico que el CUIT O DNI no se pasen de los parametros
-                    if (model.CustomerCuit.Length > 11 || model.CustomerCuit.Length < 7)
-                    {
-                        _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
-                        return Error<IdResponse<long>>(new OperationExceptions("000", "Error al cargar cliente, verifique cantidad de digitos"));
-                    }
-
-                    //Verfico que la factura A no pueda realizarse al colocar un DNI
-                    if (model.Type == 1 && model.CustomerCuit.Length != 11)
-                    {
-                        _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
-                        return Error<IdResponse<long>>(new OperationExceptions("000", "Error al cargar cliente, no puede cargar un DNI con Factura tipo A"));
-                    }
-                    //Verifico que el DNI tenga mayor a 7 caracteres y menor a 9
-                    if (model.Type == 2 && model.CustomerCuit.Length < 7 || model.CustomerCuit.Length > 9 && model.CustomerCuit.Length != 11)
-                    {
-                        _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
-                        return Error<IdResponse<long>>(new OperationExceptions("000", "Error al cargar cliente, verifique DNI"));
-                    }
-                    #endregion
-
                     foreach (var detail in invoiceModel.InvoiceDetails)
                     {
-                        var oldProduct = await _contextSql.Products.FirstAsync(p => p.Id == detail.ProductId).ConfigureAwait(false);
+                        if (detail.ProductId > 0)
+                        {
+                            var oldProduct = await _contextSql.Products.FirstAsync(p => p.Id == detail.ProductId).ConfigureAwait(false);
 
-                        productDetail = oldProduct;
-                        productDetail.UpdateStock(-detail.Quantity);
-                        _contextSql.Products.Update(productDetail);
+                            newProduct = oldProduct;
+                            newProduct.UpdateStock(-detail.Quantity);
+                            _contextSql.Products.Update(newProduct);
+                        }
+                        if (detail.ProductId < 0)
+                        {
+                            detail.ProductId = -1;
+                        }
                     }
+
                     if (_config.Status)
                     {
+                        #region VERIFICACIONES
+                        //Verifico que el DNI O CUIT no tenga letras
+                        if (!regex.IsMatch(model.CustomerCuit))
+                        {
+                            _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
+                            return Error<IdResponse<long>>(new OperationExceptions("000", "Error al cargar cliente, El CUIT/DNI tiene que ser numerico"));
+                        }
+                        //Verifico que el CUIT O DNI no se pasen de los parametros
+                        if (model.CustomerCuit.Length > 11 || model.CustomerCuit.Length < 7)
+                        {
+                            _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
+                            return Error<IdResponse<long>>(new OperationExceptions("000", "Error al cargar cliente, verifique cantidad de digitos"));
+                        }
+
+                        //Verfico que la factura A no pueda realizarse al colocar un DNI
+                        if (model.Type == 1 && model.CustomerCuit.Length != 11)
+                        {
+                            _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
+                            return Error<IdResponse<long>>(new OperationExceptions("000", "Error al cargar cliente, no puede cargar un DNI con Factura tipo A"));
+                        }
+                        //Verifico que el DNI tenga mayor a 7 caracteres y menor a 9
+                        if (model.Type == 2 && model.CustomerCuit.Length < 7 || model.CustomerCuit.Length > 9 && model.CustomerCuit.Length != 11)
+                        {
+                            _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
+                            return Error<IdResponse<long>>(new OperationExceptions("000", "Error al cargar cliente, verifique DNI"));
+                        }
+                        #endregion
+
                         var error = await PrintInvoice(invoiceModel, ct);
 
                         #region ERRORES

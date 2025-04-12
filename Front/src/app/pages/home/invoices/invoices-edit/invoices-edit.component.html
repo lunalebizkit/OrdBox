@@ -179,10 +179,8 @@
               </button>
             </div>
           </nz-form-item>
-
-       
-        
         </form>
+
         <br />
          <!-- Observaciones-->
          <nz-divider
@@ -245,8 +243,28 @@
               ></i>
             </td>
             <td>{{ data.code }}</td>
-            <td>{{ data.ownCode }}</td>
-            <td nzBreakWord>{{ data.productName }}</td>
+            <td >
+              <span *ngIf="data.ownCode > 0; else isEditProduct">
+                {{ data.ownCode }}
+              </span>
+              <ng-template #isEditProduct>                
+              </ng-template>
+            </td>
+            <td nzBreakWord>
+              <div
+                class="editable-cell"
+                [hidden]="editIdProductName === data.ownCode"
+                (click)="startEditProductName(data.ownCode)"
+              >{{ data.productName }}
+              </div>
+              <input nz-input
+                id="productName{{data.ownCode}}"
+                name="productName{{data.ownCode}}"
+                [hidden]="editIdProductName !== data.ownCode"
+                [(ngModel)]="data.productName"
+                (ngModelChange)="changeProductName($event)"
+                (nzBlur)="stopEditProductName()"
+              /></td>
             <td>
               <div
                 class="editable-cell"
@@ -264,7 +282,20 @@
                 (ngModelChange)="changeQuantity($event)"
               ></nz-input-number>
             </td>
-            <td [nzAlign]="'right'">{{ this.currencyFormat(data.price) }}</td>
+            <td [nzAlign]="'right'">
+              <div class="editable-cell"
+              [hidden]="editIdProductPrice === data.ownCode"
+              (click)="startEditProductPrice(data.ownCode)">
+              {{ this.currencyFormat(data.price) }}
+              </div>
+              <nz-input-number
+                [hidden]="editIdProductPrice !== data.ownCode"
+                [nzMin]="1"
+                [(ngModel)]="data.price"
+                (nzBlur)="stopEditProductPrice()"
+                (ngModelChange)="changeProductPrice($event)"
+              ></nz-input-number>
+            </td>
             <td [nzAlign]="'right'">
               {{ this.currencyFormat(data.subTotal) }}
             </td>
@@ -322,11 +353,24 @@
                 this.currencyFormat(this.subtotal)
               }}</b>
             </td>
-            <td colspan="1">
-              <b>Total </b
-              ><b style="color: red ; font-size: 15px;">{{ this.currencyFormat(this.total) }}</b>
+            <td colspan="1" [nzAlign]="'right'">
+              <b>Total </b>
             </td>
-            <td></td>
+            <td>
+              <div
+              [hidden]="editTotal"
+              (click)="editTotal = !editTotal">
+              <b style="color: red ; font-size: 15px;">{{ this.currencyFormat(this.total) }}</b>
+              </div>
+              <nz-input-number
+                [hidden]="!editTotal"
+                [nzMin]="0"
+                [(ngModel)]="this.total"
+                (nzBlur)="editTotal = !editTotal"
+                (ngModelChange)="changeTotalEdit($event)"
+              ></nz-input-number>
+                
+            </td>
             <td colspan="2" [nzAlign]="'right'">
               <button
                 id="actualizarbutton"
