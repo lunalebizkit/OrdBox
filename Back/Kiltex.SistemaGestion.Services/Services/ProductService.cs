@@ -14,6 +14,8 @@ using Kiltex.SistemaGestion.Services.Scripts;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
+using Serilog;
 
 namespace Kiltex.SistemaGestion.Services.Services
 {
@@ -106,6 +108,9 @@ namespace Kiltex.SistemaGestion.Services.Services
 
         public async Task<OperationResponse<DtoPagination<DtoResponseProduct>>> List(RequestPaginatedData<ProductFilter> request)
         {
+            _logger.LogInfo("------------REQUEST-------------");
+            _logger.LogInfo(ErrorsCodes.C_999_ERROR_GENERICO, JsonConvert.SerializeObject(request));
+            _logger.LogInfo("-------------REQUEST-------------");
             try
             {
                 var query = _contextSql
@@ -124,6 +129,11 @@ namespace Kiltex.SistemaGestion.Services.Services
                                     (request.Filter.Supplier.Count == 0 || request.Filter.Supplier.Contains(p.SupplierId))
                                     );
 
+
+                _logger.LogInfo("------------QUERY--------------");
+                _logger.LogInfo(ErrorsCodes.C_999_ERROR_GENERICO, JsonConvert.SerializeObject(query));
+                _logger.LogInfo("-------------QUERY-------------");
+
                 var count = await query.CountAsync().ConfigureAwait(false);
 
                 var list = await query.OrderBy(p => p.Id)
@@ -135,7 +145,9 @@ namespace Kiltex.SistemaGestion.Services.Services
 
                 var dto = _mapper.Map<List<DtoResponseProduct>>(list);
 
-
+                _logger.LogInfo("------------DTO--------------");
+                _logger.LogInfo(ErrorsCodes.C_999_ERROR_GENERICO, JsonConvert.SerializeObject(dto));
+                _logger.LogInfo("------------DTO--------------");
                 return new OperationResponse<DtoPagination<DtoResponseProduct>>(new DtoPagination<DtoResponseProduct>
                 {
                     Data = dto,
