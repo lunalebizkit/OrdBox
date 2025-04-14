@@ -137,7 +137,9 @@ namespace Kiltex.SistemaGestion.Services.Services
                                       .ToListAsync()
                                       .ConfigureAwait(false);
 
-
+                _logger.LogInfo("------------LIST--------------");
+                _logger.LogInfo(ErrorsCodes.C_999_ERROR_GENERICO, JsonConvert.SerializeObject(list));
+                _logger.LogInfo("------------LIST--------------");
                 var dto = _mapper.Map<List<DtoResponseProduct>>(list);
 
                 _logger.LogInfo("------------DTO--------------");
