@@ -129,11 +129,6 @@ namespace Kiltex.SistemaGestion.Services.Services
                                     (request.Filter.Supplier.Count == 0 || request.Filter.Supplier.Contains(p.SupplierId))
                                     );
 
-
-                _logger.LogInfo("------------QUERY--------------");
-                _logger.LogInfo(ErrorsCodes.C_999_ERROR_GENERICO, JsonConvert.SerializeObject(query));
-                _logger.LogInfo("-------------QUERY-------------");
-
                 var count = await query.CountAsync().ConfigureAwait(false);
 
                 var list = await query.OrderBy(p => p.Id)
