@@ -656,7 +656,7 @@ changeProductPrice(price: number):void {
 }
 
 isValidProductName():boolean{
- return this.invoiceDetails.every(y => y.productName != "");
+ return this.invoiceDetails.every(y => typeof y.productName === "string" && y.productName.trim() !== "")
 }
 
 }

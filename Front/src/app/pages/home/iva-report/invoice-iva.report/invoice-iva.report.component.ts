@@ -126,38 +126,45 @@ export class InvoiceIvaReportComponent extends BaseComponent implements OnInit {
 
       
       exportExcel(){
-        const fileName = `Reporte_Venta_${this.initPeriod}-${this.endPeriod}`
-        this.service.getInvoiceIvaReport(this.initPeriod, this.endPeriod).subscribe({
-          next: (r) => {    
-            this.downloadFile(r, fileName);
-          },
-          error: (e) => {
-            this.loading = false;           
-          },
-        });
+        if ((this.newInitDate != null) && (this.newEndDate != null)){
+          const fileName = `Reporte_Venta_${this.newInitDate}-${this.newEndDate}`
+          this.service.getInvoiceIvaReport(this.newInitDate, this.newEndDate).subscribe({
+            next: (r) => {    
+              this.downloadFile(r, fileName);
+            },
+            error: (e) => {
+              this.loading = false;           
+            },
+          });
+
+        }
       }
       
       getAlicuotaIva(){
-        const fileName = `Alicuota_Iva_${this.initPeriod}-${this.endPeriod}`
-        this.service.getAlicuotaIva(this.initPeriod,this.endPeriod).subscribe({
+        if ((this.newInitDate != null) && (this.newEndDate != null)){
+        const fileName = `Alicuota_Iva_${this.newInitDate}-${this.newEndDate}`
+        this.service.getAlicuotaIva(this.newInitDate,this.newEndDate).subscribe({
           next: (r) => {
             this.downloadFile(r, fileName);
           },
           error: (e) => {
             this.loading = false;           
             },
-        })
+        })}
       }
+
       getIvaVentasTxt(){
-       const fileName = `Iva_Ventas_${this.initPeriod}-${this.endPeriod}`
-        this.service.getIvaVentasTxt(this.initPeriod,this.endPeriod).subscribe({
+        if ((this.newInitDate != null) && (this.newEndDate != null)){
+       const fileName = `Iva_Ventas_${this.newInitDate}-${this.newEndDate}`
+        this.service.getIvaVentasTxt(this.newInitDate,this.newEndDate).subscribe({
           next: (r) => {
             this.downloadFile(r, fileName);
           },
           error: (e) => {
             this.loading = false;           
             },
-        })
+        });
+      }
       }
       
 
@@ -297,16 +304,16 @@ export class InvoiceIvaReportComponent extends BaseComponent implements OnInit {
       currencyFormat(data: any):string  {    
         return formatCurrency(data, this.locale, '$', 'ARS', '1.1-2')
       }
-      changeDate( fecha: any):void {             
+      changeDate( fecha: any):void { 
         this.newInitDate = this.formaterDate(fecha)
         
       }
       changeEndDate( fecha: any):void {
-         this.newEndDate = this.formaterDate(fecha);        
+         this.newEndDate = this.formaterDate(fecha);
       }
 
      getNewIvaVenta(){
-      this.getIvaVenta(this.newInitDate, this.newEndDate);
+      if ((this.newInitDate != null) && (this.newEndDate != null)){
+      this.getIvaVenta(this.newInitDate, this.newEndDate);}
      }
     }
-
