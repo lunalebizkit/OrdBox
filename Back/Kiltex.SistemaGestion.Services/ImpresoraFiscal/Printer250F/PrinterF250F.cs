@@ -8,6 +8,7 @@ using Kiltex.SistemaGestion.Services.ImpresoraFiscal.Printer250F.Dto;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
 using System.Reflection;
 using DocumentFormat.OpenXml.Office.CustomUI;
+using Kiltex.SistemaGestion.SDK.Error;
 
 namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
 
@@ -15,30 +16,46 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
     public class PrinterF250F : IPrinter
     {
         private readonly PrinterConfig _config;
-        public PrinterF250F(PrinterConfig config)
+        private readonly ErrorManager _logger;
+        public PrinterF250F(PrinterConfig config, ErrorManager logger)
         {
             _config = config;
+            _logger = logger;
         }
       
 
         private async Task<T> RunCommand<T>(object request)
         {
-            var data = JsonConvert.SerializeObject(request);
-            using HttpClient client = new();
-            
-            var requestPrinter = new HttpRequestMessage
+            try
             {
-                Method = HttpMethod.Get,
-                RequestUri = new Uri(_config.Ip),
-                Content = new StringContent(data, Encoding.UTF8, "application/json"),
-            };
+                var data = JsonConvert.SerializeObject(request);
 
-            var response = await client.SendAsync(requestPrinter).ConfigureAwait(false);
-            response.EnsureSuccessStatusCode();  
+                _logger.LogWarning("-----------request PRINTER---------");
+                _logger.LogWarning(data);
 
-            var responseBody = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                using HttpClient client = new();
 
-            return JsonConvert.DeserializeObject<T>(responseBody);
+                var requestPrinter = new HttpRequestMessage
+                {
+                    Method = HttpMethod.Get,
+                    RequestUri = new Uri(_config.Ip),
+                    Content = new StringContent(data, Encoding.UTF8, MediaTypeNames.Application.Json /* "application/json" */),
+                };
+
+                var response = await client.SendAsync(requestPrinter).ConfigureAwait(false);
+                response.EnsureSuccessStatusCode();
+
+                var responseBody = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+                _logger.LogWarning(responseBody);
+
+                return JsonConvert.DeserializeObject<T>(responseBody);
+            }
+            catch (Exception ex) {
+
+                _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
+                return default;
+            }
         }
 
         public async Task<string> OpenInvoice(ETypeReceipt type, string documentClient, eTypeDocumentClient typeDocument, string address = "")
