@@ -145,16 +145,24 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
         {
             var result = await RunCommand<DtoResponseReporteZ>(new CerrarJornadaFiscal { CerrarJornadaFiscalBody = new CerrarJornadaFiscalBody { Reporte = "ReporteZ" } });
 
-            foreach (var Item in result.Body.EstadoBody.Fiscal)
+            if (result != null && result.Body != null)
             {
-                if (Item.ToString().Contains("Error"))
+                foreach (var Item in result.Body.EstadoBody.Fiscal)
                 {
-                    await CloseFactura(1, "");
-                    return null;
+                    if (Item.ToString().Contains("Error"))
+                    {
+                        await CloseFactura(1, "");
+                        return null;
+                    }
                 }
+
+            }
+            else
+            {
+                return null;
             }
 
-            return result.Body.EstadoBody.Fiscal.ToString();
+            return result.Body.EstadoBody?.Fiscal.ToString();
 
         }
 
