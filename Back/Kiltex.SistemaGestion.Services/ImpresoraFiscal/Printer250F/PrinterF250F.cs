@@ -1,14 +1,12 @@
 ﻿using Kiltex.SistemaGestion.Domain.Enum;
+using Kiltex.SistemaGestion.SDK.Error;
+using Kiltex.SistemaGestion.Services.ImpresoraFiscal.Printer250F;
+using Kiltex.SistemaGestion.Services.ImpresoraFiscal.Printer250F.Dto;
+using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
 using Newtonsoft.Json;
 //using Simple.Interface;
 using System.Net.Mime;
 using System.Text;
-using Kiltex.SistemaGestion.Services.ImpresoraFiscal.Printer250F;
-using Kiltex.SistemaGestion.Services.ImpresoraFiscal.Printer250F.Dto;
-using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
-using System.Reflection;
-using DocumentFormat.OpenXml.Office.CustomUI;
-using Kiltex.SistemaGestion.SDK.Error;
 
 namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
 
