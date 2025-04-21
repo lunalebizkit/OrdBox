@@ -67,7 +67,6 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
   formCustomerSearch!: FormGroup;
   formInvoiceModel!: FormGroup;
   editProductId: number= 0;
-  editTotal= false;
 
   name: string = environment.name;
   date = Date.now();
@@ -641,10 +640,6 @@ changeProductPrice(price: number):void {
     )[0].price = price;
     
     this.totalCalculate();
-}
-
-changeTotalEdit(total: number):number {
-  return this.total = total;
 }
 
 }
