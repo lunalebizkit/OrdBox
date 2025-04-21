@@ -353,24 +353,12 @@
                 this.currencyFormat(this.subtotal)
               }}</b>
             </td>
-            <td colspan="1" [nzAlign]="'right'">
-              <b>Total </b>
+            <td colspan="1">
+              <b>Total </b
+              ><b style="color: red ; font-size: 15px;">
+                {{ this.currencyFormat(this.total) }}</b>
             </td>
-            <td>
-              <div
-              [hidden]="editTotal"
-              (click)="editTotal = !editTotal">
-              <b style="color: red ; font-size: 15px;">{{ this.currencyFormat(this.total) }}</b>
-              </div>
-              <nz-input-number
-                [hidden]="!editTotal"
-                [nzMin]="0"
-                [(ngModel)]="this.total"
-                (nzBlur)="editTotal = !editTotal"
-                (ngModelChange)="changeTotalEdit($event)"
-              ></nz-input-number>
-                
-            </td>
+            <td></td>
             <td colspan="2" [nzAlign]="'right'">
               <button
                 id="actualizarbutton"
@@ -406,5 +394,6 @@
   [header]="'¿Está seguro que desea guardar el comprobante?'"
   [message]="'Esta acción no se puede revertir'"
   (handleOk)="save()"
+  [disabled]="isSaving"
 >
 </app-popup-confirmation>
