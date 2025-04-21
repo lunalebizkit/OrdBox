@@ -68,14 +68,23 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
 
 
             var result = await  RunCommand<DtoResponseAbrirDoc>(new AbrirDocumento { AbrirDocumentoBody = new AbrirDocumentoBody { CodigoComprobante = typeDocumemt }});
-
-            foreach (var Item in result.Body.EstadoBody.Fiscal)
+            
+            if (result != null && result.Body != null)
             {
-                if (Item.ToString().Contains("Error"))
+                foreach (var Item in result.Body.EstadoBody.Fiscal)
                 {
-                    return null ;
+                    if (Item.ToString().Contains("Error"))
+                    {
+                        return null;
+                    }
                 }
+
             }
+            else
+            {
+                return null;
+            }
+            
             return result.Body.NumeroComprobante;
         }
 
@@ -106,14 +115,22 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
 
             var result = await RunCommand<DtoResponseAbrirDoc>(new AbrirDocumento { AbrirDocumentoBody = new AbrirDocumentoBody { CodigoComprobante = typeDocumemt } });
 
-            foreach (var Item in result.Body.EstadoBody.Fiscal)
+            if (result != null && result.Body != null)
             {
-                if (Item.ToString().Contains("Error"))
+                foreach (var Item in result.Body.EstadoBody.Fiscal)
                 {
-                    return null;
+                    if (Item.ToString().Contains("Error"))
+                    {
+                        return null;
+                    }
                 }
-            }
 
+            }
+            else
+            {
+                return null;
+            }
+            
             return result.Body.NumeroComprobante;
         }
 
@@ -130,14 +147,22 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
 
             var result = await RunCommand<DtoResponseAbrirDoc>(new AbrirDocumento { AbrirDocumentoBody = new AbrirDocumentoBody { CodigoComprobante = typeDocumemt }});
 
-            foreach (var Item in result.Body.EstadoBody.Fiscal)
+            if (result != null && result.Body != null)
             {
-                if (Item.ToString().Contains("Error"))
+                foreach (var Item in result.Body.EstadoBody.Fiscal)
                 {
-                    return null;
+                    if (Item.ToString().Contains("Error"))
+                    {
+                        return null;
+                    }
                 }
-            }
 
+            }
+            else
+            {
+                return null;
+            }
+              
             return result.Body.NumeroComprobante;
         }
 
@@ -177,13 +202,20 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
                 AlicuotaIVA = iva,
                 CodigoProducto = codigo,
             }});
-
-            foreach (var Item in result.Body.EstadoBody.Fiscal)
+            if (result != null && result.Body != null)
             {
-                if (Item.ToString().Contains("Error"))
+                foreach (var Item in result.Body.EstadoBody.Fiscal)
                 {
-                    return null;
+                    if (Item.ToString().Contains("Error"))
+                    {
+                        return null;
+                    }
                 }
+
+            }
+            else
+            {
+                return null;
             }
 
             return result.Body.IndiceAuditoria.ToString();
@@ -201,13 +233,22 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
                 }
             });
 
-            foreach (var Item in result.Body.EstadoBody.Fiscal)
+            if (result != null && result.Body != null)
             {
-                if (Item.ToString().Contains("Error"))
+                foreach (var Item in result.Body.EstadoBody.Fiscal)
                 {
-                    return null;
+                    if (Item.ToString().Contains("Error"))
+                    {
+                        return null;
+                    }
                 }
+
             }
+            else
+            {
+                return null;
+            }
+            
             return result.Body.NumeroComprobante;
         }
 
@@ -262,15 +303,23 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
                     NumeroComprobante = numeroComprobante
                 }
             });
-
-            foreach (var Item in result.Body.EstadoBody.Fiscal)
+            if (result != null && result.Body != null)
             {
-                if (Item.ToString().Contains("Error"))
+                foreach (var Item in result.Body.EstadoBody.Fiscal)
                 {
-                    await CloseFactura(1, "");
-                    return null;
+                    if (Item.ToString().Contains("Error"))
+                    {
+                        await CloseFactura(1, "");
+                        return null;
+                    }
                 }
+
             }
+            else
+            {
+                return null;
+            }
+            
             return "Comprobante Reimpreso Correctamente";
         }
     }
