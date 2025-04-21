@@ -272,9 +272,9 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
     this.cuit =
       this.formInvoice.controls['customerCuit'].value;
     if (this.cuit === '00'){
-      this.formInvoice.controls['address'].setValue('');
-      this.formInvoice.controls['customerCuit'].setValue('');
-      this.formInvoice.controls['customerName'].setValue('');
+      this.formInvoice.controls['address'].setValue('-');
+      this.formInvoice.controls['customerCuit'].setValue('99999999995');
+      this.formInvoice.controls['customerName'].setValue('-');
       this.customerId= 0;
       return;
     }else{
@@ -432,9 +432,13 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
      this.popupComponent.isConfirmationvisible = false; 
      if (this.isValidForm(this.formInvoice) && (this.invoiceDetailsList.length != 0 ) && 
      this.isValidForm(this.formCustomerSearch) && this.isValidForm(this.formProductSearch)){
+      if (!this.isValidProductName()){        
+       this.showMessageError('Hay prodcutos sin descripción');
+       return;
+      }
       this.popComponent.showConfirmation() 
      } else{
-       this.showMessageError('No ha seleccionado producto')
+       this.showMessageError('No ha seleccionado producto');
      }
      } catch (error) {
        console.log(error);
@@ -442,6 +446,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
   }
   
   save(): void {
+    this.isSaving = true;
     if (this.isValidForm(this.formInvoice)) {
 
       if(this.selectedDni && this.formInvoice.controls['customerDni'].value.length < 8){
@@ -631,6 +636,10 @@ changeProductName(name: string):void {
 }
 
 changeProductPrice(price: number):void {
+//recupero el producto a editar
+  let product= this.invoiceDetailsList.filter(
+    detail => detail.ownCode == this.editIdProductPrice)[0];
+
   this.invoiceDetailsList.filter(
     detail => detail.ownCode == this.editIdProductPrice
     )[0].price = price;
@@ -639,7 +648,15 @@ changeProductPrice(price: number):void {
     detail => detail.productId == this.editIdProductPrice
     )[0].price = price;
     
+    this.invoiceDetailsList.filter(
+      detail => detail.ownCode == this.editIdProductPrice
+      )[0].subTotal = product.quantity * price;
+
     this.totalCalculate();
+}
+
+isValidProductName():boolean{
+ return this.invoiceDetails.every(y => y.productName != "");
 }
 
 }

@@ -356,8 +356,6 @@
             <td colspan="1">
               <b>Total </b
               ><b style="color: red ; font-size: 15px;">
-                <input id="total" name="total" [(ngModel)]="this.total"
-              />
                 {{ this.currencyFormat(this.total) }}</b>
             </td>
             <td></td>
@@ -396,5 +394,6 @@
   [header]="'¿Está seguro que desea guardar el comprobante?'"
   [message]="'Esta acción no se puede revertir'"
   (handleOk)="save()"
+  [disabled]="isSaving"
 >
 </app-popup-confirmation>
