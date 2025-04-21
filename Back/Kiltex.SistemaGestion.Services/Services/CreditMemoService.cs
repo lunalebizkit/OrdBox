@@ -235,7 +235,7 @@ namespace Kiltex.SistemaGestion.Services.Services
 
             if (openDoc == null)
             {
-                await _printer.CloseFactura(1, model.CustomerName).ConfigureAwait(false);
+                await _printer.CloseFactura(1).ConfigureAwait(false);
                 return "ErrorAbrir";
             }
             //TODO por cada item mandar a imprimir
@@ -245,12 +245,12 @@ namespace Kiltex.SistemaGestion.Services.Services
 
                 if (imprimir == null)
                 {
-                    await _printer.CloseFactura(1, model.CustomerName).ConfigureAwait(false);
+                    await _printer.CloseFactura(1).ConfigureAwait(false);
                     return "ErrorImprimir";
                 }
             }
 
-            var closeFactura = await _printer.CloseFactura(1, model.CustomerName).ConfigureAwait(false);
+            var closeFactura = await _printer.CloseFactura(1).ConfigureAwait(false);
 
             if (closeFactura == null)
             {
