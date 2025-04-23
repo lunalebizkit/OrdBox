@@ -8,6 +8,7 @@ using Kiltex.SistemaGestion.Domain.Enum;
 using Kiltex.SistemaGestion.Domain.Model;
 using Kiltex.SistemaGestion.Services.LibroIvaDigital;
 using System.Text;
+using System.IO.Compression;
 
 namespace Kiltex.SistemaGestion.Api.Controllers.Invoice
 {
@@ -41,8 +42,57 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Invoice
         [AllowAccess(Permission = new EPermission[] { EPermission.GetInvoice })]
         public async Task<IActionResult> ArchivoTxt([FromQuery] DateTime from, DateTime to)
         {
-            var content = await _service.ArchivoTxt(from, to).ConfigureAwait(false);
-            return File(content.Data,"text/plain", $"ListaReporteLibroIvaVentas{DateTime.Now:dd-MM-yyyy-hh:mm:ss}.txt");
+            var ivaDigital = await _service.ArchivoTxt(from, to).ConfigureAwait(false);
+
+            var ivaAlicuota = await _service.AlicuotaTxt(from, to).ConfigureAwait(false);
+
+            if (ivaDigital.Data == null || ivaAlicuota.Data == null)
+            {
+                return BadRequest("Error generando los archivos.");
+            }
+
+            string folderPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+            // Ruta del ZIP
+            var zipPath = Path.Combine(Path.GetTempPath(), $"LIBRO_IVA_DIGITAL_{from:yyyyMMdd}-{to:yyyyMMdd}.zip");
+            try
+            {
+
+                Directory.CreateDirectory(folderPath);
+
+                // Crear archivo 1
+                string file1Path = Path.Combine(folderPath, $"LIBRO_IVA_DIGITAL_VENTAS_CBTE_{from:yyyyMMdd}-{to:yyyyMMdd}.txt");
+                string file2Path = Path.Combine(folderPath, $"LIBRO_IVA_DIGITAL_VENTAS_ALICUOTAS_{from:yyyyMMdd}-{to:yyyyMMdd}.txt");
+
+                // Guardar los archivos
+                await System.IO.File.WriteAllBytesAsync(file1Path, ivaDigital.Data);
+                await System.IO.File.WriteAllBytesAsync(file2Path, ivaAlicuota.Data);
+
+
+                // Eliminar si ya existía
+                if (System.IO.File.Exists(zipPath)) System.IO.File.Delete(zipPath);
+
+                // Comprimir carpeta
+                ZipFile.CreateFromDirectory(folderPath, zipPath);
+
+                // Leer y retornar el ZIP
+                var zipBytes = await System.IO.File.ReadAllBytesAsync(zipPath);
+                return File(zipBytes, "application/zip", Path.GetFileName(zipPath));
+            }
+            finally
+            {
+                try
+                {
+                    if (Directory.Exists(folderPath))
+                        Directory.Delete(folderPath, recursive: true);
+
+                    if (System.IO.File.Exists(zipPath))
+                        System.IO.File.Delete(zipPath);
+                }
+                catch
+                {
+                    // Opcional: loggear error de limpieza
+                }
+            }
         }
 
         [HttpGet]

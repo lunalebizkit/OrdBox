@@ -138,24 +138,12 @@ export class InvoiceIvaReportComponent extends BaseComponent implements OnInit {
           });
 
         }
-      }
+      }     
       
-      getAlicuotaIva(){
-        if ((this.newInitDate != null) && (this.newEndDate != null)){
-        const fileName = `Alicuota_Iva_${this.newInitDate}-${this.newEndDate}`
-        this.service.getAlicuotaIva(this.newInitDate,this.newEndDate).subscribe({
-          next: (r) => {
-            this.downloadFile(r, fileName);
-          },
-          error: (e) => {
-            this.loading = false;           
-            },
-        })}
-      }
 
       getIvaVentasTxt(){
         if ((this.newInitDate != null) && (this.newEndDate != null)){
-       const fileName = `Iva_Ventas_${this.newInitDate}-${this.newEndDate}`
+       const fileName = `LIBRO_IVA_DIGITAL_VENTAS_CBTE_${this.newInitDate}-${this.newEndDate}.zip`
         this.service.getIvaVentasTxt(this.newInitDate,this.newEndDate).subscribe({
           next: (r) => {
             this.downloadFile(r, fileName);
@@ -169,7 +157,6 @@ export class InvoiceIvaReportComponent extends BaseComponent implements OnInit {
       
 
       downloadTxt(){
-        this.getAlicuotaIva();
         this.getIvaVentasTxt();
       }
 

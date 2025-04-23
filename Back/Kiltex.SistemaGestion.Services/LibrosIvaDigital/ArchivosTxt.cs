@@ -29,7 +29,7 @@ namespace Kiltex.SistemaGestion.Services.LibroIvaDigital
 
         #region Punto De Ventas
 
-        public string? PuntoDeVenta { get; set; } = "0003";
+        public string PuntoDeVenta { get; set; } = "0003";
 
         #endregion
 
@@ -131,7 +131,7 @@ namespace Kiltex.SistemaGestion.Services.LibroIvaDigital
         #region Tipo de Cambio
         //4 enteros 6 decimales sin punto decimal
 
-        public string? TipoDeCambio { get; set; } = "0001000000";
+        public string TipoDeCambio { get; set; } = "0001000000";
 
         #endregion
 
@@ -144,7 +144,7 @@ namespace Kiltex.SistemaGestion.Services.LibroIvaDigital
         #region Codigo de Operacion
         //Segun tabla de Codigo de Operacion
 
-        public string? CodigoDeOperacion { get; set; } = "0";
+        public string CodigoDeOperacion { get; set; } = "0";
 
         #endregion
 
