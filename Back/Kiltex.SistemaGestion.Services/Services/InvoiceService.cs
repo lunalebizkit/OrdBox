@@ -488,6 +488,8 @@ namespace Kiltex.SistemaGestion.Services.Services
                 await _printer.CloseFactura(1,"").ConfigureAwait(false);
                 return "ErrorAbrir";
             }
+
+            Thread.Sleep(2000);
             //TODO por cada item mandar a imprimir
             foreach (var item in model.InvoiceDetails)
             {
@@ -498,6 +500,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                     await _printer.CloseFactura(1, "").ConfigureAwait(false);
                     return "ErrorImprimir";
                 }
+                Thread.Sleep(2000);
             }
 
             var closeFactura = await _printer.CloseFactura(1, "").ConfigureAwait(false);

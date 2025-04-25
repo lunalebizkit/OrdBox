@@ -31,7 +31,7 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.Printer250F.Dto
         public string TipoImpuestoInterno { get; set; } = "IIFijoMonto";
 
         [JsonProperty("MagnitudImpuestoInterno")]
-        public double MagnitudImpuestoInterno { get; set; } = 0;
+        public string MagnitudImpuestoInterno { get; set; } = "0.00";
 
         [JsonProperty("ModoDisplay")]
         public string ModoDisplay { get; set; } = "DisplayNo";      
@@ -40,15 +40,15 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.Printer250F.Dto
         public string ModoBaseTotal { get; set; } = "ModoPrecioTotal";
 
         [JsonProperty("UnidadReferencia")]
-        public string? UnidadReferencia { get; set; } = "20";
+        public string UnidadReferencia { get; set; } = "1";
 
         [JsonProperty("CodigoProducto")]
-        public string? CodigoProducto { get; set; }
+        public string CodigoProducto { get; set; } = "";
 
         [JsonProperty("CodigoInterno")]
         public string CodigoInterno { get; set; } = "C1130";
 
         [JsonProperty("UnidadMedida")]
-        public string UnidadMedida { get; set; } = "Pack";
+        public string UnidadMedida { get; set; } = "Unidad";
     }
 }

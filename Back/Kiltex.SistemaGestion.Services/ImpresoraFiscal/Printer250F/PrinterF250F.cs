@@ -4,7 +4,6 @@ using Kiltex.SistemaGestion.Services.ImpresoraFiscal.Printer250F;
 using Kiltex.SistemaGestion.Services.ImpresoraFiscal.Printer250F.Dto;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
 using Newtonsoft.Json;
-//using Simple.Interface;
 using System.Net.Mime;
 using System.Text;
 
@@ -15,6 +14,7 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
     {
         private readonly PrinterConfig _config;
         private readonly ErrorManager _logger;
+
         public PrinterF250F(PrinterConfig config, ErrorManager logger)
         {
             _config = config;
@@ -28,8 +28,8 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
             {
                 var data = JsonConvert.SerializeObject(request);
 
-                _logger.LogWarning("-----------request PRINTER---------");
-                _logger.LogWarning(data);
+                _logger.LogRequestAndResponseInfo("-----------request de Impresora---------");
+                _logger.LogRequestAndResponseInfo(data);
 
                 using HttpClient client = new();
 
@@ -41,11 +41,13 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
                 };
 
                 var response = await client.SendAsync(requestPrinter).ConfigureAwait(false);
+
                 response.EnsureSuccessStatusCode();
 
                 var responseBody = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
-                _logger.LogWarning(responseBody);
+                _logger.LogRequestAndResponseInfo("-----------Response de Impresora---------");
+                _logger.LogRequestAndResponseInfo(responseBody);
 
                 return JsonConvert.DeserializeObject<T>(responseBody);
             }
@@ -191,7 +193,7 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
 
         }
 
-        public async Task<string> PrintItem(string articulo, double cantidad, decimal monto, decimal iva = 21, string codigo = "9999999")
+        public async Task<string> PrintItem(string articulo, double cantidad, decimal monto, decimal iva = 21, string codigo = "")
         {
 
             var result = await RunCommand<DtoResponseImprimirItem>(new ImprimirItem { ImprimirItemBody = new ImprimirItemBody{
@@ -200,7 +202,7 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
                 Cantidad = cantidad,
                 PrecioUnitario = monto,
                 AlicuotaIVA = iva,
-                CodigoProducto = codigo,
+                CodigoInterno = string.IsNullOrEmpty(codigo) ? "9999999" : codigo,
             }});
             if (result != null && result.Body != null)
             {
