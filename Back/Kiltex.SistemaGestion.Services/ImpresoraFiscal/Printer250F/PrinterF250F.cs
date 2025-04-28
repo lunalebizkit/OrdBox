@@ -6,6 +6,7 @@ using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
 using Newtonsoft.Json;
 using System.Net.Mime;
 using System.Text;
+using System.Text.Json;
 
 namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
 
@@ -20,38 +21,65 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
             _config = config;
             _logger = logger;
         }
-      
+
 
         private async Task<T> RunCommand<T>(object request)
         {
+            short retry = 1;
+            int retryWait = 1500;
+            byte maxRetry = 4;
+            bool success = false;
+            string responseBody;
             try
             {
-                var data = JsonConvert.SerializeObject(request);
-
-                _logger.LogRequestAndResponseInfo("-----------request de Impresora---------");
-                _logger.LogRequestAndResponseInfo(data);
-
-                using HttpClient client = new();
-
-                var requestPrinter = new HttpRequestMessage
+                do
                 {
-                    Method = HttpMethod.Get,
-                    RequestUri = new Uri(_config.Ip),
-                    Content = new StringContent(data, Encoding.UTF8, MediaTypeNames.Application.Json /* "application/json" */),
-                };
+                    var data = JsonConvert.SerializeObject(request);
 
-                var response = await client.SendAsync(requestPrinter).ConfigureAwait(false);
+                    _logger.LogRequestAndResponseInfo($"-----------request de Impresora---------{DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
+                    _logger.LogRequestAndResponseInfo(data);
 
-                response.EnsureSuccessStatusCode();
+                    using HttpClient client = new();
 
-                var responseBody = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                    var requestPrinter = new HttpRequestMessage
+                    {
+                        Method = HttpMethod.Get,
+                        RequestUri = new Uri(_config.Ip),
+                        Content = new StringContent(data, Encoding.UTF8, "application/json"),
+                    };
 
-                _logger.LogRequestAndResponseInfo("-----------Response de Impresora---------");
-                _logger.LogRequestAndResponseInfo(responseBody);
+                    var response = await client.SendAsync(requestPrinter).ConfigureAwait(false);
 
+                    response.EnsureSuccessStatusCode();
+
+                    responseBody = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+                    _logger.LogRequestAndResponseInfo("-----------Response de Impresora---------");
+                    _logger.LogRequestAndResponseInfo(responseBody);
+
+                    var responseDeserialized = JsonConvert.DeserializeObject<T>(responseBody);
+
+                    if (responseDeserialized != null)
+                    {
+                        using JsonDocument document = JsonDocument.Parse(responseBody);
+
+                        // Buscamos si existe "ControladorOcupado" en el nivel raíz
+                        if (document.RootElement.TryGetProperty("ControladorOcupado", out JsonElement controladorOcupado))
+                        {
+                            Thread.Sleep(retry * retryWait);
+                        }
+                        else
+                        {
+                            success = true;
+                        }
+                        retry++;
+                    }
+                } while (!success && retry < maxRetry);
+                
                 return JsonConvert.DeserializeObject<T>(responseBody);
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
 
                 _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
                 return default;
@@ -69,8 +97,8 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
             };
 
 
-            var result = await  RunCommand<DtoResponseAbrirDoc>(new AbrirDocumento { AbrirDocumentoBody = new AbrirDocumentoBody { CodigoComprobante = typeDocumemt }});
-            
+            var result = await RunCommand<DtoResponseAbrirDoc>(new AbrirDocumento { AbrirDocumentoBody = new AbrirDocumentoBody { CodigoComprobante = typeDocumemt } });
+
             if (result != null && result.Body != null)
             {
                 foreach (var Item in result.Body.EstadoBody.Fiscal)
@@ -86,7 +114,7 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
             {
                 return null;
             }
-            
+
             return result.Body.NumeroComprobante;
         }
 
@@ -99,10 +127,14 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
 
         public async Task SetZona(int numeroLineas, string descripcion)
         {
-            var result = await RunCommand<Estado>(new ConfigurarZona { ConfigurarZonaBody = new ConfigurarZonaBody { 
-                NumeroLinea = numeroLineas,
-                Descripcion = descripcion
-            }});
+            var result = await RunCommand<Estado>(new ConfigurarZona
+            {
+                ConfigurarZonaBody = new ConfigurarZonaBody
+                {
+                    NumeroLinea = numeroLineas,
+                    Descripcion = descripcion
+                }
+            });
         }
 
         public async Task<string> OpenND(ETypeReceipt type, string documentClient, eTypeDocumentClient typeDocument, string address = "")
@@ -132,7 +164,7 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
             {
                 return null;
             }
-            
+
             return result.Body.NumeroComprobante;
         }
 
@@ -147,7 +179,7 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
                 _ => throw new NotImplementedException()
             };
 
-            var result = await RunCommand<DtoResponseAbrirDoc>(new AbrirDocumento { AbrirDocumentoBody = new AbrirDocumentoBody { CodigoComprobante = typeDocumemt }});
+            var result = await RunCommand<DtoResponseAbrirDoc>(new AbrirDocumento { AbrirDocumentoBody = new AbrirDocumentoBody { CodigoComprobante = typeDocumemt } });
 
             if (result != null && result.Body != null)
             {
@@ -164,7 +196,7 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
             {
                 return null;
             }
-              
+
             return result.Body.NumeroComprobante;
         }
 
@@ -196,14 +228,18 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
         public async Task<string> PrintItem(string articulo, double cantidad, decimal monto, decimal iva = 21, string codigo = "")
         {
 
-            var result = await RunCommand<DtoResponseImprimirItem>(new ImprimirItem { ImprimirItemBody = new ImprimirItemBody{
-            
-                Descripcion = articulo,
-                Cantidad = cantidad,
-                PrecioUnitario = monto,
-                AlicuotaIVA = iva,
-                CodigoInterno = string.IsNullOrEmpty(codigo) ? "9999999" : codigo,
-            }});
+            var result = await RunCommand<DtoResponseImprimirItem>(new ImprimirItem
+            {
+                ImprimirItemBody = new ImprimirItemBody
+                {
+
+                    Descripcion = articulo,
+                    Cantidad = cantidad,
+                    PrecioUnitario = monto,
+                    AlicuotaIVA = iva,
+                    CodigoInterno = string.IsNullOrEmpty(codigo) ? "9999999" : codigo,
+                }
+            });
             if (result != null && result.Body != null)
             {
                 foreach (var Item in result.Body.EstadoBody.Fiscal)
@@ -250,11 +286,11 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
             {
                 return null;
             }
-            
+
             return result.Body.NumeroComprobante;
         }
 
-        public async Task<string> CargarDatosCliente(string customerName, string customerCuit, string customerAddress, ETypeReceipt tipoDocumento )
+        public async Task<string> CargarDatosCliente(string customerName, string customerCuit, string customerAddress, ETypeReceipt tipoDocumento)
         {
             await SetHeader(_config.Line1, _config.Line2, _config.Line3);
 
@@ -272,18 +308,18 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
             };
 
             var result = await RunCommand<DtoResponseCargarDatosCliente>(new CargarDatosCliente
+            {
+                CargarDatosClienteBody = new CargarDatosClienteBody
                 {
-                    CargarDatosClienteBody = new CargarDatosClienteBody
-                    {
-                        RazonSocial = customerName,
-                        NumeroDocumento = customerCuit,
-                        ResponsabilidadIVA = typeDocumemt,
-                        TipoDocumento = typeIva,
-                        Domicilio = customerAddress
-                    }
-                });
+                    RazonSocial = customerName,
+                    NumeroDocumento = customerCuit,
+                    ResponsabilidadIVA = typeDocumemt,
+                    TipoDocumento = typeIva,
+                    Domicilio = customerAddress
+                }
+            });
 
-            foreach(var Item in result.Body.EstadoBody.Fiscal)
+            foreach (var Item in result.Body.EstadoBody.Fiscal)
             {
                 if (Item.ToString().Contains("Error"))
                 {
@@ -321,7 +357,7 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
             {
                 return null;
             }
-            
+
             return "Comprobante Reimpreso Correctamente";
         }
     }

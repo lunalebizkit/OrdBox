@@ -17,6 +17,7 @@ export class ReportComponent extends BaseComponent implements OnInit {
   @ViewChild('popup') popupComponent!: PopupConfirmationComponent;
   @ViewChild('header') headerComponent!: HeaderOperationsButtonsComponent;
   @ViewChild('pop') popComponent!: PopupConfirmationComponent;
+  isSaving=false;
   constructor( 
     notificacionService: NzNotificationService,
     el: ElementRef,
@@ -31,17 +32,20 @@ export class ReportComponent extends BaseComponent implements OnInit {
   }
 
   reportZ(){
+    this.isSaving = true;
    this.service.reportZ().subscribe({
       next: () => {
         this.showNotificationSuccess(
           'Generado correcto',
           `Generado correctamente`
         );
+        this.isSaving = false;
         this.popComponent.handleCance()
         this.router.navigate(['/home/products/list']);
       },
       error: (e) =>{
-        this.showMessageError(e.error.descripcion)      
+        this.showMessageError(e.error.descripcion);
+        this.isSaving = false;   
       }
    })
   }

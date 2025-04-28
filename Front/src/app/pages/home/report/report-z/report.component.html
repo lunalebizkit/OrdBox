@@ -22,6 +22,7 @@
   [header]="'¿Está seguro que desea realizar un Reporte Z?'"
   [message]="'Esta acción no se puede revertir'"
   (handleOk)="reportZ()"
+  [disabled]="isSaving"
 >
   >
 </app-popup-confirmation>

@@ -489,24 +489,23 @@ namespace Kiltex.SistemaGestion.Services.Services
                 return "ErrorAbrir";
             }
 
-            Thread.Sleep(2000);
             //TODO por cada item mandar a imprimir
             foreach (var item in model.InvoiceDetails)
             {
                 var imprimir = await _printer.PrintItem(item.ProductName, item.Quantity, item.Price, item.Iva, item.ProductCode.ToString()).ConfigureAwait(false);
 
                 if (imprimir == null)
-                {
+                {                    
                     await _printer.CloseFactura(1, "").ConfigureAwait(false);
                     return "ErrorImprimir";
                 }
-                Thread.Sleep(2000);
             }
 
             var closeFactura = await _printer.CloseFactura(1, "").ConfigureAwait(false);
 
             if (closeFactura == null)
             {
+                Thread.Sleep(1000);
                 await _printer.CerrarJornadaFiscal();
                 return "ErrorCerrar";
             }
