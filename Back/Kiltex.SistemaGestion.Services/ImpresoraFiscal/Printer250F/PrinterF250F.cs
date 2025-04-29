@@ -4,7 +4,6 @@ using Kiltex.SistemaGestion.Services.ImpresoraFiscal.Printer250F;
 using Kiltex.SistemaGestion.Services.ImpresoraFiscal.Printer250F.Dto;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
 using Newtonsoft.Json;
-using System.Net.Mime;
 using System.Text;
 using System.Text.Json;
 
@@ -124,8 +123,35 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
                                     Thread.Sleep(retryWait);
                                 } while (!success && getStatusRetry < getStatusMaxRetry);
                             }
+                        
+                            if (requestType.RootElement.TryGetProperty("CerrarJornadaFiscal", out JsonElement cerrarFiscal))
+                                {
+                                    do
+                                    {
+                                        responseBody = await GetStatusForPrintWaiting();
 
-                        }
+                                        var responseBodyConverted = JsonConvert.DeserializeObject<T>(responseBody);
+
+                                        if (responseBodyConverted != null)
+                                        {
+                                            using JsonDocument parsedDoc = JsonDocument.Parse(responseBody);
+
+                                            if (parsedDoc.RootElement.TryGetProperty("CerrarJornadaFiscal", out JsonElement abrirDocumento))
+                                                {
+                                                    success = true;
+                                                }
+                                        }
+
+                                        if (success)
+                                        {
+                                            break;
+                                        }
+                                        getStatusRetry++;
+                                        Thread.Sleep(retryWait);
+                                    } while (!success && getStatusRetry < getStatusMaxRetry);
+                                }
+
+                            }
                     }                
                 
                 return JsonConvert.DeserializeObject<T>(responseBody);
@@ -347,7 +373,7 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
                 }
             }while(withRetry && getStatusRetry < getStatusMaxRetry);
 
-            return result.Body.NumeroComprobante;
+            return (result.Body.NumeroComprobante != null) ? result.Body.NumeroComprobante : string.Empty;
         }
 
         public async Task<string> CargarDatosCliente(string customerName, string customerCuit, string customerAddress, ETypeReceipt tipoDocumento)
