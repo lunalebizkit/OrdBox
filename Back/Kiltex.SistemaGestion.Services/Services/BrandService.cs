@@ -75,7 +75,6 @@ namespace Kiltex.SistemaGestion.Services.Services
                 {
                     var oldBrand = await _contextSql
                                     .Brands
-                                    .AsNoTracking()
                                     .FirstAsync(p => p.Id == brandModel.Id)
                                     .ConfigureAwait(false);
                     _contextSql.Brands.Update(brandModel);

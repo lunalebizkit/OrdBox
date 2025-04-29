@@ -156,7 +156,6 @@ namespace Kiltex.SistemaGestion.Services.Services
                     {
                         var oldUser = await _contextSql
                                    .Users
-                                   .AsNoTracking()
                                    .FirstAsync(p => p.Id == usermodel.Id, ct)
                                    .ConfigureAwait(false);
 

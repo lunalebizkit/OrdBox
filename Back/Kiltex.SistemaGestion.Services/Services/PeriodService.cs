@@ -88,7 +88,6 @@ namespace Kiltex.SistemaGestion.Services.Services
                 {
                     var oldPeriod = await _contextSql
                                     .Periods
-                                    .AsNoTracking()
                                     .FirstAsync(p => p.Id == NewModel.Id)
                                     .ConfigureAwait(false);
                     _contextSql.Periods.Update(NewModel);

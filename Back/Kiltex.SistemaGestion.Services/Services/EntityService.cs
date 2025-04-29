@@ -211,7 +211,6 @@ namespace Kiltex.SistemaGestion.Services.Services
                 {
                     var oldEntity = await _contextSql
                                     .Suppliers
-                                    .AsNoTracking()
                                     .Include(p => p.EmailEntities)
                                     .Include(p => p.PhoneEntities)
                                     .FirstAsync(p => p.Id == entityModel.Id)
@@ -411,7 +410,6 @@ namespace Kiltex.SistemaGestion.Services.Services
                 {
                     var oldEntity = await _contextSql
                                     .Customers
-                                    .AsNoTracking()
                                     .Include(p => p.EmailEntities)
                                     .Include(p => p.PhoneEntities)
                                     .FirstAsync(p => p.Id == entityModel.Id)

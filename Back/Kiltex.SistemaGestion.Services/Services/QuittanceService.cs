@@ -106,7 +106,6 @@ namespace Kiltex.SistemaGestion.Services.Services
                     var oldQuittance = await _contextSql
                                     .Quittance
                                     .Include(x => x.QuittanceDetails)
-                                    .AsNoTracking()
                                     .FirstAsync(p => p.Id == model.Id)
                                     .ConfigureAwait(false);
                     _contextSql.QuittanceDetails.RemoveRange(oldQuittance.QuittanceDetails);

@@ -135,7 +135,7 @@ namespace Kiltex.SistemaGestion.Services.Services
 
                     foreach (var detail in receiptModel.ReceiptDetails)
                     {
-                        var oldProduct = await _contextSql.Products.AsNoTracking().FirstAsync(p => p.Id == detail.ProductId).ConfigureAwait(false);
+                        var oldProduct = await _contextSql.Products.FirstAsync(p => p.Id == detail.ProductId).ConfigureAwait(false);
 
                         productDetail = oldProduct;
                         productDetail.UpdateStock(detail.Quantity);

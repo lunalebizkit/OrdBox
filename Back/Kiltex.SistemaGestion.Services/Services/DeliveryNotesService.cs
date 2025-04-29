@@ -100,7 +100,6 @@ namespace Kiltex.SistemaGestion.Services.Services
                 {
                     var oldDeliveryNotes = await _contextSql
                                     .DeliveryNotes
-                                    .AsNoTracking()
                                     .FirstAsync(p => p.Id == model.Id)
                                     .ConfigureAwait(false);
                     _contextSql.DeliveryNotes.Update(newModel);

@@ -83,7 +83,6 @@ namespace Kiltex.SistemaGestion.Services.Services
                 {
                     var oldCategory = await _contextSql
                                     .Category
-                                    .AsNoTracking()
                                     .FirstAsync(p => p.Id == categoryModel.Id)
                                     .ConfigureAwait(false);
                     _contextSql.Category.Update(categoryModel);

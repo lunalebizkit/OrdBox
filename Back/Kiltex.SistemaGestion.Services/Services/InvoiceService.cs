@@ -471,7 +471,7 @@ namespace Kiltex.SistemaGestion.Services.Services
         #region Imprimir Factura En impresora Fiscal
         public async Task<string> PrintInvoice(Invoice model, CancellationToken ct = default)
         {
-
+            string? closeFactura = null;
             //MANEJO DE ERRORES
             var cargarCliente = await _printer.CargarDatosCliente(model.CustomerName, model.CustomerCuit, model.CustomerAddress, (ETypeReceipt)model.Type).ConfigureAwait(false);
 
@@ -480,28 +480,36 @@ namespace Kiltex.SistemaGestion.Services.Services
                 await _printer.CerrarJornadaFiscal();
                 return "ErrorCliente";
             }
-
+            //Contiene loop de reintentos en consultar Estado
             var openDoc = await _printer.OpenInvoice((ETypeReceipt)model.Type, model.CustomerName, eTypeDocumentClient.Cuil, model.CustomerAddress).ConfigureAwait(false);
 
             if (openDoc == null)
             {
-                await _printer.CloseFactura(1,"").ConfigureAwait(false);
-                return "ErrorAbrir";
+                await _printer.CloseFactura(1, "").ConfigureAwait(false);
+                return "ErrorAbrir";                
             }
 
             //TODO por cada item mandar a imprimir
             foreach (var item in model.InvoiceDetails)
             {
+                //Contiene loop de reintentos en consultar Estado
                 var imprimir = await _printer.PrintItem(item.ProductName, item.Quantity, item.Price, item.Iva, item.ProductCode.ToString()).ConfigureAwait(false);
 
                 if (imprimir == null)
-                {                    
-                    await _printer.CloseFactura(1, "").ConfigureAwait(false);
-                    return "ErrorImprimir";
+                {
+                    //Intento recuperar numero de comprobante mediante Status
+                    closeFactura = await _printer.CloseFactura(1, "", true).ConfigureAwait(false);
+
+                    if (closeFactura == null)
+                    {
+                        return "ErrorImprimir";
+                    }
                 }
             }
-
-            var closeFactura = await _printer.CloseFactura(1, "").ConfigureAwait(false);
+            if (string.IsNullOrEmpty(closeFactura))
+            {
+                closeFactura = await _printer.CloseFactura(1, "").ConfigureAwait(false);
+            }
 
             if (closeFactura == null)
             {

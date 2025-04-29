@@ -69,7 +69,6 @@ namespace Kiltex.SistemaGestion.Services.Services
                 {
                     var oldOrder = await _contextSql
                         .SupplierOrders
-                        .AsNoTracking()
                         .Include(p => p.Supplier)
                         .Include(p => p.SupplierOrderDetail)
                         .FirstAsync(p => p.Id == newOrder.Id, ct)

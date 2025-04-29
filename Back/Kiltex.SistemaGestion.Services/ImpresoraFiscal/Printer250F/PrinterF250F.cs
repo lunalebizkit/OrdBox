@@ -16,6 +16,7 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
         private readonly PrinterConfig _config;
         private readonly ErrorManager _logger;
 
+        private string ConsultarEstadoEsperaString = JsonConvert.SerializeObject(new { ConsultarEstadoEspera = new { } });
         public PrinterF250F(PrinterConfig config, ErrorManager logger)
         {
             _config = config;
@@ -23,17 +24,15 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
         }
 
 
-        private async Task<T> RunCommand<T>(object request)
+        private async Task<T> RunCommand<T>(object request,bool reintentar = true, int sleep = 1500)
         {
-            short retry = 1;
             int retryWait = 1500;
-            byte maxRetry = 4;
             bool success = false;
             string responseBody;
+            byte getStatusRetry = 0;
+            byte getStatusMaxRetry = 10;
             try
             {
-                do
-                {
                     var data = JsonConvert.SerializeObject(request);
 
                     _logger.LogRequestAndResponseInfo($"-----------request de Impresora---------{DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
@@ -66,15 +65,68 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
                         // Buscamos si existe "ControladorOcupado" en el nivel raíz
                         if (document.RootElement.TryGetProperty("ControladorOcupado", out JsonElement controladorOcupado))
                         {
-                            Thread.Sleep(retry * retryWait);
+                            using JsonDocument requestType = JsonDocument.Parse(data);
+
+                            if (requestType.RootElement.TryGetProperty("AbrirDocumento", out JsonElement abrirDocument))
+                            {
+                                do
+                                {
+                                    responseBody = await GetStatusForPrintWaiting();
+
+                                    var responseBodyConverted = JsonConvert.DeserializeObject<T>(responseBody);
+
+                                    if (responseBodyConverted != null)
+                                    {
+                                        using JsonDocument statusResponse = JsonDocument.Parse(responseBody);
+
+                                        if (statusResponse.RootElement.TryGetProperty("AbrirDocumento", out JsonElement abrirDocumento))
+                                        {
+                                            // Ahora buscamos si dentro de "AbrirDocumento" existe "NumeroComprobante"
+                                            if (abrirDocumento.TryGetProperty("NumeroComprobante", out JsonElement numeroComprobante))
+                                            {
+                                                success = true;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    if (success)
+                                    {
+                                    break;
+                                    }
+                                        getStatusRetry++;
+                                        Thread.Sleep(retryWait);
+                                } while (!success && getStatusRetry < getStatusMaxRetry);
+                            }
+                            
+                            if (requestType.RootElement.TryGetProperty("ImprimirItem", out JsonElement imprimirDoc))
+                            {
+                                do
+                                {
+                                    responseBody = await GetStatusForPrintWaiting();
+
+                                    var responseBodyConverted = JsonConvert.DeserializeObject<T>(responseBody);
+
+                                    if (responseBodyConverted != null)
+                                    {
+                                        using JsonDocument parsedDoc = JsonDocument.Parse(responseBody);
+
+                                        if (parsedDoc.RootElement.TryGetProperty("ImprimirItem", out JsonElement abrirDocumento))
+                                            {
+                                                success = true;
+                                            }
+                                    }
+
+                                    if (success)
+                                    {
+                                        break;
+                                    }
+                                    getStatusRetry++;
+                                    Thread.Sleep(retryWait);
+                                } while (!success && getStatusRetry < getStatusMaxRetry);
+                            }
+
                         }
-                        else
-                        {
-                            success = true;
-                        }
-                        retry++;
-                    }
-                } while (!success && retry < maxRetry);
+                    }                
                 
                 return JsonConvert.DeserializeObject<T>(responseBody);
             }
@@ -97,7 +149,7 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
             };
 
 
-            var result = await RunCommand<DtoResponseAbrirDoc>(new AbrirDocumento { AbrirDocumentoBody = new AbrirDocumentoBody { CodigoComprobante = typeDocumemt } });
+            var result = await RunCommand<DtoResponseAbrirDoc>(new AbrirDocumento { AbrirDocumentoBody = new AbrirDocumentoBody { CodigoComprobante = typeDocumemt } },false,3000);
 
             if (result != null && result.Body != null)
             {
@@ -259,33 +311,41 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
             return result.Body.IndiceAuditoria.ToString();
         }
 
-        public async Task<string> CloseFactura(int copias = 1, string email = "")
+        public async Task<string> CloseFactura(int copias = 1, string email = "", bool withRetry = false)
         {
-
-            var result = await RunCommand<DtoResponseCerrarDoc>(new CerrarDocumento
+            byte getStatusRetry = 0;
+            byte getStatusMaxRetry = 10;
+            DtoResponseCerrarDoc? result;
+            do
             {
-                CerrarDocumentoBody = new CerrarDocumentoBody
+                result = await RunCommand<DtoResponseCerrarDoc>(new CerrarDocumento
                 {
-                    Copias = copias,
-                    DireccionEmail = email
-                }
-            });
-
-            if (result != null && result.Body != null)
-            {
-                foreach (var Item in result.Body.EstadoBody.Fiscal)
-                {
-                    if (Item.ToString().Contains("Error"))
+                    CerrarDocumentoBody = new CerrarDocumentoBody
                     {
-                        return null;
+                        Copias = copias,
+                        DireccionEmail = email
                     }
-                }
+                });
 
-            }
-            else
-            {
-                return null;
-            }
+                withRetry = (result == null || (result != null && result.Body == null));
+
+                if (result != null && result.Body != null)
+                {
+                    foreach (var Item in result.Body.EstadoBody.Fiscal)
+                    {
+                        if (Item.ToString().Contains("Error"))
+                        {
+                            return null;
+                        }
+                    }
+                withRetry = false;
+                }
+                    getStatusRetry++;
+                if (withRetry)
+                {
+                    Thread.Sleep(1000);
+                }
+            }while(withRetry && getStatusRetry < getStatusMaxRetry);
 
             return result.Body.NumeroComprobante;
         }
@@ -360,5 +420,28 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
 
             return "Comprobante Reimpreso Correctamente";
         }
+
+        #region Private
+        private async Task<string> GetStatusForPrintWaiting()
+        {
+            using HttpClient client = new();
+
+            var getStatus = new HttpRequestMessage
+            {
+                Method = HttpMethod.Get,
+                RequestUri = new Uri(_config.Ip),
+                Content = new StringContent(ConsultarEstadoEsperaString, Encoding.UTF8, "application/json"),
+            };
+
+            var response = await client.SendAsync(getStatus).ConfigureAwait(false);
+
+            response.EnsureSuccessStatusCode();
+
+            var responseBody = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+            return responseBody;
+            
+        }
+        #endregion
     }
 }
