@@ -90,7 +90,7 @@ namespace Kiltex.SistemaGestion.Api.Controllers.PDF
                 Nombre = factura.Data.SupplierName,
                 Fecha = factura.Data.DateTime,
                 Observacion = factura.Data.Observation,
-                Tipo = factura.Data.Type.ToString(),        
+                Tipo = factura.Data.Status
             };
 
             var dtoDetalle = new DtoRequestDetallePDF()

@@ -42,6 +42,7 @@ namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest
         public decimal Iva21 { get; set; }
         public decimal Iva27 { get; set; }
         public List<DtoResponseReceiptDetail> ReceiptDetails { get; set; }
-        
+        public string? Status { get; set; }
+
     }
 }

@@ -17,7 +17,7 @@ namespace Kiltex.SistemaGestion.Services.Mapper
                     d.IvaTotal = o.ReceiptDetails.Sum(e => e.Quantity *( e.Price - (e.Price /( 1 + e.Iva / 100.00m))) );
                 });
 
-            CreateMap<Receipt, DtoRequestReceipt>();
+            CreateMap<Receipt, DtoRequestReceipt>().ReverseMap();
 
             CreateMap<ReceiptDetails, DtoResponseReceiptDetail>().ReverseMap();
 

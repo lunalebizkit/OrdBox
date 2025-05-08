@@ -1,4 +1,5 @@
 ﻿
+using Kiltex.SistemaGestion.Domain.Enum;
 using System.ComponentModel.DataAnnotations.Schema;
 
 
@@ -59,6 +60,9 @@ namespace Kiltex.SistemaGestion.Domain.Model
         public int Type { get; set; }
 
         public ICollection<ReceiptDetails> ReceiptDetails { get; set; } = new HashSet<ReceiptDetails>();
+
+        [NotMapped]
+        public ETypeReceipt Status { get => (ETypeReceipt)Type; }
 
     }
 }
