@@ -34,6 +34,8 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
             {
                     var data = JsonConvert.SerializeObject(request);
 
+                    var requestTypeName = request.GetType().Name;
+
                     _logger.LogRequestAndResponseInfo($"-----------request de Impresora---------{DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
                     _logger.LogRequestAndResponseInfo(data);
 
@@ -61,12 +63,12 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
                     {
                         using JsonDocument document = JsonDocument.Parse(responseBody);
 
-                        // Buscamos si existe "ControladorOcupado" en el nivel raíz
+                    // Buscamos si existe "ControladorOcupado" en el nivel raíz
                         if (document.RootElement.TryGetProperty("ControladorOcupado", out JsonElement controladorOcupado))
                         {
                             using JsonDocument requestType = JsonDocument.Parse(data);
 
-                            if (requestType.RootElement.TryGetProperty("AbrirDocumento", out JsonElement abrirDocument))
+                            if (requestType.RootElement.TryGetProperty(requestTypeName, out JsonElement abrirDocument))
                             {
                                 do
                                 {
@@ -78,80 +80,34 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
                                     {
                                         using JsonDocument statusResponse = JsonDocument.Parse(responseBody);
 
-                                        if (statusResponse.RootElement.TryGetProperty("AbrirDocumento", out JsonElement abrirDocumento))
+                                        if (statusResponse.RootElement.TryGetProperty(requestTypeName, out JsonElement abrirDocumento))
                                         {
-                                            // Ahora buscamos si dentro de "AbrirDocumento" existe "NumeroComprobante"
-                                            if (abrirDocumento.TryGetProperty("NumeroComprobante", out JsonElement numeroComprobante))
+                                            if (requestTypeName == "AbrirDocumento")
                                             {
-                                                success = true;
-                                                break;
+                                                // Ahora buscamos si dentro de "AbrirDocumento" existe "NumeroComprobante"
+                                                if (abrirDocumento.TryGetProperty("NumeroComprobante", out JsonElement numeroComprobante))
+                                                {
+                                                    success = true;
+                                                    break;
                                             }
+                                            else { continue; }
+                                            }
+
+                                            success = true;                                            
                                         }
-                                    }
-                                    if (success)
-                                    {
-                                    break;
-                                    }
-                                        getStatusRetry++;
-                                        Thread.Sleep(retryWait);
-                                } while (!success && getStatusRetry < getStatusMaxRetry);
-                            }
-                            
-                            if (requestType.RootElement.TryGetProperty("ImprimirItem", out JsonElement imprimirDoc))
-                            {
-                                do
-                                {
-                                    responseBody = await GetStatusForPrintWaiting();
-
-                                    var responseBodyConverted = JsonConvert.DeserializeObject<T>(responseBody);
-
-                                    if (responseBodyConverted != null)
-                                    {
-                                        using JsonDocument parsedDoc = JsonDocument.Parse(responseBody);
-
-                                        if (parsedDoc.RootElement.TryGetProperty("ImprimirItem", out JsonElement abrirDocumento))
-                                            {
-                                                success = true;
-                                            }
                                     }
 
                                     if (success)
                                     {
                                         break;
                                     }
+
                                     getStatusRetry++;
                                     Thread.Sleep(retryWait);
                                 } while (!success && getStatusRetry < getStatusMaxRetry);
                             }
-                        
-                            if (requestType.RootElement.TryGetProperty("CerrarJornadaFiscal", out JsonElement cerrarFiscal))
-                                {
-                                    do
-                                    {
-                                        responseBody = await GetStatusForPrintWaiting();
-
-                                        var responseBodyConverted = JsonConvert.DeserializeObject<T>(responseBody);
-
-                                        if (responseBodyConverted != null)
-                                        {
-                                            using JsonDocument parsedDoc = JsonDocument.Parse(responseBody);
-
-                                            if (parsedDoc.RootElement.TryGetProperty("CerrarJornadaFiscal", out JsonElement abrirDocumento))
-                                                {
-                                                    success = true;
-                                                }
-                                        }
-
-                                        if (success)
-                                        {
-                                            break;
-                                        }
-                                        getStatusRetry++;
-                                        Thread.Sleep(retryWait);
-                                    } while (!success && getStatusRetry < getStatusMaxRetry);
-                                }
-
-                            }
+                        }            
+                            
                     }                
                 
                 return JsonConvert.DeserializeObject<T>(responseBody);
