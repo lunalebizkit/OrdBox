@@ -24,7 +24,7 @@ namespace Kiltex.SistemaGestion.Services.Services
         private bool mostrarIvaA;
         private bool mostrarIvaB;
         private BaseColor boldColor = BaseColor.Black;
-        private Font textFont = FontFactory.GetFont(FontFactory.HELVETICA, 8);
+        private Font textFont = FontFactory.GetFont(FontFactory.HELVETICA, 9);
         public PdfService(ErrorManager logger, IConfiguration configuration, IWebHostEnvironment env)
 
         {
@@ -107,9 +107,9 @@ namespace Kiltex.SistemaGestion.Services.Services
             Font titleFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12, BaseColor.Black);
             Chunk titleChunk = new Chunk(titulo, titleFont);
 
-            Font titleFont2 = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 8, BaseColor.Black);
-            Chunk titleComprobante = new(model.TituloComprobante, titleFont2);
-            Chunk numero = new(model.NumeroComprobante, titleFont2);
+            Font titletextFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 8, BaseColor.Black);
+            Chunk titleComprobante = new(model.TituloComprobante, titletextFont);
+            Chunk numero = new(model.NumeroComprobante, titletextFont);
 
             phrase.Add(new Chunk(titleChunk));
             phrase.Add(Chunk.Newline);
@@ -118,16 +118,16 @@ namespace Kiltex.SistemaGestion.Services.Services
             phrase.Add(new Chunk(titleComprobante));
 
             phrase.Add(Chunk.Newline);
-            phrase.Add(new Chunk("N°: ", titleFont2));
+            phrase.Add(new Chunk("N°: ", titletextFont));
             phrase.Add(new Chunk(numero));
             phrase.Add(Chunk.Newline);
-            phrase.Add(new Chunk(dni, titleFont2));
+            phrase.Add(new Chunk(dni, titletextFont));
             phrase.Add(Chunk.Newline);
-            phrase.Add(new Chunk(direccion, titleFont2));
+            phrase.Add(new Chunk(direccion, titletextFont));
             phrase.Add(Chunk.Newline);
-            phrase.Add(new Chunk(nombre_apellido, titleFont2));
+            phrase.Add(new Chunk(nombre_apellido, titletextFont));
             phrase.Add(Chunk.Newline);
-            phrase.Add(new Chunk(email, titleFont2));
+            phrase.Add(new Chunk(email, titletextFont));
 
             // Primera columna: texto
             PdfPCell textCell = new PdfPCell(phrase)
@@ -267,12 +267,11 @@ namespace Kiltex.SistemaGestion.Services.Services
 
             //Le agrego color a la letra de la tabla y tamaño
             BaseColor black = BaseColor.Black;
-            Font font = FontFactory.GetFont(FontFactory.HELVETICA, 8, Font.BOLD, black);
-            Font font2 = FontFactory.GetFont(FontFactory.HELVETICA, 8);
+            Font font = FontFactory.GetFont(FontFactory.HELVETICA, 9, Font.BOLD, black);
 
             table.AddCell(new PdfPCell(new Phrase("Cantidad", font))
             {
-                Border = PdfPCell.BOTTOM_BORDER,
+                Border = PdfPCell.BOTTOM_BORDER | PdfPCell.TOP_BORDER,
                 HorizontalAlignment = Element.ALIGN_CENTER,
                 PaddingBottom = 10f,
                 PaddingTop = 5f
@@ -280,7 +279,7 @@ namespace Kiltex.SistemaGestion.Services.Services
 
             PdfPCell productoCell = new PdfPCell(new Phrase("Producto", font))
             {
-                Border = PdfPCell.BOTTOM_BORDER,
+                Border = PdfPCell.BOTTOM_BORDER | PdfPCell.TOP_BORDER,
                 HorizontalAlignment = Element.ALIGN_CENTER,
                 PaddingBottom = 10f,
                 PaddingTop = 5f
@@ -289,7 +288,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             table.AddCell(productoCell);
             table.AddCell(new PdfPCell(new Phrase("Precio Unitario", font))
             {
-                Border = PdfPCell.BOTTOM_BORDER,
+                Border = PdfPCell.BOTTOM_BORDER | PdfPCell.TOP_BORDER,
                 HorizontalAlignment = Element.ALIGN_CENTER,
                 PaddingBottom = 10f,
                 PaddingTop = 5f
@@ -298,7 +297,7 @@ namespace Kiltex.SistemaGestion.Services.Services
 
             table.AddCell(new PdfPCell(new Phrase("Iva", font))
             {
-                Border = PdfPCell.BOTTOM_BORDER,
+                Border = PdfPCell.BOTTOM_BORDER | PdfPCell.TOP_BORDER,
                 HorizontalAlignment = Element.ALIGN_CENTER,
                 PaddingBottom = 10f,
                 PaddingTop = 5f
@@ -306,7 +305,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             
             table.AddCell(new PdfPCell(new Phrase("Importe", font))
             {
-                Border = PdfPCell.BOTTOM_BORDER,
+                Border = PdfPCell.BOTTOM_BORDER | PdfPCell.TOP_BORDER,
                 HorizontalAlignment = Element.ALIGN_CENTER,
                 PaddingBottom = 10f,
                 PaddingTop = 5f
@@ -323,37 +322,37 @@ namespace Kiltex.SistemaGestion.Services.Services
                 foreach (var item in resumen.Detalle)
                 {
 
-                    table.AddCell(new PdfPCell(new Phrase(item.Quantity.ToString(), font2))
+                    table.AddCell(new PdfPCell(new Phrase(item.Quantity.ToString(), textFont))
                     {
                         HorizontalAlignment = Element.ALIGN_CENTER,
-                        Border = PdfPCell.RIGHT_BORDER,
+                        Border = PdfPCell.NO_BORDER,
                         PaddingTop = 10f
                     });
 
-                    table.AddCell(new PdfPCell(new Phrase(item.ProductName, font2))
+                    table.AddCell(new PdfPCell(new Phrase(item.ProductName, textFont))
                     {
-                        Border = PdfPCell.RIGHT_BORDER,
+                        Border = PdfPCell.NO_BORDER,
                         PaddingTop = 10f
                     });
 
-                    table.AddCell(new PdfPCell(new Phrase(string.Format("{0,7:##.00}", item.Price), font2))
-                    {
-                        HorizontalAlignment = Element.ALIGN_RIGHT,
-                        Border = PdfPCell.RIGHT_BORDER,
-                        PaddingTop = 10f
-                    });
-
-                    table.AddCell(new PdfPCell(new Phrase(item.Iva.ToString(), font2))
+                    table.AddCell(new PdfPCell(new Phrase(string.Format("{0,7:##.00}", item.Price), textFont))
                     {
                         HorizontalAlignment = Element.ALIGN_RIGHT,
-                        Border = PdfPCell.RIGHT_BORDER,
+                        Border = PdfPCell.NO_BORDER,
                         PaddingTop = 10f
                     });
 
-                    table.AddCell(new PdfPCell(new Phrase(string.Format("{0,7:##.00}", (item.Price * item.Quantity)), font2))
+                    table.AddCell(new PdfPCell(new Phrase(item.Iva.ToString(), textFont))
                     {
                         HorizontalAlignment = Element.ALIGN_RIGHT,
-                        Border = PdfPCell.LEFT_BORDER,
+                        Border = PdfPCell.NO_BORDER,
+                        PaddingTop = 10f
+                    });
+
+                    table.AddCell(new PdfPCell(new Phrase(string.Format("{0,7:##.00}", (item.Price * item.Quantity)), textFont))
+                    {
+                        HorizontalAlignment = Element.ALIGN_RIGHT,
+                        Border = PdfPCell.NO_BORDER,
                         PaddingTop = 10f
                     });
                 }
@@ -367,38 +366,38 @@ namespace Kiltex.SistemaGestion.Services.Services
                 foreach (var item in resumen.BudgetDetails)
                 {
 
-                    table.AddCell(new PdfPCell(new Phrase(item.Quantity.ToString(), font2))
+                    table.AddCell(new PdfPCell(new Phrase(item.Quantity.ToString(), textFont))
                     {
                         HorizontalAlignment = Element.ALIGN_RIGHT,
-                        Border = PdfPCell.RIGHT_BORDER,
+                        Border = PdfPCell.NO_BORDER,
                         PaddingTop = 10f
                     });
 
-                    table.AddCell(new PdfPCell(new Phrase(item.ProductName, font2))
+                    table.AddCell(new PdfPCell(new Phrase(item.ProductName, textFont))
                     {
-                        Border = PdfPCell.RIGHT_BORDER,
+                        Border = PdfPCell.NO_BORDER,
                         PaddingTop = 10f
                     });
 
 
-                    table.AddCell(new PdfPCell(new Phrase(string.Format("{0,7:##.00}", item.Price), font2))
+                    table.AddCell(new PdfPCell(new Phrase(string.Format("{0,7:##.00}", item.Price), textFont))
                     {
                         HorizontalAlignment = Element.ALIGN_RIGHT,
-                        Border = PdfPCell.RIGHT_BORDER,
+                        Border = PdfPCell.NO_BORDER,
                         PaddingTop = 10f
                     });
                     
-                    table.AddCell(new PdfPCell(new Phrase(" ", font2))
+                    table.AddCell(new PdfPCell(new Phrase(" ", textFont))
                     {
                         HorizontalAlignment = Element.ALIGN_RIGHT,
-                        Border = PdfPCell.RIGHT_BORDER,
+                        Border = PdfPCell.NO_BORDER,
                         PaddingTop = 10f
                     });
 
-                    table.AddCell(new PdfPCell(new Phrase(string.Format("{0,7:##.00}", (item.Price * item.Quantity)), font2))
+                    table.AddCell(new PdfPCell(new Phrase(string.Format("{0,7:##.00}", (item.Price * item.Quantity)), textFont))
                     {
                         HorizontalAlignment = Element.ALIGN_RIGHT,
-                        Border = PdfPCell.RIGHT_BORDER,
+                        Border = PdfPCell.NO_BORDER,
                         PaddingTop = 10f
                     });
 
@@ -437,13 +436,13 @@ namespace Kiltex.SistemaGestion.Services.Services
                 if (resumen.Iva10 != 0)
                 {
 
-                    table2.AddCell(new PdfPCell(new Phrase("Iva 10: ", font2))
+                    table2.AddCell(new PdfPCell(new Phrase("Iva 10: ", textFont))
                     {
-                        HorizontalAlignment = Element.ALIGN_LEFT,
+                        HorizontalAlignment = Element.ALIGN_RIGHT,
                     });
 
                     //table2.AddCell(emptyCell);
-                    table2.AddCell(new PdfPCell(new Phrase(string.Format("{0,7:##.00}", "$" + resumen.Iva10), font2))
+                    table2.AddCell(new PdfPCell(new Phrase(string.Format("{0,7:##.00}", "$" + resumen.Iva10), textFont))
                     {
                         HorizontalAlignment = Element.ALIGN_RIGHT,
                     });
@@ -457,13 +456,13 @@ namespace Kiltex.SistemaGestion.Services.Services
                     table2.AddCell(emptyCell);
                     table2.AddCell(emptyCell);
                     table2.AddCell(emptyCell);
-                    table2.AddCell(new PdfPCell(new Phrase("Iva 21: ", font2))
+                    table2.AddCell(new PdfPCell(new Phrase("Iva 21: ", textFont))
                     {
-                        HorizontalAlignment = Element.ALIGN_LEFT,
+                        HorizontalAlignment = Element.ALIGN_RIGHT,
                     });
 
 
-                    table2.AddCell(new PdfPCell(new Phrase(string.Format("{0,7:##.00}", "$" + resumen.Iva21), font2))
+                    table2.AddCell(new PdfPCell(new Phrase(string.Format("{0,7:##.00}", "$" + resumen.Iva21), textFont))
                     {
                         HorizontalAlignment = Element.ALIGN_RIGHT,
                     });
@@ -479,12 +478,12 @@ namespace Kiltex.SistemaGestion.Services.Services
                     table2.AddCell(emptyCell);
                     table2.AddCell(emptyCell);
 
-                    table2.AddCell(new PdfPCell(new Phrase("Iva 27: ", font2))
+                    table2.AddCell(new PdfPCell(new Phrase("Iva 27: ", textFont))
                     {
-                        HorizontalAlignment = Element.ALIGN_LEFT,
+                        HorizontalAlignment = Element.ALIGN_RIGHT,
                     });
 
-                    table2.AddCell(new PdfPCell(new Phrase(string.Format("{0,7:##.00}", "$" + resumen.Iva27), font2))
+                    table2.AddCell(new PdfPCell(new Phrase(string.Format("{0,7:##.00}", "$" + resumen.Iva27), textFont))
                     {
                         HorizontalAlignment = Element.ALIGN_RIGHT,
                     });
@@ -507,13 +506,13 @@ namespace Kiltex.SistemaGestion.Services.Services
                 table2.AddCell(emptyCell);
                 table2.AddCell(emptyCell);
                 table2.AddCell(emptyCell);
-                table2.AddCell(new PdfPCell(new Phrase("IvaTotal: ", font2))
+                table2.AddCell(new PdfPCell(new Phrase("IvaTotal: ", textFont))
                 {
-                    HorizontalAlignment = Element.ALIGN_LEFT,
+                    HorizontalAlignment = Element.ALIGN_RIGHT,
                     Border = PdfCell.NO_BORDER,
                 });
 
-                table2.AddCell(new PdfPCell(new Phrase(string.Format("{0,7:##.00}", "$" + resumen.IvaTotal.ToString()), font2))
+                table2.AddCell(new PdfPCell(new Phrase(string.Format("{0,7:##.00}", "$" + resumen.IvaTotal.ToString()), textFont))
                 {
                     HorizontalAlignment = Element.ALIGN_RIGHT,
                     Border = PdfCell.NO_BORDER,
@@ -526,12 +525,12 @@ namespace Kiltex.SistemaGestion.Services.Services
                 table2.AddCell(emptyCell);
                 table2.AddCell(emptyCell);
                 table2.AddCell(emptyCell);
-                table2.AddCell(new PdfPCell(new Phrase("SubTotal: ", font2))
+                table2.AddCell(new PdfPCell(new Phrase("SubTotal: ", textFont))
                 {
-                    HorizontalAlignment = Element.ALIGN_LEFT,
+                    HorizontalAlignment = Element.ALIGN_RIGHT,
                     Border = PdfCell.NO_BORDER,
                 });
-                table2.AddCell(new PdfPCell(new Phrase("$" + subTotal.ToString(), font2))
+                table2.AddCell(new PdfPCell(new Phrase("$" + subTotal.ToString(), textFont))
                 {
                     HorizontalAlignment = Element.ALIGN_RIGHT,
                     Border = PdfCell.NO_BORDER,
@@ -544,12 +543,12 @@ namespace Kiltex.SistemaGestion.Services.Services
                 table2.AddCell(emptyCell);
                 table2.AddCell(emptyCell);
 
-                table2.AddCell(new PdfPCell(new Phrase("Total:", font2))
+                table2.AddCell(new PdfPCell(new Phrase("Total:", textFont))
                 {
-                    HorizontalAlignment = Element.ALIGN_LEFT,
+                    HorizontalAlignment = Element.ALIGN_RIGHT,
                     Border = PdfCell.NO_BORDER,
                 });
-                table2.AddCell(new PdfPCell(new Phrase(string.Format("{0,7:##.00}", "$" + resumen.Total.ToString()), font2))
+                table2.AddCell(new PdfPCell(new Phrase(string.Format("{0,7:##.00}", "$" + resumen.Total.ToString()), textFont))
                 {
                     HorizontalAlignment = Element.ALIGN_RIGHT,
                     Border = PdfCell.NO_BORDER,
@@ -567,11 +566,11 @@ namespace Kiltex.SistemaGestion.Services.Services
                 table2.AddCell(emptyCell);
                 table2.AddCell(emptyCell);
 
-                table2.AddCell(new PdfPCell(new Phrase("Total:", font2))
+                table2.AddCell(new PdfPCell(new Phrase("Total:", textFont))
                 {
-                    HorizontalAlignment = Element.ALIGN_LEFT,
+                    HorizontalAlignment = Element.ALIGN_RIGHT,
                 });
-                table2.AddCell(new PdfPCell(new Phrase(string.Format("{0,7:##.00}", "$" + resumen.Total.ToString()), font2))
+                table2.AddCell(new PdfPCell(new Phrase(string.Format("{0,7:##.00}", "$" + resumen.Total.ToString()), textFont))
                 {
                     HorizontalAlignment = Element.ALIGN_RIGHT,
                 });
@@ -1018,7 +1017,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             //Le agrego color a la letra de la tabla y tamaño
             BaseColor black = BaseColor.Black;
             Font font = FontFactory.GetFont(FontFactory.HELVETICA, 12, Font.BOLD, black);
-            Font font2 = FontFactory.GetFont(FontFactory.HELVETICA, 10);
+            Font textFont = FontFactory.GetFont(FontFactory.HELVETICA, 10);
 
             PdfPCell productoCell = new PdfPCell(new Phrase("Producto", font))
             {
@@ -1053,20 +1052,20 @@ namespace Kiltex.SistemaGestion.Services.Services
                 foreach (var item in resumen.BudgetDetails)
                 {
 
-                    table.AddCell(new PdfPCell(new Phrase(item.ProductName, font2))
+                    table.AddCell(new PdfPCell(new Phrase(item.ProductName, textFont))
                     {
                         Border = PdfPCell.RIGHT_BORDER,
                         PaddingTop = 10f
                     });
 
-                    table.AddCell(new PdfPCell(new Phrase(item.Quantity.ToString(), font2))
+                    table.AddCell(new PdfPCell(new Phrase(item.Quantity.ToString(), textFont))
                     {
                         HorizontalAlignment = Element.ALIGN_RIGHT,
                         Border = PdfPCell.RIGHT_BORDER,
                         PaddingTop = 10f
                     });
 
-                    table.AddCell(new PdfPCell(new Phrase(string.Format("{0,7:##.00}", item.Price), font2))
+                    table.AddCell(new PdfPCell(new Phrase(string.Format("{0,7:##.00}", item.Price), textFont))
                     {
                         HorizontalAlignment = Element.ALIGN_RIGHT,
                         Border = PdfPCell.RIGHT_BORDER,
@@ -1083,20 +1082,20 @@ namespace Kiltex.SistemaGestion.Services.Services
                 foreach (var item in resumen.DeliveryNotesDetails)
                 {
 
-                    table.AddCell(new PdfPCell(new Phrase(item.ProductName, font2))
+                    table.AddCell(new PdfPCell(new Phrase(item.ProductName, textFont))
                     {
                         Border = PdfPCell.RIGHT_BORDER,
                         PaddingTop = 10f
                     });
 
-                    table.AddCell(new PdfPCell(new Phrase(item.Quantity.ToString(), font2))
+                    table.AddCell(new PdfPCell(new Phrase(item.Quantity.ToString(), textFont))
                     {
                         HorizontalAlignment = Element.ALIGN_RIGHT,
                         Border = PdfPCell.RIGHT_BORDER,
                         PaddingTop = 10f
                     });
 
-                    table.AddCell(new PdfPCell(new Phrase(string.Format("{0,7:##.00}", item.Price), font2))
+                    table.AddCell(new PdfPCell(new Phrase(string.Format("{0,7:##.00}", item.Price), textFont))
                     {
                         HorizontalAlignment = Element.ALIGN_RIGHT,
                         Border = PdfPCell.RIGHT_BORDER,
