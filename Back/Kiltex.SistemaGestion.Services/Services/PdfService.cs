@@ -306,7 +306,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             table.AddCell(new PdfPCell(new Phrase("Importe", font))
             {
                 Border = PdfPCell.BOTTOM_BORDER | PdfPCell.TOP_BORDER,
-                HorizontalAlignment = Element.ALIGN_CENTER,
+                HorizontalAlignment = Element.ALIGN_RIGHT,
                 PaddingBottom = 10f,
                 PaddingTop = 5f
             });
@@ -743,7 +743,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             table.AddCell(new PdfPCell(new Phrase("Importe", font))
             {
                 Border = PdfPCell.BOTTOM_BORDER,
-                HorizontalAlignment = Element.ALIGN_CENTER,
+                HorizontalAlignment = Element.ALIGN_RIGHT,
                 PaddingBottom = 10f,
                 PaddingTop = 5f
             });
