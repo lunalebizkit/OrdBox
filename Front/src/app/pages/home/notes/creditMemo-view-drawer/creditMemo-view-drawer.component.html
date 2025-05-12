@@ -25,7 +25,7 @@
         <b><label>* Tipo: </label></b>
         <span>
           <nz-page-header-tags>
-            <nz-tag [nzColor]="'blue'">{{ this.creditMemoType(type) }}</nz-tag>
+            <nz-tag [nzColor]="'blue'">{{ type| invoiceTypeFilter }}</nz-tag>
           </nz-page-header-tags>
         </span>
         <br />
@@ -60,38 +60,6 @@
       </div>
     </div>
   </nz-collapse-panel>
-
-    <!--<div style="margin-left: 100px; padding: 5px;" >
-    <nz-descriptions nzSize="small" [nzColumn]="3">
-        <nz-descriptions-item nzTitle=" * Fecha" > 
-        <a>{{ dateTime ? (dateTime | date : "YYYY-MM-dd") : "N/A" }} </a>
-      </nz-descriptions-item> 
-      <nz-descriptions-item nzTitle=" * Tipo" >
-        <nz-page-header-tags>
-          <nz-tag [nzColor]="'blue'">{{ this.creditMemoType(type) }}</nz-tag>
-        </nz-page-header-tags>
-      </nz-descriptions-item>
-      <nz-descriptions-item *ngIf="edit == true" nzTitle="* Factura Relacionada" >
-        {{ this.invoiceNumber }}</nz-descriptions-item>
-        <nz-descriptions-item *ngIf=" edit == true" nzTitle="* Nro de Nota de Crédito" >
-       {{ this.creditMemoNumber }}</nz-descriptions-item>-->
-    <!--  </nz-descriptions> 
-      <nz-descriptions nzSize="small" [nzColumn]="2">   -->
-    <!--<nz-descriptions-item nzTitle="* Cliente" >
-        {{ this.customerName }}</nz-descriptions-item>
-      <nz-descriptions-item nzTitle=" * Cuit" >
-        {{ this.customerCuit  | cuit }}</nz-descriptions-item
-      >
-      <nz-descriptions-item nzTitle=" * Dirección" >
-        {{ this.customerAddress }}
-      </nz-descriptions-item>
-      <nz-descriptions-item nzTitle=" * Observación" >
-        {{ this.observation }}
-      </nz-descriptions-item>
-     </nz-descriptions>
-    </div>
-  </nz-collapse-panel>
-</nz-collapse>-->
 
     <nz-collapse>
       <nz-collapse-panel

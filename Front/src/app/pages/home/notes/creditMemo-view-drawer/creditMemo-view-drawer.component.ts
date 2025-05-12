@@ -95,22 +95,14 @@ export class CreditMemoViewDrawerComponent
             this.dateTime = r.dateTime,
             this.observation = r.observation,
             this.creditMemoDetail= r.creditMemoDetail
-          this.isLoading = false; 
-          this.getTipo(r.type); 
+          this.isLoading = false;
         },
         error: () => {
           this.isLoading = false;
         },
       });
   }
-  getTipo(tipo : number):any {
-    switch (tipo){
-      case  eInvoiceType.A :
-        return this.tipo = 'factA'
-      case  eInvoiceType.B :
-       return this.tipo = 'factB'
-    }
-  }
+  
   
   creditMemoType(id: any):string{
     return eInvoiceType[id]

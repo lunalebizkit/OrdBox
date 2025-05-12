@@ -107,10 +107,7 @@ export class DebitMemoViewDrawerComponent
        return this.tipo = 'factB'
     }
   }
-  
-  debitMemoType(id: any):string{
-    return eInvoiceType[id]
-  }
+    
 
   currencyFormat(data: any): string {
     if (!this.locale) return '';
