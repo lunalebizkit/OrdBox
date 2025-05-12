@@ -1,6 +1,4 @@
 ﻿using Kiltex.SistemaGestion.Domain.Enum;
-using Kiltex.SistemaGestion.Services.ImpresoraFiscal.Printer250F.Dto;
-using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
 
 namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal
 {
