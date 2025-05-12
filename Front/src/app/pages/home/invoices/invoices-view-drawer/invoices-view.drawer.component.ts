@@ -37,7 +37,7 @@ export class InvoicesViewDrawerComponent extends BaseComponent implements OnInit
   tipo!: string;
 
   //Variables del comprobante
-  type: any;
+  type!: eInvoiceType;
   invoiceDetail: InvoiceDetails []= [];
   customerAddress!: string;
   customerCuit!: string;
@@ -98,10 +98,7 @@ export class InvoicesViewDrawerComponent extends BaseComponent implements OnInit
           this.dateTime = r.dateTime,
           this.invoiceDetail= r.invoiceDetails
           this.subTotal= r.total - r.ivaTotal;          
-          this.isLoading = false;
-          this.getTipo(r.type);
- 
-          
+          this.isLoading = false;          
         },
         error: () => { this.isLoading = false; }
     })

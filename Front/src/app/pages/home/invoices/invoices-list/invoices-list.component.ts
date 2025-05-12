@@ -103,10 +103,7 @@ export class InvoicesListComponent implements OnInit {
     });
   }
 
-  getInvoiceType(id: number) {
-    return eInvoiceType[id];
-  }
-
+  
   formaterDate(date: string | number | Date): string {
     return formatDate(date, 'YYYY-MM-dd', this.locale);
   }

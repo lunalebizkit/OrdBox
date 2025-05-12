@@ -16,7 +16,7 @@ import { PopupConfirmationComponent } from "src/app/common/components/popup-conf
 import { InvoiceService } from "../invoices.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { ePayment } from "../model/invoice-payment.Enum";
-import { InvoiceType } from "../model/invoice-type.Enum";
+import { eInvoiceType, InvoiceType } from "../model/invoice-type.Enum";
 import { formatCurrency, formatDate } from '@angular/common';
 import { Inject, LOCALE_ID } from '@angular/core';
 import { ProductService } from "../../products/product.service";
@@ -45,7 +45,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
   /*
  ** Cantidad total de productos
  */
-  type = InvoiceType;
+  invoiceType = InvoiceType;
   ivaType = IvaType;
   typeSelectedId: number = 1;
   ivaSelectedId: number = 1;
@@ -171,11 +171,12 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
   })
   }
 
-  typeSelectedChange(id: any): void {
-    this.typeSelectedId = id;    
-    if (id == 1) {      
+  typeSelectedChange(id: eInvoiceType): void {
+    if (id == eInvoiceType.A) {      
+      this.typeSelectedId = id;
       this.invoiceA = true;
     }else{
+      this.typeSelectedId = eInvoiceType.B;
       this.invoiceA= false;
     }    
   }
@@ -446,7 +447,6 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
   }
   
   save(): void {
-    this.isSaving = true;
     if (this.isValidForm(this.formInvoice)) {
 
       if(this.selectedDni && this.formInvoice.controls['customerDni'].value.length < 8){

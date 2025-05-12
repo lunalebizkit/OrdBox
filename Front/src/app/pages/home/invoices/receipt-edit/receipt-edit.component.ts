@@ -134,10 +134,10 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
       dateTime: ['', Validators.required],
       type: [1, Validators.required],
       receiptNumber: ['', Validators.required],
-      supplierAddress: ['', Validators.required],
-      supplierCuit: ['', [Validators.required, Validators.pattern('[0-9]{11}'),]],
+      supplierAddress: ['',],
+      supplierCuit: [''],
       supplierDni: ['',],
-      supplierName: ['', Validators.required],
+      supplierName: [''],
       observation: [''],
     });
     this.formSupplierSearch = this.fb.group({});

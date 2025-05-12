@@ -96,7 +96,6 @@ export class ReceiptViewDrawerComponent
             this.percIngBrutos = r.percIngBrutos,
             this.percIva = r.percIva,
             this.receiptDetails = r.receiptDetails;
-            this.getTipo(r.type);
           this.isLoading = false;
         },
         error: () => {
@@ -104,18 +103,7 @@ export class ReceiptViewDrawerComponent
         },
       });
   }
-
-  invoiceType(id: any): string {
-    return eInvoiceType[id];
-  }
-  getTipo(tipo : number):any {
-    switch (tipo){
-      case  eInvoiceType.A :
-        return this.tipo = 'factA'
-      case  eInvoiceType.B :
-       return this.tipo = 'factB'
-    }
-  }
+   
   subTotalCalculate(concNoGravado: number, percIngBrutos: number, percIva:number, ivaTotal: number): number {
  return concNoGravado + percIngBrutos + percIva  + ivaTotal  
   }

@@ -102,7 +102,7 @@
                 <tr *ngIf="data.type == 1">
                   <td style="text-align: right;">{{this.formaterDate(data.dateTime)}}</td>
                   <td style="text-align: right;">{{data.receiptNumber}}</td>
-                  <td style="text-align: right;">{{this.getReceiptType(data.type)}}</td>
+                  <td style="text-align: right;">{{data.type | invoiceTypeFilter}}</td>
                   <td style="text-align: right;">{{data.supplierName}}</td>
                   <td style="text-align: right;">{{data.supplierCuit | cuit }}</td>          
                   <td style="text-align: right;">{{this.currencyFormat(data.importeNeto)}}</td>          
@@ -186,10 +186,10 @@
             </thead>
             <tbody class="small-text">
               <ng-container *ngFor="let data of periodListCompra;">
-              <tr *ngIf="data.type == 2">
+              <tr *ngIf="data.type == 2 || data.type == 4">
               <td style="text-align: right;">{{this.formaterDate(data.dateTime)}}</td>
               <td style="text-align: right;">{{data.receiptNumber}}</td>
-              <td style="text-align: right;">{{this.getReceiptType(data.type)}}</td>
+              <td style="text-align: right;">{{data.type | invoiceTypeFilter}}</td>
               <td style="text-align: right;">{{data.supplierName}}</td>
               <td style="text-align: right;">{{data.supplierCuit | cuit }}</td>          
               <td style="text-align: right;">{{this.currencyFormat(data.importeNeto)}}</td>          
@@ -276,7 +276,7 @@
               <tr *ngIf="data.type == 3">
                 <td style="text-align: right;">{{this.formaterDate(data.dateTime)}}</td>
                 <td style="text-align: right;">{{data.receiptNumber}}</td>
-                <td style="text-align: right;">{{this.getReceiptType(data.type)}}</td>
+                <td style="text-align: right;">{{data.type | invoiceTypeFilter}}</td>
                 <td style="text-align: right;">{{data.supplierName}}</td>
                 <td style="text-align: right;">{{data.supplierCuit | cuit }}</td>          
                 <td style="text-align: right;">{{this.currencyFormat(data.importeNeto)}}</td>          

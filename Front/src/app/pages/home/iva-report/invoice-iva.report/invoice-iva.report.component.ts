@@ -243,6 +243,7 @@ export class InvoiceIvaReportComponent extends BaseComponent implements OnInit {
               break;
 
             case eInvoiceType.B:
+            case eInvoiceType.X:
               if (Number(data.iva10) != 0){
                 this.iva10Type2 += data.iva10;  
                 this.iva10Type2NetoGravado += data.importeNetoIva10;

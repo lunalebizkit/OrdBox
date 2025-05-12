@@ -32,7 +32,7 @@
               <nz-form-control>
                 <nz-page-header-tags>
                   <nz-tag [nzColor]="'blue'">{{
-                    this.invoiceType(this.type1)
+                    this.type1 | invoiceTypeFilter
                     }}</nz-tag>
                 </nz-page-header-tags>
               </nz-form-control>

@@ -137,9 +137,7 @@ import { ReceiptIvaReportDetailsModel, ReceiptIvaReportModel } from '../model/re
     document.body.appendChild(downloadLink);
     downloadLink.click();
   }
-  getReceiptType(id: number) {
-    return eInvoiceType[id];
-  }
+  
     getReceipt(){
     this.totalIva10Type1 = 0
     this.totalIva21Type1 = 0
@@ -179,6 +177,7 @@ import { ReceiptIvaReportDetailsModel, ReceiptIvaReportModel } from '../model/re
             this.totalType1 += data.total
             break;
           case eInvoiceType.B:
+          case eInvoiceType.X:
             this.totalIva10Type2 += (Number(data.iva10))
             this.totalIva21Type2 += (Number(data.iva21))
             this.totalIva27Type2 += (Number(data.iva27))

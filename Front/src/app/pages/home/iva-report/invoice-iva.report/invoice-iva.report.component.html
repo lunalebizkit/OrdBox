@@ -191,7 +191,7 @@
             <tr  *ngFor="let data of periodListaVentas;">
             <td>{{ this.formaterDate(data.dateTime)}}</td>
             <td>{{data.invoiceNumber}}</td>
-            <td>{{this.getInvoiceType(data.type)}}</td>
+            <td>{{data.type | invoiceTypeFilter }}</td>
             <td>{{data.customerName}}</td>
             <td>{{data.customerCuit  | cuit }}</td>          
              <td>{{this.currencyFormat( data.importeNeto )}}</td>          

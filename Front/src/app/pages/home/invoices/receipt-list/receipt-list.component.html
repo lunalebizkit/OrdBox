@@ -83,9 +83,6 @@
                 </ng-template>
               </nz-form-control>
             </nz-form-item>
-            <!--  <div style="color: red;font-size: 12px; margin-left: 20px;">* Debe ingresar el número de comprobante completo</div> -->
-            <!-- </div>
-            <div nz-col class="gutter-row" [nzSpan]="8"> -->
             <nz-form-item style="margin-left: 55px">
               <nz-form-label>Fecha</nz-form-label>
               <nz-form-control>
@@ -163,7 +160,7 @@
               <b>{{ this.currencyFormat(data.total) }}</b>
             </td>
 
-            <td [nzAlign]="'center'">{{ this.getInvoiceType(data.type) }}</td>
+            <td [nzAlign]="'center'">{{ data.type | invoiceTypeFilter }}</td>
             <td style="text-align: center">
               <a>
                 <i

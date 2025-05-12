@@ -31,7 +31,7 @@
         <b><label>* Tipo: </label></b>
         <span>
           <nz-page-header-tags>
-            <nz-tag [nzColor]="'blue'">{{ this.invoiceType(type) }}</nz-tag>
+            <nz-tag [nzColor]="'blue'">{{ type | invoiceTypeFilter }}</nz-tag>
           </nz-page-header-tags>
         </span>
         <br />
@@ -48,40 +48,6 @@
       </div>
     </div>
   </nz-collapse-panel>
-
-  <!-- <nz-descriptions
-      nzSize="small"
-      [nzColumn]="3"
-      style="margin-left: 100px; padding: 5px;"
-    >
- 
-        <nz-descriptions-item nzTitle=" * Fecha" class="bold">
-          <b>  <a >{{ dateTime ? (dateTime | date : "YYYY-MM-dd") : "N/A" }} </a> </b>
-        </nz-descriptions-item>
-     
-      <nz-descriptions-item nzTitle=" * Tipo">
-        <nz-page-header-tags>
-          <nz-tag [nzColor]="'blue'">{{ this.invoiceType(type) }}</nz-tag>
-        </nz-page-header-tags>
-      </nz-descriptions-item>
-      <nz-descriptions-item class="item-bold" nzTitle="* Número de Referencia">
-        {{ this.receiptNumber }}</nz-descriptions-item
-      >
-      <nz-descriptions-item nzTitle=" * Cliente">
-        {{ supplierName }}</nz-descriptions-item
-      >
-     <nz-descriptions-item nzTitle=" * Cuit">
-        {{ supplierCuit | cuit }}</nz-descriptions-item
-      >
-      <nz-descriptions-item nzTitle="* Dirección">
-        {{ supplierAddress }}
-      </nz-descriptions-item>
-      <nz-descriptions-item nzTitle=" * Observación">
-        {{ observation }}
-      </nz-descriptions-item>
-    </nz-descriptions>
-  </nz-collapse-panel>
-</nz-collapse>-->
 
   <nz-collapse-panel nzHeader="Detalle" [nzActive]="true" [nzShowArrow]="true" >
   <nz-collapse class="{{ this.tipo }}">

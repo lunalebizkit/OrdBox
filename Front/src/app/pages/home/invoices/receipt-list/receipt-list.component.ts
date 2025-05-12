@@ -113,10 +113,6 @@ export class ReceiptListComponent implements OnInit {
     return formatCurrency(data, this.locale!, '$', 'ARS', '1.1-2');
   }
 
-  getInvoiceType(id: number) {
-    return eInvoiceType[id];
-  }
-
   onDoubleClicked(datos: receiptModel) {
     this.id = datos.id;
     this.openComponentReceiptView();

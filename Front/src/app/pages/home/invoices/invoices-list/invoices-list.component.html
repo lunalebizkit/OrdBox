@@ -161,7 +161,7 @@
             <td [nzAlign]="'right'">
               <b>{{ this.currencyFormat(data.total) }}</b>
             </td>
-            <td [nzAlign]="'center'">{{ this.getInvoiceType(data.type) }}</td>
+            <td [nzAlign]="'center'">{{ data.type | invoiceTypeFilter }}</td>
             <ng-container>
               <td style="text-align: center">
                 <a>

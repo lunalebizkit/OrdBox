@@ -11,7 +11,7 @@
   [hideFacturaPro]="true"
   [hideBack]="true"
   [disabled]="invoiceNumber == 0 ? true : false"
-  [title]="'Comprobantes de Ventas'"
+  [title]="'Comprobantes de Venta'"
   [iconReprint]="'file-excel'"
   [iconBack]="'rollback'"
   [iconTitle]="'container'"
@@ -38,7 +38,7 @@
         <b><label>* Tipo: </label></b>
         <span>
           <nz-page-header-tags>
-            <nz-tag [nzColor]="'blue'">{{ this.invoiceType(type) }}</nz-tag>
+            <nz-tag [nzColor]="'blue'">{{ type | invoiceTypeFilter }}</nz-tag>
           </nz-page-header-tags>
         </span>
         <br />

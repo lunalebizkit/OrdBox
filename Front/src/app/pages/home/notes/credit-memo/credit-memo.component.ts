@@ -287,10 +287,7 @@ constructor(@Inject(LOCALE_ID) public locale: string,
     }
   };
 
-   invoiceType(id: any):string{
-    return eInvoiceType[id]
-  }
-
+  
   openComponentCustomer(): void {
     const drawerRefCustomer = this.drawerService.create<InvoiceCustomerSearchComponent, {}, CustomerModel>({
       nzTitle: 'Cliente',
