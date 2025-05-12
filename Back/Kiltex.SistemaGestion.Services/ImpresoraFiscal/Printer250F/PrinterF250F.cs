@@ -127,6 +127,7 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
             {
                 ETypeReceipt.A => "TiqueFacturaA",
                 ETypeReceipt.B => "TiqueFacturaB",
+                ETypeReceipt.X => "TiqueFacturaB",
                 _ => throw new NotImplementedException()
             };
 
@@ -178,6 +179,7 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
             {
                 ETypeReceipt.A => "TiqueNotaDebitoA",
                 ETypeReceipt.B => "TiqueNotaDebitoB",
+                ETypeReceipt.X => "TiqueNotaDebitoB",
                 _ => throw new NotImplementedException()
             };
 
@@ -210,6 +212,7 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
             {
                 ETypeReceipt.A => "TiqueNotaCreditoA",
                 ETypeReceipt.B => "TiqueNotaCreditoB",
+                ETypeReceipt.X => "TiqueNotaCreditoB",
                 _ => throw new NotImplementedException()
             };
 
@@ -340,6 +343,7 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
             {
                 ETypeReceipt.A => "ResponsableInscripto",
                 ETypeReceipt.B => "ConsumidorFinal",
+                ETypeReceipt.X => "ResponsableExento",
                 _ => throw new NotImplementedException()
             };
 
@@ -357,7 +361,7 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
                     NumeroDocumento = customerCuit,
                     ResponsabilidadIVA = typeDocumemt,
                     TipoDocumento = typeIva,
-                    Domicilio = customerAddress
+                    Domicilio = string.IsNullOrWhiteSpace(customerAddress) ? "-" : customerAddress,
                 }
             });
 

@@ -1,5 +1,6 @@
 ﻿
 using iTextSharp.text;
+using Kiltex.SistemaGestion.Domain.Enum;
 using Kiltex.SistemaGestion.Services.ImpresoraFiscal.Printer250F.Dto;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
 using Kiltex.SistemaGestion.Services.Services;
@@ -40,8 +41,16 @@ namespace Kiltex.SistemaGestion.Api.Controllers.PDF
                 Nombre = factura.Data.CustomerName,
                 Observacion = factura.Data.Observation,
                 Fecha = factura.Data.DateTime,
-                Tipo = factura.Data.Status
             };
+
+            if (Enum.TryParse<ETypeReceipt>(factura.Data.Status, out var typeReceipt))
+            {
+                if(typeReceipt == ETypeReceipt.X)
+                {
+                    dtoCabecera.Tipo = "B";
+                }
+                else { dtoCabecera.Tipo = factura.Data.Status; }
+            }
 
             var dtoDetalle = new DtoRequestDetallePDF()
             {
@@ -52,8 +61,8 @@ namespace Kiltex.SistemaGestion.Api.Controllers.PDF
                 Iva21 = (int)factura.Data.Iva21,
                 Iva27 = (int)factura.Data.Iva27,
                 Precio = (int)factura.Data.InvoiceDetails.Select(p => p.Price).FirstOrDefault(),
-                IvaTotal = (int)factura.Data.IvaTotal,
-                Total = (int)factura.Data.Total
+                IvaTotal = factura.Data.IvaTotal,
+                Total = factura.Data.Total
 
             };
 
@@ -90,8 +99,15 @@ namespace Kiltex.SistemaGestion.Api.Controllers.PDF
                 Nombre = factura.Data.SupplierName,
                 Fecha = factura.Data.DateTime,
                 Observacion = factura.Data.Observation,
-                Tipo = factura.Data.Status
             };
+            if (Enum.TryParse<ETypeReceipt>(factura.Data.Status, out var typeReceipt))
+            {
+                if (typeReceipt == ETypeReceipt.X)
+                {
+                    dtoCabecera.Tipo = "B";
+                }
+                else { dtoCabecera.Tipo = factura.Data.Status; }
+            }
 
             var dtoDetalle = new DtoRequestDetallePDF()
             {
@@ -103,7 +119,7 @@ namespace Kiltex.SistemaGestion.Api.Controllers.PDF
                 PercIngBrutos = (int)factura.Data.PercIngBrutos,
                 Precio = (int)factura.Data.ReceiptDetails.Select(p => p.Price).FirstOrDefault(),
                 IvaTotal = (int)factura.Data.IvaTotal,
-                Total = (int)factura.Data.Total
+                Total = factura.Data.Total
             };
 
             Paragraph encabezado = await _service.Encabezado(dtoEncabezado);

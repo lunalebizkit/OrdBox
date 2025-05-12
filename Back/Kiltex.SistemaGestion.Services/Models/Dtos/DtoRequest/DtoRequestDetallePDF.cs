@@ -1,9 +1,4 @@
 ﻿using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest
 {
@@ -11,11 +6,11 @@ namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest
     {
         public string Producto { get ; set; }
         public int Cantidad { get; set; }
-        public int Precio { get; set; }
-        public int SubTotal { get; set; }
-        public int Iva { get; set; }
-        public int IvaTotal { get; set; }
-        public int Total { get; set; }
+        public decimal Precio { get; set; }
+        public decimal SubTotal { get; set; }
+        public decimal Iva { get; set; }
+        public decimal IvaTotal { get; set; }
+        public decimal Total { get; set; }
         public int Quantity { get; set; }
         public int Iva10 { get; set; }
         public int Iva21 { get; set; }

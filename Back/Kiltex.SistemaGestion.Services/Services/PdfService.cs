@@ -570,10 +570,12 @@ namespace Kiltex.SistemaGestion.Services.Services
                 table2.AddCell(new PdfPCell(new Phrase("Total:", textFont))
                 {
                     HorizontalAlignment = Element.ALIGN_RIGHT,
+                    Border= PdfCell.NO_BORDER,
                 });
                 table2.AddCell(new PdfPCell(new Phrase(string.Format("{0,7:##.00}", "$" + resumen.Total.ToString()), textFont))
                 {
                     HorizontalAlignment = Element.ALIGN_RIGHT,
+                    Border = PdfCell.NO_BORDER,
                 });
             }
 
