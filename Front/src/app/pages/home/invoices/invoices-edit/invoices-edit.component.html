@@ -29,7 +29,7 @@
               </nz-form-control>
             </nz-form-item>
           </div>
-          <div nz-col class="gutter-row" style="margin-right: 20px">
+          <div nz-col class="gutter-row" [nzSpan]="5" style="margin-right: 20px">
             <nz-form-item>
               <nz-form-label>Tipo de Factura</nz-form-label>
               <nz-form-control>
@@ -44,7 +44,7 @@
             </nz-form-item>
           </div>
 
-          <div nz-col class="gutter-row" [nzSpan]="8">
+          <div nz-col class="gutter-row" [nzSpan]="6">
             <nz-form-item>
               <nz-form-label>Forma de Pago</nz-form-label>
               <nz-form-control>
@@ -105,7 +105,7 @@
           </form>
         </nz-form-item>
 
-         <nz-form-item *ngIf="typeSelectedId == 2 || typeSelectedId == 4">
+         <nz-form-item *ngIf="typeSelectedId == 2">
            <nz-form-label [nzSm]="6" [nzXs]="14" nzFor="customerDni" 
               >Dni
             </nz-form-label>
@@ -264,7 +264,7 @@
                 [hidden]="editIdProductName !== data.ownCode"
                 [(ngModel)]="data.productName"
                 (ngModelChange)="changeProductName($event)"
-                (nzBlur)="stopEditProductName()"
+                (blur)="stopEditProductName()"
                 autocomplete="off"
               /></td>
             <td>

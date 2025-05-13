@@ -266,5 +266,6 @@
   [header]="'¿Está seguro de que desea actualizar los productos?'"
   [message]="'Esta acción no se puede revertir'"
   (handleOk)="handleOk()"
+  [disabled]="isSaving"
 >
 </app-popup-confirmation>

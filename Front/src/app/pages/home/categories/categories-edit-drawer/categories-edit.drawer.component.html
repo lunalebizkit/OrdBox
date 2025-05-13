@@ -28,5 +28,6 @@
   [header]="'¿Está seguro que desea guardar categoría?'"
   [message]="'Esta acción no se puede revertir'"
   (handleOk)="save()"
+  [disabled]="isSaving"
 >
 </app-popup-confirmation>

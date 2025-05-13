@@ -80,7 +80,7 @@
             <input
               formControlName="supplierCuit"
               nz-input
-              maxlength="250"
+              maxlength="11"
               nzSize="small"
               (keydown.enter)="searchSupplier(); $event.preventDefault()"
             />
@@ -262,12 +262,31 @@
         </thead>
         <tbody>
           <tr id="{{data.productId}}" *ngFor="let data of receiptDetailsGrid" class="small-text">
-            <td>{{ data.productId }}</td>
+            <td><span *ngIf="data.productId > 0; else isEditProduct">
+                {{ data.productId }}
+              </span>
+              <ng-template #isEditProduct>                
+              </ng-template></td>
 
             <td>
               {{ data.code }}
             </td>
-            <td>{{ data.description }}</td>
+            <td nzBreakWord>
+              <div
+                class="editable-cell"
+                [hidden]="editIdProductName === data.productId"
+                (click)="startEditProductName(data.productId)"
+              >{{ data.description }}
+              </div>
+              <input nz-input
+                id="productName{{data.productId}}"
+                name="productName{{data.productId}}"
+                [hidden]="editIdProductName !== data.productId"
+                [(ngModel)]="data.description"
+                (ngModelChange)="changeProductName($event)"
+                (blur)="stopEditProductName()"
+                autocomplete="off"
+              /></td>
             <td>
               <div
                 class="editable-cell"
@@ -285,7 +304,20 @@
                 (ngModelChange)="changeQuantity($event)"
               ></nz-input-number>
             </td>
-            <td [nzAlign]="'right'">{{  this.currencyFormat(data.price) }}</td>
+            <td [nzAlign]="'right'">
+              <div class="editable-cell"
+              [hidden]="editIdProductPrice === data.productId"
+              (click)="startEditProductPrice(data.productId)">
+              {{ this.currencyFormat(data.price) }}
+              </div>
+              <nz-input-number
+                [hidden]="editIdProductPrice !== data.productId"
+                [nzMin]="1"
+                [(ngModel)]="data.price"
+                (nzBlur)="stopEditProductPrice()"
+                (ngModelChange)="changeProductPrice($event)"
+              ></nz-input-number>
+            </td>
             <td [nzAlign]="'right'">{{  this.currencyFormat(data.subTotal) }}</td>
             <td>
               <div
@@ -412,6 +444,7 @@
   [header]="'¿Está seguro que desea guardar el comprobante?'"
   [message]="'Esta acción no se puede revertir'"
   (handleOk)="save()"
+  [disabled]="isSaving"
 >
   >
 </app-popup-confirmation>

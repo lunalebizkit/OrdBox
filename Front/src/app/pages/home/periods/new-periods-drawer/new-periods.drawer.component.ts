@@ -129,8 +129,6 @@ save(): void {
 
         this.isSaving = false;
          this.close(r.id); 
-        /*  location.reload() */
-       /*  this.ngOnInit() */
        this.refresh()
       },
       error: () => {

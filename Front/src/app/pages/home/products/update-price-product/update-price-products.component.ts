@@ -146,6 +146,7 @@ export class UpdatePriceProductsComponent extends BaseComponent implements OnIni
         category: this.formSearch.controls['category'].value,
         supplier:this.formSearch.controls['supplier'].value
       }
+      this.isSaving = true;
       this.service.UpdatePriceProduct(model).subscribe({
         next: (r) => {
           this.showNotificationSuccess(

@@ -154,5 +154,6 @@
   [header]="'¿Está seguro de que desea cerrar el Período seleccionado?'"
   [message]="'Esta acción no se puede revertir'"
   (handleOk)="handleOk()"
+  [disabled]="isSaving"
 >
 </app-popup-confirmation>

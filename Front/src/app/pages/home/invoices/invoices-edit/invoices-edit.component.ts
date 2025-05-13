@@ -172,11 +172,10 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
   }
 
   typeSelectedChange(id: eInvoiceType): void {
+    this.typeSelectedId = id;
     if (id == eInvoiceType.A) {      
-      this.typeSelectedId = id;
       this.invoiceA = true;
     }else{
-      this.typeSelectedId = eInvoiceType.B;
       this.invoiceA= false;
     }    
   }

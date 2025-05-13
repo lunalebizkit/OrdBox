@@ -42,9 +42,7 @@ import { isNil } from 'ng-zorro-antd/core/util';
   styleUrls: ['./receipt-edit.component.css'],
 })
 export class ReceiptEditComponent extends BaseComponent implements OnInit {
-// direction() {
-// throw new Error('Method not implemented.');
-// }
+
   @ViewChild('popup') popupComponent!: PopupConfirmationComponent;
   @ViewChild('header') headerComponent!: HeaderOperationsButtonsComponent;
   @ViewChild('pop') popComponent!: PopupConfirmationComponent;
@@ -80,6 +78,7 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
   percIva: number = 0;
   concNoGravado: number = 0;
   product!: string;
+  editProductId: number= 0;
 
   today = new Date();
 
@@ -106,7 +105,8 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
   userId: number = this.serviceUser.currentUser.id;
   selectedDni: boolean = false;
   dni: any;
-
+  editIdProductName: number | null = null;  
+  editIdProductPrice: number | null = null;
   /*
    ** Parametros de busqueda
    */
@@ -215,9 +215,9 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
   searchSupplier(): void {
     this.cuit = this.formReceipt.controls['supplierCuit'].value;
     if (this.cuit === '00') {
-      this.formReceipt.controls['supplierAddress'].setValue('S/D');
-      this.formReceipt.controls['supplierCuit'].setValue('00');
-      this.formReceipt.controls['supplierName'].setValue('Admin');
+      this.formReceipt.controls['supplierAddress'].setValue('-');
+      this.formReceipt.controls['supplierCuit'].setValue('99999999995');
+      this.formReceipt.controls['supplierName'].setValue('-');
       this.supplierId = 0;
       return;
     } else {
@@ -400,6 +400,10 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
     this.product = this.formProductSearch.controls['productSearchFilter'].value;
     this.queryParams.filter = this.product;
     if (this.isValidForm(this.formReceipt)) {
+      if (this.product == '00') {
+      this.addNewEditProduct();
+       return;
+      }
       if (this.product.length > 0) {
         this.serviceProduct.getProducts(this.queryParams).subscribe({
           next: (r) => {
@@ -470,6 +474,10 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
 }
 
   openComponentProduct(): void {
+    if (this.formProductSearch.controls['productSearchFilter'].value == '00'){
+      this.addNewEditProduct();
+      return;
+    }
     const drawerRefProduct = this.drawerService.create<
       InvoiceProductSearchComponent,
       { filter: string, supplierId : number | null },
@@ -561,5 +569,96 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
     this.router.navigate(['/home/invoices/receipt']);
   }
   
+  addNewEditProduct():void{
+      this.editProductId--;
+      let newEditProduct: ProductsModel = {
+        id: this.editProductId,
+        quantity: 1,
+        code: '',
+        description: '',
+        cashSalePrice: 0, 
+        categoryName: '',
+        brandName: '',
+        purchasePrice: 0,
+        salePrice: 0,
+        salePercentage: 0,
+        cardSalePrice: 0,
+        cashSalePercentage: 0,
+        cardSalePercentage: 0,
+        pointOrder: 0,
+        observation: '',
+        supplierName: '',
+        isDeleted: false,
+        barCode: ''
+      };
+      /* Parseo el Producto a la grilla de Tabla */
+      const model: receiptDetailsGrid = receiptGridParser(
+        newEditProduct,
+        this.iva
+      );
+      this.receiptDetailsGridTest.push(model);
+      this.receiptDetailsGrid = this.receiptDetailsGridTest;
+
+      /* Parseo dato a Dto Factura Detalle */
+      const modelDetail: receiptDetails = receiptDetailParser(
+        newEditProduct,
+        this.iva
+      );
+      this.receiptDetails.push(modelDetail);
+
+      this.totalCalculate();
+
+      this.loading = false;
+      this.formProductSearch.controls['productSearchFilter'].setValue(
+        ''
+      );
+  }
+
+  startEditProductName(id: number): void {
+    this.editIdProductName = id;
+  }
+
+  changeProductName(name: string):void {
+  this.receiptDetails.filter(
+    detail => detail.productId == this.editIdProductName
+    )[0].productName = name;
+
+  this.receiptDetailsGrid.filter(
+    detail => detail.productId == this.editIdProductName
+    )[0].description = name;
+    
+  }
+
+   stopEditProductName(): void {
+    this.editIdProductName = null;
+  }
+  
+  startEditProductPrice(id: number): void {
+    this.editIdProductPrice = id;
+  }
+
+  stopEditProductPrice(): void {
+    this.editIdProductPrice = null;
+  }
+  
+  changeProductPrice(price: number):void {
+  //recupero el producto a editar
+    let product= this.receiptDetails.filter(
+      detail => detail.productId == this.editIdProductPrice)[0];
+
+    this.receiptDetails.filter(
+      detail => detail.productId == this.editIdProductPrice
+      )[0].price = price;
+
+    this.receiptDetailsGrid.filter(
+      detail => detail.productId == this.editIdProductPrice
+      )[0].price = price;
+      
+      this.receiptDetailsGrid.filter(
+        detail => detail.productId == this.editIdProductPrice
+        )[0].subTotal = product.quantity * price;
+
+      this.totalCalculate();
+  }
 }
 

@@ -315,5 +315,5 @@
 </app-popup-confirmation>
 <app-popup-confirmation #pop [title]="'Confirmar Guardado de comprobante'"
   [header]="'¿Está seguro que desea guardar el comprobante?'" [message]="'Esta acción no se puede revertir'"
-  (handleOk)="save()">
+  (handleOk)="save()" [disabled]="isSaving">
 </app-popup-confirmation>
