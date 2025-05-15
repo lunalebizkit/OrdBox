@@ -19,42 +19,9 @@
       </button>
     </nz-page-header-extra>
   </nz-page-header>
-  <nz-content>
-    <nz-collapse>
-      <nz-collapse-panel nzSize="small" nzHeader="Filtros">
-        <div nz-row [nzGutter]="[8, 1]">
-          <div nz-col nzSpan="24">
-            <nz-form-item>
-              <nz-form-label>Búsqueda</nz-form-label>
-              <nz-form-control>
-                <nz-input-group [nzSuffix]="clearQuery">
-                  <input
-                    [ngModelOptions]="{ standalone: true }"
-                    type="text"
-                    placeholder="Ingrese Nombre o CUIT-DNI"
-                    nz-input
-                    (keydown.enter)="search()"
-                    [(ngModel)]="queryParams.filter"
-                  />
-                </nz-input-group>
-
-                <ng-template #clearQuery>
-                  <i
-                    nz-icon
-                    class="ant-input-clear-icon"
-                    nzTheme="fill"
-                    nzType="close-circle"
-                    *ngIf="queryParams.filter"
-                    (click)="queryParams.filter = ''; search()"
-                  ></i>
-                </ng-template>
-              </nz-form-control>
-            </nz-form-item>
-          </div>
-        </div>
-      </nz-collapse-panel>
-    </nz-collapse>
-
+  <nz-content>    
+    <app-search-filter [title]="'Filtros'" [(model)]="queryParams.filter" (keydown.enter)="search()" [palceHolder]="'Ingrese Nombre o CUIT-DNI'" (onSearchClick)="search()"></app-search-filter>
+    
     <!-- Tabla -->
 
     <div class="table" (scroll)="onScroll($event)">

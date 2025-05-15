@@ -27,6 +27,8 @@ import { CuitPipe } from './pipes/cuit.pipe';
 import { NoCommaPipe } from './pipes/no-comma.pipe';
 import { ButtonOperationFooter } from './components/footers/button.operation.footer.component';
 import { InvoiceTypePipe } from './pipes/invoice-type.pipe';
+import { SearchFilterComponent } from './components/search-filter/search.filter.component';
+import { NzCollapseModule } from 'ng-zorro-antd/collapse';
 
 @NgModule({
   imports: [
@@ -46,6 +48,7 @@ import { InvoiceTypePipe } from './pipes/invoice-type.pipe';
     NzTypographyModule,
     NzTagModule,
     NzImageModule,
+    NzCollapseModule,    
   ],
   exports: [
     CommonModule,
@@ -71,6 +74,7 @@ import { InvoiceTypePipe } from './pipes/invoice-type.pipe';
     NoCommaPipe,
     ButtonOperationFooter,
     InvoiceTypePipe,
+    SearchFilterComponent,
   ],
   declarations: [
     HeaderOperationsButtonsComponent,
@@ -81,13 +85,15 @@ import { InvoiceTypePipe } from './pipes/invoice-type.pipe';
     CuitPipe,
     NoCommaPipe,
     ButtonOperationFooter,
-    InvoiceTypePipe
+    InvoiceTypePipe,
+    SearchFilterComponent,
   ],
   entryComponents: [
     HeaderOperationsButtonsComponent,
     BaseComponent,
     PopupConfirmationComponent,
     ButtonOperationFooter,
+    SearchFilterComponent,
   ],
   providers: [],
 })

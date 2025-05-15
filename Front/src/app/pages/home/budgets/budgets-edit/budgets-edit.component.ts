@@ -46,7 +46,7 @@ export class BudgetsEditComponent extends BaseComponent implements OnInit {
   total: number = 0;
   /*FORM*/
   formProductSearch!: FormGroup;
-  startDate = Date.now().toString();
+  startDate = new Date;
   today = new Date();
   subtotal: number = 0;
 
@@ -149,7 +149,7 @@ export class BudgetsEditComponent extends BaseComponent implements OnInit {
         this.form.controls['customerName'].setValue(r.customerName);
         this.form.controls['customerAddress'].setValue(r.customerAddress);
         this.form.controls['observation'].setValue(r.observation);
-        this.startDate = new Date(r.dateTime).toString();
+        this.startDate = new Date(r.dateTime.toString());
 
         this.budgetDetails = r.budgetDetails;
         this.subtotal = r.subtotal;
