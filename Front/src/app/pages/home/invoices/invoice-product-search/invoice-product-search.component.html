@@ -2,15 +2,17 @@
   <nz-collapse class="list-header">
     <form nz-form>
 
-      <div nz-col nzSpan="20" style="margin-bottom: -20px;">
+      <div nz-col nzSpan="24" style="margin-bottom: -20px;">
         <nz-form-item>
           <nz-form-label>Búsqueda</nz-form-label>
           <nz-form-control>
-            <nz-input-group [nzSuffix]="clearQuery">
+            <nz-input-group nzSearch [nzSuffix]="clearQuery" [nzAddOnAfter]="suffixButton">
               <input [ngModelOptions]="{standalone: true}" type="text" placeholder="Ingrese producto"
                 nz-input (keydown.enter)="search()" [(ngModel)]="queryParams.filter.product" />
             </nz-input-group>
-
+             <ng-template #suffixButton>
+                <button nz-button nzType="primary" nzSearch><i nz-icon nzType="search" (click)="search()"></i></button>
+            </ng-template>
             <ng-template #clearQuery>
               <i nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle"
                 *ngIf="queryParams.filter.product" (click)="queryParams.filter.product= ''; search()"></i>
@@ -19,7 +21,7 @@
         </nz-form-item>
       </div>
 
-      <div nz-col nzSpan="18" style="margin: 25px;">
+      <div nz-col nzSpan="24" style="margin: 25px;">
         <nz-form-item>
           <nz-form-label>Marca</nz-form-label>
           <nz-form-control [nzSm]="18">
@@ -55,11 +57,7 @@
             </nz-form-control>
           </nz-form-item>
 
-          <button nz-button nzType="primary" (click)="search()" style="margin-left: 50px; margin-top: 3px;">
-            <i nz-icon nzType="search"></i>
-            Buscar
-          </button>
-          <button class="btn-excel-export" nz-button nzType="primary" style="margin-left: 50px;" [disabled]="setOfCheckedId.size == 0" (click)="selecccion()">
+          <button class="btn-excel-export" nz-button nzType="primary" style="margin-left: 30px;" [disabled]="setOfCheckedId.size == 0" (click)="selecccion()">
             <i nz-icon nzType="check"></i>
             Aceptar
           </button>

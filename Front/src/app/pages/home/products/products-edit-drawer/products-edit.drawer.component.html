@@ -13,14 +13,14 @@
                         <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="description">Descripción
                         </nz-form-label>
                         <nz-form-control [nzSm]="14" [nzXs]="24">
-                            <input formControlName="description" nz-input id="description" maxlength="250" />
+                            <input formControlName="description" nz-input id="description" maxlength="250" autocomplete="off" />
                         </nz-form-control>
                     </nz-form-item>
 
                     <nz-form-item>
-                        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="code">Código </nz-form-label>
+                        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="code">Código </nz-form-label>
                         <nz-form-control [nzSm]="14" [nzXs]="24">
-                            <input formControlName="code" nz-input id="code" maxlength="250" />
+                            <input formControlName="code" nz-input id="code" maxlength="250" autocomplete="off"/>
                         </nz-form-control>
                     </nz-form-item>
 
@@ -67,7 +67,7 @@
                     </nz-form-item>
 
                     <nz-form-item>
-                        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="supplierName">Proveedor </nz-form-label>
+                        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="supplierName">Proveedor</nz-form-label>
                         <nz-form-control [nzSm]="14" [nzXs]="24">
                             <nz-spin [nzSpinning]="isLoadingEntity">
                                 <nz-select nzAllowClear nzShowSearch nzServerSearch (nzOnSearch)="onSearch($event)"
@@ -91,14 +91,14 @@
                         </nz-form-label>
                         <nz-form-control [nzSm]="14" [nzXs]="24">
                             <input formControlName="barCode" nz-input id="barCode" maxlength="250"
-                                ng-model="this.codeBar" />
+                                ng-model="this.codeBar" autocomplete="off"/>
                         </nz-form-control>
                     </nz-form-item>
                     <nz-form-item>
-                        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="observation">Observación
+                        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="observation">Observación
                         </nz-form-label>
                         <nz-form-control [nzSm]="14" [nzXs]="24">
-                            <input formControlName="observation" nz-input id="observation" maxlength="250" />
+                            <input formControlName="observation" nz-input id="observation" maxlength="250" autocomplete="off"/>
                         </nz-form-control>
                     </nz-form-item>
                 </nz-content>

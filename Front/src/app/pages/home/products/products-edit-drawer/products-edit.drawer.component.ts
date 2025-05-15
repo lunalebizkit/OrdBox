@@ -109,7 +109,7 @@ export class ProductsEditDrawerComponent extends BaseComponent implements OnInit
     super(notificacionService, el, message);
     this.form = this.fb.group({
       description: ['', [Validators.required]],
-      code: ['', [Validators.required]],
+      code: ['', ],
       categoryName: ['', [Validators.required]],
       brandName: ['', [Validators.required]],
       salePercentage: [50, [Validators.required]],
