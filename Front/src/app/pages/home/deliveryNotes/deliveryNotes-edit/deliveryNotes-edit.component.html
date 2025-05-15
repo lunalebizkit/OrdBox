@@ -62,7 +62,7 @@
           <nz-form-label [nzSm]="6" [nzXs]="14" nzRequired nzFor="supplierName">Razón Social-Nombre
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="14" [nzErrorTip]="cuit">
-            <input nz-input nzSize="small" formControlName="supplierName" />
+            <input nz-input nzSize="small" formControlName="supplierName" id="supplierName"/>
           </nz-form-control>
           <!-- Boton que abre el buscador de Cliente en drawer -->
           <form nz-form [formGroup]="formSupplierSearch">
@@ -80,7 +80,7 @@
           <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="supplierCuit">Cuit - Cuil
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24">
-            <input nz-input maxlength="250" nzSize="small" formControlName="supplierCuit" />
+            <input nz-input maxlength="250" nzSize="small" formControlName="supplierCuit" id="supplierCuit"/>
           </nz-form-control>
         </nz-form-item>
         <ng-template #cuit let-control>
@@ -96,7 +96,7 @@
           <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="supplierAddress">Domicilio
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24">
-            <input nz-input nzSize="small" maxlength="250" formControlName="supplierAddress" />
+            <input nz-input nzSize="small" maxlength="250" formControlName="supplierAddress" id="supplierAddress"/>
           </nz-form-control>
         </nz-form-item>
 
@@ -111,7 +111,7 @@
               <nz-input-group [nzSuffix]="clearQuery">
                 <input nz-input formControlName="productSearchFilter"
                   placeholder="Ingrese producto" nzSize="small"
-                  (keydown.enter)="searchProduct(); $event.preventDefault()" />
+                  (keydown.enter)="searchProduct(); $event.preventDefault()" id="productSearchFilter"/>
               </nz-input-group>
 
               <ng-template #clearQuery>

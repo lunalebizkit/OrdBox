@@ -78,7 +78,7 @@
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="14" [nzErrorTip]="cuit">
             <input
-              formControlName="supplierCuit"
+              formControlName="supplierCuit" id="supplierCuit"
               nz-input
               maxlength="11"
               nzSize="small"
@@ -109,11 +109,11 @@
           </form>
         </nz-form-item>
         <nz-form-item *ngIf="typeSelectedId == 2">
-          <nz-form-label [nzSm]="6" [nzXs]="14" nzFor="customerDni" 
+          <nz-form-label [nzSm]="6" [nzXs]="14" nzFor="customerDni"
              >Dni
            </nz-form-label>
            <nz-form-control [nzSm]="14" [nzXs]="14">
-           <input
+           <input id="customerDni" 
              nz-input
              maxlength="8"
              nzSize="small"
@@ -130,7 +130,7 @@
             >Razón Social - Nombre
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24">
-            <input
+            <input id="supplierName"
               formControlName="supplierName"
               nz-input
               maxlength="250"
@@ -148,7 +148,8 @@
             >Domicilio
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24">
-            <input
+            <input 
+              id="supplierAddress"
               formControlName="supplierAddress"
               nz-input
               nzSize="small"
@@ -177,6 +178,8 @@
                   placeholder="Ingrese producto"
                   nzSize="small"
                   (keydown.enter)="searchProduct(); $event.preventDefault()"
+                  id="productSearchFilter"
+                  
                 />
               </nz-input-group>
 

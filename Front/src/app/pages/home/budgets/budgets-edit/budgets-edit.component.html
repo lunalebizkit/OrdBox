@@ -33,7 +33,7 @@
             <nz-form-control [nzSm]="14" [nzXs]="14" [nzErrorTip]="cuit">
               <nz-input-group [nzSuffix]="clearQuery">
                 <input nz-input (keydown.enter)="searchCustomer(); $event.preventDefault()" nzSize="small"
-                  formControlName="budgetNumber" />
+                  formControlName="budgetNumber" nzFor="budgetNumber"/>
               </nz-input-group>
 
             </nz-form-control>
@@ -77,7 +77,7 @@
           <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="customerName">Nombre
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24">
-            <input nz-input maxlength="250" nzSize="small" formControlName="customerName" />
+            <input nz-input maxlength="250" nzSize="small" formControlName="customerName" id="customerName"/>
           </nz-form-control>
         </nz-form-item>
 
@@ -86,7 +86,7 @@
           <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="customerAddress">Domicilio
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24">
-            <input nz-input formControlName="customerAddress" nzSize="small" maxlength="250" />
+            <input nz-input formControlName="customerAddress" nzSize="small" maxlength="250" id="customerAddress"/>
           </nz-form-control>
         </nz-form-item>
 
@@ -101,7 +101,7 @@
               <nz-input-group [nzSuffix]="clearQuery">
                 <input nz-input formControlName="productSearchFilter"
                   placeholder="Ingrese producto" nzSize="small"
-                  (keydown.enter)="searchProduct(); $event.preventDefault()" />
+                  (keydown.enter)="searchProduct(); $event.preventDefault()" id="productSearchFilter"/>
 
               </nz-input-group>
 

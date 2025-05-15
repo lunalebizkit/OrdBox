@@ -112,6 +112,7 @@
              maxlength="8"
              nzSize="small"
              formControlName="customerDni"
+             id="customerDni"
              />
            </nz-form-control>
              <nz-switch style="margin-left: 5px;" (click)="select()"
@@ -161,6 +162,7 @@
                 <input 
                 nz-input 
                 formControlName="productSearchFilter"
+                id="productSearchFilter"
                 placeholder="Ingrese producto" 
                 nzSize="small"
                 (keydown.enter)="searchProduct(); $event.preventDefault() " />

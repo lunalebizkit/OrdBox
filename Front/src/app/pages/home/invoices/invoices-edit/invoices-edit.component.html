@@ -78,7 +78,7 @@
               (keydown.enter)="searchCustomer(); $event.preventDefault()"
               nzSize="small"
               maxlength="11"
-              formControlName="customerCuit"
+              formControlName="customerCuit" id="customerCuit"
             />
           </nz-form-control>
           <ng-template #cuit let-control>
@@ -114,7 +114,7 @@
               nz-input
               maxlength="8"
               nzSize="small"
-              formControlName="customerDni"
+              formControlName="customerDni" id="customerDni"
               />
             </nz-form-control>
               <nz-switch style="margin-left: 5px;" (click)="select()" 
@@ -131,7 +131,7 @@
               nz-input
               maxlength="250"
               nzSize="small"
-              formControlName="customerName"
+              formControlName="customerName" id="customerName"
             />
           </nz-form-control>
         </nz-form-item>
@@ -145,7 +145,7 @@
               nz-input
               formControlName="address"
               nzSize="small"
-              maxlength="250"
+              maxlength="250" id="address"
             />
           </nz-form-control>
         </nz-form-item>
