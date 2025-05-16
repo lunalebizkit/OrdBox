@@ -17,40 +17,8 @@
   </nz-page-header>
   <nz-content>
     <!-- Busqueda -->
-    <nz-collapse>
-      <nz-collapse-panel nzSize="small" nzHeader="Filtros">
-        <div nz-row [nzGutter]="[8, 1]">
-          <div nz-col nzSpan="24">
-            <nz-form-item>
-              <nz-form-label>Búsqueda</nz-form-label>
-              <nz-form-control>
-                <nz-input-group [nzSuffix]="clearQuery">
-                  <input
-                    [ngModelOptions]="{ standalone: true }"
-                    type="text"
-                    placeholder="Ingrese Marca"
-                    nz-input
-                    (keydown.enter)="search()"
-                    [(ngModel)]="queryData.filter"
-                  />
-                </nz-input-group>
-
-                <ng-template #clearQuery>
-                  <i
-                    nz-icon
-                    class="ant-input-clear-icon"
-                    nzTheme="fill"
-                    nzType="close-circle"
-                    *ngIf="queryData.filter"
-                    (click)="queryData.filter = ''; search()"
-                  ></i>
-                </ng-template>
-              </nz-form-control>
-            </nz-form-item>
-          </div>
-        </div>
-      </nz-collapse-panel>
-    </nz-collapse>
+    
+    <app-search-filter [title]="'Filtros'" [(model)]="queryData.filter" (keydown.enter)="search()" [palceHolder]="'Ingrese marca'" (onSearchClick)="search()"></app-search-filter>
 
     <!-- Tabla -->
 

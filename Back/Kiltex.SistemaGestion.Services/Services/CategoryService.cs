@@ -115,7 +115,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                 var query = _contextSql
                                     .Category
                                     .AsNoTracking()
-                                    .Where(p => ((p.Description.ToLower().Contains(request.Filter ?? ""))));
+                                    .Where(p => ((p.Description.ToLower().Contains(request.Filter ?? "")) && p.Id > 0));
 
                 var count = await query.CountAsync().ConfigureAwait(false);
 
