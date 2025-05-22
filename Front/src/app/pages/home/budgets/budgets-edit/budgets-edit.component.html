@@ -17,9 +17,9 @@
         <div nz-row nzJustify="center">
           <div style=" margin-right: 25px">
             <nz-form-item>
-              <nz-form-label>Fecha</nz-form-label>
+              <nz-form-label for="fecha">Fecha</nz-form-label>
               <nz-form-control>
-                <b>
+                <b id="fecha">
                   {{ startDate ? (startDate | date : "YYYY-MM-dd") : "N/A" }}
                 </b>
               </nz-form-control>
@@ -33,7 +33,7 @@
             <nz-form-control [nzSm]="14" [nzXs]="14" [nzErrorTip]="cuit">
               <nz-input-group [nzSuffix]="clearQuery">
                 <input nz-input (keydown.enter)="searchCustomer(); $event.preventDefault()" nzSize="small"
-                  formControlName="budgetNumber" nzFor="budgetNumber"/>
+                  formControlName="budgetNumber" id="budgetNumber"/>
               </nz-input-group>
 
             </nz-form-control>
@@ -48,10 +48,10 @@
           <div nz-col class="gutter-row" [nzSpan]="8" >
         
               <nz-form-item>
-                <nz-form-label nzRequired>Forma de Pago</nz-form-label>
+                <nz-form-label nzFor="payment" nzRequired>Forma de Pago</nz-form-label>
                 <nz-form-control>
                   <nz-select
-                    id="payment"
+                    nzId="payment"
                     formControlName="payment"
                     [nzOptions]="payment"
                     (ngModelChange)="paymentSelectedChange($event)"
@@ -164,7 +164,7 @@
         </thead>
 
         <tbody>
-          <tr *ngFor="let data of budgetDetailsList"   class="small-text">
+          <tr *ngFor="let data of budgetDetailsList"   class="small-text" id="{{data.ownCode}}">
             <td>{{data.productCode}}</td>
             <td>{{ data.productId }}</td>
             <td nzBreakWord>{{ data.productName }}</td>
@@ -176,7 +176,7 @@
                 
                 {{ data.quantity }}
               </div>
-              <nz-input-number 
+              <nz-input-number nzId="{{data.ownCode}}"
               [hidden]="editId !== data.ownCode"
               [nzMin]="1"
               [nzMax]="10000"

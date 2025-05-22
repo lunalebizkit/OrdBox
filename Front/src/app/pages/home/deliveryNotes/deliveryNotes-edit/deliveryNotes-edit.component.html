@@ -14,8 +14,8 @@
         <div nz-row nzJustify="center" style="margin: 20px;" >
           <div nz-col class="gutter-row" [nzSpan]="4" style="margin-right: 5px; margin-left: 5px;">
             <nz-form-item>
-              <nz-form-label>Fecha</nz-form-label >
-              <nz-form-control>
+              <nz-form-label nzFor="fecha">Fecha</nz-form-label >
+              <nz-form-control id="fecha">
                 <b>
                   {{ startDate ? (startDate | date : "YYYY-MM-dd") : "N/A" }}
                 </b>
@@ -46,11 +46,11 @@
 
           <div nzSpan="18" style="width: 240px">
             <nz-form-item>
-              <nz-form-label nzRequired nzFor="paid">Pagado
+              <nz-form-label nzRequired for="paid">Pagado
               </nz-form-label>
               <nz-switch class="mb-2" formControlName="paid" (ngModelChange)="selectPaid($event)"
                 nzCheckedChildren="Si " nzUnCheckedChildren="No" [ngModel]="switchValue"
-                [nzDisabled]="isDisabledPaid"></nz-switch>
+                [nzDisabled]="isDisabledPaid" id="paid"></nz-switch>
             </nz-form-item>
           </div>
         </div>
