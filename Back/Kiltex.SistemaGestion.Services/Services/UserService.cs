@@ -146,22 +146,21 @@ namespace Kiltex.SistemaGestion.Services.Services
                 }
                 else
                 {
+                    var oldUser = await _contextSql
+                                .Users
+                                .FirstAsync(p => p.Id == usermodel.Id, ct)
+                                .ConfigureAwait(false);
+
                     if (!String.IsNullOrEmpty(usermodel.Password))
                     {
                         usermodel.Password = SecurePasswordHasher.Hash(usermodel.Password, 100);
-                        _contextSql.Users.Update(usermodel);
                     }
 
                     else
                     {
-                        var oldUser = await _contextSql
-                                   .Users
-                                   .FirstAsync(p => p.Id == usermodel.Id, ct)
-                                   .ConfigureAwait(false);
-
                         usermodel.Password = oldUser.Password;
-                        _contextSql.Users.Update(usermodel);
                     }
+                     _contextSql.Entry(oldUser).CurrentValues.SetValues(usermodel);
 
                 }
                 await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
