@@ -29,6 +29,7 @@ import { ButtonOperationFooter } from './components/footers/button.operation.foo
 import { InvoiceTypePipe } from './pipes/invoice-type.pipe';
 import { SearchFilterComponent } from './components/search-filter/search.filter.component';
 import { NzCollapseModule } from 'ng-zorro-antd/collapse';
+import { IvaConditionTypePipe } from './pipes/ivacondition-type';
 
 @NgModule({
   imports: [
@@ -75,6 +76,7 @@ import { NzCollapseModule } from 'ng-zorro-antd/collapse';
     ButtonOperationFooter,
     InvoiceTypePipe,
     SearchFilterComponent,
+    IvaConditionTypePipe,
   ],
   declarations: [
     HeaderOperationsButtonsComponent,
@@ -87,6 +89,7 @@ import { NzCollapseModule } from 'ng-zorro-antd/collapse';
     ButtonOperationFooter,
     InvoiceTypePipe,
     SearchFilterComponent,
+    IvaConditionTypePipe,
   ],
   entryComponents: [
     HeaderOperationsButtonsComponent,

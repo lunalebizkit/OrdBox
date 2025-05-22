@@ -19,7 +19,7 @@
     >
       <nz-content> 
         <div nz-row nzJustify="center">
-          <div style=" margin-right: 25px">
+          <div style=" margin-right: 20px">
             <nz-form-item>
               <nz-form-label >Fecha</nz-form-label>
               <nz-form-control>
@@ -29,7 +29,7 @@
               </nz-form-control>
             </nz-form-item>
           </div>
-          <div nz-col class="gutter-row" [nzSpan]="5" style="margin-right: 20px">
+          <div nz-col class="gutter-row" style="margin-right: 20px">
             <nz-form-item>
               <nz-form-label>Tipo de Factura</nz-form-label>
               <nz-form-control>
@@ -44,6 +44,21 @@
             </nz-form-item>
           </div>
 
+          <div nz-col class="gutter-row" [nzSpan]="6" style="margin-right: 20px">
+            <nz-form-item>
+              <nz-form-label>Cond. Iva</nz-form-label>
+              <nz-form-control>
+                <nz-select
+                  id="ivaCondition"
+                  formControlName="ivaCondition"
+                  [nzOptions]="ivaCondition"
+                  [nzDisabled]="isConditionDisabled"
+                >
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          
           <div nz-col class="gutter-row" [nzSpan]="6">
             <nz-form-item>
               <nz-form-label>Forma de Pago</nz-form-label>
@@ -58,6 +73,7 @@
               </nz-form-control>
             </nz-form-item>
           </div>
+
         </div>
 
         <!-- Datos del Cliente -->
@@ -105,11 +121,11 @@
           </form>
         </nz-form-item>
 
-         <nz-form-item *ngIf="typeSelectedId == 2">
+         <nz-form-item *ngIf="typeSelectedId == 2 && formInvoice.get('ivaCondition')?.value == eIvaCondition.ConsFinal">
            <nz-form-label [nzSm]="6" [nzXs]="14" nzFor="customerDni" 
               >Dni
             </nz-form-label>
-            <nz-form-control [nzSm]="14" [nzXs]="14">
+            <nz-form-control [nzSm]="14" [nzXs]="14" [nzErrorTip]="dni">
             <input
               nz-input
               maxlength="8"
@@ -117,9 +133,14 @@
               formControlName="customerDni" id="customerDni"
               />
             </nz-form-control>
-              <nz-switch style="margin-left: 5px;" (click)="select()" 
-               nzCheckedChildren="seleccionado" nzUnCheckedChildren="No seleccionado" 
+              <nz-switch style="margin-left: 5px;" (ngModelChange)="select($event)" [(ngModel)]="selectedDni"
+               nzCheckedChildren="seleccionado" nzUnCheckedChildren="No seleccionado" [ngModelOptions]="{standalone: true}"
             ></nz-switch>
+             <ng-template #dni let-control>
+            <ng-container *ngIf="control.hasError('minlength')"> 
+              Debe ingresar un dni valido, 8 digitos.
+            </ng-container>            
+          </ng-template>
       </nz-form-item>
       
         <nz-form-item>
@@ -159,7 +180,7 @@
             </nz-form-label>
             <nz-form-control [nzSm]="14" [nzXs]="14">
               <nz-input-group [nzSuffix]="clearQuery">
-                <input nz-input formControlName="productSearchFilter"
+                <input nz-input formControlName="productSearchFilter" id="productSearchFilter"
                   placeholder="Ingrese producto" nzSize="small"
                   (keydown.enter)="searchProduct(); $event.preventDefault()" />
 
@@ -343,6 +364,8 @@
         <tfoot style="background-color: #fafafa">
           <tr>
             <td></td>
+            <td *ngIf="!invoiceA"></td>
+            <td *ngIf="!invoiceA"></td>
             <td colspan="2" *ngIf="invoiceA; else elseBlock">
               <b>Iva </b
               ><b style="color: red; font-size: 15px;" >{{
@@ -355,26 +378,25 @@
                 this.currencyFormat(this.subtotal)
               }}</b>
             </td>
-            <td colspan="1">
+            <td colspan="2">
               <b>Total </b
               ><b style="color: red ; font-size: 15px;">
                 {{ this.currencyFormat(this.total) }}</b>
             </td>
-            <td></td>
             <td colspan="2" [nzAlign]="'right'">
               <button
-                id="actualizarbutton"
-                nz-button
-                nzSize="large"
-                style="background-color: #24ce41"
-                (click)="msjConfirmOk()"
+              id="actualizarbutton"
+              nz-button
+              nzSize="large"
+              style="background-color: #24ce41"
+              (click)="msjConfirmOk()"
               >
-                <i nz-icon nzType="save" nzTheme="outline"></i>Grabar
-              </button>
-            </td>
-            <ng-template #elseBlock>
-              <td colspan="1"></td>
-            </ng-template>
+              <i nz-icon nzType="save" nzTheme="outline"></i>Grabar
+            </button>
+          </td>
+          <ng-template #elseBlock>
+            <td colspan="1"></td>
+          </ng-template>
           </tr>
         </tfoot>
       </nz-table>
