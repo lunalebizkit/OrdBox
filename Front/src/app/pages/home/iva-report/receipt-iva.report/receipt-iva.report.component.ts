@@ -177,7 +177,7 @@ import { ReceiptIvaReportDetailsModel, ReceiptIvaReportModel } from '../model/re
             this.totalType1 += data.total
             break;
           case eInvoiceType.B:
-          case eInvoiceType.X:
+          case eInvoiceType.EXENTO:
             this.totalIva10Type2 += (Number(data.iva10))
             this.totalIva21Type2 += (Number(data.iva21))
             this.totalIva27Type2 += (Number(data.iva27))
