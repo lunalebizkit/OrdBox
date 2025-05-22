@@ -27,7 +27,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             try
             {
 
-                if (tipoDocumento == ETypeReceipt.B || tipoDocumento == ETypeReceipt.X)
+                if (tipoDocumento == ETypeReceipt.B || tipoDocumento == ETypeReceipt.EXENTO)
                 {
                     tipoDocumento = ETypeReceipt.BImpresion;
                 }

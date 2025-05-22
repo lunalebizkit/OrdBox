@@ -1,12 +1,10 @@
 ﻿
 using iTextSharp.text;
 using Kiltex.SistemaGestion.Domain.Enum;
-using Kiltex.SistemaGestion.Services.ImpresoraFiscal.Printer250F.Dto;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
 using Kiltex.SistemaGestion.Services.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 
 namespace Kiltex.SistemaGestion.Api.Controllers.PDF
 {
@@ -45,7 +43,7 @@ namespace Kiltex.SistemaGestion.Api.Controllers.PDF
 
             if (Enum.TryParse<ETypeReceipt>(factura.Data.Status, out var typeReceipt))
             {
-                if(typeReceipt == ETypeReceipt.X)
+                if(typeReceipt == ETypeReceipt.EXENTO)
                 {
                     dtoCabecera.Tipo = "B";
                 }
@@ -102,7 +100,7 @@ namespace Kiltex.SistemaGestion.Api.Controllers.PDF
             };
             if (Enum.TryParse<ETypeReceipt>(factura.Data.Status, out var typeReceipt))
             {
-                if (typeReceipt == ETypeReceipt.X)
+                if (typeReceipt == ETypeReceipt.EXENTO)
                 {
                     dtoCabecera.Tipo = "B";
                 }

@@ -127,7 +127,7 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
             {
                 ETypeReceipt.A => "TiqueFacturaA",
                 ETypeReceipt.B => "TiqueFacturaB",
-                ETypeReceipt.X => "TiqueFacturaB",
+                ETypeReceipt.EXENTO => "TiqueFacturaB",
                 _ => throw new NotImplementedException()
             };
 
@@ -179,7 +179,7 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
             {
                 ETypeReceipt.A => "TiqueNotaDebitoA",
                 ETypeReceipt.B => "TiqueNotaDebitoB",
-                ETypeReceipt.X => "TiqueNotaDebitoB",
+                ETypeReceipt.EXENTO => "TiqueNotaDebitoB",
                 _ => throw new NotImplementedException()
             };
 
@@ -212,7 +212,7 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
             {
                 ETypeReceipt.A => "TiqueNotaCreditoA",
                 ETypeReceipt.B => "TiqueNotaCreditoB",
-                ETypeReceipt.X => "TiqueNotaCreditoB",
+                ETypeReceipt.EXENTO => "TiqueNotaCreditoB",
                 _ => throw new NotImplementedException()
             };
 
@@ -343,7 +343,7 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
             {
                 ETypeReceipt.A => "ResponsableInscripto",
                 ETypeReceipt.B => "ConsumidorFinal",
-                ETypeReceipt.X => "ResponsableExento",
+                ETypeReceipt.EXENTO => "ResponsableExento",
                 _ => throw new NotImplementedException()
             };
 

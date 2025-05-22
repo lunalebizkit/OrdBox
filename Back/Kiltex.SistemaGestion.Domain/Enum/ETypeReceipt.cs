@@ -7,7 +7,7 @@ namespace Kiltex.SistemaGestion.Domain.Enum
         A = 1,
         B = 2,
         C = 3,
-        X = 4,
+        EXENTO = 4,
         BImpresion = 6,
         CImpresion = 11,
     }
