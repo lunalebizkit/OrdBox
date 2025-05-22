@@ -42,7 +42,6 @@ export class AuthService {
   logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('auth-user');
-    //  this.user = new BehaviorSubject<AuthUserModel>(new AuthUserModel());
   }
 
 

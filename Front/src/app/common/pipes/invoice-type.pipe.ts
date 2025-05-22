@@ -6,7 +6,7 @@ export class InvoiceTypePipe implements PipeTransform{
     transform(value: eInvoiceType):string {
         if (!value) return '';
 
-        if (value == eInvoiceType.X) return 'B';
+        if (value == eInvoiceType.EXENTO) return 'B';
     
     return eInvoiceType[value];
     }

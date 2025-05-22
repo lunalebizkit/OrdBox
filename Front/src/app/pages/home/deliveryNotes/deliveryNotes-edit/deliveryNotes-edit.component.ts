@@ -81,7 +81,6 @@ export class DeliveryNotesEditComponent extends BaseComponent implements OnInit 
   paid!: boolean;
   statusId!: number;
   subTotal!: number;
-  //ivaTotal!: number;
   subtotal: number = 0;
 
   isDisabled = false;
@@ -148,14 +147,13 @@ export class DeliveryNotesEditComponent extends BaseComponent implements OnInit 
           this.formDeliveryNotes.controls['deliveryNotesNumber'].setValue(r.deliveryNotes_number)
           this.formDeliveryNotes.controls['statusId'].setValue(r.statusId);
 
-          //this.statusId = r.statusId;
           this.formDeliveryNotes.controls['paid'].setValue(r.paid),
-            this.formDeliveryNotes.controls['supplierAddress'].setValue(r.supplierAddress),
-            this.formDeliveryNotes.controls['supplierCuit'].setValue(r.supplierCuit),
-            this.formDeliveryNotes.controls['supplierName'].setValue(r.supplierName),
-            this.dateTime = r.dateTime
+          this.formDeliveryNotes.controls['supplierAddress'].setValue(r.supplierAddress),
+          this.formDeliveryNotes.controls['supplierCuit'].setValue(r.supplierCuit),
+          this.formDeliveryNotes.controls['supplierName'].setValue(r.supplierName),
+          this.dateTime = r.dateTime
           this.formDeliveryNotes.controls['observation'].setValue(r.observation),
-            this.isLoading = false;
+           this.isLoading = false;
 
           this.subtotal = r.subtotal;
 
@@ -228,8 +226,6 @@ export class DeliveryNotesEditComponent extends BaseComponent implements OnInit 
   }
 
   openComponentProduct(): void {
-    /*  if (this.isValidForm(this.formDeliveryNotes)) { */
-    // this.isDisabled = true;
     const drawerRefProduct = this.drawerService.create<InvoiceProductSearchComponent, { filter: string }, [ProductsModel]>({
       nzTitle: 'Productos',
       nzContent: InvoiceProductSearchComponent,
@@ -303,7 +299,6 @@ export class DeliveryNotesEditComponent extends BaseComponent implements OnInit 
   searchProduct(): void {
 
     this.product = this.formProductSearch.controls['productSearchFilter'].value;
-    //  this.formProductSearch.controls['productSearchFilter'].disable();
     this.queryParams.filter = this.product;
     if (this.product.length > 0) {
       this.serviceProduct.getProducts(this.queryParams).subscribe({

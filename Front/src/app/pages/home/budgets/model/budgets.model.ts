@@ -34,7 +34,7 @@ export interface BudgetDetailList {
     subTotal: number;
     
 }
-//f
+
 export function BudgetGridParser(value: any, price: number) {
     return {
       productId: value.id,

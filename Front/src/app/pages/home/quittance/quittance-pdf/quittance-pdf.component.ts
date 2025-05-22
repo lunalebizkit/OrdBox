@@ -7,7 +7,6 @@ import { environment } from '../../../../../environments/environment';
 import { formatCurrency, formatDate } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 
-//import { HtmlComponentRenderer } from 'docx-html';
 
 declare var require: any;
 import * as pdfMake from 'pdfmake/build/pdfmake';
@@ -15,7 +14,6 @@ import html2canvas from 'html2canvas';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import jsPDF from 'jspdf';
 
-// (pdfMake as any).vfs = pdfFonts.pdfMake.vfs;
 import { quittanceDetails, quittanceModel } from '../model';
 import { QuittanceService } from '../quittance.service';
 

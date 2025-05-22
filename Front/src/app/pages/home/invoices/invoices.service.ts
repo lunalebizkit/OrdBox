@@ -93,10 +93,5 @@ export class InvoiceService {
 
   }
 
-
-
-
-
-  /* https://localhost:7261/api/v1/Pdf/PdfComprobanteVenta?id=40024*/
 }
 

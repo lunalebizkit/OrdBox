@@ -16,8 +16,6 @@ import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { CommonModule } from '@angular/common';
 import { BudgetsRoutingModule } from './budgets-routing.module';
-//import { PeriodsRoutingModule } from './periods-routing.module';
-//import { periodsDrawerComponent } from './new-periods-drawer/new-periods.drawer.component';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { BudgetsEditComponent } from './budgets-edit/budgets-edit.component';
