@@ -48,7 +48,7 @@ namespace Kiltex.SistemaGestion.Services.LibroIvaDigital
         #region Codigo de Documento del Comprador(Cuit)
         //Segun tabla de Documentos
 
-        public string? Cuit { get; set; }
+        public string CodigoDocumento { get; set; }
 
         #endregion
 

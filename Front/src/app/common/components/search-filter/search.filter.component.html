@@ -10,7 +10,7 @@
                             <nz-input-group nzSearch nzSize="large" [nzSuffix]="clearQuery" [nzAddOnAfter]="suffixButton">
                                 <input [ngModelOptions]="{ standalone: true }" type="text"
                                 placeholder={{palceHolder}} nz-input (keydown.enter)="onSearchClick.emit($event)"
-                                [(ngModel)]="model" (ngModelChange)="onModelChange($event)" id="busqueda" />
+                                [(ngModel)]="model" (ngModelChange)="onModelChange($event)" id="busqueda" autocomplete="off" />
                             </nz-input-group>
                             <ng-template #suffixButton>
                                 <button nz-button nzType="primary" nzSize="large" nzSearch><i nz-icon nzType="search" ></i></button>
