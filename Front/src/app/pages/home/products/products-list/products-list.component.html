@@ -16,7 +16,7 @@
             <nz-form-item>
               <nz-form-label>Producto</nz-form-label>
               <nz-form-control>
-                <nz-input-group [nzSuffix]="clearProduct">
+                <nz-input-group [nzSuffix]="clearProduct"  [nzAddOnAfter]="suffixButton" nzSearch>
                   <input formControlName="product" type="text" placeholder="Producto" nz-input
                     [(ngModel)]="queryParams.filter.product" />
                 </nz-input-group>
@@ -24,15 +24,18 @@
                   <i nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle"
                     *ngIf="formSearch.get('product')?.value" (click)="formSearch.get('product')?.setValue('')"></i>
                 </ng-template>
+                 <ng-template #suffixButton>
+                    <button nz-button nzType="primary" nzSearch (click)="search()">Buscar</button>
+                </ng-template>
               </nz-form-control>
             </nz-form-item>
           </div>
           <div nz-col nzSpan="12">
             <div style="margin-left:30px ;">
-              <button nz-button nzType="primary" (click)="search()">
+              <!-- <button nz-button nzType="primary" >
                 <i nz-icon nzType="search"></i>
                 Buscar
-              </button>
+              </button> -->
               <button *authPermission="[permissions.DeleteProduct]" nz-button nzType="primary"
                 (click)="searchInactive()" style="background-color: #912a49; border-color: #912a49; margin-left: 5px;">
                 <i nz-icon nzType="eye-invisible"></i>

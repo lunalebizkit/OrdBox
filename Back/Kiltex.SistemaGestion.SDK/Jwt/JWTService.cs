@@ -20,7 +20,7 @@ namespace Kiltex.SistemaGestion.SDK.Jwt
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = claims,
-                Expires = DateTime.UtcNow.AddMinutes(360),
+                Expires = null,
                 SigningCredentials = credentials,
             };
 

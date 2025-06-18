@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using DocumentFormat.OpenXml.Office2013.Excel;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Kiltex.SistemaGestion.Domain;
 using Kiltex.SistemaGestion.Domain.Enum;
 using Kiltex.SistemaGestion.Domain.Model;
@@ -281,70 +283,176 @@ namespace Kiltex.SistemaGestion.Services.Services
                            .AsNoTracking()
                            .Where(x => x.DateTime.Date >= from && x.DateTime.Date <= to).ToArrayAsync();
 
-            var newDtoDetalleResumen = new List<AlicuotaIvaDto>();
-
-
-            var tipo = 0;
-            var iva = 0;
-            var resumen = new AlicuotaIva();
 
             StringWriter OutPutFile = new StringWriter();
-
+            List<AlicuotaIvaDto> alicuotaIvaDtos = new List<AlicuotaIvaDto>();
             try
             {
 
                 MemoryStream ms = new MemoryStream();
                 TextWriter tw = new StreamWriter(ms);
 
-                foreach (var item in query)
-                {
-                    var subtotal = item.Total - item.IvaTotal;
-                    string sinComa = subtotal.ToString().Replace(",", "");
-                    string ivaSinComa = item.IvaTotal.ToString("F2").Replace(",", "");
-                    var newItem = _mapper.Map<AlicuotaIvaDto>(item);
+                foreach (Invoice item in query)
+                {                    
+                    var iva = 0;
+                    decimal totalIva10 = 0;
+                    decimal totalIva21 = 0;
+                    decimal totalIva27 = 0;                    
 
-                    #region Condicionales Tipo
-                    if (item.Type == 2)
+                    foreach (InvoiceDetail invoiceDetail in item.InvoiceDetails)
                     {
-                        tipo = 6;
+                        #region Importe Liquidado (total de iva)
+                        totalIva10 += ((decimal)invoiceDetail.Iva == (decimal)10.5) ? (invoiceDetail.Quantity * invoiceDetail.Price) - (invoiceDetail.Quantity * invoiceDetail.Price) / 1.10m : 0;
+                        totalIva21 += ((decimal)invoiceDetail.Iva == (decimal)21) ? (invoiceDetail.Quantity * invoiceDetail.Price) - (invoiceDetail.Quantity * invoiceDetail.Price) / 1.21m : 0;
+                        totalIva27 += ((decimal)invoiceDetail.Iva == (decimal)27) ? (invoiceDetail.Quantity * invoiceDetail.Price) - (invoiceDetail.Quantity * invoiceDetail.Price) / 1.27m : 0;
+                        #endregion
                     }
-                    if (item.Type == 1)
+                    
+                    if (totalIva10 > 0m) 
                     {
-                        tipo = 1;
-                    }
 
-                    #endregion
+                        AlicuotaIvaDto alicuotaIva = new AlicuotaIvaDto();
 
-                    foreach (var item2 in item.InvoiceDetails)
-                    {
-                        #region Condicionales Iva
-                        if (item2.Iva == 10.50m)
+                        #region Condicionales Tipo Factura
+                        if (item.Type == (int)ETypeReceipt.B || item.Type == (int)ETypeReceipt.EXENTO)
                         {
-                            iva = 4;
+                            alicuotaIva.TipoDecComprobante = "006";
                         }
-                        if (item2.Iva == 21.00m)
+
+                        if (item.Type == (int)ETypeReceipt.A)
                         {
-                            iva = 5;
-                        }
-                        if (item2.Iva == 27.00m)
-                        {
-                            iva = 6;
+                            alicuotaIva.TipoDecComprobante = "001";
                         }
                         #endregion
 
-                        await tw.WriteAsync
-                            (
-                                tipo.ToString().PadLeft(3, '0') +
-                                newItem.PuntoDeVenta.ToString().PadLeft(5, '0') +
-                                item.InvoiceNumber.ToString().PadLeft(20, '0') +
-                                sinComa.ToString().PadLeft(15, '0') +
-                                iva.ToString().PadLeft(4, '0') +
-                                ivaSinComa.PadLeft(15, '0') +
-                                "\n"
-                            );
+                        #region Numero de Comprobante
+                        alicuotaIva.NumeroDeComprobante = item.InvoiceNumber.ToString().PadLeft(20, '0');
+                        #endregion
+
+                        #region Numero de Comprobante
+                        alicuotaIva.NumeroDeComprobante = item.InvoiceNumber.ToString().PadLeft(20, '0');
+                        #endregion
+
+                        #region Importe neto gravado (SIN COMA)
+                        var subtotal = item.Total - Math.Round(totalIva10, 2);
+                        alicuotaIva.ImporteNetoGravado = subtotal.ToString().Replace(",", "").Replace(".", "");
+                        alicuotaIva.ImporteNetoGravado = alicuotaIva.ImporteNetoGravado.PadLeft(15, '0');
+                        #endregion
+
+                        #region Impuesto Liquidado
+                        alicuotaIva.ImpuestoLiquidado = totalIva10.ToString("F2").Replace(",", "").Replace(".", "");
+                        alicuotaIva.ImpuestoLiquidado = alicuotaIva.ImpuestoLiquidado.PadLeft(15, '0');
+                        #endregion
+                        
+                        #region Condicionales Iva
+                        
+                        alicuotaIva.AlicuotaIva = "4";
+
+                        #endregion
+
+                        alicuotaIvaDtos.Add(alicuotaIva);
                     }
-                    newDtoDetalleResumen.Add(newItem);
+                    
+                    if (totalIva21 > 0m) 
+                    {
+                        AlicuotaIvaDto alicuotaIva = new AlicuotaIvaDto();
+
+                        #region Condicionales Tipo Factura
+                        if (item.Type == (int)ETypeReceipt.B || item.Type == (int)ETypeReceipt.EXENTO)
+                        {
+                            alicuotaIva.TipoDecComprobante = "006";
+                        }
+
+                        if (item.Type == (int)ETypeReceipt.A)
+                        {
+                            alicuotaIva.TipoDecComprobante = "001";
+                        }
+                        #endregion
+
+                        #region Numero de Comprobante
+                        alicuotaIva.NumeroDeComprobante = item.InvoiceNumber.ToString().PadLeft(20, '0');
+                        #endregion
+
+                        #region Numero de Comprobante
+                        alicuotaIva.NumeroDeComprobante = item.InvoiceNumber.ToString().PadLeft(20, '0');
+                        #endregion
+
+                        #region Importe neto gravado (SIN COMA)
+                        var subtotal = item.Total - Math.Round(totalIva21, 2);
+                        alicuotaIva.ImporteNetoGravado = subtotal.ToString().Replace(",", "").Replace(".", "");
+                        alicuotaIva.ImporteNetoGravado = alicuotaIva.ImporteNetoGravado.PadLeft(15, '0');
+                        #endregion
+
+                        #region Impuesto Liquidado
+                        alicuotaIva.ImpuestoLiquidado = totalIva21.ToString("F2").Replace(",", "").Replace(".", "");
+                        alicuotaIva.ImpuestoLiquidado = alicuotaIva.ImpuestoLiquidado.PadLeft(15, '0');
+                        #endregion
+                        
+                        #region Condicionales Iva                        
+                        alicuotaIva.AlicuotaIva = "5";                        
+                        #endregion
+
+                        alicuotaIvaDtos.Add(alicuotaIva);
+                    }
+                    
+                    if (totalIva27 > 0m) 
+                    {
+                        AlicuotaIvaDto alicuotaIva = new AlicuotaIvaDto();
+
+                        #region Condicionales Tipo Factura
+                        if (item.Type == (int)ETypeReceipt.B || item.Type == (int)ETypeReceipt.EXENTO)
+                        {
+                            alicuotaIva.TipoDecComprobante = "006";
+                        }
+
+                        if (item.Type == (int)ETypeReceipt.A)
+                        {
+                            alicuotaIva.TipoDecComprobante = "001";
+                        }
+                        #endregion
+
+                        #region Numero de Comprobante
+                        alicuotaIva.NumeroDeComprobante = item.InvoiceNumber.ToString().PadLeft(20, '0');
+                        #endregion
+
+
+                        #region Numero de Comprobante
+                        alicuotaIva.NumeroDeComprobante = item.InvoiceNumber.ToString().PadLeft(20, '0');
+                        #endregion
+
+                        #region Importe neto gravado (SIN COMA)
+                        var subtotal = item.Total - Math.Round(totalIva27, 2);
+                        alicuotaIva.ImporteNetoGravado = subtotal.ToString().Replace(",", "").Replace(".", "");
+                        alicuotaIva.ImporteNetoGravado = alicuotaIva.ImporteNetoGravado.PadLeft(15, '0');
+                        #endregion
+
+                        #region Impuesto Liquidado
+                        alicuotaIva.ImpuestoLiquidado = totalIva27.ToString("F2").Replace(",", "").Replace(".", "");
+                        alicuotaIva.ImpuestoLiquidado = alicuotaIva.ImpuestoLiquidado.PadLeft(15, '0');
+                        #endregion
+                        
+                        #region Condicionales Iva                        
+                        alicuotaIva.AlicuotaIva = "6";                        
+                        #endregion
+
+                        alicuotaIvaDtos.Add(alicuotaIva);
+                    }
                 }
+
+                foreach (AlicuotaIvaDto alicuotaIvaDto in alicuotaIvaDtos)
+                {
+                    await tw.WriteAsync
+                        (
+                            alicuotaIvaDto.TipoDecComprobante +
+                            alicuotaIvaDto.PuntoDeVenta.ToString().PadLeft(5, '0') +
+                            alicuotaIvaDto.NumeroDeComprobante +
+                            alicuotaIvaDto.ImporteNetoGravado +
+                            alicuotaIvaDto.AlicuotaIva.PadLeft(4, '0') +
+                            alicuotaIvaDto.ImpuestoLiquidado +
+                            "\n"
+                        );
+                }
+
                 tw.Flush();
 
                 byte[] bytes = ms.ToArray();
@@ -378,73 +486,88 @@ namespace Kiltex.SistemaGestion.Services.Services
                             .AsNoTracking()
                             .Where(x => x.DateTime.Date >= from && x.DateTime.Date <= to).ToArrayAsync();
 
-            var newDtoDetalleResumem = new List<ArchivoTxtDto>();
-
-            var resumen = new ArchivosTxt();
-
             StringWriter OutPutFile = new StringWriter();
 
             {
                 try
                 {
-                    var tipoComprobante = 0;
-                    var tipoDocumento = "";
                     MemoryStream ms = new MemoryStream();
                     TextWriter tw = new StreamWriter(ms);
 
-                    foreach (var item in query)
+                    List<ArchivoTxtDto> archivoTxtDtos = new List<ArchivoTxtDto>();
+
+                    foreach (Invoice invoice in query)
                     {
-                        if (item.Type == 2)
+                        ArchivoTxtDto archivoTxtDto = new ArchivoTxtDto();
+
+                        archivoTxtDto.FechaDeComprobante = invoice.DateTime.ToString("yyyyyMMdd");
+
+                        if (invoice.Type == (int)ETypeReceipt.B || invoice.Type == (int)ETypeReceipt.EXENTO)
                         {
-                            tipoComprobante = 6;
+                            archivoTxtDto.TipoDeComprobante = "6";
+                            archivoTxtDto.TipoDeComprobante.PadLeft(3, '0');
                         }
 
-                        if (item.Type == 1)
+                        if (invoice.Type == (int)ETypeReceipt.A)
                         {
-                            tipoComprobante = 1;
+                            archivoTxtDto.TipoDeComprobante = "1";
+                            archivoTxtDto.TipoDeComprobante.PadLeft(3, '0');
                         }
 
-                        if (item.CustomerCuit.Length == 8)
+                        archivoTxtDto.NumeroDeComprobante = invoice.InvoiceNumber.ToString().PadLeft(20, '0');
+                        archivoTxtDto.NumeroDeComprobanteHasta = invoice.InvoiceNumber.ToString().PadLeft(20, '0');
+
+                        if (invoice.CustomerCuit.Length == 8)
                         {
-                            tipoDocumento = "96";
+                            archivoTxtDto.CodigoDocumento = "96";
                         }
 
-                        if (item.CustomerCuit.Length == 11)
+                        if (invoice.CustomerCuit.Length == 11)
                         {
-                            tipoDocumento = "80";
+                            archivoTxtDto.CodigoDocumento = "80";
                         }
-                        string sinComa = item.Total.ToString().Replace(",", "");
-                        var newItem = _mapper.Map<ArchivoTxtDto>(item);
 
+                        archivoTxtDto.NumeroDeIdentificacionComprador = invoice.CustomerCuit.Trim().ToString().PadLeft(20, '0');
+                        archivoTxtDto.NombreCompletoComprador = invoice.CustomerName.Trim().ToString().PadLeft(30, ' ');
+
+                        archivoTxtDto.ImporteTotal = invoice.Total.ToString().Replace(",", "").Replace(".", "");
+                        archivoTxtDto.ImporteTotal = archivoTxtDto.ImporteTotal.PadLeft(15, '0');
+
+                        archivoTxtDto.FechaDePago = invoice.DateTime.ToString("yyyyMMdd");
+                        archivoTxtDtos.Add(archivoTxtDto);
+                    }
+
+                    foreach (ArchivoTxtDto item in archivoTxtDtos)
+                    {
                         await tw.WriteAsync
                             (
-                                item.DateTime.ToString("yyyyMMdd") +
-                                tipoComprobante.ToString().PadLeft(3, '0') +
-                                newItem.PuntoDeVenta.PadLeft(5, '0') +
-                                item.InvoiceNumber.ToString().PadLeft(20, '0') +
-                                item.InvoiceNumber.ToString().PadLeft(20, '0') +
-                                tipoDocumento +
-                                item.CustomerCuit.ToString().PadLeft(20, '0') +
-                                item.CustomerName.PadRight(30, ' ') +
-                                sinComa.PadLeft(15, '0') +
-                                newItem.NetoGravado +
-                                newItem.NoCategorizados +
-                                newItem.OperacionesExentas +
-                                newItem.ImpuestosNacionales +
-                                newItem.IngresosBrutos +
-                                newItem.ImpuestosMunicipales +
-                                newItem.ImpuestosInternos +
-                                newItem.CodigoDeMoneda +
-                                newItem.TipoDeCambio +
-                                newItem.AlicuotaIva +
-                                newItem.CodigoDeOperacion +
-                                newItem.OtrosTributos +
-                                item.DateTime.ToString("yyyyMMdd") +
+                                item.FechaDeComprobante +
+                                item.TipoDeComprobante +
+                                item.PuntoDeVenta.PadLeft(5, '0') +
+                                item.NumeroDeComprobante +
+                                item.NumeroDeComprobanteHasta +
+                                item.CodigoDocumento +
+                                item.NumeroDeIdentificacionComprador +
+                                item.NombreCompletoComprador +
+                                item.ImporteTotal +
+                                item.NetoGravado +
+                                item.NoCategorizados +
+                                item.OperacionesExentas + //consultar exento
+                                item.ImpuestosNacionales +
+                                item.IngresosBrutos +
+                                item.ImpuestosMunicipales +
+                                item.ImpuestosInternos +
+                                item.CodigoDeMoneda +
+                                item.TipoDeCambio +
+                                item.AlicuotaIva +
+                                item.CodigoDeOperacion +
+                                item.OtrosTributos +
+                                item.FechaDePago +
                                 '\n'
 
                            );
-                        newDtoDetalleResumem.Add(newItem);
                     }
+
                     tw.Flush();
 
                     byte[] bytes = ms.ToArray();
