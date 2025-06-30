@@ -500,18 +500,16 @@ namespace Kiltex.SistemaGestion.Services.Services
                     {
                         ArchivoTxtDto archivoTxtDto = new ArchivoTxtDto();
 
-                        archivoTxtDto.FechaDeComprobante = invoice.DateTime.ToString("yyyyyMMdd");
+                        archivoTxtDto.FechaDeComprobante = invoice.DateTime.ToString("yyyyMMdd");
 
                         if (invoice.Type == (int)ETypeReceipt.B || invoice.Type == (int)ETypeReceipt.EXENTO)
                         {
-                            archivoTxtDto.TipoDeComprobante = "6";
-                            archivoTxtDto.TipoDeComprobante.PadLeft(3, '0');
+                            archivoTxtDto.TipoDeComprobante = "006";
                         }
 
                         if (invoice.Type == (int)ETypeReceipt.A)
                         {
-                            archivoTxtDto.TipoDeComprobante = "1";
-                            archivoTxtDto.TipoDeComprobante.PadLeft(3, '0');
+                            archivoTxtDto.TipoDeComprobante = "001";
                         }
 
                         archivoTxtDto.NumeroDeComprobante = invoice.InvoiceNumber.ToString().PadLeft(20, '0');
@@ -543,7 +541,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                             (
                                 item.FechaDeComprobante +
                                 item.TipoDeComprobante +
-                                item.PuntoDeVenta.PadLeft(5, '0') +
+                                item.PuntoDeVenta +
                                 item.NumeroDeComprobante +
                                 item.NumeroDeComprobanteHasta +
                                 item.CodigoDocumento +

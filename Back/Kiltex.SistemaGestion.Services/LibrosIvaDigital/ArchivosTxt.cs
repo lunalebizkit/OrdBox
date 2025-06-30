@@ -29,7 +29,7 @@ namespace Kiltex.SistemaGestion.Services.LibroIvaDigital
 
         #region Punto De Ventas
 
-        public string PuntoDeVenta { get; set; } = "0003";
+        public string PuntoDeVenta { get; set; } = "00003";
 
         #endregion
 
