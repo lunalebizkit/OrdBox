@@ -41,11 +41,11 @@ namespace Kiltex.SistemaGestion.Services.Services
                 newItem.ImporteNeto += newItem.Total - newItem.IvaTotal;
                 foreach (var detalle in item.InvoiceDetails)
                 {
-                    newItem.Iva10 += ((decimal)detalle.Iva == (decimal)10.5) ? (detalle.Quantity * detalle.Price) - (detalle.Quantity * detalle.Price) / 1.10m : 0;
+                    newItem.Iva10 += ((decimal)detalle.Iva == (decimal)10.5) ? (detalle.Quantity * detalle.Price) - (detalle.Quantity * detalle.Price) / 1.105m : 0;
                     newItem.Iva21 += ((decimal)detalle.Iva == (decimal)21) ? (detalle.Quantity * detalle.Price) - (detalle.Quantity * detalle.Price) / 1.21m : 0;
                     newItem.Iva27 += ((decimal)detalle.Iva == (decimal)27) ? (detalle.Quantity * detalle.Price) - (detalle.Quantity * detalle.Price) / 1.27m : 0;
 
-                    newItem.ImporteNetoIva10 += ((decimal)detalle.Iva == (decimal)10.5) ? ((detalle.Price * detalle.Quantity) - (detalle.Quantity * detalle.Price) / 1.10m ): 0;
+                    newItem.ImporteNetoIva10 += ((decimal)detalle.Iva == (decimal)10.5) ? ((detalle.Price * detalle.Quantity) - (detalle.Quantity * detalle.Price) / 1.105m ): 0;
                     newItem.ImporteNetoIva21 += ((decimal)detalle.Iva == (decimal)21) ? ((detalle.Price * detalle.Quantity) - (detalle.Quantity * detalle.Price) / 1.21m ): 0;
                     newItem.ImporteNetoIva27 += ((decimal)detalle.Iva == (decimal)27) ? ((detalle.Price * detalle.Quantity) - (detalle.Quantity * detalle.Price) / 1.27m ): 0;
                 }

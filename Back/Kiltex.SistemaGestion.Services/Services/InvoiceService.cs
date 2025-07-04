@@ -53,7 +53,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                 result.Iva27 = 0;
                 foreach (var item in result.InvoiceDetails)
                 {
-                    result.Iva10 += ((decimal)item.Iva == (decimal)10.5) ? (item.Quantity * item.Price) - (item.Quantity * item.Price) / 1.10m : 0;
+                    result.Iva10 += ((decimal)item.Iva == (decimal)10.5) ? (item.Quantity * item.Price) - (item.Quantity * item.Price) / 1.105m : 0;
                     result.Iva21 += ((decimal)item.Iva == (decimal)21) ? (item.Quantity * item.Price) - (item.Quantity * item.Price) / 1.21m : 0;
                     result.Iva27 += ((decimal)item.Iva == (decimal)27) ? (item.Quantity * item.Price) - (item.Quantity * item.Price) / 1.27m : 0;
                 }
@@ -296,15 +296,23 @@ namespace Kiltex.SistemaGestion.Services.Services
                 {                    
                     var iva = 0;
                     decimal totalIva10 = 0;
+                    decimal totalBaseIva10 = 0;
                     decimal totalIva21 = 0;
+                    decimal totalBaseIva21 = 0;
                     decimal totalIva27 = 0;                    
+                    decimal totalBaseIva27 = 0;                    
 
                     foreach (InvoiceDetail invoiceDetail in item.InvoiceDetails)
                     {
                         #region Importe Liquidado (total de iva)
-                        totalIva10 += ((decimal)invoiceDetail.Iva == (decimal)10.5) ? (invoiceDetail.Quantity * invoiceDetail.Price) - (invoiceDetail.Quantity * invoiceDetail.Price) / 1.10m : 0;
+                        totalIva10 += ((decimal)invoiceDetail.Iva == (decimal)10.5) ? (invoiceDetail.Quantity * invoiceDetail.Price) - (invoiceDetail.Quantity * invoiceDetail.Price) / 1.105m : 0;
+                        totalBaseIva10 += ((decimal)invoiceDetail.Iva == (decimal)10.5) ? (invoiceDetail.Quantity * invoiceDetail.Price) : 0;
+
                         totalIva21 += ((decimal)invoiceDetail.Iva == (decimal)21) ? (invoiceDetail.Quantity * invoiceDetail.Price) - (invoiceDetail.Quantity * invoiceDetail.Price) / 1.21m : 0;
+                        totalBaseIva21 += ((decimal)invoiceDetail.Iva == (decimal)21) ? (invoiceDetail.Quantity * invoiceDetail.Price) : 0;
+
                         totalIva27 += ((decimal)invoiceDetail.Iva == (decimal)27) ? (invoiceDetail.Quantity * invoiceDetail.Price) - (invoiceDetail.Quantity * invoiceDetail.Price) / 1.27m : 0;
+                        totalBaseIva27 += ((decimal)invoiceDetail.Iva == (decimal)27) ? (invoiceDetail.Quantity * invoiceDetail.Price) : 0;
                         #endregion
                     }
                     
@@ -329,12 +337,8 @@ namespace Kiltex.SistemaGestion.Services.Services
                         alicuotaIva.NumeroDeComprobante = item.InvoiceNumber.ToString().PadLeft(20, '0');
                         #endregion
 
-                        #region Numero de Comprobante
-                        alicuotaIva.NumeroDeComprobante = item.InvoiceNumber.ToString().PadLeft(20, '0');
-                        #endregion
-
                         #region Importe neto gravado (SIN COMA)
-                        var subtotal = item.Total - Math.Round(totalIva10, 2);
+                        var subtotal = totalBaseIva10 - Math.Round(totalIva10, 2);
                         alicuotaIva.ImporteNetoGravado = subtotal.ToString().Replace(",", "").Replace(".", "");
                         alicuotaIva.ImporteNetoGravado = alicuotaIva.ImporteNetoGravado.PadLeft(15, '0');
                         #endregion
@@ -373,12 +377,8 @@ namespace Kiltex.SistemaGestion.Services.Services
                         alicuotaIva.NumeroDeComprobante = item.InvoiceNumber.ToString().PadLeft(20, '0');
                         #endregion
 
-                        #region Numero de Comprobante
-                        alicuotaIva.NumeroDeComprobante = item.InvoiceNumber.ToString().PadLeft(20, '0');
-                        #endregion
-
                         #region Importe neto gravado (SIN COMA)
-                        var subtotal = item.Total - Math.Round(totalIva21, 2);
+                        var subtotal = totalBaseIva21 - Math.Round(totalIva21, 2);
                         alicuotaIva.ImporteNetoGravado = subtotal.ToString().Replace(",", "").Replace(".", "");
                         alicuotaIva.ImporteNetoGravado = alicuotaIva.ImporteNetoGravado.PadLeft(15, '0');
                         #endregion
@@ -416,12 +416,8 @@ namespace Kiltex.SistemaGestion.Services.Services
                         #endregion
 
 
-                        #region Numero de Comprobante
-                        alicuotaIva.NumeroDeComprobante = item.InvoiceNumber.ToString().PadLeft(20, '0');
-                        #endregion
-
                         #region Importe neto gravado (SIN COMA)
-                        var subtotal = item.Total - Math.Round(totalIva27, 2);
+                        var subtotal = totalBaseIva27 - Math.Round(totalIva27, 2);
                         alicuotaIva.ImporteNetoGravado = subtotal.ToString().Replace(",", "").Replace(".", "");
                         alicuotaIva.ImporteNetoGravado = alicuotaIva.ImporteNetoGravado.PadLeft(15, '0');
                         #endregion
