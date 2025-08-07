@@ -86,10 +86,12 @@ namespace Kiltex.SistemaGestion.Services.Services
 
                 else
                 {
-                    var oldPeriod = await _contextSql
+                    var oldModel = await _contextSql
                                     .Periods
                                     .FirstAsync(p => p.Id == NewModel.Id)
                                     .ConfigureAwait(false);
+
+                    _contextSql.Entry(oldModel).State = EntityState.Detached;
                     _contextSql.Periods.Update(NewModel);
                 }
                 await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);

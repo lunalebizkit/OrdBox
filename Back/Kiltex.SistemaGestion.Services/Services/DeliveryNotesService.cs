@@ -98,10 +98,11 @@ namespace Kiltex.SistemaGestion.Services.Services
                 }
                 else
                 {
-                    var oldDeliveryNotes = await _contextSql
+                    var oldModel = await _contextSql
                                     .DeliveryNotes
                                     .FirstAsync(p => p.Id == model.Id)
                                     .ConfigureAwait(false);
+                    _contextSql.Entry(oldModel).State = EntityState.Detached;
                     _contextSql.DeliveryNotes.Update(newModel);
                 }
 

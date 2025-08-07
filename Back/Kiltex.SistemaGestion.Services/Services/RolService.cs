@@ -78,12 +78,14 @@ namespace Kiltex.SistemaGestion.Services.Services
                 }
                 else
                 {            
-                   var oldRol = await _contextSql
+                   var oldModel = await _contextSql
                                    .Rols
                                    .FirstAsync(p => p.Id == rolmodel.Id)
-                                   .ConfigureAwait(false);  
-                
-                        _contextSql.Rols.Update(rolmodel);
+                                   .ConfigureAwait(false);
+
+                    _contextSql.Entry(oldModel).State = EntityState.Detached;
+
+                    _contextSql.Rols.Update(rolmodel);
                 }
                 await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
 
