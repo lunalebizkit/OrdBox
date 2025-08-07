@@ -75,15 +75,16 @@ namespace Kiltex.SistemaGestion.Services.Services
                 }
                 else
                 {
-                    var oldBrand = await _contextSql
+                    var oldModel = await _contextSql
                                     .Budgets
-                                    .Include(x => x.BudgetDetails)                   
+                                    .Include(x => x.BudgetDetails)                 
                                     .FirstAsync(p => p.Id == model.Id)
                                     .ConfigureAwait(false);
 
-                    _contextSql.BudgetDetails.RemoveRange(oldBrand.BudgetDetails);
+                    _contextSql.BudgetDetails.RemoveRange(oldModel.BudgetDetails);
 
-                    _contextSql.Entry(oldBrand).State = EntityState.Detached;
+                    _contextSql.Entry(oldModel).State = EntityState.Detached;
+
                     await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
 
                     newModel.Total = 0;
@@ -93,7 +94,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                     {
                         item.Id = 0;
                         newModel.Total += item.Price * item.Quantity;
-                        oldBrand.BudgetDetails.Add(item);
+                        oldModel.BudgetDetails.Add(item);
                     }                   
                   
                     _contextSql.Attach(newModel2);

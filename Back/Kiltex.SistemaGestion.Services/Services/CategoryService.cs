@@ -81,10 +81,13 @@ namespace Kiltex.SistemaGestion.Services.Services
                 }
                 else
                 {
-                    var oldCategory = await _contextSql
+                    var oldModel = await _contextSql
                                     .Category
                                     .FirstAsync(p => p.Id == categoryModel.Id)
                                     .ConfigureAwait(false);
+
+                    _contextSql.Entry(oldModel).State = EntityState.Detached;
+
                     _contextSql.Category.Update(categoryModel);
                 }
                 await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
