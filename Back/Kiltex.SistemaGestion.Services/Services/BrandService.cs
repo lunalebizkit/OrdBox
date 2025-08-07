@@ -73,10 +73,13 @@ namespace Kiltex.SistemaGestion.Services.Services
                 }
                 else
                 {
-                    var oldBrand = await _contextSql
+                    var oldModel = await _contextSql
                                     .Brands
                                     .FirstAsync(p => p.Id == brandModel.Id)
                                     .ConfigureAwait(false);
+
+                    _contextSql.Entry(oldModel).State = EntityState.Detached;
+
                     _contextSql.Brands.Update(brandModel);
                 }
                 await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
