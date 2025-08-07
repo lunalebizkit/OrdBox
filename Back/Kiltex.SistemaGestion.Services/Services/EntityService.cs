@@ -209,20 +209,22 @@ namespace Kiltex.SistemaGestion.Services.Services
                 }
                 else
                 {
-                    var oldEntity = await _contextSql
+                    var oldModel = await _contextSql
                                     .Suppliers
                                     .Include(p => p.EmailEntities)
                                     .Include(p => p.PhoneEntities)
                                     .FirstAsync(p => p.Id == entityModel.Id)
                                     .ConfigureAwait(false);
+
+                    _contextSql.Entry(oldModel).State = EntityState.Detached;
                     _contextSql.Suppliers.Update(entityModel);
 
 
-                    var oldPhone = await _contextSql.PhoneEntities.Where(p => p.EntityId == model.Id).ToListAsync(cancellationToken: ct);
+                    var oldPhone = await _contextSql.PhoneEntities.AsNoTracking().Where(p => p.EntityId == model.Id).ToListAsync(cancellationToken: ct);
 
                     _contextSql.PhoneEntities.RemoveRange(oldPhone);
 
-                    var oldMail = await _contextSql.EmailEntities.Where(p => p.EntityId == model.Id).ToListAsync(cancellationToken: ct);
+                    var oldMail = await _contextSql.EmailEntities.AsNoTracking().Where(p => p.EntityId == model.Id).ToListAsync(cancellationToken: ct);
 
                     _contextSql.EmailEntities.RemoveRange(oldMail);
 
@@ -237,7 +239,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                             {
                                 email = new EmailEntity()
                                 {
-                                    Entity = oldEntity,
+                                    Entity = oldModel,
                                     Email = newEmail,
                                 };
                                 entityModel.EmailEntities.Add(email);
@@ -254,7 +256,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                             {
                                 phones = new PhoneEntity()
                                 {
-                                    Entity = oldEntity,
+                                    Entity = oldModel,
                                     PhoneNumber = newPhone,
                                 };
                                 entityModel.PhoneEntities.Add(phones);
@@ -408,12 +410,14 @@ namespace Kiltex.SistemaGestion.Services.Services
                 }
                 else
                 {
-                    var oldEntity = await _contextSql
+                    var oldModel = await _contextSql
                                     .Customers
                                     .Include(p => p.EmailEntities)
                                     .Include(p => p.PhoneEntities)
                                     .FirstAsync(p => p.Id == entityModel.Id)
                                     .ConfigureAwait(false);
+
+                    _contextSql.Entry(oldModel).State = EntityState.Detached;
                     _contextSql.Customers.Update(entityModel);
 
 
@@ -435,7 +439,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                             {
                                 email = new EmailEntity()
                                 {
-                                    Entity = oldEntity,
+                                    Entity = oldModel,
                                     Email = newEmail
                                 };
                                 entityModel.EmailEntities.Add(email);
@@ -452,7 +456,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                             {
                                 phones = new PhoneEntity()
                                 {
-                                    Entity = oldEntity,
+                                    Entity = oldModel,
                                     PhoneNumber = newPhone,
                                 };
                                 entityModel.PhoneEntities.Add(phones);
