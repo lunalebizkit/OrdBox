@@ -326,18 +326,15 @@ namespace Kiltex.SistemaGestion.Services.Services
                         }
                         if (item.Type == (int)ETypeReceipt.B || item.Type == (int)ETypeReceipt.EXENTO)
                         {
-                            totalIva10B += ((decimal)invoiceDetail.Iva == (decimal)10.5) ? (item.Total * 0.105m)/ 1.105m : 0;
                             totalBaseIva10B += ((decimal)invoiceDetail.Iva == (decimal)10.5) ? (invoiceDetail.Quantity * invoiceDetail.Price) : 0;
 
-                            totalIva21B += ((decimal)invoiceDetail.Iva == (decimal)21) ? (item.Total * 0.21m) / 1.21m : 0;
                             totalBaseIva21B += ((decimal)invoiceDetail.Iva == (decimal)21) ? (invoiceDetail.Quantity * invoiceDetail.Price) : 0;
 
-                            totalIva27B += ((decimal)invoiceDetail.Iva == (decimal)27) ? (item.Total * 0.27m) / 1.27m : 0;
                             totalBaseIva27B += ((decimal)invoiceDetail.Iva == (decimal)27) ? (invoiceDetail.Quantity * invoiceDetail.Price) : 0;
                         }
                      }
                     
-                    if (totalIva10 > 0m || totalIva10B > 0m) 
+                    if (totalIva10 > 0m || totalBaseIva10B > 0m) 
                     {
 
                         AlicuotaIvaDto alicuotaIva = new AlicuotaIvaDto();
@@ -348,13 +345,14 @@ namespace Kiltex.SistemaGestion.Services.Services
                             alicuotaIva.TipoDecComprobante = CustomizationConstant.FacturaB;
 
                             #region Importe neto gravado (SIN COMA)
-                            var subtotal = totalBaseIva10B - Math.Round(totalIva10B, 2);
-                            alicuotaIva.ImporteNetoGravado = subtotal.ToString().Replace(",", "").Replace(".", "");
+                            var netogravado = Math.Round((totalBaseIva10B / 1.105m), 2);
+                            alicuotaIva.ImporteNetoGravado = netogravado.ToString().Replace(",", "").Replace(".", "");
                             alicuotaIva.ImporteNetoGravado = alicuotaIva.ImporteNetoGravado.PadLeft(15, '0');
                             #endregion
 
                             #region Impuesto Liquidado
-                            alicuotaIva.ImpuestoLiquidado = totalIva10B.ToString("F2").Replace(",", "").Replace(".", "");
+                            var impuestoLiquidado = Math.Round((netogravado * 0.105m),2);
+                            alicuotaIva.ImpuestoLiquidado = impuestoLiquidado.ToString("F2").Replace(",", "").Replace(".", "");
                             alicuotaIva.ImpuestoLiquidado = alicuotaIva.ImpuestoLiquidado.PadLeft(15, '0');
                             #endregion
                         }
@@ -389,7 +387,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                         alicuotaIvaDtos.Add(alicuotaIva);
                     }
                     
-                    if (totalIva21 > 0m || totalIva21B > 0m) 
+                    if (totalIva21 > 0m || totalBaseIva21B > 0m) 
                     {
                         AlicuotaIvaDto alicuotaIva = new AlicuotaIvaDto();
 
@@ -399,16 +397,16 @@ namespace Kiltex.SistemaGestion.Services.Services
                             alicuotaIva.TipoDecComprobante = CustomizationConstant.FacturaB;
 
                             #region Importe neto gravado (SIN COMA)
-                            var subtotal = totalBaseIva21B - Math.Round(totalIva21B, 2);
-                            alicuotaIva.ImporteNetoGravado = subtotal.ToString().Replace(",", "").Replace(".", "");
+                            var netogravado = Math.Round((totalBaseIva21B / 1.21m), 2);
+                            alicuotaIva.ImporteNetoGravado = netogravado.ToString().Replace(",", "").Replace(".", "");
                             alicuotaIva.ImporteNetoGravado = alicuotaIva.ImporteNetoGravado.PadLeft(15, '0');
                             #endregion
 
                             #region Impuesto Liquidado
-                            alicuotaIva.ImpuestoLiquidado = totalIva21B.ToString("F2").Replace(",", "").Replace(".", "");
+                            var impuestoLiquidado = Math.Round((netogravado * 0.21m), 2);
+                            alicuotaIva.ImpuestoLiquidado = impuestoLiquidado.ToString("F2").Replace(",", "").Replace(".", "");
                             alicuotaIva.ImpuestoLiquidado = alicuotaIva.ImpuestoLiquidado.PadLeft(15, '0');
                             #endregion
-
                         }
 
                         if (item.Type == (int)ETypeReceipt.A)
@@ -439,7 +437,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                         alicuotaIvaDtos.Add(alicuotaIva);
                     }
                     
-                    if (totalIva27 > 0m || totalIva27B > 0m) 
+                    if (totalIva27 > 0m || totalBaseIva27B > 0m) 
                     {
                         AlicuotaIvaDto alicuotaIva = new AlicuotaIvaDto();
 
@@ -449,13 +447,14 @@ namespace Kiltex.SistemaGestion.Services.Services
                             alicuotaIva.TipoDecComprobante = CustomizationConstant.FacturaB;
 
                             #region Importe neto gravado (SIN COMA)
-                            var subtotal = totalBaseIva27B - Math.Round(totalIva27B, 2);
-                            alicuotaIva.ImporteNetoGravado = subtotal.ToString().Replace(",", "").Replace(".", "");
+                            var netogravado = Math.Round((totalBaseIva27B / 1.27m), 2);
+                            alicuotaIva.ImporteNetoGravado = netogravado.ToString().Replace(",", "").Replace(".", "");
                             alicuotaIva.ImporteNetoGravado = alicuotaIva.ImporteNetoGravado.PadLeft(15, '0');
                             #endregion
 
                             #region Impuesto Liquidado
-                            alicuotaIva.ImpuestoLiquidado = totalIva27B.ToString("F2").Replace(",", "").Replace(".", "");
+                            var impuestoLiquidado = Math.Round((netogravado * 0.27m), 2);
+                            alicuotaIva.ImpuestoLiquidado = impuestoLiquidado.ToString("F2").Replace(",", "").Replace(".", "");
                             alicuotaIva.ImpuestoLiquidado = alicuotaIva.ImpuestoLiquidado.PadLeft(15, '0');
                             #endregion
 
