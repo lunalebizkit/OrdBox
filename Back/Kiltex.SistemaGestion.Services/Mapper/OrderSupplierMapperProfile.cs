@@ -11,11 +11,13 @@ namespace Kiltex.SistemaGestion.Services.Mapper
         {
             CreateMap<SupplierOrder, DtoResponseSupplierOrder>()
                 .ForMember(o => o.SupplierName, x => x.MapFrom(y => y.Supplier.Name))
+                .ForMember(o => o.Observation, x => x.MapFrom(source => (string.IsNullOrEmpty(source.Observation) ? null : source.Observation.Trim())))
             .AfterMap((o, d, c) =>
             {
                 d.OrderDetail = c.Mapper.Map<List<DtoResponseOrderDetail>>(o.SupplierOrderDetail);
             });
             CreateMap<DtoRequestSupplierOrder, SupplierOrder>()
+                .ForMember(destination => destination.Observation, option => option.MapFrom(source => (string.IsNullOrEmpty(source.Observation) ? null : source.Observation.Trim())))
                 .AfterMap((o, d,c)=> {
                     d.DateTime = o.DateTime=  DateTime.Now;
                     d.ScheduledDate = o.DateTime=  DateTime.Now;
