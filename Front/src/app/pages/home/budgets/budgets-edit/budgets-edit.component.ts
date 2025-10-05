@@ -18,7 +18,7 @@ import { ProductsModel } from "../../products/model/product.model";
 import { NzDrawerService } from "ng-zorro-antd/drawer";
 import { InvoiceProductSearchComponent } from "../../invoices/invoice-product-search/invoice-product-search.component";
 import { ePayment } from "../../invoices/model/invoice-payment.Enum";
-
+import { forkJoin, map } from "rxjs";
 
 @Component({
   selector: 'app-budgets-edit',
@@ -44,6 +44,7 @@ export class BudgetsEditComponent extends BaseComponent implements OnInit {
   totalItems: number = 0;
   paymentSelected: any;
   total: number = 0;
+  editProductId: number = 0;
   /*FORM*/
   formProductSearch!: FormGroup;
   startDate = new Date;
@@ -60,8 +61,9 @@ export class BudgetsEditComponent extends BaseComponent implements OnInit {
   budgetDetails: BudgetDetails[] = [];
   budgetDetailsTest: BudgetDetailList[] = [];
   budgetDetailsList: BudgetDetailList[] = [];
-
+  editIdProductName: number | null = null;
   editId: number | null = null;
+  editIdProductPrice: number | null = null;
 
   /*
   ** Parametros de busqueda
@@ -152,6 +154,7 @@ export class BudgetsEditComponent extends BaseComponent implements OnInit {
         this.startDate = new Date(r.dateTime.toString());
 
         this.budgetDetails = r.budgetDetails;
+        this.updateProductIdToEdit(this.budgetDetails)
         this.subtotal = r.subtotal;
         this.total = r.total;
 
@@ -182,6 +185,7 @@ export class BudgetsEditComponent extends BaseComponent implements OnInit {
 
   paymentSelectedChange(id: any): void {
     this.paymentSelected = id;
+    this.updatePriceByPaymentSelectedChange();
   }
 
 
@@ -277,7 +281,7 @@ export class BudgetsEditComponent extends BaseComponent implements OnInit {
     )[0].subTotal = quantity * product.price;
 
     this.totalCalculate();
-    this.budgetDetails.filter(detail => detail.id == this.editId
+    this.budgetDetails.filter(detail => detail.productId == this.editId
     )[0].quantity = quantity;
   };
 
@@ -369,6 +373,12 @@ export class BudgetsEditComponent extends BaseComponent implements OnInit {
   searchProduct(): void {
 
     this.product = this.formProductSearch.controls['productSearchFilter'].value;
+
+    if (this.product == '00') {
+        this.addNewEditProduct();
+        return;
+    }
+
     this.queryParams.filter.product = this.product;
     if (this.product.length > 0) {
       this.serviceProduct.getProducts(this.queryParams).subscribe({
@@ -509,5 +519,145 @@ export class BudgetsEditComponent extends BaseComponent implements OnInit {
     this.router.navigate(['/home/budgets']);
   }
 
+  addNewEditProduct(): void {
+      this.editProductId--;
+      let product: ProductsModel = {
+        id: this.editProductId,
+        quantity: 1,
+        code: '',
+        description: '',
+        cashSalePrice: 0,
+        categoryName: '',
+        brandName: '',
+        purchasePrice: 0,
+        salePrice: 0,
+        salePercentage: 0,
+        cardSalePrice: 0,
+        cashSalePercentage: 0,
+        cardSalePercentage: 0,
+        pointOrder: 0,
+        observation: '',
+        supplierName: '',
+        isDeleted: false,
+        barCode: ''
+      };
+     /* Parseo el Producto a la grilla de Tabla */
+      const model: BudgetDetailList = BudgetGridParser(product, this.bindPrice(product));
+      this.budgetDetailsTest.push(model);
 
+      this.budgetDetailsList = this.budgetDetailsTest;
+
+      /* Parseo dato a Dto Factura Detalle */
+      const modelDetail: BudgetDetails = BudgetDetailParser(product, this.bindPrice(product));
+      this.budgetDetails.push(modelDetail);
+      this.budgetDetailsList = this.budgetDetailsTest
+      this.totalCalculate();
+      this.isLoading = false;
+  
+      this.formProductSearch.controls['productSearchFilter'].setValue('');
+    }
+
+  startEditProductName(id: number): void {
+    this.editIdProductName = id;
+  }
+
+   stopEditProductName(): void {
+    this.editIdProductName = null;
+  }
+
+   changeProductName(name: string): void {
+    this.budgetDetailsList.filter(
+      detail => detail.ownCode == this.editIdProductName
+    )[0].productName = name;
+
+    this.budgetDetails.filter(
+      detail => detail.productId == this.editIdProductName
+    )[0].productName = name;
+  }
+
+  stopEditProductPrice(): void {
+    this.editIdProductPrice = null;
+  }
+
+  startEditProductPrice(id: number): void {
+    this.editIdProductPrice = id;
+  }
+
+  changeProductPrice(price: number): void {
+    //recupero el producto a editar
+    let product = this.budgetDetailsList.filter(
+      detail => detail.ownCode == this.editIdProductPrice)[0];
+
+    this.budgetDetailsList.filter(
+      detail => detail.ownCode == this.editIdProductPrice
+    )[0].price = price;
+
+    this.budgetDetails.filter(
+      detail => detail.productId == this.editIdProductPrice
+    )[0].price = price;
+
+    this.budgetDetailsList.filter(
+      detail => detail.ownCode == this.editIdProductPrice
+    )[0].subTotal = product.quantity * price;
+
+    this.totalCalculate();
+  }
+
+  updatePriceByPaymentSelectedChange(): void {
+  
+      if (this.budgetDetails.length > 0) {
+        this.isLoading = true;
+        
+        let invoiceDetailsAux = this.budgetDetailsList.filter(data => data.productId > 0);
+        
+        if (invoiceDetailsAux.length > 0) {
+
+          this.budgetDetailsList = [];
+          this.budgetDetailsTest = [];
+          this.budgetDetails = [];
+        
+          const observables = invoiceDetailsAux.map(data =>
+            this.serviceProduct.getById(data.productId).pipe(
+              map(product => ({
+                product,
+                quantity: data.quantity
+              }))
+            )
+          );
+    
+          forkJoin(observables).subscribe({
+            next: (results) => {
+              results.forEach(({ product, quantity }) => {
+                const model: BudgetDetailList = BudgetGridParser(product, this.bindPrice(product), quantity);
+                this.budgetDetailsTest.push(model);
+                this.budgetDetailsList = this.budgetDetailsTest;
+    
+                const modelDetail: BudgetDetails = BudgetDetailParser(product,this.bindPrice(product), quantity);
+                this.budgetDetails.push(modelDetail);
+              });
+    
+              this.totalCalculate();
+              this.isLoading = false;
+            },
+            error: (err) => {
+              console.error('Error al obtener productos', err);
+              this.isLoading = false;
+            }
+          });
+
+        }
+
+        this.isLoading = false;
+      };
+  }
+
+  updateProductIdToEdit(budgetDetail: BudgetDetails[]): void{
+    budgetDetail.map((item)=>{
+      if (item.productId < 0){
+        item.productId = this.editProductId;
+        item.id = this.editProductId;
+        this.editProductId--;
+      }
+    })
+  }
 }

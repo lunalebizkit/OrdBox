@@ -35,18 +35,18 @@ export interface BudgetDetailList {
     
 }
 
-export function BudgetGridParser(value: any, price: number) {
+export function BudgetGridParser(value: any, price: number, quantity: number = 1) {
     return {
       productId: value.id,
       productCode: value.code,
       ownCode: value.id,
       productName: value.description,
       price: price,
-      quantity: 1,
-      subTotal: price,
-     
+      quantity: quantity,
+      subTotal: (price * quantity),     
     
     }}
+
     export function budgetsGridFromParser(value: any) {
         return {
           
@@ -58,7 +58,7 @@ export function BudgetGridParser(value: any, price: number) {
             quantity: value.quantity,
             subTotal: value.price * value.quantity
         }}
-    export function BudgetDetailParser(value: any, price: number) {
+    export function BudgetDetailParser(value: any, price: number, quantity: number = 1) {
         return {
             id: 0,
             budgetId: 0,
@@ -66,6 +66,5 @@ export function BudgetGridParser(value: any, price: number) {
             productCode: value.code,
             productName: value.description,
             price: price,
-            quantity: 1
-         
+            quantity: quantity         
     }}
