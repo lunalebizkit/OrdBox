@@ -69,12 +69,13 @@ namespace Kiltex.SistemaGestion.Services.Services
             {
                 var newModel = _mapper.Map<Budget>(model);
 
+                foreach (BudgetDetail budgetDetail in newModel.BudgetDetails)
+                {
+                    if (budgetDetail.ProductId <= 0) { budgetDetail.ProductId = -1; }
+                }
+
                 if (newModel.Id == 0)
                 {
-                    foreach (BudgetDetail budgetDetail in newModel.BudgetDetails)
-                    {
-                        if (budgetDetail.ProductId < 0) { budgetDetail.ProductId = -1; }
-                    }
 
                     await _contextSql.Budgets.AddAsync(newModel, ct).ConfigureAwait(false);
                 }

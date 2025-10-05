@@ -95,7 +95,6 @@ export class BudgetsEditComponent extends BaseComponent implements OnInit {
     public serviceUser: AuthService,
     private drawerService: NzDrawerService,
     private serviceBudget: BudgetsService,
-    private changeDetectorRef: ChangeDetectorRef,
     @Inject(LOCALE_ID) public locale: string
 
 
@@ -281,8 +280,14 @@ export class BudgetsEditComponent extends BaseComponent implements OnInit {
     )[0].subTotal = quantity * product.price;
 
     this.totalCalculate();
-    this.budgetDetails.filter(detail => detail.productId == this.editId
-    )[0].quantity = quantity;
+
+    if (Number(this.editId) <= 0) {
+      this.budgetDetails.filter(detail => detail.productId == this.editId
+      )[0].quantity = quantity;
+    }else{
+      this.budgetDetails.filter(detail => detail.id == this.editId
+      )[0].quantity = quantity;
+    }
   };
 
   typeSelectedChange(id: any): void {

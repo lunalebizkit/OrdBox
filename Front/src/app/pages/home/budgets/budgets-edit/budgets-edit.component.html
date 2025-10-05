@@ -32,7 +32,7 @@
             </nz-form-label>
             <nz-form-control [nzSm]="14" [nzXs]="14" [nzErrorTip]="cuit">
               <nz-input-group [nzSuffix]="clearQuery">
-                <input nz-input (keydown.enter)="searchCustomer(); $event.preventDefault()" nzSize="small"
+                <input nz-input nzSize="small" type="number"
                   formControlName="budgetNumber" id="budgetNumber"/>
               </nz-input-group>
 
@@ -86,7 +86,7 @@
           <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="customerAddress">Domicilio
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24">
-            <input nz-input formControlName="customerAddress" nzSize="small" maxlength="250" id="customerAddress"/>
+            <input nz-input formControlName="customerAddress" nzSize="small" maxlength="250" id="customerAddress" autocomplete="off" />
           </nz-form-control>
         </nz-form-item>
 
@@ -130,7 +130,7 @@
           <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="observation">Observación
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24">
-            <input formControlName="observation" nz-input id="observation" maxlength="250" />
+            <input formControlName="observation" nz-input id="observation" maxlength="250" autocomplete="off" />
           </nz-form-control>
         </nz-form-item>
 
