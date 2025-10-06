@@ -14,7 +14,9 @@ namespace Kiltex.SistemaGestion.Services.Mapper
                 .AfterMap((o,d,c) =>
                 {
                     d.Total = d.BudgetDetails.Sum(p => (p.Price * p.Quantity));
+                    d.IsInactive = false;
                 });
+
             CreateMap<DtoRequestBudgetDetail, BudgetDetail>().ReverseMap();
             //response
             CreateMap<Budget, DtoResponseBudget>()

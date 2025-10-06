@@ -1,9 +1,7 @@
 ﻿using Kiltex.SistemaGestion.Api.Filter;
 using Kiltex.SistemaGestion.Domain.Enum;
-using Kiltex.SistemaGestion.Domain.Model;
 using Kiltex.SistemaGestion.Services.Common;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
-using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
 using Kiltex.SistemaGestion.Services.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -48,6 +46,14 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Budget
         public async Task<IActionResult> List([FromBody] RequestPaginatedData<string> filter)
         {
             return Return(await _service.ListBudget(filter).ConfigureAwait(false));
+        }
+
+        [HttpDelete]
+        [Route("[action]")]
+        [AllowAccess(Permission = new EPermission[] { EPermission.CreateBrand })]
+        public async Task<IActionResult> Delete(long id)
+        {
+            return Return(await _service.Delete(id).ConfigureAwait(false));
         }
      
     }

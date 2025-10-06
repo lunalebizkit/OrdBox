@@ -158,26 +158,39 @@
 
             <td [nzAlign]="'center'">{{ data.type | invoiceTypeFilter }}</td>
             <td style="text-align: center">
-              <a>
-                <i
-                  nz-icon
-                  nzType="eye"
-                  nzTheme="outline"
-                  style="font-size: 16px; margin-right: 20px"
-                  (click)="onDoubleClicked(data)"
-                ></i>
-              </a>
-              <a (click)="reimprimirReceipt(data.id)">
-                <i
-                nz-icon
-                nz-tooltip
-                nzTooltipTitle="Descargar pdf"
-                nzType="file-pdf"
-                nzTheme="twotone"
-                [nzTwotoneColor]="'#f5222d'"
-                style="font-size: 16px; margin-right: 2px"
-              ></i>
-              </a>
+              <nz-space [nzSplit]="spaceSplit">
+                <ng-template #spaceSplit>
+                 </ng-template>                
+                 <a>
+                   <i
+                     nz-icon
+                     nzType="eye"
+                     nzTheme="outline"
+                     style="font-size: 16px; margin-right: 20px"
+                     (click)="onDoubleClicked(data)"
+                   ></i>
+                 </a>
+                <ng-template #spaceSplit>
+                 </ng-template>                
+                 <a (click)="reimprimirReceipt(data.id)">
+                   <i
+                   nz-icon
+                   nz-tooltip
+                   nzTooltipTitle="Descargar pdf"
+                   nzType="file-pdf"
+                   nzTheme="twotone"
+                   [nzTwotoneColor]="'#f5222d'"
+                   style="font-size: 16px; margin-right: 20px"
+                 ></i>
+                 </a>
+                <ng-template #spaceSplit>
+                 </ng-template>                
+                 <a *nzSpaceItem (click)="popup.showDeleteConfirmation(data.id)">
+                   <i nz-tooltip nzTooltipTitle="Eliminar" nz-icon nzType="delete" [nzTheme]="'twotone'"
+                     [nzTwotoneColor]="'#FF0000'" style="font-size: 16px;"></i>
+                 </a>
+
+              </nz-space>
             </td>
           </tr>
         </tbody>
@@ -185,3 +198,8 @@
     </div>
   </nz-content>
 </nz-layout>
+
+<app-popup-confirmation #popup [title]="'Confirmar eliminación'"
+  [header]="'¿Está seguro de que desea eliminar el comprobante seleccionado?'"
+  [message]="'Esta acción no se puede revertir'" (handleOk)="handleOk()">
+</app-popup-confirmation>

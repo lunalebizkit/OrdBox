@@ -54,5 +54,18 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Receipt
         {
             return Return(await _service.ListReceipt(filter).ConfigureAwait(false));
         }
+
+        /// <summary>
+        /// Inactiva una orden de compra
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpDelete]
+        [Route("[action]")]
+        [AllowAccess(Permission = new EPermission[] { EPermission.CreateReceipt })]
+        public async Task<IActionResult> Delete(long id)
+        {
+            return Return(await _service.Delete(id).ConfigureAwait(false));
+        }
     }
 }

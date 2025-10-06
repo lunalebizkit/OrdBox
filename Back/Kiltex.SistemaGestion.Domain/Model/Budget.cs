@@ -34,6 +34,9 @@ namespace Kiltex.SistemaGestion.Domain.Model
 
         [Column("payment")]
         public string? Payment { get; set; }
+        
+        [Column("is_inactive")]
+        public bool IsInactive { get; set; }
 
         public ICollection<BudgetDetail> BudgetDetails { get; set; } = new HashSet<BudgetDetail>();
     }

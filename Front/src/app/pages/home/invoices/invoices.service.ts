@@ -93,5 +93,13 @@ export class InvoiceService {
 
   }
 
+  /**
+     * Elimina un presupuesto por Id
+     * @param id
+     * @returns
+     */
+    public delete(id: number): Observable<any> {
+      return this.api.delete(`receipt/Delete?id=${id}`, false)
+    }
 }
 
