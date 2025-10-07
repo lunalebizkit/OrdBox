@@ -205,7 +205,7 @@ export class DeliveryNotesEditComponent extends BaseComponent implements OnInit 
     this.cuit = this.formDeliveryNotes.controls['supplierCuit'].value;
     if (this.cuit === '00') {
       this.formDeliveryNotes.controls['supplierAddress'].setValue('S/D');
-      this.formDeliveryNotes.controls['supplierCuit'].setValue('00');
+      this.formDeliveryNotes.controls['supplierCuit'].setValue('99999999995');
       this.formDeliveryNotes.controls['supplierName'].setValue('Admin');
       this.supplierId = 0;
       return;

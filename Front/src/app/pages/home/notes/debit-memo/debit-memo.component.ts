@@ -452,7 +452,7 @@ export class debitMemoComponent extends BaseComponent implements OnInit {
       this.formDebitMemo.controls['customerCuit'].value;
     if (this.cuit == '00') {
       this.formDebitMemo.controls['address'].setValue('S/D');
-      this.formDebitMemo.controls['customerCuit'].setValue('00');
+      this.formDebitMemo.controls['customerCuit'].setValue('99999999995');
       this.formDebitMemo.controls['customerName'].setValue('Admin');
       this.customerId = 0;
       return;

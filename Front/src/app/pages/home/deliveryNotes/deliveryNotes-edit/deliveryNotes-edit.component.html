@@ -110,7 +110,7 @@
             <nz-form-control [nzSm]="14" [nzXs]="14">
               <nz-input-group [nzSuffix]="clearQuery">
                 <input nz-input formControlName="productSearchFilter"
-                  placeholder="Ingrese producto" nzSize="small"
+                  placeholder="Ingrese producto" nzSize="small" autocomplete="off"
                   (keydown.enter)="searchProduct(); $event.preventDefault()" id="productSearchFilter"/>
               </nz-input-group>
 

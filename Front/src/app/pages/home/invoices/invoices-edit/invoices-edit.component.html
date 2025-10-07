@@ -182,7 +182,7 @@
               <nz-input-group [nzSuffix]="clearQuery">
                 <input nz-input formControlName="productSearchFilter" id="productSearchFilter"
                   placeholder="Ingrese producto" nzSize="small"
-                  (keydown.enter)="searchProduct(); $event.preventDefault()" />
+                  (keydown.enter)="searchProduct(); $event.preventDefault()" autocomplete="off" />
 
               </nz-input-group>
 
