@@ -453,7 +453,7 @@ export class CreditMemoComponent extends BaseComponent implements OnInit {
     if (this.cuit == '00') {
       this.formCreditMemo.controls['address'].setValue('S/D');
       this.formCreditMemo.controls['customerCuit'].setValue('99999999995');
-      this.formCreditMemo.controls['customerName'].setValue('');
+      this.formCreditMemo.controls['customerName'].setValue('-');
       this.customerId = 0;
       return;
     } else {

@@ -50,8 +50,9 @@ export class debitMemoComponent extends BaseComponent implements OnInit {
   quantity!: number;
   price!: number;
   subTotal: number = 0;
-
-
+  editProductId: number = 0;
+  editIdProductName: number | null = null;
+  editIdProductPrice: number | null = null;
   iva: number = 21;
   debitId!: number;
 
@@ -393,7 +394,14 @@ export class debitMemoComponent extends BaseComponent implements OnInit {
 
   searchProduct(): void {
     this.product = this.formProductSearch.controls['productSearchFilter'].value;
+
+    if (this.product == '00') {
+        this.addNewEditProduct();
+        return;
+    }
+
     this.queryParams.filter = this.product;
+
     if (this.isValidForm(this.formDebitMemo)) {
       if (this.product.length > 0) {
         this.serviceProduct.getProducts(this.queryParams).subscribe({
@@ -453,8 +461,8 @@ export class debitMemoComponent extends BaseComponent implements OnInit {
     if (this.cuit == '00') {
       this.formDebitMemo.controls['address'].setValue('S/D');
       this.formDebitMemo.controls['customerCuit'].setValue('99999999995');
-      this.formDebitMemo.controls['customerName'].setValue('Admin');
-      this.customerId = 0;
+      this.formDebitMemo.controls['customerName'].setValue('-');
+      this.customerId = this.serviceUser.currentUser.id;
       return;
     } else {
       if (this.cuit.length >= 6) {
@@ -561,5 +569,87 @@ export class debitMemoComponent extends BaseComponent implements OnInit {
     }
   }
 
+   addNewEditProduct(): void {
+      this.editProductId--;
+
+      let newEditProduct: ProductsModel = {
+        id: this.editProductId,
+        quantity: 1,
+        code: '',
+        description: ' ',
+        cashSalePrice: 0,
+        categoryName: '',
+        brandName: '',
+        purchasePrice: 0,
+        salePrice: 0,
+        salePercentage: 0,
+        cardSalePrice: 0,
+        cashSalePercentage: 0,
+        cardSalePercentage: 0,
+        pointOrder: 0,
+        observation: '',
+        supplierName: '',
+        isDeleted: false,
+        barCode: ''
+      };   
+
+      /* Parseo el Producto a la grilla de Tabla */
+      const model: DebitMemoDetailList = debitMemoGridParser(newEditProduct, this.iva);
+      this.debitMemoListTest.push(model)
+      this.debitMemoList = this.debitMemoListTest;
+      /* Parseo dato a Dto Factura Detalle */
+      const modelDetail: DebitMemoDetails = debitMemoDetailParser(newEditProduct, this.iva);
+      this.debitMemoDetails.push(modelDetail);
+      this.totalCalculate();
+      this.isLoading = false;
+      this.formProductSearch.controls['productSearchFilter'].setValue('');
+    }
+
+    startEditProductName(id: number): void {
+    this.editIdProductName = id;
+  }
+
+  startEditProductPrice(id: number): void {
+    this.editIdProductPrice = id;
+  }
+
+  stopEditProductName(): void {
+    this.editIdProductName = null;
+  }
+
+  stopEditProductPrice(): void {
+    this.editIdProductPrice = null;
+  }
+
+   changeProductName(name: string): void {
+    this.debitMemoList.filter(
+      detail => detail.ownCode == this.editIdProductName
+    )[0].productName = name;
+
+    this.debitMemoDetails.filter(
+      detail => detail.productId == this.editIdProductName
+    )[0].productName = name;
+
+  }
+
+  changeProductPrice(price: number): void {
+    //recupero el producto a editar
+    let product = this.debitMemoList.filter(
+      detail => detail.ownCode == this.editIdProductPrice)[0];
+
+    this.debitMemoList.filter(
+      detail => detail.ownCode == this.editIdProductPrice
+    )[0].price = price;
+
+    this.debitMemoDetails.filter(
+      detail => detail.productId == this.editIdProductPrice
+    )[0].price = price;
+
+    this.debitMemoList.filter(
+      detail => detail.ownCode == this.editIdProductPrice
+    )[0].subTotal = product.quantity * price;
+
+    this.totalCalculate();
+  }
 
 }

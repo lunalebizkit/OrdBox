@@ -53,54 +53,6 @@
     </div>
   </nz-collapse-panel>
 
-    <!-- <nz-descriptions nzSize="small" [nzColumn]="3" style="margin-left: 100px; padding: 5px;">
-          <nz-descriptions-item nzTitle=" * Fecha" >
-          <a>{{ dateTime ? (dateTime | date : "YYYY-MM-dd") : "N/A" }} </a>
-        </nz-descriptions-item>
-        <nz-descriptions-item nzTitle=" * Tipo" >
-          <nz-page-header-tags>
-            <nz-tag [nzColor]="'blue'">{{ this.debitMemoType(type) }}</nz-tag>
-          </nz-page-header-tags>
-        </nz-descriptions-item>
-          <nz-descriptions-item nzTitle="* Factura Relacionada" >
-            {{ this.invoiceNumber }}</nz-descriptions-item>
-            <nz-descriptions-item nzTitle="* Nro de Nota de Debito" >
-              {{ this.debitMemoNumber }}</nz-descriptions-item>  
-        <nz-descriptions-item nzTitle="* Cliente" >
-          {{ this.customerName }}</nz-descriptions-item
-        > 
-          <nz-descriptions-item nzTitle=" * Cuit" >
-            {{ this.customerCuit  | cuit }}</nz-descriptions-item
-          >
-         
-        
-          <nz-descriptions-item nzTitle=" * Dirección" >
-            {{ this.customerAddress }}
-          </nz-descriptions-item>
-          <nz-descriptions-item nzTitle=" * Observación" >
-            {{ this.observation }}
-          </nz-descriptions-item>
-        </nz-descriptions> -->
-    <!--   </div> 
-        <div  nz-col  > -->
-    <!--  <nz-descriptions nzSize="small" [nzColumn]="2">
-          <nz-descriptions-item nzTitle="* Cliente" >
-            {{ this.customerName }}</nz-descriptions-item
-          > 
-          <nz-descriptions-item nzTitle=" * Cuit" >
-            {{ this.customerCuit }}</nz-descriptions-item
-          >
-          <nz-descriptions-item nzTitle=" * Dirección" >
-            {{ this.customerAddress }}
-          </nz-descriptions-item>
-          <nz-descriptions-item nzTitle=" * Observación" >
-            {{ this.observation }}
-          </nz-descriptions-item>
-        </nz-descriptions>  -->
-    <!--   </div>   -->
-    <!--</nz-collapse-panel>
-</nz-collapse>-->
-
     <nz-collapse>
       <nz-collapse-panel
         nzHeader="Detalle"
@@ -124,7 +76,12 @@
             <tbody>
               <tr *ngFor="let data of debitMemoDetail">
                 <td>{{ data.productCode }}</td>
-                <td>{{ data.productId }}</td>
+                <td> <span *ngIf="data.productId > 0; else isEditProduct">
+                    {{ data.productId }}
+                  </span>
+                  <ng-template #isEditProduct>                
+                  </ng-template>
+                </td>
                 <td>{{ data.productName }}</td>
                 <td [nzAlign]="'right'">{{ data.quantity }}</td>
                 <td [nzAlign]="'right'">

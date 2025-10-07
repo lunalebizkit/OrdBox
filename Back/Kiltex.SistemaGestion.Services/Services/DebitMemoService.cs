@@ -69,6 +69,8 @@ namespace Kiltex.SistemaGestion.Services.Services
                     debitMemoModel = _mapper.Map<DebitMemo>(model);
                     debitMemoModel.InvoiceId = debitMemoModel.InvoiceId == 0 ? null : debitMemoModel.InvoiceId;
 
+                    foreach (DebitMemoDetails debitMemo in debitMemoModel.DebitMemoDetails) { if (debitMemo.ProductId <= 0) { debitMemo.ProductId = -1; } }
+
                     var regex = new Regex(@"^-?[0-9][0-9,\.]+$");
 
                     //Verifico que el DNI O CUIT no tenga letras
@@ -160,6 +162,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                     _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
                     return Error<IdResponse<long>>(new OperationExceptions("000", "La nota de debito no tiene ID"));
                 }
+
                 return await AddOrUpdate(model, ct).ConfigureAwait(false);
 
             }
