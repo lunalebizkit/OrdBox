@@ -299,9 +299,22 @@ export class DeliveryNotesEditComponent extends BaseComponent implements OnInit 
   searchProduct(): void {
 
     this.product = this.formProductSearch.controls['productSearchFilter'].value;
-    this.queryParams.filter = this.product;
+     const productParams = {
+        filter: {
+          product: this.product,
+          code: '',
+          barCode: '',
+          brand: 0,
+          category: 0,
+          status: 0,
+          supplier: [] as Number[]
+        },
+        page: 0,
+        pageSize: 50
+      };
+
     if (this.product.length > 0) {
-      this.serviceProduct.getProducts(this.queryParams).subscribe({
+      this.serviceProduct.getProducts(productParams).subscribe({
         next: (r) => {
           this.isLoading = true;
           if (r.data.length == 1) {

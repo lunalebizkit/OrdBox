@@ -399,12 +399,26 @@ export class debitMemoComponent extends BaseComponent implements OnInit {
         this.addNewEditProduct();
         return;
     }
-
-    this.queryParams.filter = this.product;
+    
 
     if (this.isValidForm(this.formDebitMemo)) {
+
       if (this.product.length > 0) {
-        this.serviceProduct.getProducts(this.queryParams).subscribe({
+         const productParams = {
+        filter: {
+          product: this.product,
+          code: '',
+          barCode: '',
+          brand: 0,
+          category: 0,
+          status: 0,
+          supplier: [] as Number[]
+        },
+        page: 0,
+        pageSize: 50
+      };
+      
+        this.serviceProduct.getProducts(productParams).subscribe({
           next: (r) => {
             this.isLoading = true;
             if (r.data.length == 1) {
