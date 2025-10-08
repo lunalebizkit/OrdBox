@@ -45,6 +45,10 @@ export class DeliveryNotesEditComponent extends BaseComponent implements OnInit 
   }
 
 
+  editProductId: number = 0;
+  editIdProductName: number | null = null;
+  editIdProductPrice: number | null = null;
+  
   type = statusType;
   loading = false;
   startDate = this.formaterDate(Date.now());
@@ -65,7 +69,7 @@ export class DeliveryNotesEditComponent extends BaseComponent implements OnInit 
   isSaving!: boolean;
   pagado: boolean = true;
   typeSelectedId: number = 1;
-  statusPaid!: string;
+  statusPaid!: boolean;
   totalItems: number = 0;
   total!: number;
   userId!: number;
@@ -85,7 +89,7 @@ export class DeliveryNotesEditComponent extends BaseComponent implements OnInit 
 
   isDisabled = false;
   viewOrder: boolean = false;
-  switchValue!: boolean;
+  switchValue= false;
   isDisabledPaid = false;
   isDisabledGrabar = false;
 
@@ -112,12 +116,12 @@ export class DeliveryNotesEditComponent extends BaseComponent implements OnInit 
     super(notificacionService, el, message)
     this.formDeliveryNotes = this.fb.group({
       dateTime: [new Date(this.startDate), Validators.required],
-      statusId: [1, Validators.required],
-      deliveryNotesNumber: ['', Validators.required],
+      statusId: [{value: 1, label: 'Entregado' }, Validators.required],
+      deliveryNotesNumber: [''],
       supplierAddress: ['', Validators.required],
       supplierCuit: ['', [Validators.required, Validators.pattern('[0-9]{11}'),]],
       supplierDni: ['',],
-      paid: ['', Validators.required],
+      paid: [, Validators.required],
       supplierName: ['', Validators.required],
       observation: [''],
       importTotal: [0, Validators.required]
@@ -155,7 +159,7 @@ export class DeliveryNotesEditComponent extends BaseComponent implements OnInit 
           this.formDeliveryNotes.controls['observation'].setValue(r.observation),
            this.isLoading = false;
 
-          this.subtotal = r.subtotal;
+          this.subTotal = r.subtotal;
 
           this.deliveryNotesDetails = r.deliveryNotesDetails;
 
@@ -250,7 +254,7 @@ export class DeliveryNotesEditComponent extends BaseComponent implements OnInit 
               /*Actualizo la lista de la tabla */
               let newListElement = this.deliveryNotesDetailsList.filter(item => item.productId == productItem.id)[0];
               newListElement.quantity += 1;
-              newListElement.subtotal += this.bindPrice(productItem) * newListElement.quantity;
+              newListElement.subTotal += this.bindPrice(productItem) * newListElement.quantity;
 
               this.totalCalculate();
               this.isLoading = false;
@@ -299,6 +303,12 @@ export class DeliveryNotesEditComponent extends BaseComponent implements OnInit 
   searchProduct(): void {
 
     this.product = this.formProductSearch.controls['productSearchFilter'].value;
+    
+    if (this.product == '00') {
+        this.addNewEditProduct();
+        return;
+    }
+
      const productParams = {
         filter: {
           product: this.product,
@@ -329,7 +339,7 @@ export class DeliveryNotesEditComponent extends BaseComponent implements OnInit 
                 .quantity += 1;
 
               this.deliveryNotesDetailsList.filter(item => item.ownCode == model.id)[0]
-                .subtotal += this.bindPrice(model) * model.quantity;
+                .subTotal += this.bindPrice(model) * model.quantity;
 
               this.totalCalculate();
               this.isLoading = false;
@@ -338,14 +348,13 @@ export class DeliveryNotesEditComponent extends BaseComponent implements OnInit 
               const product: ProductsModel = r.data[0];
               // /* Parseo el Producto a la grilla de Tabla */
               const model: deliveryNotesDetailsList = deliveryNotesGridParser(product, this.bindPrice(product));
+              
               this.deliveryNotesDetailsTest.push(model);
-
               this.deliveryNotesDetailsList = this.deliveryNotesDetailsTest;
 
               /* Parseo dato a Dto Factura Detalle */
               const modelDetail: DeliveryNotesDetails = deliveryNotesDetailParser(product, this.bindPrice(product));
               this.deliveryNotesDetails.push(modelDetail);
-              this.deliveryNotesDetailsList = this.deliveryNotesDetailsTest
               this.totalCalculate();
               this.isLoading = false;
               this.formProductSearch.controls['productSearchFilter'].setValue('');
@@ -403,7 +412,7 @@ export class DeliveryNotesEditComponent extends BaseComponent implements OnInit 
 
     this.deliveryNotesDetailsList.filter(
       detail => detail.productId == this.editId
-    )[0].subtotal = quantity * product.price;
+    )[0].subTotal = quantity * product.price;
 
     this.totalCalculate();
 
@@ -568,7 +577,7 @@ export class DeliveryNotesEditComponent extends BaseComponent implements OnInit 
       );
       this.popupComponent.isConfirmationvisible = false;
       if ((this.deliveryNotesDetailsList.length != 0)
-        && this.isValidForm(this.formSupplierSearch) && this.isValidForm(this.formProductSearch)) {
+        && this.isValidForm(this.formSupplierSearch) && this.isValidForm(this.formProductSearch) && this.isValidForm(this.formDeliveryNotes)) {
         this.popComponent.showConfirmation()
       } else {
         this.showMessageError('No ha seleccionado producto');
@@ -576,15 +585,93 @@ export class DeliveryNotesEditComponent extends BaseComponent implements OnInit 
     } catch (error) { }
   }
 
-  selectPaid(value: string) {
-
+  selectPaid(value: boolean) {
     this.statusPaid = value;
-    this.statusId = this.newStatusPaid
-    if (value == 'si') {
-      this.formDeliveryNotes.controls['statusId'].value
-    } if (value == 'no') {
-      this.formDeliveryNotes.controls['statusId'].value
-    }
+  }
 
+     addNewEditProduct(): void {
+        this.editProductId--;
+  
+        let newEditProduct: ProductsModel = {
+          id: this.editProductId,
+          quantity: 1,
+          code: '',
+          description: ' ',
+          cashSalePrice: 0,
+          categoryName: '',
+          brandName: '',
+          purchasePrice: 0,
+          salePrice: 0,
+          salePercentage: 0,
+          cardSalePrice: 0,
+          cashSalePercentage: 0,
+          cardSalePercentage: 0,
+          pointOrder: 0,
+          observation: '',
+          supplierName: '',
+          isDeleted: false,
+          barCode: ''
+        };   
+  
+    /* Parseo el Producto a la grilla de Tabla */
+          const model: deliveryNotesDetailsList = deliveryNotesGridParser(newEditProduct, this.bindPrice(newEditProduct));
+          
+          this.deliveryNotesDetailsTest.push(model);
+          this.deliveryNotesDetailsList = this.deliveryNotesDetailsTest;
+
+          /* Parseo dato a Dto Factura Detalle */
+          const modelDetail: DeliveryNotesDetails = deliveryNotesDetailParser(newEditProduct, this.bindPrice(newEditProduct));
+          this.deliveryNotesDetails.push(modelDetail);
+          this.totalCalculate();
+          this.isLoading = false;
+          this.formProductSearch.controls['productSearchFilter'].setValue('');
+      }
+
+        startEditProductName(id: number): void {
+    this.editIdProductName = id;
+  }
+
+  startEditProductPrice(id: number): void {
+    this.editIdProductPrice = id;
+  }
+
+  stopEditProductName(): void {
+    this.editIdProductName = null;
+  }
+
+  stopEditProductPrice(): void {
+    this.editIdProductPrice = null;
+  }
+
+  
+   changeProductName(name: string): void {
+    this.deliveryNotesDetailsList.filter(
+      detail => detail.ownCode == this.editIdProductName
+    )[0].productName = name;
+
+    this.deliveryNotesDetails.filter(
+      detail => detail.productId == this.editIdProductName
+    )[0].productName = name;
+
+  }
+
+  changeProductPrice(price: number): void {
+    //recupero el producto a editar
+    let product = this.deliveryNotesDetailsList.filter(
+      detail => detail.ownCode == this.editIdProductPrice)[0];
+
+    this.deliveryNotesDetailsList.filter(
+      detail => detail.ownCode == this.editIdProductPrice
+    )[0].price = price;
+
+    this.deliveryNotesDetails.filter(
+      detail => detail.productId == this.editIdProductPrice
+    )[0].price = price;
+
+    this.deliveryNotesDetailsList.filter(
+      detail => detail.ownCode == this.editIdProductPrice
+    )[0].subTotal = product.quantity * price;
+
+    this.totalCalculate();
   }
 }

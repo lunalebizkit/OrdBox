@@ -6,7 +6,6 @@ import { NzDrawerService } from 'ng-zorro-antd/drawer';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { AuthService } from 'src/app/common/auth/interceptors/auth.service';
-import { Permission } from 'src/app/common/auth/models/permissions.enum';
 import { BaseComponent } from 'src/app/common/components/base/base.component';
 import { PopupConfirmationComponent } from 'src/app/common/components/popup-confirmation/popup-confirmation.component';
 import { EntityService } from '../../customers/customer.service';

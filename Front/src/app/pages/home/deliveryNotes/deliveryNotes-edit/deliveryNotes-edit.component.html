@@ -29,17 +29,7 @@
               <nz-form-control>
                 <nz-select id="statusId" formControlName="statusId" [nzOptions]="type" nzWidth="50px"
                   [nzDisabled]="id == 0 ? true : viewOrder">
-                </nz-select>
-                <ng-template #clearQuery>
-                  <i nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle" *ngIf="
-                    this.formDeliveryNotes.controls['statusId'].value !== ''
-                    " (click)="
-                    this.formDeliveryNotes.controls[
-                      'statusId'
-                    ].setValue('')
-                  "></i>
-
-                </ng-template>
+                </nz-select>               
               </nz-form-control>
             </nz-form-item>
           </div>
@@ -115,13 +105,7 @@
               </nz-input-group>
 
               <ng-template #clearQuery>
-                <i nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle" *ngIf="
-                    this.formProductSearch.controls['productSearchFilter'].value !== ''
-                    " (click)="
-                    this.formProductSearch.controls[
-                      'productSearchFilter'
-                    ].setValue('')
-                  "></i>
+                <i nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle" *ngIf="this.formProductSearch.controls['productSearchFilter'].value !== '' " (click)="this.formProductSearch.controls['productSearchFilter'].setValue('')" ></i>
               </ng-template>
             </nz-form-control>
             <div nz-col style="margin: 3px">
@@ -165,18 +149,45 @@
         </thead>
         <tbody>
           <tr *ngFor="let data of deliveryNotesDetailsList" class="small-text">
-            <td nzBreakWord>{{data.productName}}</td>
+            <td nzBreakWord>
+              <div
+                class="editable-cell"
+                [hidden]="editIdProductName === data.ownCode"
+                (click)="startEditProductName(data.ownCode)"
+              >{{ data.productName }}
+              </div>
+              <input nz-input
+                id="productName{{data.ownCode}}"
+                name="productName{{data.ownCode}}"
+                [hidden]="editIdProductName !== data.ownCode"
+                [(ngModel)]="data.productName"
+                (ngModelChange)="changeProductName($event)"
+                (blur)="stopEditProductName()"
+                autocomplete="off"
+              /></td>
             <td>
               <div class="editable-cell" [hidden]="editId === data.productId" (click)="startEdit(data.productId)">
-
                 {{ data.quantity }}
               </div>
               <nz-input-number [hidden]="editId !== data.productId" [nzMin]="1" [nzMax]="1000"
                 [(ngModel)]="data.quantity" [disabled]="isDisabled" (nzBlur)="stopEdit()"
                 (ngModelChange)="changeQuantity($event)"></nz-input-number>
             </td>
-            <td [nzAlign]="'right'">{{ this.currencyFormat(data.price) }}</td>
-            <td [nzAlign]="'right'"> {{this.currencyFormat(data.subtotal)}}</td>
+           <td [nzAlign]="'right'">
+              <div class="editable-cell"
+              [hidden]="editIdProductPrice === data.ownCode"
+              (click)="startEditProductPrice(data.ownCode)">
+              {{ this.currencyFormat(data.price) }}
+              </div>
+              <nz-input-number
+                [hidden]="editIdProductPrice !== data.ownCode"
+                [nzMin]="1"
+                [(ngModel)]="data.price"
+                (blur)="stopEditProductPrice()"
+                (ngModelChange)="changeProductPrice($event)"
+              ></nz-input-number>
+            </td>
+            <td [nzAlign]="'right'"> {{this.currencyFormat(data.subTotal)}}</td>
             <td *ngIf="this.edit == false" style="text-align: center">
               <nz-space [nzSplit]="spaceSplit">
                 <ng-template #spaceSplit>

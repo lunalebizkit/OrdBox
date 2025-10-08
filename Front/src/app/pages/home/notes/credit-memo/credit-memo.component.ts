@@ -6,7 +6,6 @@ import { NzDrawerService } from 'ng-zorro-antd/drawer';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { AuthService } from 'src/app/common/auth/interceptors/auth.service';
-import { Permission } from 'src/app/common/auth/models/permissions.enum';
 import { BaseComponent } from 'src/app/common/components/base/base.component';
 import { PopupConfirmationComponent } from 'src/app/common/components/popup-confirmation/popup-confirmation.component';
 import { EntityService } from '../../customers/customer.service';
@@ -15,7 +14,7 @@ import { InvoiceCustomerSearchComponent } from '../../invoices/invoice-customer-
 import { InvoiceProductSearchComponent } from '../../invoices/invoice-product-search/invoice-product-search.component';
 import { InvoiceService } from '../../invoices/invoices.service';
 import { ePayment } from '../../invoices/model/invoice-payment.Enum';
-import { eInvoiceType, InvoiceType } from '../../invoices/model/invoice-type.Enum';
+import { InvoiceType } from '../../invoices/model/invoice-type.Enum';
 import { InvoiceDetails, InvoiceModel } from '../../invoices/model/invoice.model';
 import { IvaType } from '../../invoices/model/iva-type.Enum';
 import { ProductsModel } from '../../products/model/product.model';

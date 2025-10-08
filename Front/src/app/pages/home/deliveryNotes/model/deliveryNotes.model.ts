@@ -29,7 +29,7 @@ export interface deliveryNotesDetailsList {
     ownCode : number;
     quantity: number;
     price: number;
-    subtotal:number 
+    subTotal:number 
   }
 export function deliveryNotesGridParser(value: any, price:number ) {
     return {
@@ -37,7 +37,7 @@ export function deliveryNotesGridParser(value: any, price:number ) {
       productName: value.description,
       price: value.purchasePrice,
       quantity:1,
-      subtotal: price, 
+      subTotal: price, 
       ownCode: value.id,
     };
   } export function deliveryNotesGridFromParser(value: any) {
@@ -48,7 +48,7 @@ export function deliveryNotesGridParser(value: any, price:number ) {
         ownCode: value.id,
         price: value.price,
         quantity: value.quantity,
-        subtotal: value.price * value.quantity 
+        subTotal: value.price * value.quantity 
     }}
   export function deliveryNotesDetailParser(value: any, price: number) {
     return {
