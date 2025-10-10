@@ -116,7 +116,7 @@ export class DeliveryNotesEditComponent extends BaseComponent implements OnInit 
     super(notificacionService, el, message)
     this.formDeliveryNotes = this.fb.group({
       dateTime: [new Date(this.startDate), Validators.required],
-      statusId: [{value: 1, label: 'Entregado' }, Validators.required],
+      statusId: [1, Validators.required],
       deliveryNotesNumber: [''],
       supplierAddress: ['', Validators.required],
       supplierCuit: ['', [Validators.required, Validators.pattern('[0-9]{11}'),]],
