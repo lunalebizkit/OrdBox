@@ -1,9 +1,13 @@
-import { Component, Inject, LOCALE_ID, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, Inject, LOCALE_ID, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Permission } from 'src/app/common/auth/models/permissions.enum';
 import { BudgetsService } from '../budgets.services'; 
 import { BudgetsModel } from '../model/budgets.model'; 
 import { formatCurrency, formatDate } from '@angular/common';
+import { PopupConfirmationComponent } from 'src/app/common/components/popup-confirmation/popup-confirmation.component';
+import { NzMessageService } from 'ng-zorro-antd/message';
+import { BaseComponent } from 'src/app/common/components/base/base.component';
+import { NzNotificationService } from 'ng-zorro-antd/notification';
 
 @Component({
     selector: 'app-budgets-list',
@@ -11,8 +15,9 @@ import { formatCurrency, formatDate } from '@angular/common';
     styleUrls: ['./budgets-list.component.css'],
   })
 
-export class BudgetsListComponent  implements OnInit{
+export class BudgetsListComponent extends BaseComponent implements OnInit{
    
+  @ViewChild('popup') popupComponent!: PopupConfirmationComponent;
   permissions = Permission;
   budgetsList: BudgetsModel[] = [];
   totalItems!: number;
@@ -29,11 +34,13 @@ export class BudgetsListComponent  implements OnInit{
   };
 
   constructor(
-    private service: BudgetsService, 
-    private route: ActivatedRoute,
+    private service: BudgetsService,
     private router: Router,
-     @Inject(LOCALE_ID) public locale: string,
-  ) {}
+    notificacionService: NzNotificationService,
+    el: ElementRef,
+    message: NzMessageService,
+    @Inject(LOCALE_ID) public locale: string,
+  ) {super( notificacionService, el, message)}
 
   search(): void {
     this.getBudget(this.queryData);
@@ -183,6 +190,18 @@ downloadFile(response: any, fileName: string){
   downloadLink.click();
 }
 
-
+handleOk() {
+    this.service.delete(this.popupComponent.elementSelectedToDelete).subscribe(
+     {next: (r) => {
+        this.popupComponent.isDeleteConfirmationVisible = false;
+        this.showMessageSuccess("Presupuesto eliminado");
+        this.search();
+      },
+      error:(r) => { 
+        this.showMessageError(r.error.descripcion);
+        this.popupComponent.isDeleteConfirmationVisible = false;
+      }
+  });
+  }
 
 }

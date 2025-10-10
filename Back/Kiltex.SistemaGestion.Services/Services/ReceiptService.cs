@@ -81,7 +81,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                                     .Receipts
                                     .AsNoTracking()
                                     .Include(x => x.ReceiptDetails)
-                                     .Where(p => (!string.IsNullOrEmpty(request.Filter.Cuit) ? p.SupplierCuit.ToLower().Contains(request.Filter.Cuit) : true)
+                                     .Where(p =>(!  p.IsInactive) && (!string.IsNullOrEmpty(request.Filter.Cuit) ? p.SupplierCuit.ToLower().Contains(request.Filter.Cuit) : true)
                                      && ((request.Filter.Number.HasValue && request.Filter.Number != 0) ? p.ReceiptNumber == request.Filter.Number : true)
                                       &&
                                      ((!request.Filter.Date.Contains("") || request.Filter.Date != null) ? p.DateTime.Date.ToString().Contains(request.Filter.Date) : true));
@@ -159,7 +159,36 @@ namespace Kiltex.SistemaGestion.Services.Services
             return Ok(new IdResponse<long>(receiptModel.Id));
         }
 
-   
+        public async Task<OperationResponse<IdResponse<long>>> Delete(long id, CancellationToken ct = default)
+        {
+            try
+            {
+                var model = await _contextSql
+                                             .Receipts
+                                             .FirstOrDefaultAsync(p => p.Id == id && !p.IsInactive, ct)
+                                              .ConfigureAwait(false);
+                
+                if (model != null)
+                {
+                    model.IsInactive = true;
+
+                    await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
+                }
+                else
+                {
+                    _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_010_ERROR_EXCEPTION));
+                    return Error<IdResponse<long>>(new OperationExceptions(ErrorsCodes.C_010_ERROR_EXCEPTION, ErrorsMessages.GetMessage(ErrorsCodes.C_010_ERROR_EXCEPTION)));
+                }
+
+                return Ok(new IdResponse<long>(id));
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
+                throw;
+            }
+        }
 
 
     }

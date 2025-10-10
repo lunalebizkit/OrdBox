@@ -85,7 +85,12 @@
             <tbody>
               <tr *ngFor="let data of creditMemoDetail">
                 <td>{{ data.productCode }}</td>
-                <td>{{ data.productId }}</td>
+                <td> <span *ngIf="data.productId > 0; else isEditProduct">
+                    {{ data.productId }}
+                  </span>
+                  <ng-template #isEditProduct>                
+                  </ng-template>
+                </td>
                 <td>{{ data.productName }}</td>
                 <td [nzAlign]="'right'">{{ data.quantity }}</td>
                 <td [nzAlign]="'right'">

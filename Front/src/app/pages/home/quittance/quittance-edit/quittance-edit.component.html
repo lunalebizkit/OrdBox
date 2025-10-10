@@ -41,7 +41,7 @@
           <nz-form-item>
             <nz-form-label [nzSm]="6" [nzXs]="14" nzRequired nzFor="customerName">Nombre
             </nz-form-label>
-            <nz-form-control [nzSm]="14" [nzXs]="14" [nzErrorTip]="cuit">
+            <nz-form-control [nzSm]="14" [nzXs]="14" [nzErrorTip]="nombre">
               <input nz-input nzSize="small" formControlName="customerName" />
             </nz-form-control>
             <!-- Boton que abre el buscador de CLiente en drawer -->
@@ -54,10 +54,15 @@
               </div>
             </form>
           </nz-form-item>
+          <ng-template #nombre let-control>
+            <ng-container *ngIf="control.hasError('required')">
+              Este campo es requerido.
+            </ng-container>
+          </ng-template>
           <nz-form-item>
             <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="customerCuit">Cuit - Cuil
             </nz-form-label>
-            <nz-form-control [nzSm]="14" [nzXs]="24">
+            <nz-form-control [nzSm]="14" [nzXs]="24" [nzErrorTip]="cuit">
               <input nz-input maxlength="250" nzSize="small" formControlName="customerCuit" />
             </nz-form-control>
           </nz-form-item>
@@ -73,10 +78,15 @@
           <nz-form-item >
             <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="address">Domicilio
             </nz-form-label>
-            <nz-form-control [nzSm]="14" [nzXs]="24">
+            <nz-form-control [nzSm]="14" [nzXs]="24" [nzErrorTip]="domicilio">
               <input nz-input nzSize="small" maxlength="250" formControlName="address" />
             </nz-form-control>
           </nz-form-item>
+          <ng-template #domicilio let-control>
+            <ng-container *ngIf="control.hasError('required')">
+              Este campo es requerido.
+            </ng-container>
+          </ng-template>
         </nz-content>
       </nz-collapse-panel>
     </nz-collapse>
@@ -86,14 +96,14 @@
                 <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="cash">Recibi(mos) la suma de 
                 </nz-form-label>
                 <nz-form-control [nzSm]="14" [nzXs]="24">
-                  <input nz-input nzSize="small" maxlength="250" formControlName="cash" />
+                  <input nz-input nzSize="small" type="number" formControlName="cash" />
                 </nz-form-control>
             </nz-form-item>
               <nz-form-item>
                 <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="concept">En concepto de 
                 </nz-form-label>
                 <nz-form-control [nzSm]="14" [nzXs]="24">
-                  <textarea nz-input nzSize="small" maxlength="250" formControlName="concept" ></textarea>
+                  <textarea nz-input nzSize="small" maxlength="250" formControlName="concept" autocomplete="off" ></textarea>
                 </nz-form-control>
             <div style="margin: 3px; margin-top: 21px; ">
               <button nz-button nzType="primary" style="font-size:11px;text-align: center;" nzSize="small"class="ml-5"(click)="showPasswordChangeBox()">
@@ -123,7 +133,7 @@
               <nz-form-item>
                 <nz-form-label  [nzSm]="14" [nzXs]="24"for="total">Total </nz-form-label> 
                 <nz-form-control [nzSm]="14" [nzXs]="24">
-                 <input nz-input type="text" nzSize="small" formControlName="total"/> 
+                 <input nz-input type="number" nzSize="small" formControlName="total"/> 
                 </nz-form-control> 
               </nz-form-item>  
               <i nz-icon nzType="minus-circle-o" class="dynamic-delete-button" style="color: rgb(243, 79, 79); margin-top:10px; margin-left: 5px;"

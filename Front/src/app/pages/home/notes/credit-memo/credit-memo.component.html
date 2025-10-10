@@ -165,7 +165,7 @@
                 id="productSearchFilter"
                 placeholder="Ingrese producto" 
                 nzSize="small"
-                (keydown.enter)="searchProduct(); $event.preventDefault() " />
+                (keydown.enter)="searchProduct(); $event.preventDefault() " autocomplete="off" />
               </nz-input-group>
 
               <ng-template #clearQuery>
@@ -201,7 +201,7 @@
           <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="observation">Observación
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24">
-            <input formControlName="observation" nz-input id="observation" maxlength="250" />
+            <input formControlName="observation" nz-input id="observation" maxlength="250" autocomplete="off" />
           </nz-form-control>
         </nz-form-item>
 
@@ -236,34 +236,50 @@
               {{ data.ownCode }}
             </span>
             <ng-template #isEditProduct>                
-            </ng-template></td>
-            <td nzBreakWord>{{ data.productName }}</td>
+            </ng-template>
+          </td>
+            <td nzBreakWord >
+              <div class="editable-cell"
+                [hidden]="editIdProductName === data.ownCode"
+                (click)="startEditProductName(data.ownCode)"
+              >{{ data.productName }}
+              </div>
+              <input nz-input
+                id="productName{{data.ownCode}}"
+                name="productName{{data.ownCode}}"
+                [hidden]="editIdProductName !== data.ownCode"
+                [(ngModel)]="data.productName"
+                (ngModelChange)="changeProductName($event)"
+                (blur)="stopEditProductName()"
+                autocomplete="off"
+              />
+            </td>
             <td>
-              <div class="editable-cell" [hidden]="editId === data.productId" (click)="startEdit(data.productId)">
+              <div class="editable-cell" [hidden]="editId === data.ownCode" (click)="startEdit(data.ownCode)">
                 {{ data.quantity }}
               </div>
-              <nz-input-number [hidden]="editId !== data.productId" [nzMin]="1" [nzMax]="10000"
-                [(ngModel)]="data.quantity" (nzBlur)="stopEdit()"
+              <nz-input-number [hidden]="editId !== data.ownCode" [nzMin]="1" [nzMax]="10000"
+                [(ngModel)]="data.quantity" (blur)="stopEdit()"
                 (ngModelChange)="changeQuantity($event)"></nz-input-number>
             </td>
             <td>
-              <div class="editable-cell" [hidden]="editId === data.productId" (click)="startEdit(data.productId)">
+              <div class="editable-cell" [hidden]="editIdProductPrice === data.ownCode" (click)="startEditProductPrice(data.ownCode)">
                 {{ this.currencyFormat(data.price)  }}
               </div>
-              <nz-input-number [hidden]="editId !== data.productId" [nzMin]="1" [nzMax]="10000000"
-                [(ngModel)]="data.price" (nzBlur)="stopEdit()"
+              <nz-input-number [hidden]="editIdProductPrice !== data.ownCode" [nzMin]="1" [nzMax]="10000000"
+                [(ngModel)]="data.price" (blur)="stopEditProductPrice()"
                 (ngModelChange)="changePrice($event)"></nz-input-number>
             </td>
             <td [nzAlign]="'right'">
               {{ this.currencyFormat(data.subTotal) }}
             </td>
             <td>
-              <div class="editable-cell" [hidden]="editIdIva !== data.productId" (click)="startEditIva(data.productId)">
+              <div class="editable-cell" [hidden]="editIdIva !== data.ownCode" (click)="startEditIva(data.ownCode)">
                 {{ data.iva }}
               </div>
-              <nz-select [hidden]="editIdIva === data.productId" [nzOptions]="ivaType"
-                (ngModelChange)="changeIvaValue($event, data.productId)" [(ngModel)]="data.iva"
-                (nzBlur)="stopEditIva()">
+              <nz-select [hidden]="editIdIva === data.ownCode" [nzOptions]="ivaType"
+                (ngModelChange)="changeIvaValue($event, data.ownCode)" [(ngModel)]="data.iva"
+                (blur)="stopEditIva()">
               </nz-select>
             </td>
             <td style="text-align: center">

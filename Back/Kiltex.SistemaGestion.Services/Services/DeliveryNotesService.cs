@@ -92,6 +92,8 @@ namespace Kiltex.SistemaGestion.Services.Services
 
                 var newModel = _mapper.Map<DeliveryNotes>(model);
 
+                foreach (DeliveryNotesDetails item in newModel.DeliveryNotesDetails) { if (item.ProductId <= 0) { item.ProductId = -1; } }
+
                 if (newModel.Id == 0)
                 {
                     await _contextSql.DeliveryNotes.AddAsync(newModel, ct).ConfigureAwait(false);

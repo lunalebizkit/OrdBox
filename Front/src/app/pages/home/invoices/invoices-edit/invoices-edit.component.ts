@@ -733,38 +733,43 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
       this.isLoading = true;
       let invoiceDetailsAux = this.invoiceDetailsList.filter(data => data.productId > 0);
 
-      this.invoiceDetailsList = [];
-      this.invoiceListTest = [];
-      this.invoiceDetails = [];
+      if (invoiceDetailsAux.length > 0) {
 
-      const observables = invoiceDetailsAux.map(data =>
-        this.serviceProduct.getById(data.productId).pipe(
-          map(product => ({
-            product,
-            iva: data.iva,
-            quantity: data.quantity
-          }))
-        )
-      );
+        this.invoiceDetailsList = [];
+        this.invoiceListTest = [];
+        this.invoiceDetails = [];
 
-      forkJoin(observables).subscribe({
-        next: (results) => {
-          results.forEach(({ product, iva, quantity }) => {
-            const model: InvoiceDetailList = invoiceGridParser(product, iva, this.bindPrice(product), quantity);
-            this.invoiceListTest.push(model);
-            this.invoiceDetailsList = this.invoiceListTest;
+        const observables = invoiceDetailsAux.map(data =>
+          this.serviceProduct.getById(data.productId).pipe(
+            map(product => ({
+              product,
+              iva: data.iva,
+              quantity: data.quantity
+            }))
+          )
+        );
 
-            const modelDetail: InvoiceDetails = invoiceDetailParser(product, iva, this.bindPrice(product), quantity);
-            this.invoiceDetails.push(modelDetail);
-          });
+        forkJoin(observables).subscribe({
+          next: (results) => {
+            results.forEach(({ product, iva, quantity }) => {
+              const model: InvoiceDetailList = invoiceGridParser(product, iva, this.bindPrice(product), quantity);
+              this.invoiceListTest.push(model);
+              this.invoiceDetailsList = this.invoiceListTest;
 
-          this.totalCalculate();
-          this.isLoading = false;
-        },
-        error: (err) => {
-          console.error('Error al obtener productos', err);
-        }
-      });
+              const modelDetail: InvoiceDetails = invoiceDetailParser(product, iva, this.bindPrice(product), quantity);
+              this.invoiceDetails.push(modelDetail);
+            });
+
+            this.totalCalculate();
+            this.isLoading = false;
+          },
+          error: (err) => {
+            console.error('Error al obtener productos', err);
+            this.isLoading = false;
+          }
+        });
+      }
+      this.isLoading = false;
     };
   }
 

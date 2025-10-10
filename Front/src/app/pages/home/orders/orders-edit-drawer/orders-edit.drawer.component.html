@@ -125,7 +125,7 @@
               <nz-form-label>Búsqueda de Producto</nz-form-label>
               <nz-form-control>
                 <nz-input-group [nzSuffix]="clearQuery">
-                  <input nzSize="small" formControlName="productSearchFilter"
+                  <input nzSize="small" formControlName="productSearchFilter" autocomplete="off"
                     placeholder="Ingrese Marca, Código, Categoria o Producto" nz-input
                     (keydown.enter)="searchProduct()" />
                 </nz-input-group>

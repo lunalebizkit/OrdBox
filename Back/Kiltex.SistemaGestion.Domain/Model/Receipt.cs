@@ -59,6 +59,9 @@ namespace Kiltex.SistemaGestion.Domain.Model
         [Column("type")]
         public int Type { get; set; }
 
+        [Column("is_inactive")]
+        public bool IsInactive { get; set; }
+
         public ICollection<ReceiptDetails> ReceiptDetails { get; set; } = new HashSet<ReceiptDetails>();
 
         [NotMapped]

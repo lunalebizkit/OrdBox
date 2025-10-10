@@ -1,22 +1,26 @@
 import { formatCurrency, formatDate } from '@angular/common';
-import { Component, Inject, LOCALE_ID, OnInit } from '@angular/core';
+import { Component, ElementRef, Inject, LOCALE_ID, OnInit, ViewChild } from '@angular/core';
 import { NzDrawerService } from 'ng-zorro-antd/drawer';
 import { Permission } from 'src/app/common/auth/models/permissions.enum';
 import { InvoiceService } from '../invoices.service';
 import { eInvoiceType } from '../model/invoice-type.Enum';
 import { receiptModel } from '../model/receipt.model';
 import { ReceiptViewDrawerComponent } from '../receipt-view-drawer/receipt-view-drawer.component';
+import { BaseComponent } from 'src/app/common/components/base/base.component';
+import { NzNotificationService } from 'ng-zorro-antd/notification';
+import { NzMessageService } from 'ng-zorro-antd/message';
+import { PopupConfirmationComponent } from 'src/app/common/components/popup-confirmation/popup-confirmation.component';
 
 @Component({
   selector: 'app-receipt-list',
   templateUrl: './receipt-list.component.html',
   styleUrls: ['./receipt-list.component.css'],
 })
-export class ReceiptListComponent implements OnInit {
+export class ReceiptListComponent extends BaseComponent implements OnInit {
   permissions = Permission;
   dia:any;
   id!: number;
-
+  @ViewChild('popup') popupComponent!: PopupConfirmationComponent;
   /*
    ** Indicador de carga de la grilla
    */
@@ -52,8 +56,11 @@ export class ReceiptListComponent implements OnInit {
   constructor(
     @Inject(LOCALE_ID) public locale: string,
     private service: InvoiceService,
-    private drawerService: NzDrawerService
-  ) {}
+    private drawerService: NzDrawerService,    
+    notificacionService: NzNotificationService,
+    el: ElementRef,
+    message: NzMessageService,
+  ) {super( notificacionService, el, message)}
 
   ngOnInit(): void {
     this.getData(this.SpecificFilter); 
@@ -232,5 +239,19 @@ export class ReceiptListComponent implements OnInit {
     downloadLink.setAttribute('download', fileName);
     document.body.appendChild(downloadLink);
     downloadLink.click();
+  }
+
+  handleOk() {
+    this.service.delete(this.popupComponent.elementSelectedToDelete).subscribe(
+     {next: (r) => {
+        this.popupComponent.isDeleteConfirmationVisible = false;
+        this.showMessageSuccess("Comprobante eliminado");
+        this.search();
+      },
+      error:(r) => { 
+        this.showMessageError(r.error.descripcion);
+        this.popupComponent.isDeleteConfirmationVisible = false;
+      }
+  });
   }
 }

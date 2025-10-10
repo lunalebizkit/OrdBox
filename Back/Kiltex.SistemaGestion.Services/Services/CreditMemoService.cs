@@ -117,6 +117,9 @@ namespace Kiltex.SistemaGestion.Services.Services
                 {
         
                     creditModel = _mapper.Map<CreditMemo>(model);
+
+                    foreach (CreditMemoDetail creditMemo in creditModel.CreditMemoDetail) { if (creditMemo.ProductId <= 0) { creditMemo.ProductId = -1;} }
+
                     creditModel.InvoiceId = creditModel.InvoiceId == 0 ? null : creditModel.InvoiceId;
 
                     var regex = new Regex(@"^-?[0-9][0-9,\.]+$");

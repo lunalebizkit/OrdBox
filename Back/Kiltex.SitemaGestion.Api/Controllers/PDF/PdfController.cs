@@ -160,8 +160,8 @@ namespace Kiltex.SistemaGestion.Api.Controllers.PDF
                 BudgetDetails = factura.Data.BudgetDetails,
                 Cantidad = factura.Data.BudgetDetails.Select(p => p.Quantity).FirstOrDefault(),
                 Producto = factura.Data.BudgetDetails.Select(p => p.ProductName).FirstOrDefault(),
-                Precio = (int)factura.Data.BudgetDetails.Select(p => p.Price).FirstOrDefault(),
-                Total = (int)factura.Data.Total
+                Precio = (decimal)factura.Data.BudgetDetails.Select(p => p.Price).FirstOrDefault(),
+                Total = (decimal)factura.Data.Total
             };
 
             Paragraph encabezado = await _service.Encabezado(dtoEncabezado);
@@ -202,8 +202,8 @@ namespace Kiltex.SistemaGestion.Api.Controllers.PDF
                 DeliveryNotesDetails = factura.Data.DeliveryNotesDetails,
                 Cantidad = factura.Data.DeliveryNotesDetails.Select(p => p.Quantity).FirstOrDefault(),
                 Producto = factura.Data.DeliveryNotesDetails.Select(p => p.ProductName).FirstOrDefault(),
-                Precio = (int)factura.Data.DeliveryNotesDetails.Select(p => p.Price).FirstOrDefault(),
-                Total = (int)factura.Data.ImportTotal,
+                Precio = (decimal)factura.Data.DeliveryNotesDetails.Select(p => p.Price).FirstOrDefault(),
+                Total = (decimal)factura.Data.ImportTotal,
                 Iva = 0
             };
 

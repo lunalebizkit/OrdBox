@@ -69,8 +69,14 @@ namespace Kiltex.SistemaGestion.Services.Services
             {
                 var newModel = _mapper.Map<Budget>(model);
 
+                foreach (BudgetDetail budgetDetail in newModel.BudgetDetails)
+                {
+                    if (budgetDetail.ProductId <= 0) { budgetDetail.ProductId = -1; }
+                }
+
                 if (newModel.Id == 0)
                 {
+
                     await _contextSql.Budgets.AddAsync(newModel, ct).ConfigureAwait(false);
                 }
                 else
@@ -144,7 +150,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                                     .Include(p=>p.BudgetDetails)
                                     .Include(p => p.User)
                                     .AsNoTracking()
-                                    .Where(p => ((p.BudgetNumber.ToString().Contains(request.Filter ?? ""))));
+                                    .Where(p => !p.IsInactive && p.BudgetNumber.ToString().Contains(request.Filter ?? ""));
 
                 var count = await query.CountAsync().ConfigureAwait(false);
 
@@ -161,6 +167,37 @@ namespace Kiltex.SistemaGestion.Services.Services
                     PageSize = request.PageSize,
                     TotalCount = count
                 });
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
+                throw;
+            }
+        }
+
+        public async Task<OperationResponse<IdResponse<long>>> Delete(long id, CancellationToken ct = default)
+        {
+            try
+            {
+                var model = await _contextSql
+                                             .Budgets
+                                             .FirstOrDefaultAsync(p => p.Id == id && !p.IsInactive, ct)
+                                              .ConfigureAwait(false);
+                
+                if (model != null)
+                {
+                    model.IsInactive = true;
+
+                    await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
+                }
+                else
+                {
+                    _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_010_ERROR_EXCEPTION));
+                    return Error<IdResponse<long>>(new OperationExceptions(ErrorsCodes.C_010_ERROR_EXCEPTION, ErrorsMessages.GetMessage(ErrorsCodes.C_010_ERROR_EXCEPTION)));
+                }
+
+                return Ok(new IdResponse<long>(id));
 
             }
             catch (Exception ex)

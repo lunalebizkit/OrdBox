@@ -220,7 +220,7 @@ removeCheck( e: MouseEvent, index: any): void {
       this.formQuittance.controls['customerCuit'].value;
     if (this.cuit == '00'){
       this.formQuittance.controls['address'].setValue('S/D');
-      this.formQuittance.controls['customerCuit'].setValue('00');
+      this.formQuittance.controls['customerCuit'].setValue('99999999995');
       this.formQuittance.controls['customerName'].setValue('Admin');  
       this.customerId= 0;
       return;

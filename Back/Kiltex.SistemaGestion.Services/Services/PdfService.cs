@@ -1146,7 +1146,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                 HorizontalAlignment = Element.ALIGN_LEFT,
                 Border = PdfPCell.LEFT_BORDER | PdfPCell.BOTTOM_BORDER | PdfPCell.TOP_BORDER
             });
-            table2.AddCell(new PdfPCell(new Phrase(string.Format("{0,7:##.00}", "$" + resumen.Total.ToString())))
+            table2.AddCell(new PdfPCell(new Phrase(string.Format(" ${0:0.00}", resumen.Total)))
             {
                 HorizontalAlignment = Element.ALIGN_RIGHT,
                 Border = PdfPCell.RIGHT_BORDER | PdfPCell.BOTTOM_BORDER | PdfPCell.TOP_BORDER,

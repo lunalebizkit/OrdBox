@@ -62,7 +62,13 @@ export class BudgetsService {
     return this.api.get(`Pdf/PdfPresupuesto?id=${id}`,false, {responseType:'blob' as 'json'})
 
   }
-  
-
+   /**
+     * Elimina un presupuesto por Id
+     * @param id
+     * @returns
+     */
+    public delete(id: number): Observable<any> {
+      return this.api.delete(`budget/Delete?id=${id}`, false)
+    }
 
 }

@@ -55,7 +55,7 @@
                 <input
                   formControlName="receiptNumber"
                   nz-input
-                  maxlength="250"
+                  type="number"
                   nzSize="small"
                 />
               </nz-form-control>
@@ -179,7 +179,7 @@
                   nzSize="small"
                   (keydown.enter)="searchProduct(); $event.preventDefault()"
                   id="productSearchFilter"
-                  
+                  autocomplete="off"                  
                 />
               </nz-input-group>
 
@@ -230,7 +230,7 @@
             formControlName="observation"
             nz-input
             id="observation"
-            maxlength="250" />
+            maxlength="250" autocomplete="off" />
           </nz-form-control>
 
         </nz-form-item>
