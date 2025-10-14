@@ -2,7 +2,7 @@ export const environment = {
   production: true,
   sistemaGestion:"http://apigestion.kiltex.com.ar/",
   api:{
-    url: 'https://apigestion.kiltex.com.ar',
+    url: 'http://apigestion.local/api/',
     ver: 1
   },
   images: {
