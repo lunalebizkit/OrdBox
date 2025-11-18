@@ -9,10 +9,6 @@ import { InvoiceIvaReportDetailsModel, InvoiceIvaReportModel } from '../model/in
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HeaderOperationsButtonsComponent } from 'src/app/common/components/headers/buttons.oparations.header.component';
 import { eInvoiceType } from '../../invoices/model/invoice-type.Enum';
-
-
-
-
 @Component({
     selector: 'app-invoice-iva.report',
     templateUrl: './invoice-iva.report.component.html',
@@ -153,8 +149,7 @@ export class InvoiceIvaReportComponent extends BaseComponent implements OnInit {
             },
         });
       }
-      }
-      
+      }      
 
       downloadTxt(){
         this.getIvaVentasTxt();
