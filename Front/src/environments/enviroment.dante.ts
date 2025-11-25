@@ -1,4 +1,3 @@
-
 interface WindowEnv {
   env?: {
     apiUrl?: string;
@@ -10,9 +9,9 @@ declare const window: WindowEnv;
 
 export const environment = {
   production: false,
-  sistemaGestion:"https://localhost:7261/",
+  sistemaGestion:"http://apigestion.kiltex.com.ar/",
   api:{
-    url: window?.env?.apiUrl ?? 'https://localhost:7261/api/',
+    url: window?.env?.apiUrl ?? 'http://apigestion.local/api/',
     ver: window?.env?.apiVer ?? 1
   },
   images: {
@@ -22,5 +21,3 @@ export const environment = {
   },
   name: "Refrigeraciones Dante",
 };
-
-

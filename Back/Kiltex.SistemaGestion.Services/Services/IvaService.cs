@@ -264,6 +264,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                 var currentRow = 2;
                 var ColorHeader = XLColor.FromName("PowderBlue");
 
+                worksheet.Style.Font.SetFontName("Arial");
                 #region Header Columnas       
 
                 worksheet.Cell(currentRow, 1).SetValue("Fecha").Style.Font.Bold = true;
