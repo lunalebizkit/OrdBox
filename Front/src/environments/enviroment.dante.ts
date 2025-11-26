@@ -14,10 +14,5 @@ export const environment = {
     url: window?.env?.apiUrl ?? 'http://apigestion.local/api/',
     ver: window?.env?.apiVer ?? 1
   },
-  images: {
-    url: 'https://storage.googleapis.com/dev-sistemagestion/development/media/images/catalog',
-    urlCommon: 'https://storage.googleapis.com/dev-sistemagestion/common',
-    urlBadge: 'https://storage.googleapis.com/dev-sistemagestion/development/media/images/catalog'
-  },
   name: "Refrigeraciones Dante",
 };
