@@ -18,3 +18,7 @@ services:
       - 80
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
+    environment:
+      API_URL: ""
+      API_VERSION: "1"
+

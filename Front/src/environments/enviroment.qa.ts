@@ -2,8 +2,6 @@ interface WindowEnv {
   env?: {
     apiUrl?: string;
     apiVer?: number;
-    apiOsrm?: string;
-    apiKeyOpenCage?: string;
   };
 }
 
