@@ -197,8 +197,6 @@ namespace Kiltex.SistemaGestion.Services.Services
                 worksheet.Cell(currentRow, 10).SetValue("$ " + $"{resumen.PeriodTotal}").Style.Font.Bold = true;
                 worksheet.Cell(currentRow, 10).Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Right);
 
-                worksheet.Columns().AdjustToContents();
-
                 stream = new MemoryStream();
 
                 workbook.SaveAs(stream);
@@ -322,8 +320,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                 worksheet.Cell(currentRow, 10).SetValue("$ " + $"{resumen.PeriodTotal}").Style.Font.Bold = true;
                 worksheet.Cell(currentRow, 10).Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Right);
 
-                worksheet.Columns().AdjustToContents();
-
+                
                 stream = new MemoryStream();
 
                 workbook.SaveAs(stream);

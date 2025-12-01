@@ -6,9 +6,9 @@ COPY package.json /app
 RUN npm install --force
 COPY . /app 
 
-ARG environment
-RUN npm run ${environment}
-
+#ARG environment
+#RUN npm run ${environment}
+RUN npm run build
 # Stage 2
 FROM nginx:alpine
 COPY nginx.conf /etc/nginx/nginx.conf
