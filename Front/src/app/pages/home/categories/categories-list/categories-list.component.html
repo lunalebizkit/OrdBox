@@ -22,7 +22,7 @@
   <nz-content>
     <!-- Busqueda -->
     
-    <app-search-filter [title]="'Filtros'" [(model)]="queryData.filter" (keydown.enter)="search()" [palceHolder]="'Ingrese descripción o Categoría'" (onSearchClick)="search()"></app-search-filter>
+    <app-search-filter [title]="'Filtros'" [(model)]="queryData.filter" (keydown.enter)="search()" [palceHolder]="'Ingrese categoría'" (onSearchClick)="search()"></app-search-filter>
 
     <!-- Tabla -->
     <div class="table" (scroll)="onScroll($event)">
@@ -38,7 +38,7 @@
         <thead>
           <tr>
             <th nzEllipsis nzWidth="380px">#</th>
-            <th nzEllipsis nzWidth="380px">Descripción</th>
+            <th nzEllipsis nzWidth="380px">Categoría</th>
             <th nzEllipsis nzWidth="45px" style="text-align: center;" *authPermission="[permissions.DeleteBrand]">Acción</th>
           </tr>
         </thead>

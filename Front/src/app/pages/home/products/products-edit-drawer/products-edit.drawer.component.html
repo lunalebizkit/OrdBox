@@ -182,7 +182,7 @@
         [showSpinner]="isSaving" [btnSaveText]="'Activar'" [hidden]="!isDeleted">
     </app-button-op-footer>
     <app-button-op-footer *authPermission="[permissions.DeleteBrand]" [className]="'btn-footer-productSave'" (onSaveClick)="popupDelete.showDeleteConfirmation(id)"
-        [showSpinner]="isSaving" [btnSaveText]="'Eliminar'" [nzDanger]="true" [nzType]="'default'" [hidden]="isDeleted">
+        [showSpinner]="isSaving" [btnSaveText]="'Eliminar'" [nzDanger]="true" [nzType]="'default'" [hidden]="isDeleted || id == 0">
     </app-button-op-footer>
     <app-button-op-footer [className]="'btn-footer-productSave'" [iconSave]="'save'" (onSaveClick)="msjConfirmOk()"
         [showSpinner]="isSaving" [btnSaveText]="'Guardar'">
