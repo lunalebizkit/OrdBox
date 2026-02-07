@@ -1,136 +1,77 @@
 <nz-collapse>
-      <nz-collapse-panel
-        nzSize="small"
-        nzHeader="Filtros"
-        style="font-weight: bold"
-      >
-        <form nz-form style="margin-left: 13px" (ngSubmit)="onSearchClick.emit($event)">
-          <div nz-row>
+  <nz-collapse-panel nzSize="small" nzHeader="Filtros" style="font-weight: bold">
+    <form nz-form style="margin-left: 13px" (ngSubmit)="onSearchCustomClick.emit($event)">
+      <div nz-row>
+        <div nz-col nzFlex="2" style="margin: 10px;">
+          <nz-form-item>
+            <nz-form-label>Nombre</nz-form-label>
             <nz-form-control>
-                    <nz-form-item style="margin-left: 15px">
-              <nz-form-label>Nombre</nz-form-label>       
-                            <nz-input-group nzSearch nzSize="large" [nzSuffix]="clearQuery" [nzAddOnAfter]="suffixButton">
-                                <input [ngModelOptions]="{ standalone: true }" type="text"
-                                placeholder={{palceHolder}} nz-input (keydown.enter)="onSearchClick.emit($event)"
-                                [(ngModel)]="model.filter.customerName" (ngModelChange)="onModelChange($event)" id="customerName" autocomplete="off" />
-                            </nz-input-group>
-                            <ng-template #suffixButton>
-                                <button nz-button nzType="primary" nzSize="large" nzSearch><i nz-icon nzType="search" ></i></button>
-                            </ng-template>
-                            
-                            <ng-template #clearQuery>
-                                <i nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle"
-                                *ngIf="model" (click)="clearInput()"></i>
-                            </ng-template>
-                    </nz-form-item>
-                        </nz-form-control>
-            <!--  <div nz-col nzSpan="14" > -->
-            <nz-form-item style="margin-left: 15px">
-              <nz-form-label>CUIT</nz-form-label>
-              <nz-form-control>
-                <nz-input-group [nzSuffix]="clearQuery" style="width: 100%">
-                  <input
-                    [ngModelOptions]="{ standalone: true }"
-                    type="text"
-                    placeholder="Ingrese CUIT/CUIL o DNI"
-                    nz-input
-                    (keydown.enter)="onSearchClick.emit($event)"
-                    [(ngModel)]="model.filter.customerName"
-                  />
-                </nz-input-group>
+              <nz-input-group nzSearch [nzSuffix]="clearQueryName">
+                <input [ngModelOptions]="{ standalone: true }" type="text" placeholder={{palceHolder}} nz-input
+                  (keydown.enter)="onSearchCustomClick.emit($event)" [(ngModel)]="model.filter.customerName"
+                  id="customerName" autocomplete="off" />
+              </nz-input-group>
+  
+              <ng-template #clearQueryName>
+                <i nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle" *ngIf="model.filter.customerName" (click)="model.filter.customerName = '';onSearchCustomClick.emit($event)"></i>
+              </ng-template>
+            </nz-form-control>
+          </nz-form-item>          
+        </div>
+        <div nz-col nzFlex="2" style="margin: 10px;">
+          <nz-form-item>
+            <nz-form-label>CUIT</nz-form-label>
+            <nz-form-control>
+              <nz-input-group [nzSuffix]="clearQueryCuit">
+                <input [ngModelOptions]="{ standalone: true }" type="text" placeholder="Ingrese CUIT/CUIL o DNI" nz-input
+                  (keydown.enter)="onSearchCustomClick.emit($event)" [(ngModel)]="model.filter.cuit" /></nz-input-group>
+  
+              <ng-template #clearQueryCuit>
+                <i nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle" *ngIf="model.filter.cuit"
+                  (click)="model.filter.cuit = ''; onSearchCustomClick.emit($event)"></i>
+              </ng-template>
+            </nz-form-control>
+          </nz-form-item>          
+        </div>
+      </div>
 
-                <ng-template #clearQuery>
-                  <i
-                    nz-icon
-                    class="ant-input-clear-icon"
-                    nzTheme="fill"
-                    nzType="close-circle"
-                    *ngIf="model.filter.cuit"
-                    (click)="model.filter.cuit = ''; onSearchClick.emit($event)"
-                  ></i>
-                </ng-template>
-              </nz-form-control>
-            </nz-form-item>
-            <!--  </div>
-              <div nz-col nzSpan="8"> -->
-            <nz-form-item style="margin-left: 25px">
-              <nz-form-label>Nro de comprobante</nz-form-label>
-              <nz-form-control>
-                <nz-input-group [nzSuffix]="clearQuery" style="width: 100%">
-                  <input
-                    [ngModelOptions]="{ standalone: true }"
-                    type="number"
-                    placeholder="Ingrese numero de factura"
-                    nz-input
-                    (keydown.enter)="onSearchClick.emit($event)"
-                    [(ngModel)]="model.filter.number"
-                    min="0"
-                  />
-                </nz-input-group>
+      <div nz-row>
+        <div nz-col nzFlex="2" style="margin: 10px;">
+          <nz-form-item>
+            <nz-form-label>Nro de comprobante</nz-form-label>
+            <nz-form-control>
+              <nz-input-group [nzSuffix]="clearQueryNumber">
+                <input [ngModelOptions]="{ standalone: true }" type="number" placeholder="Ingrese numero de factura"
+                  nz-input (keydown.enter)="onSearchCustomClick.emit($event)" [(ngModel)]="model.filter.number" min="0" />
+              </nz-input-group>
+  
+              <ng-template #clearQueryNumber>
+                <i nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle" *ngIf="model.filter.number"
+                  (click)="model.filter.number = 0; onSearchCustomClick.emit($event)"></i>
+              </ng-template>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col nzFlex="2" style="margin: 10px;">
+          <nz-form-item >
+            <nz-form-label>Fecha</nz-form-label>
+            <nz-form-control>
+              <nz-date-picker nzFormat="dd/MM/yyyy" [(ngModel)]="model.filter.date" name="date" [nzPlaceHolder]="'Fecha'"
+                (ngModelChange)="dateChange($event)"></nz-date-picker>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col style="margin: 10px;">
+          <button nz-button nzType="primary">
+            <i nz-icon nzType="search"></i>
+            Buscar
+          </button>
+        </div>
+      </div>
 
-                <ng-template #clearQuery>
-                  <i
-                    nz-icon
-                    class="ant-input-clear-icon"
-                    nzTheme="fill"
-                    nzType="close-circle"
-                    *ngIf="model.filter.number"
-                    (click)="model.filter.number = 0; onSearchClick.emit($event)"
-                  ></i>
-                </ng-template>
-              </nz-form-control>
-            </nz-form-item>
-            <!--   </div>
-            <div nz-col class="gutter-row" [nzSpan]="8"> -->
-            <nz-form-item style="margin-left: 55px">
-              <nz-form-label>Fecha</nz-form-label>
-              <nz-form-control>
-                <nz-date-picker
-                  nzFormat="dd/MM/yyyy"
-                  [(ngModel)]="model.filter.date"
-                  name="date"
-                  [nzPlaceHolder]="'Fecha'"
-                  (ngModelChange)="dateChange($event)"
-                ></nz-date-picker>
-              </nz-form-control>
-            </nz-form-item>
-            <!-- </div>
-          <div style="margin-left: 15px;"> -->
-            <button
-              nz-button
-              nzType="primary"
-              style="margin-left: 90px; font-size: 14px"
-            >
-              <i nz-icon nzType="search"></i>
-              Buscar
-            </button>
-          </div>
-          <!-- </div> -->
-        </form>
-      </nz-collapse-panel>
-    </nz-collapse>
-        <!-- <form nz-form (ngSubmit)="onSearchClick.emit($event)">
-            <div nz-row>
-                <div nz-col nzSpan="24">
-                    <nz-form-item>
-                        <nz-form-label nzFor="busqueda">Búsqueda</nz-form-label>
-                        <nz-form-control>
-                           
-                            <nz-input-group nzSearch nzSize="large" [nzSuffix]="clearQuery" [nzAddOnAfter]="suffixButton">
-                                <input [ngModelOptions]="{ standalone: true }" type="text"
-                                placeholder={{palceHolder}} nz-input (keydown.enter)="onSearchClick.emit($event)"
-                                [(ngModel)]="model" (ngModelChange)="onModelChange($event)" id="busqueda" autocomplete="off" />
-                            </nz-input-group>
-                            <ng-template #suffixButton>
-                                <button nz-button nzType="primary" nzSize="large" nzSearch><i nz-icon nzType="search" ></i></button>
-                            </ng-template>
-                            
-                            <ng-template #clearQuery>
-                                <i nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle"
-                                *ngIf="model" (click)="clearInput()"></i>
-                            </ng-template>
-                        </nz-form-control>
-                        </nz-form-item>
-                </div>
-            </div>
-        </form> -->
+        <div nz-row nzJustify="end">
+        </div>
+
+    </form>
+  </nz-collapse-panel>
+</nz-collapse>

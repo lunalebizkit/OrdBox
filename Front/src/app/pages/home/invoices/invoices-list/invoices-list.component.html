@@ -20,103 +20,10 @@
 
   <nz-content>
     <nz-collapse>
-      <nz-collapse-panel
-        nzSize="small"
-        nzHeader="Filtros"
-        style="font-weight: bold"
-      >
-        <form nz-form style="margin-left: 13px">
-          <div nz-row>
-            <!--  <div nz-col nzSpan="14" > -->
-            <nz-form-item style="margin-left: 15px">
-              <nz-form-label>CUIT</nz-form-label>
-              <nz-form-control>
-                <nz-input-group [nzSuffix]="clearQuery" style="width: 100%">
-                  <input
-                    [ngModelOptions]="{ standalone: true }"
-                    type="text"
-                    placeholder="Ingrese CUIT/CUIL o DNI"
-                    nz-input
-                    (keydown.enter)="search()"
-                    [(ngModel)]="SpecificFilter.filter.cuit"
-                  />
-                </nz-input-group>
-
-                <ng-template #clearQuery>
-                  <i
-                    nz-icon
-                    class="ant-input-clear-icon"
-                    nzTheme="fill"
-                    nzType="close-circle"
-                    *ngIf="SpecificFilter.filter.cuit"
-                    (click)="SpecificFilter.filter.cuit = ''; search()"
-                  ></i>
-                </ng-template>
-              </nz-form-control>
-            </nz-form-item>
-            <!--  </div>
-              <div nz-col nzSpan="8"> -->
-            <nz-form-item style="margin-left: 25px">
-              <nz-form-label>Nro de comprobante</nz-form-label>
-              <nz-form-control>
-                <nz-input-group [nzSuffix]="clearQuery" style="width: 100%">
-                  <input
-                    [ngModelOptions]="{ standalone: true }"
-                    type="number"
-                    placeholder="Ingrese numero de factura"
-                    nz-input
-                    (keydown.enter)="search()"
-                    [(ngModel)]="SpecificFilter.filter.number"
-                    min="0"
-                  />
-                </nz-input-group>
-
-                <ng-template #clearQuery>
-                  <i
-                    nz-icon
-                    class="ant-input-clear-icon"
-                    nzTheme="fill"
-                    nzType="close-circle"
-                    *ngIf="SpecificFilter.filter.number"
-                    (click)="SpecificFilter.filter.number = 0; search()"
-                  ></i>
-                </ng-template>
-              </nz-form-control>
-            </nz-form-item>
-            <!--   </div>
-            <div nz-col class="gutter-row" [nzSpan]="8"> -->
-            <nz-form-item style="margin-left: 55px">
-              <nz-form-label>Fecha</nz-form-label>
-              <nz-form-control>
-                <nz-date-picker
-                  nzFormat="dd/MM/yyyy"
-                  [(ngModel)]="dia"
-                  name="date"
-                  [nzPlaceHolder]="'Fecha'"
-                  (ngModelChange)="dateChange($event)"
-                ></nz-date-picker>
-              </nz-form-control>
-            </nz-form-item>
-            <!-- </div>
-          <div style="margin-left: 15px;"> -->
-            <button
-              nz-button
-              nzType="primary"
-              style="margin-left: 90px; font-size: 14px"
-              (click)="search()"
-            >
-              <i nz-icon nzType="search"></i>
-              Buscar
-            </button>
-          </div>
-          <!-- </div> -->
-        </form>
-      </nz-collapse-panel>
+      <app-search-custom-filter (onSearchCustomClick)="search()" [(ngModel)]="customSerchModel"></app-search-custom-filter>      
     </nz-collapse>
 
     <!-- Tabla -->
-
-    <!--   <div > -->
     <div class="table" (scroll)="onScroll($event)">
       <nz-table
         class="tabla"

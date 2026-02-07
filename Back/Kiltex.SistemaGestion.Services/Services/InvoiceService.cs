@@ -1,6 +1,4 @@
 ﻿using AutoMapper;
-using DocumentFormat.OpenXml.Office2013.Excel;
-using DocumentFormat.OpenXml.Spreadsheet;
 using Kiltex.SistemaGestion.Domain;
 using Kiltex.SistemaGestion.Domain.Enum;
 using Kiltex.SistemaGestion.Domain.Model;

@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, LOCALE_ID } from '@angular/core';
+import { Component, OnInit, Inject, LOCALE_ID, Input } from '@angular/core';
 import { InvoiceService } from '../invoices.service';
 import { eInvoiceType } from '../model/invoice-type.Enum';
 import { InvoiceModel } from '../model/invoice.model';
@@ -6,6 +6,7 @@ import { formatCurrency, formatDate } from '@angular/common';
 import { NzDrawerService } from 'ng-zorro-antd/drawer';
 import { InvoicesViewDrawerComponent } from '../invoices-view-drawer/invoices-view.drawer.component';
 import { Permission } from 'src/app/common/auth/models/permissions.enum';
+import { SearchCustomFilterModel, initialSearchFilter } from 'src/app/common/components/model/search.custom.filter';
 
 @Component({
   selector: 'app-invoices-list',
@@ -13,6 +14,8 @@ import { Permission } from 'src/app/common/auth/models/permissions.enum';
   styleUrls: ['./invoices-list.component.css'],
 })
 export class InvoicesListComponent implements OnInit {
+
+  @Input() customSerchModel: SearchCustomFilterModel = initialSearchFilter;
   router: any;
   permissions = Permission;
   dia: any;
@@ -49,6 +52,7 @@ export class InvoicesListComponent implements OnInit {
       number: 0,
       cuit: "",
       date: "",
+      customerName: ""
     },
     page: 0,
     pageSize: 20
@@ -70,15 +74,15 @@ export class InvoicesListComponent implements OnInit {
    ** Evento de inicio de angular
    */
   ngOnInit(): void {
-    this.getData(this.SpecificFilter);
+    this.getData(this.customSerchModel);
   }
   /*
    ** Evento al presionar buscar o presionar enter
    */
   search(): void {
-    this.getData(this.SpecificFilter);
-    this.SpecificFilter.page = 0;
-    this.SpecificFilter.pageSize = 20;
+    this.getData(this.customSerchModel);
+    this.customSerchModel.page = 0;
+    this.customSerchModel.pageSize = 20;
 
   }
   /*

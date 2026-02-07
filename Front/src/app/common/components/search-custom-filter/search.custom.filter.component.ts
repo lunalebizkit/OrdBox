@@ -10,28 +10,16 @@ import { formatDate } from "@angular/common";
 export class SearchCustomFilterComponent implements OnInit{
     @Input('title') title!: string;
     @Input('palceHolder') palceHolder!: string;
-    @Input() model!: SearchCustomFilterModel;
+    @Input() model: SearchCustomFilterModel = this.resetSearchFilter();
 
 
-    @Output('onSearchClick') onSearchClick: EventEmitter<any> =
+    @Output('onSearchCustomClick') onSearchCustomClick: EventEmitter<any> =
     new EventEmitter<any>();
-    @Output() modelChange = new EventEmitter<SearchCustomFilterModel>();
         
    constructor(@Inject(LOCALE_ID) public locale: string){}
 
     ngOnInit(): void {
-    }
-
-    onModelChange(value: SearchCustomFilterModel) {
-    this.model = value;
-    this.modelChange.emit(value);
-    }
-
-    clearInput() {
-    this.model = this.resetSearchFilter();
-    this.modelChange.emit(this.model);
-    this.onSearchClick.emit();
-    }
+    }  
 
     resetSearchFilter(): SearchCustomFilterModel {
     return { ...initialSearchFilter };
@@ -41,11 +29,11 @@ export class SearchCustomFilterComponent implements OnInit{
         return formatDate(date, 'YYYY-MM-dd', this.locale);
       }
     
-      dateChange(date: any): void {
-        if (date) {
-          this.model.filter.date = this.formaterDate(date)
-        } else {
-          this.model.filter.date = ''
-        }
+    dateChange(date: any): void {
+      if (date) {
+        this.model.filter.date = this.formaterDate(date)
+      } else {
+        this.model.filter.date = ''
       }
+    }
 }
