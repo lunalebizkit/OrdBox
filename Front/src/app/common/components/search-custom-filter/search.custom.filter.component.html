@@ -1,13 +1,13 @@
 <nz-collapse>
   <nz-collapse-panel nzSize="small" nzHeader="Filtros" style="font-weight: bold">
-    <form nz-form style="margin-left: 13px" (ngSubmit)="onSearchCustomClick.emit($event)">
+    <form style="margin-left: 13px" (ngSubmit)="onSearchCustomClick.emit($event)">
       <div nz-row>
         <div nz-col nzFlex="2" style="margin: 10px;">
           <nz-form-item>
-            <nz-form-label>Nombre</nz-form-label>
+            <nz-form-label nzFor="customerName">Nombre</nz-form-label>
             <nz-form-control>
               <nz-input-group nzSearch [nzSuffix]="clearQueryName">
-                <input [ngModelOptions]="{ standalone: true }" type="text" placeholder={{palceHolder}} nz-input
+                <input name="customerName" type="text" placeholder="Ingrese nombre" nz-input
                   (keydown.enter)="onSearchCustomClick.emit($event)" [(ngModel)]="model.filter.customerName"
                   id="customerName" autocomplete="off" />
               </nz-input-group>
@@ -20,10 +20,10 @@
         </div>
         <div nz-col nzFlex="2" style="margin: 10px;">
           <nz-form-item>
-            <nz-form-label>CUIT</nz-form-label>
+            <nz-form-label nzFor="cuit" >CUIT</nz-form-label>
             <nz-form-control>
               <nz-input-group [nzSuffix]="clearQueryCuit">
-                <input [ngModelOptions]="{ standalone: true }" type="text" placeholder="Ingrese CUIT/CUIL o DNI" nz-input
+                <input name="cuit" type="text" placeholder="Ingrese CUIT/CUIL o DNI" nz-input
                   (keydown.enter)="onSearchCustomClick.emit($event)" [(ngModel)]="model.filter.cuit" /></nz-input-group>
   
               <ng-template #clearQueryCuit>
@@ -38,10 +38,10 @@
       <div nz-row>
         <div nz-col nzFlex="2" style="margin: 10px;">
           <nz-form-item>
-            <nz-form-label>Nro de comprobante</nz-form-label>
+            <nz-form-label nzFor="number">Nro de comprobante</nz-form-label>
             <nz-form-control>
               <nz-input-group [nzSuffix]="clearQueryNumber">
-                <input [ngModelOptions]="{ standalone: true }" type="number" placeholder="Ingrese numero de factura"
+                <input name="number" type="number" placeholder="Ingrese numero de factura"
                   nz-input (keydown.enter)="onSearchCustomClick.emit($event)" [(ngModel)]="model.filter.number" min="0" />
               </nz-input-group>
   
@@ -56,8 +56,7 @@
           <nz-form-item >
             <nz-form-label>Fecha</nz-form-label>
             <nz-form-control>
-              <nz-date-picker nzFormat="dd/MM/yyyy" [(ngModel)]="model.filter.date" name="date" [nzPlaceHolder]="'Fecha'"
-                (ngModelChange)="dateChange($event)"></nz-date-picker>
+              <nz-date-picker nzFormat="dd/MM/yyyy" [(ngModel)]="model.filter.date" name="date" [nzPlaceHolder]="'Fecha'" (ngModelChange)="dateChange($event)"></nz-date-picker>
             </nz-form-control>
           </nz-form-item>
         </div>

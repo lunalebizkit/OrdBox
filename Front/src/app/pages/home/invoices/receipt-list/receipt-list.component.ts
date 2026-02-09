@@ -1,5 +1,5 @@
 import { formatCurrency, formatDate } from '@angular/common';
-import { Component, ElementRef, Inject, LOCALE_ID, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Inject, Input, LOCALE_ID, OnInit, ViewChild } from '@angular/core';
 import { NzDrawerService } from 'ng-zorro-antd/drawer';
 import { Permission } from 'src/app/common/auth/models/permissions.enum';
 import { InvoiceService } from '../invoices.service';
@@ -10,6 +10,7 @@ import { BaseComponent } from 'src/app/common/components/base/base.component';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { PopupConfirmationComponent } from 'src/app/common/components/popup-confirmation/popup-confirmation.component';
+import { initialSearchFilter, SearchCustomFilterModel } from 'src/app/common/components/model/search.custom.filter';
 
 @Component({
   selector: 'app-receipt-list',
@@ -21,6 +22,7 @@ export class ReceiptListComponent extends BaseComponent implements OnInit {
   dia:any;
   id!: number;
   @ViewChild('popup') popupComponent!: PopupConfirmationComponent;
+  @Input() customSerchModel: SearchCustomFilterModel = initialSearchFilter;
   /*
    ** Indicador de carga de la grilla
    */
@@ -34,18 +36,6 @@ export class ReceiptListComponent extends BaseComponent implements OnInit {
     page: 0,
     pageSize: 10,
   };
-  SpecificFilter = {
-    filter: {
-      supplier: "",
-      category: "",
-      statusid: 0,
-      number: 0,
-      cuit: "",
-      date: ""
-    },
-    page: 0,
-    pageSize: 20
-  }
 
   receiptList: receiptModel[] = [];
 
@@ -63,7 +53,7 @@ export class ReceiptListComponent extends BaseComponent implements OnInit {
   ) {super( notificacionService, el, message)}
 
   ngOnInit(): void {
-    this.getData(this.SpecificFilter); 
+    this.getData(this.customSerchModel); 
   }
 
   /*
@@ -76,9 +66,9 @@ export class ReceiptListComponent extends BaseComponent implements OnInit {
    ** Evento al presionar buscar o presionar enter
    */
   search(): void {
-    this.getData(this.SpecificFilter);
-    this.SpecificFilter.page = 0;
-    this.SpecificFilter.pageSize = 20;
+    this.getData(this.customSerchModel);
+    this.customSerchModel.page = 0;
+    this.customSerchModel.pageSize = 20;
   }
 
   /*
@@ -102,15 +92,7 @@ export class ReceiptListComponent extends BaseComponent implements OnInit {
       },
     });
   }
-  dateChange(date:any):void{
-    if(date){
-      this.dia = date
-      this.SpecificFilter.filter.date = this.formaterDate(date)
-    }else{
-      this.SpecificFilter.filter.date = ''
-    }
-  }
-
+  
   formaterDate(date: string | number | Date): string {
     return formatDate(date, 'YYYY-MM-dd', this.locale);
   }
@@ -186,15 +168,15 @@ export class ReceiptListComponent extends BaseComponent implements OnInit {
     );
     if (
       ScrollPosition <= 5 &&
-      this.totalItems / this.SpecificFilter.page > this.SpecificFilter.page
+      this.totalItems / this.customSerchModel.page > this.customSerchModel.page
     ) {
-      let page = this.SpecificFilter.page;
-      this.SpecificFilter .page = this.SpecificFilter.page + 1;
+      let page = this.customSerchModel.page;
+      this.customSerchModel .page = this.customSerchModel.page + 1;
       if (
         this.totalItems === undefined ||
-        this.SpecificFilter.page * this.SpecificFilter.pageSize <= this.totalItems
+        this.customSerchModel.page * this.customSerchModel.pageSize <= this.totalItems
       ) {
-        this.service.getReceipt(this.SpecificFilter).subscribe({
+        this.service.getReceipt(this.customSerchModel).subscribe({
           next: (r) => {
             r.data.map((data: receiptModel) =>
               this.receiptList.push(data)
@@ -207,7 +189,7 @@ export class ReceiptListComponent extends BaseComponent implements OnInit {
           },
         });
       } else {
-        this.SpecificFilter.page = page;
+        this.customSerchModel.page = page;
       }
     }
   }

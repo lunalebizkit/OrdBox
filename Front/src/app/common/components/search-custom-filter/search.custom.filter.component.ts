@@ -8,8 +8,6 @@ import { formatDate } from "@angular/common";
     styleUrls: ['search.custom.filter.component.css'],
 })
 export class SearchCustomFilterComponent implements OnInit{
-    @Input('title') title!: string;
-    @Input('palceHolder') palceHolder!: string;
     @Input() model: SearchCustomFilterModel = this.resetSearchFilter();
 
 
