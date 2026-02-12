@@ -5,7 +5,7 @@ import { Permission } from 'src/app/common/auth/models/permissions.enum';
 import { CreditMemoViewDrawerComponent } from '../creditMemo-view-drawer/creditMemo-view-drawer.component';
 import { CreditMemoModel } from '../model/creditMemo.model';
 import { NoteService } from '../notes.service';
-import { initialSearchFilter, parseFilterCustomSeachData, SearchCustomFilterModel } from 'src/app/common/components/model/search.custom.filter.model';
+import { initialSearchFilter, parseFilterCustomSeachData, resetQuerySearchFilter, SearchCustomFilterModel } from 'src/app/common/components/model/search.custom.filter.model';
 import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
@@ -16,7 +16,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 export class creditMemoListComponent implements OnInit {
   
   customNCSearchForm!: FormGroup;
-  queryParams: SearchCustomFilterModel = initialSearchFilter;
+  queryParams: SearchCustomFilterModel = resetQuerySearchFilter();
   id!: number;
   isLoading: boolean= false;
   loading!: boolean;

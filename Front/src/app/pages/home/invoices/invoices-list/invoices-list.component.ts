@@ -1,14 +1,12 @@
-import { Component, OnInit, Inject, LOCALE_ID, Input } from '@angular/core';
+import { Component, OnInit, Inject, LOCALE_ID } from '@angular/core';
 import { InvoiceService } from '../invoices.service';
-import { eInvoiceType } from '../model/invoice-type.Enum';
 import { InvoiceModel } from '../model/invoice.model';
 import { formatCurrency, formatDate } from '@angular/common';
 import { NzDrawerService } from 'ng-zorro-antd/drawer';
 import { InvoicesViewDrawerComponent } from '../invoices-view-drawer/invoices-view.drawer.component';
 import { Permission } from 'src/app/common/auth/models/permissions.enum';
-import { SearchCustomFilterModel, initialSearchFilter, parseFilterCustomSeachData } from 'src/app/common/components/model/search.custom.filter.model';
+import { SearchCustomFilterModel, parseFilterCustomSeachData, resetQuerySearchFilter } from 'src/app/common/components/model/search.custom.filter.model';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { isNil } from 'ng-zorro-antd/core/util';
 
 @Component({
   selector: 'app-invoices-list',
@@ -40,7 +38,7 @@ export class InvoicesListComponent implements OnInit {
   /*
    ** Parametros de busqueda
    */
-  queryParams: SearchCustomFilterModel = initialSearchFilter;
+  queryParams: SearchCustomFilterModel = resetQuerySearchFilter();
 
   /*
    ** Constructor

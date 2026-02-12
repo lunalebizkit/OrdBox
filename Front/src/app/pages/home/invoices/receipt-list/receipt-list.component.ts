@@ -10,7 +10,7 @@ import { BaseComponent } from 'src/app/common/components/base/base.component';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { PopupConfirmationComponent } from 'src/app/common/components/popup-confirmation/popup-confirmation.component';
-import { initialSearchFilter, parseFilterCustomSeachData, SearchCustomFilterModel } from 'src/app/common/components/model/search.custom.filter.model';
+import { initialSearchFilter, parseFilterCustomSeachData, resetQuerySearchFilter, SearchCustomFilterModel } from 'src/app/common/components/model/search.custom.filter.model';
 import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
@@ -32,7 +32,7 @@ export class ReceiptListComponent extends BaseComponent implements OnInit {
   /*
    ** Parametros de busqueda
    */
-  queryParams: SearchCustomFilterModel = initialSearchFilter;
+  queryReceiptParams: SearchCustomFilterModel = resetQuerySearchFilter();
 
   receiptList: receiptModel[] = [];
 
@@ -58,7 +58,7 @@ export class ReceiptListComponent extends BaseComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getData(this.queryParams); 
+    this.getData(this.queryReceiptParams); 
   }
 
   /*
@@ -71,9 +71,9 @@ export class ReceiptListComponent extends BaseComponent implements OnInit {
    ** Evento al presionar buscar o presionar enter
    */
   search(): void {
-    this.getData(this.queryParams);
-    this.queryParams.page = 0;
-    this.queryParams.pageSize = 20;
+    this.getData(this.queryReceiptParams);
+    this.queryReceiptParams.page = 0;
+    this.queryReceiptParams.pageSize = 20;
   }
 
   /*
@@ -174,15 +174,15 @@ export class ReceiptListComponent extends BaseComponent implements OnInit {
     );
     if (
       ScrollPosition <= 5 &&
-      this.totalItems / this.queryParams.page > this.queryParams.page
+      this.totalItems / this.queryReceiptParams.page > this.queryReceiptParams.page
     ) {
-      let page = this.queryParams.page;
-      this.queryParams .page = this.queryParams.page + 1;
+      let page = this.queryReceiptParams.page;
+      this.queryReceiptParams .page = this.queryReceiptParams.page + 1;
       if (
         this.totalItems === undefined ||
-        this.queryParams.page * this.queryParams.pageSize <= this.totalItems
+        this.queryReceiptParams.page * this.queryReceiptParams.pageSize <= this.totalItems
       ) {
-        this.service.getReceipt(this.queryParams).subscribe({
+        this.service.getReceipt(this.queryReceiptParams).subscribe({
           next: (r) => {
             r.data.map((data: receiptModel) =>
               this.receiptList.push(data)
@@ -195,7 +195,7 @@ export class ReceiptListComponent extends BaseComponent implements OnInit {
           },
         });
       } else {
-        this.queryParams.page = page;
+        this.queryReceiptParams.page = page;
       }
     }
   }

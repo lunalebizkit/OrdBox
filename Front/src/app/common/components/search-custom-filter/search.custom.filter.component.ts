@@ -9,7 +9,6 @@ import { FormGroup } from "@angular/forms";
 })
 export class SearchCustomFilterComponent implements OnInit {
   @Input() customSearchForm!: FormGroup;
-  @Input() model: SearchCustomFilterModel = this.resetSearchFilter();
 
   @Output('onSearchCustomClick') onSearchCustomClick: EventEmitter<any> =
     new EventEmitter<any>();
@@ -19,11 +18,6 @@ export class SearchCustomFilterComponent implements OnInit {
   constructor(@Inject(LOCALE_ID) public locale: string) { }
 
   ngOnInit(): void {
-  }
-
-  resetSearchFilter(): SearchCustomFilterModel {
-    this.datetime = null;
-    return { ...initialSearchFilter };
   }
   
   clearFormValue(formControl: string) {

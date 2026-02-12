@@ -1,5 +1,4 @@
 import { formatDate } from "@angular/common";
-import { LOCALE_ID } from "@angular/core";
 import { FormGroup } from "@angular/forms";
 import { isNil } from "ng-zorro-antd/core/util";
 
@@ -43,4 +42,12 @@ export function  parseFilterCustomSeachData(queryParams: SearchCustomFilterModel
     queryParams.filter.cuit = customSearchForm.controls['cuit'].value;
     queryParams.filter.date = formaterDate(customSearchForm.controls['date'].value, locale);
     return queryParams;
-  }
+}
+
+export function resetQuerySearchFilter(): SearchCustomFilterModel {
+  return {
+    filter: { ...initialSearchFilter.filter },
+    page: initialSearchFilter.page,
+    pageSize: initialSearchFilter.pageSize
+  };
+}
