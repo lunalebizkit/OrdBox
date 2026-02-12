@@ -6,7 +6,9 @@ import { formatCurrency, formatDate } from '@angular/common';
 import { NzDrawerService } from 'ng-zorro-antd/drawer';
 import { InvoicesViewDrawerComponent } from '../invoices-view-drawer/invoices-view.drawer.component';
 import { Permission } from 'src/app/common/auth/models/permissions.enum';
-import { SearchCustomFilterModel, initialSearchFilter } from 'src/app/common/components/model/search.custom.filter';
+import { SearchCustomFilterModel, initialSearchFilter, parseFilterCustomSeachData } from 'src/app/common/components/model/search.custom.filter.model';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { isNil } from 'ng-zorro-antd/core/util';
 
 @Component({
   selector: 'app-invoices-list',
@@ -15,7 +17,7 @@ import { SearchCustomFilterModel, initialSearchFilter } from 'src/app/common/com
 })
 export class InvoicesListComponent implements OnInit {
 
-  @Input() customSerchModel: SearchCustomFilterModel = initialSearchFilter;
+  customSearchForm!: FormGroup;
   router: any;
   permissions = Permission;
   dia: any;
@@ -38,25 +40,7 @@ export class InvoicesListComponent implements OnInit {
   /*
    ** Parametros de busqueda
    */
-  queryParams = {
-    filter: '',
-    page: 0,
-    pageSize: 20,
-  };
-
-  SpecificFilter = {
-    filter: {
-      supplier: "",
-      category: "",
-      statusid: 0,
-      number: 0,
-      cuit: "",
-      date: "",
-      customerName: ""
-    },
-    page: 0,
-    pageSize: 20
-  }
+  queryParams: SearchCustomFilterModel = initialSearchFilter;
 
   /*
    ** Constructor
@@ -64,8 +48,15 @@ export class InvoicesListComponent implements OnInit {
   constructor(
     private service: InvoiceService,
     @Inject(LOCALE_ID) public locale: string,
-    private drawerService: NzDrawerService
-  ) { }
+    private drawerService: NzDrawerService,
+    private fb: FormBuilder
+  ) {
+    this.customSearchForm = this.fb.group({
+      cuit: [''],
+      customerName: [''],
+      invoicenumber: [0],
+      date: [null]  
+    })}
 
   selectedIndex!: number;
   selectedInvoice: any;
@@ -73,16 +64,17 @@ export class InvoicesListComponent implements OnInit {
   /*
    ** Evento de inicio de angular
    */
-  ngOnInit(): void {
-    this.getData(this.customSerchModel);
+  ngOnInit(): void {    
+
+    this.getData(this.queryParams);
   }
   /*
    ** Evento al presionar buscar o presionar enter
    */
   search(): void {
-    this.getData(this.customSerchModel);
-    this.customSerchModel.page = 0;
-    this.customSerchModel.pageSize = 20;
+    this.getData(this.queryParams);
+    this.queryParams.page = 0;
+    this.queryParams.pageSize = 20;
 
   }
   /*
@@ -90,8 +82,9 @@ export class InvoicesListComponent implements OnInit {
    */
 
   getData(params: any): void {
+    let loadedparams = parseFilterCustomSeachData(params, this.customSearchForm, this.locale);
     this.loading = true;
-    this.service.getInvoices(params).subscribe({
+    this.service.getInvoices(loadedparams).subscribe({
       next: (r) => {
         this.invoicesList = r.data;
         this.totalItems = r.totalCount;
@@ -106,19 +99,9 @@ export class InvoicesListComponent implements OnInit {
       },
     });
   }
-
   
   formaterDate(date: string | number | Date): string {
     return formatDate(date, 'YYYY-MM-dd', this.locale);
-  }
-
-  dateChange(date: any): void {
-    if (date) {
-      this.dia = date
-      this.SpecificFilter.filter.date = this.formaterDate(date)
-    } else {
-      this.SpecificFilter.filter.date = ''
-    }
   }
 
   currencyFormat(data: any): string {
@@ -182,15 +165,15 @@ export class InvoicesListComponent implements OnInit {
     );
     if (
       ScrollPosition <= 5 &&
-      this.totalItems / this.SpecificFilter.page > this.SpecificFilter.page
+      this.totalItems / this.queryParams.page > this.queryParams.page
     ) {
-      let page = this.SpecificFilter.page;
-      this.SpecificFilter.page = this.SpecificFilter.page + 1;
+      let page = this.queryParams.page;
+      this.queryParams.page = this.queryParams.page + 1;
       if (
         this.totalItems === undefined ||
-        this.SpecificFilter.page * this.SpecificFilter.pageSize <= this.totalItems
+        this.queryParams.page * this.queryParams.pageSize <= this.totalItems
       ) {
-        this.service.getInvoices(this.SpecificFilter).subscribe({
+        this.service.getInvoices(this.queryParams).subscribe({
           next: (r) => {
             r.data.map((invoice: InvoiceModel) =>
               this.invoicesList.push(invoice)
@@ -203,7 +186,7 @@ export class InvoicesListComponent implements OnInit {
           },
         });
       } else {
-        this.SpecificFilter.page = page;
+        this.queryParams.page = page;
       }
     }
   }
@@ -251,9 +234,6 @@ export class InvoicesListComponent implements OnInit {
     downloadLink.setAttribute('download', fileName);
     document.body.appendChild(downloadLink);
     downloadLink.click();
-  }
-
-
-
+  } 
 
 }

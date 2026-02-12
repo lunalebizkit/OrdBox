@@ -1,37 +1,33 @@
 import { Component, EventEmitter, Inject, Input, LOCALE_ID, OnInit, Output } from "@angular/core";
-import { SearchCustomFilterModel, initialSearchFilter } from "../model/search.custom.filter";
+import { SearchCustomFilterModel, initialSearchFilter } from "../model/search.custom.filter.model";
 import { formatDate } from "@angular/common";
-
+import { FormGroup } from "@angular/forms";
 @Component({
-    selector: 'app-search-custom-filter',
-    templateUrl: './search.custom.filter.component.html',
-    styleUrls: ['search.custom.filter.component.css'],
+  selector: 'app-search-custom-filter',
+  templateUrl: './search.custom.filter.component.html',
+  styleUrls: ['search.custom.filter.component.css'],
 })
-export class SearchCustomFilterComponent implements OnInit{
-    @Input() model: SearchCustomFilterModel = this.resetSearchFilter();
+export class SearchCustomFilterComponent implements OnInit {
+  @Input() customSearchForm!: FormGroup;
+  @Input() model: SearchCustomFilterModel = this.resetSearchFilter();
 
-
-    @Output('onSearchCustomClick') onSearchCustomClick: EventEmitter<any> =
+  @Output('onSearchCustomClick') onSearchCustomClick: EventEmitter<any> =
     new EventEmitter<any>();
-        
-   constructor(@Inject(LOCALE_ID) public locale: string){}
 
-    ngOnInit(): void {
-    }  
+  datetime!: Date | null;
 
-    resetSearchFilter(): SearchCustomFilterModel {
+  constructor(@Inject(LOCALE_ID) public locale: string) { }
+
+  ngOnInit(): void {
+  }
+
+  resetSearchFilter(): SearchCustomFilterModel {
+    this.datetime = null;
     return { ...initialSearchFilter };
-    }
-
-    formaterDate(date: string | number | Date): string {
-        return formatDate(date, 'YYYY-MM-dd', this.locale);
-      }
-    
-    dateChange(date: any): void {
-      if (date) {
-        this.model.filter.date = this.formaterDate(date)
-      } else {
-        this.model.filter.date = ''
-      }
-    }
+  }
+  
+  clearFormValue(formControl: string) {
+  this.customSearchForm.get(formControl)?.setValue(null);
+  this.onSearchCustomClick.emit(this.customSearchForm.value);
+  }
 }

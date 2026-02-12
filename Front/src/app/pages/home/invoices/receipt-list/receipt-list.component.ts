@@ -10,7 +10,8 @@ import { BaseComponent } from 'src/app/common/components/base/base.component';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { PopupConfirmationComponent } from 'src/app/common/components/popup-confirmation/popup-confirmation.component';
-import { initialSearchFilter, SearchCustomFilterModel } from 'src/app/common/components/model/search.custom.filter';
+import { initialSearchFilter, parseFilterCustomSeachData, SearchCustomFilterModel } from 'src/app/common/components/model/search.custom.filter.model';
+import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-receipt-list',
@@ -22,7 +23,7 @@ export class ReceiptListComponent extends BaseComponent implements OnInit {
   dia:any;
   id!: number;
   @ViewChild('popup') popupComponent!: PopupConfirmationComponent;
-  @Input() customSerchModel: SearchCustomFilterModel = initialSearchFilter;
+  customRSearchForm!: FormGroup;
   /*
    ** Indicador de carga de la grilla
    */
@@ -31,11 +32,7 @@ export class ReceiptListComponent extends BaseComponent implements OnInit {
   /*
    ** Parametros de busqueda
    */
-  queryParams = {
-    filter: '',
-    page: 0,
-    pageSize: 10,
-  };
+  queryParams: SearchCustomFilterModel = initialSearchFilter;
 
   receiptList: receiptModel[] = [];
 
@@ -50,10 +47,18 @@ export class ReceiptListComponent extends BaseComponent implements OnInit {
     notificacionService: NzNotificationService,
     el: ElementRef,
     message: NzMessageService,
-  ) {super( notificacionService, el, message)}
+    private fb: FormBuilder
+  ) {super( notificacionService, el, message);
+    this.customRSearchForm = this.fb.group({
+      cuit: [''],
+      customerName: [''],
+      invoicenumber: [0],
+      date: [null]  
+    })
+  }
 
   ngOnInit(): void {
-    this.getData(this.customSerchModel); 
+    this.getData(this.queryParams); 
   }
 
   /*
@@ -66,9 +71,9 @@ export class ReceiptListComponent extends BaseComponent implements OnInit {
    ** Evento al presionar buscar o presionar enter
    */
   search(): void {
-    this.getData(this.customSerchModel);
-    this.customSerchModel.page = 0;
-    this.customSerchModel.pageSize = 20;
+    this.getData(this.queryParams);
+    this.queryParams.page = 0;
+    this.queryParams.pageSize = 20;
   }
 
   /*
@@ -77,7 +82,8 @@ export class ReceiptListComponent extends BaseComponent implements OnInit {
 
   getData(params: any): void {
     this.loading = true;
-    this.service.getReceipt(params).subscribe({
+    let loadedparams = parseFilterCustomSeachData(params, this.customRSearchForm, this.locale);
+    this.service.getReceipt(loadedparams).subscribe({
       next: (r) => {
         this.receiptList = r.data;
         this.totalItems = r.totalCount;
@@ -168,15 +174,15 @@ export class ReceiptListComponent extends BaseComponent implements OnInit {
     );
     if (
       ScrollPosition <= 5 &&
-      this.totalItems / this.customSerchModel.page > this.customSerchModel.page
+      this.totalItems / this.queryParams.page > this.queryParams.page
     ) {
-      let page = this.customSerchModel.page;
-      this.customSerchModel .page = this.customSerchModel.page + 1;
+      let page = this.queryParams.page;
+      this.queryParams .page = this.queryParams.page + 1;
       if (
         this.totalItems === undefined ||
-        this.customSerchModel.page * this.customSerchModel.pageSize <= this.totalItems
+        this.queryParams.page * this.queryParams.pageSize <= this.totalItems
       ) {
-        this.service.getReceipt(this.customSerchModel).subscribe({
+        this.service.getReceipt(this.queryParams).subscribe({
           next: (r) => {
             r.data.map((data: receiptModel) =>
               this.receiptList.push(data)
@@ -189,7 +195,7 @@ export class ReceiptListComponent extends BaseComponent implements OnInit {
           },
         });
       } else {
-        this.customSerchModel.page = page;
+        this.queryParams.page = page;
       }
     }
   }

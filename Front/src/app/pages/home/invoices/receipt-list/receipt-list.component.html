@@ -17,7 +17,7 @@
   </nz-page-header>
 
   <nz-content>
-    <app-search-custom-filter (onSearchCustomClick)="search()"></app-search-custom-filter>
+    <app-search-custom-filter [customSearchForm]="customRSearchForm" (onSearchCustomClick)="search()"></app-search-custom-filter>
     <!-- Tabla -->
 
     <div class="table" (scroll)="onScroll($event)">

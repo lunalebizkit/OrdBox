@@ -199,7 +199,7 @@ export class CreditMemoComponent extends BaseComponent implements OnInit {
           invoiceId: this.id,
           invoiceNumber: this.formCreditMemo.controls['invoiceNumber'].value,
           customerName: this.formCreditMemo.controls['customerName'].value,
-          customerCuit: this.selectedDni ? this.dni.toString() : this.formCreditMemo.controls['customerCuit'].value,
+          customerCuit: this.selectedDni ? this.formCreditMemo.controls['customerDni'].value : this.formCreditMemo.controls['customerCuit'].value,
           customerAddress: this.formCreditMemo.controls['address'].value,
           observation: this.formCreditMemo.controls['observation'].value,
           dateTime: this.formCreditMemo.controls['dateTime'].value,
@@ -575,10 +575,15 @@ export class CreditMemoComponent extends BaseComponent implements OnInit {
   select() {
     this.selectedDni = !this.selectedDni;
     if (this.selectedDni) {
-      this.dni = this.formCreditMemo.controls['customerDni'].value
+      this.dni = this.formCreditMemo.controls['customerDni'].value;
+      this.formCreditMemo.controls['customerCuit'].removeValidators(Validators.required);
+      this.formCreditMemo.controls['customerDni'].addValidators(Validators.required);
     } else {
-      this.dni = null;
+      this.dni = null;      
+      this.formCreditMemo.controls['customerCuit'].addValidators(Validators.required);
+      this.formCreditMemo.controls['customerDni'].removeValidators(Validators.required);
     }
+    this.formCreditMemo.controls['customerCuit'].updateValueAndValidity();
   }
 
   addNewEditProduct(): void {
