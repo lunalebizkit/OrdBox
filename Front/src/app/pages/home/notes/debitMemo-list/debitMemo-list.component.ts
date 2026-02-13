@@ -6,6 +6,8 @@ import { Permission } from 'src/app/common/auth/models/permissions.enum';
 import { DebitMemoViewDrawerComponent } from '../debitMemo-view-drawer/debitMemo-view-drawer.component';
 import { DebitMemoModel } from '../model/debitMemo.model';
 import { NoteService } from '../notes.service';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { parseFilterCustomSeachData, resetQuerySearchFilter, SearchCustomFilterModel } from 'src/app/common/components/model/search.custom.filter.model';
 
 @Component({
   selector: 'app-debitMemo-list',
@@ -13,6 +15,8 @@ import { NoteService } from '../notes.service';
   styleUrls: ['./debitMemo-list.component.css'],
 })
 export class debitMemoListComponent implements OnInit {
+
+  customDMSearchForm!: FormGroup;
   id!: number;
   isLoading: boolean= false;
   loading!: boolean;
@@ -24,36 +28,29 @@ export class debitMemoListComponent implements OnInit {
   dia:any;
   permissions = Permission;
 
-  queryParams = {
-    filter: '',
-    page: 0,
-    pageSize: 20
-  };
-  SpecificFilter = {
-    filter: {
-      supplier: "",
-      category: "",
-      statusid: 0,
-      number: 0,
-      cuit: "",
-      date:""
-    },
-    page: 0,
-    pageSize: 20
-  }
+  queryParams: SearchCustomFilterModel = resetQuerySearchFilter();
+  
   index!: number;
 
   constructor(
     private service: NoteService,
     @Inject(LOCALE_ID) public locale: string,
-    private drawerService: NzDrawerService
-  ){}
+    private drawerService: NzDrawerService,
+    private fb: FormBuilder
+  ){ this.customDMSearchForm = this.fb.group({
+      cuit: [''],
+      customerName: [''],
+      invoicenumber: [0],
+      date: [null]  
+    })}
     ngOnInit(): void {
-      this.getData(this.SpecificFilter)
+      this.getData(this.queryParams)
     }
+
     getData(params: any): void {
       this.loading = true;
-      this.service.getDebitMemo(params).subscribe({
+      let loadedparams = parseFilterCustomSeachData(params, this.customDMSearchForm, this.locale);
+      this.service.getDebitMemo(loadedparams).subscribe({
         next: (r) => {
           this.debitMemoList = r.data;
           this.totalItems = r.totalCount;
@@ -68,13 +65,15 @@ export class debitMemoListComponent implements OnInit {
         },
       });
     }
+
     formaterDate(date: string | number | Date): string {
       return formatDate(date, 'YYYY-MM-dd', this.locale);
     }
+
     search(): void {
-      this.getData(this.SpecificFilter);
-      this.SpecificFilter.page = 0;
-      this.SpecificFilter.pageSize = 20;
+      this.getData(this.queryParams);
+      this.queryParams.page = 0;
+      this.queryParams.pageSize = 20;
     }
     openComponentDebitMemoView(): void {
       const drawerRefCustomer = this.drawerService.create<
@@ -90,20 +89,13 @@ export class debitMemoListComponent implements OnInit {
         },
         nzClosable: false,
       });
-    } 
+    }
+
     onClick(datos: DebitMemoModel, index: number): void {
       this.index = index;
       this.selectedIndex = index;
       this.selectedDebitMemo = datos;
-    }
-    dateChange(date:any):void{
-      if(date){
-        this.dia = date
-        this.SpecificFilter.filter.date = this.formaterDate(date)
-      }else{
-        this.SpecificFilter.filter.date = ''
-      }
-    }
+    }    
 
     onDoubleClicked(datos: DebitMemoModel) {
       this.id = datos.id;
@@ -156,15 +148,15 @@ export class debitMemoListComponent implements OnInit {
     );     
     if (
       ScrollPosition <= 5 &&
-      this.totalItems / this. SpecificFilter .page > this.SpecificFilter.page
+      this.totalItems / this. queryParams.page > this.queryParams.page
     ) {
-      let page = this.SpecificFilter.page;
-      this.SpecificFilter.page = this.SpecificFilter.page + 1;
+      let page = this.queryParams.page;
+      this.queryParams.page = this.queryParams.page + 1;
       if (
         this.totalItems === undefined ||
-        this.SpecificFilter.page * this.SpecificFilter.pageSize <= this.totalItems
+        this.queryParams.page * this.queryParams.pageSize <= this.totalItems
       ) {
-        this.service.getDebitMemo(this.SpecificFilter).subscribe({
+        this.service.getDebitMemo(this.queryParams).subscribe({
           next: (r) => {
             r.data.map((debit: DebitMemoModel) =>
               this.debitMemoList.push(debit)
@@ -177,7 +169,7 @@ export class debitMemoListComponent implements OnInit {
           },
         });
       } else {
-        this.SpecificFilter.page = page;
+        this.queryParams.page = page;
       }
     }
   }

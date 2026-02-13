@@ -80,8 +80,8 @@ export class InvoicesListComponent implements OnInit {
    */
 
   getData(params: any): void {
-    let loadedparams = parseFilterCustomSeachData(params, this.customSearchForm, this.locale);
     this.loading = true;
+    let loadedparams = parseFilterCustomSeachData(params, this.customSearchForm, this.locale);
     this.service.getInvoices(loadedparams).subscribe({
       next: (r) => {
         this.invoicesList = r.data;

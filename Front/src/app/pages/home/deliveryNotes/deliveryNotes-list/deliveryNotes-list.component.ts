@@ -8,6 +8,8 @@ import { formatCurrency, formatDate } from '@angular/common';
 import { DeliveryNotesViewDrawerComponent } from '../deliveryNotes-view-drawer/deliveryNotes-view-drawer.component';
 import { pStatusType } from '../model/status.model';
 import { ActivatedRoute, Router } from '@angular/router';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { parseFilterCustomSeachData, resetQuerySearchFilter, SearchCustomFilterModel } from 'src/app/common/components/model/search.custom.filter.model';
 
 @Component({
   selector: 'app-deliveryNotes-list',
@@ -15,6 +17,8 @@ import { ActivatedRoute, Router } from '@angular/router';
   styleUrls: ['./deliveryNotes-list.component.css'],
 })
 export class DeliveryNotesListComponent implements OnInit {
+
+  customDNSearchForm!: FormGroup;
   permissions = Permission;
   dia:any;
   index!: number;
@@ -36,42 +40,31 @@ export class DeliveryNotesListComponent implements OnInit {
   /*
    ** Parametros de busqueda
    */
-  queryParams = {
-    filter: '',
-    page: 0,
-    pageSize: 35,
-  };
-
-  SpecificFilter = {
-    filter: {
-      supplier: "",
-      category: "",
-      statusid: 0,
-      number: 0,
-      cuit: "",
-      date:"",
-    },
-    page: 0,
-    pageSize: 26
-  }
+  queryParams: SearchCustomFilterModel = resetQuerySearchFilter();
+  
   constructor(
     private service: deliveryNotesService,
     @Inject(LOCALE_ID) public locale: string,
     private drawerService: NzDrawerService,
     private router: Router,
-    private route: ActivatedRoute, 
-  ) { }
+    private fb: FormBuilder, 
+  ) { this.customDNSearchForm = this.fb.group({
+      cuit: [''],
+      customerName: [''],
+      invoicenumber: [0],
+      date: [null]  
+    })}
 
   selectedIndex!: number;
   selectedDeliveryNotes: any;
     ngOnInit(): void {
-        this.getData(this.SpecificFilter)
+        this.getData(this.queryParams)
     }
 
     search(): void {
-      this.getData(this.SpecificFilter);
-      this.SpecificFilter.page = 0;
-      this.SpecificFilter.pageSize = 20; 
+      this.getData(this.queryParams);
+      this.queryParams.page = 0;
+      this.queryParams.pageSize = 20; 
   
     }
     /*
@@ -80,7 +73,8 @@ export class DeliveryNotesListComponent implements OnInit {
   
     getData(params: any): void {
       this.loading = true;
-      this.service.getDeliveryNotes(params).subscribe({
+      let loadedparams = parseFilterCustomSeachData(params, this.customDNSearchForm, this.locale);
+      this.service.getDeliveryNotes(loadedparams).subscribe({
         next: (r) => {
           this.deliveryNotesList = r.data;
           this.totalItems = r.totalCount;
@@ -100,16 +94,7 @@ export class DeliveryNotesListComponent implements OnInit {
     formaterDate(date: string | number | Date): string {
       return formatDate(date, 'YYYY-MM-dd', this.locale);
     }
-   
-    dateChange(date:any):void{
-      if(date){
-        this.dia = date
-        this.SpecificFilter.filter.date =this.formaterDate(date)
-      }else{
-        this.SpecificFilter.filter.date = ''
-      }
-    }
-  
+     
     currencyFormat(data: any): string {
       if (!this.locale) return '';
       return formatCurrency(data, this.locale!, '$', 'ARS', '1.1-2');
@@ -117,8 +102,7 @@ export class DeliveryNotesListComponent implements OnInit {
   
     onDoubleClicked(datos: DeliveryNotesModel) {
       this.id = datos.id;
-      this.openComponentDeliveryNotesView()
-      
+      this.openComponentDeliveryNotesView();      
     }
   
     onClick(datos: DeliveryNotesModel, index: number): void {
@@ -132,8 +116,7 @@ export class DeliveryNotesListComponent implements OnInit {
       this.id = this.deliveryNotesList[this.index].id;
       this.router.navigate(['/home/deliveryNotes/edit', this.id]); 
     }
-  
-  
+   
   
     /*
      ** Evento de navegacion por teclado
@@ -174,15 +157,15 @@ export class DeliveryNotesListComponent implements OnInit {
       );
       if (
         ScrollPosition <= 5 &&
-        this.totalItems / this.SpecificFilter.page > this.SpecificFilter.page
+        this.totalItems / this.queryParams.page > this.queryParams.page
       ) {
-        let page = this.SpecificFilter.page;
-        this.SpecificFilter.page = this.SpecificFilter.page + 1;
+        let page = this.queryParams.page;
+        this.queryParams.page = this.queryParams.page + 1;
         if (
           this.totalItems === undefined ||
-          this.SpecificFilter.page * this.SpecificFilter.pageSize <= this.totalItems
+          this.queryParams.page * this.queryParams.pageSize <= this.totalItems
         ) {
-          this.service.getDeliveryNotes(this.SpecificFilter).subscribe({
+          this.service.getDeliveryNotes(this.queryParams).subscribe({
             next: (r) => {
               r.data.map((deliveryNotes: DeliveryNotesModel) =>
                 this.deliveryNotesList.push(deliveryNotes)
@@ -195,7 +178,7 @@ export class DeliveryNotesListComponent implements OnInit {
             },
           });
         } else {
-          this.SpecificFilter.page = page;
+          this.queryParams.page = page;
         }
       }
     }
@@ -214,7 +197,8 @@ export class DeliveryNotesListComponent implements OnInit {
         },
         nzClosable: false,
       });
-    } 
+    }
+    
     getStatusName(id: number) {
       return pStatusType [id];
     }
@@ -251,7 +235,5 @@ export class DeliveryNotesListComponent implements OnInit {
       downloadLink.click();
     }
   
-
-
 }
 
