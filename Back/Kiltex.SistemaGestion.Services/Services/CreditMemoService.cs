@@ -75,7 +75,6 @@ namespace Kiltex.SistemaGestion.Services.Services
                 var query = _contextSql
                                     .CreditMemo                                 
                                     .AsNoTracking()
-                                    .Include(p => p.CreditMemoDetail)
                                     .Where(p => (!string.IsNullOrEmpty(request.Filter.Cuit) ? p.CustomerCuit.ToLower().Contains(request.Filter.Cuit) : true)
                                      && ((request.Filter.Number.HasValue && request.Filter.Number != 0) ? p.InvoiceNumber == request.Filter.Number : true) &&
                                      ((!request.Filter.Date.Contains("") || request.Filter.Date != null) ? p.DateTime.Date.ToString().Contains(request.Filter.Date) : true)
