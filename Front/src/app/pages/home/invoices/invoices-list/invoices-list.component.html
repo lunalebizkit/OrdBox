@@ -43,6 +43,7 @@
             <th>Nombre</th>
             <th [nzAlign]="'center'">Total</th>
             <th [nzAlign]="'center'">Tipo</th>
+            <th [nzAlign]="'center'">Creado por</th>
             <th nzWidth="200px" [nzAlign]="'center'">Notas</th>
             <th [nzAlign]="'center'">Acción</th>
           </tr>
@@ -69,6 +70,7 @@
               <b>{{ this.currencyFormat(data.total) }}</b>
             </td>
             <td [nzAlign]="'center'">{{ data.type | invoiceTypeFilter }}</td>
+            <td>{{ data.createdBy }}</td>
             <ng-container>
               <td style="text-align: center">
                 <a>

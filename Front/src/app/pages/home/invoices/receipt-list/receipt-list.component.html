@@ -40,6 +40,7 @@
             <th>Nombre</th>
             <th [nzAlign]="'center'">Total</th>
             <th [nzAlign]="'center'">Tipo</th>
+            <th [nzAlign]="'center'">Creado por</th>
             <th [nzAlign]="'center'">Acción</th>
           </tr>
         </thead>
@@ -65,6 +66,7 @@
             </td>
 
             <td [nzAlign]="'center'">{{ data.type | invoiceTypeFilter }}</td>
+            <td>{{ data.createdBy }}</td>
             <td style="text-align: center">
               <nz-space [nzSplit]="spaceSplit">
                 <ng-template #spaceSplit>

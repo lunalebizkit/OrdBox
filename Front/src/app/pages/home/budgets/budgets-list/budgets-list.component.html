@@ -17,8 +17,8 @@
   </nz-page-header>
   <nz-content>
     <!-- Busqueda -->
-    <app-search-filter [title]="'Filtros'" [(model)]="queryData.filter" (keydown.enter)="search()" [palceHolder]="'Ingrese Presupuesto'" (onSearchClick)="search()"></app-search-filter>
-    <!-- Tabla -->
+     <app-search-custom-filter [customSearchForm]="customBSearchForm" (onSearchCustomClick)="search()"></app-search-custom-filter>
+   <!-- Tabla -->
 
     <div class="table" (scroll)="onScroll($event)">
       <nz-table

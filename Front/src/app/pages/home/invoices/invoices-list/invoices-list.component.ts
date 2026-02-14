@@ -1,6 +1,6 @@
 import { Component, OnInit, Inject, LOCALE_ID } from '@angular/core';
 import { InvoiceService } from '../invoices.service';
-import { InvoiceModel } from '../model/invoice.model';
+import { InvoiceListModel } from '../model/invoice.model';
 import { formatCurrency, formatDate } from '@angular/common';
 import { NzDrawerService } from 'ng-zorro-antd/drawer';
 import { InvoicesViewDrawerComponent } from '../invoices-view-drawer/invoices-view.drawer.component';
@@ -34,7 +34,7 @@ export class InvoicesListComponent implements OnInit {
   /*
    ** Lista de Productos
    */
-  invoicesList: InvoiceModel[] = [];
+  invoicesList: InvoiceListModel[] = [];
   /*
    ** Parametros de busqueda
    */
@@ -107,12 +107,12 @@ export class InvoicesListComponent implements OnInit {
     return formatCurrency(data, this.locale!, '$', 'ARS', '1.1-2');
   }
 
-  onDoubleClicked(datos: InvoiceModel) {
+  onDoubleClicked(datos: InvoiceListModel) {
     this.id = datos.id;
     this.openComponentInvoicesView();
   }
 
-  onClick(datos: InvoiceModel, index: number): void {
+  onClick(datos: InvoiceListModel, index: number): void {
     this.index = index;
     this.selectedIndex = index;
     this.selectedInvoice = datos;
@@ -173,7 +173,7 @@ export class InvoicesListComponent implements OnInit {
       ) {
         this.service.getInvoices(this.queryParams).subscribe({
           next: (r) => {
-            r.data.map((invoice: InvoiceModel) =>
+            r.data.map((invoice: InvoiceListModel) =>
               this.invoicesList.push(invoice)
             );
             this.loading = false;

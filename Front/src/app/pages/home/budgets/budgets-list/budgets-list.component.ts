@@ -1,4 +1,4 @@
-import { Component, ElementRef, Inject, LOCALE_ID, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, Inject, LOCALE_ID, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Permission } from 'src/app/common/auth/models/permissions.enum';
 import { BudgetsService } from '../budgets.services'; 
@@ -8,6 +8,8 @@ import { PopupConfirmationComponent } from 'src/app/common/components/popup-conf
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { BaseComponent } from 'src/app/common/components/base/base.component';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { parseFilterCustomSeachData, resetQuerySearchFilter, SearchCustomFilterModel } from 'src/app/common/components/model/search.custom.filter.model';
 
 @Component({
     selector: 'app-budgets-list',
@@ -16,7 +18,8 @@ import { NzNotificationService } from 'ng-zorro-antd/notification';
   })
 
 export class BudgetsListComponent extends BaseComponent implements OnInit{
-   
+
+  customBSearchForm!: FormGroup; 
   @ViewChild('popup') popupComponent!: PopupConfirmationComponent;
   permissions = Permission;
   budgetsList: BudgetsModel[] = [];
@@ -26,12 +29,10 @@ export class BudgetsListComponent extends BaseComponent implements OnInit{
   selectedBudget: any;
   id!: number;
   index!: number;
-
-  queryData = {
-    filter: '',
-    page: 0,
-    pageSize: 50,
-  };
+  /*
+   ** Parametros de busqueda
+   */
+  queryParams: SearchCustomFilterModel = resetQuerySearchFilter();
 
   constructor(
     private service: BudgetsService,
@@ -39,22 +40,31 @@ export class BudgetsListComponent extends BaseComponent implements OnInit{
     notificacionService: NzNotificationService,
     el: ElementRef,
     message: NzMessageService,
+    private fb: FormBuilder, 
     @Inject(LOCALE_ID) public locale: string,
-  ) {super( notificacionService, el, message)}
+  ) {super( notificacionService, el, message);
+    this.customBSearchForm = this.fb.group({
+      cuit: [''],
+      customerName: [''],
+      invoicenumber: [0],
+      date: [null]  
+    })
+  }
 
   search(): void {
-    this.getBudget(this.queryData);
-    this.queryData.page = 0;
-    this.queryData.pageSize = 20; 
+    this.getBudget(this.queryParams);
+    this.queryParams.page = 0;
+    this.queryParams.pageSize = 20; 
   }
 
   ngOnInit(): void {
-    this.getBudget(this.queryData);
+    this.getBudget(this.queryParams);
   }
 
 getBudget(params: any): void {
   this.loading = true;
-    this.service.getByFilter(params).subscribe({
+  let loadedparams = parseFilterCustomSeachData(params, this.customBSearchForm, this.locale);
+    this.service.getByFilter(loadedparams).subscribe({
         next: (r) => {
           this.budgetsList = r.data;
           this.totalItems = r.totalCount;
@@ -80,14 +90,14 @@ onScroll(event: any): void {
   );
   if (
     ScrollPosition <= 5 &&
-    this.totalItems / this.queryData.page > this.queryData.page
+    this.totalItems / this.queryParams.page > this.queryParams.page
   ) {
-    this.queryData.page++;
+    this.queryParams.page++;
     if (
       this.totalItems === undefined ||
-      this.queryData.page * this.queryData.pageSize <= this.totalItems
+      this.queryParams.page * this.queryParams.pageSize <= this.totalItems
     ) {
-      this.service.getByFilter(this.queryData).subscribe({
+      this.service.getByFilter(this.queryParams).subscribe({
         next: (r) => {
           r.data.map((brand: BudgetsModel) => this.budgetsList.push(brand));
           this.loading = false;

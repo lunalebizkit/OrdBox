@@ -4,7 +4,7 @@ import { NzDrawerService } from 'ng-zorro-antd/drawer';
 import { Permission } from 'src/app/common/auth/models/permissions.enum';
 import { InvoiceService } from '../invoices.service';
 import { eInvoiceType } from '../model/invoice-type.Enum';
-import { receiptModel } from '../model/receipt.model';
+import { receiptListModel } from '../model/receipt.model';
 import { ReceiptViewDrawerComponent } from '../receipt-view-drawer/receipt-view-drawer.component';
 import { BaseComponent } from 'src/app/common/components/base/base.component';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
@@ -34,7 +34,7 @@ export class ReceiptListComponent extends BaseComponent implements OnInit {
    */
   queryReceiptParams: SearchCustomFilterModel = resetQuerySearchFilter();
 
-  receiptList: receiptModel[] = [];
+  receiptList: receiptListModel[] = [];
 
   selectedIndex!: number;
   selectedReceipt: any;
@@ -108,15 +108,15 @@ export class ReceiptListComponent extends BaseComponent implements OnInit {
     return formatCurrency(data, this.locale!, '$', 'ARS', '1.1-2');
   }
 
-  onDoubleClicked(datos: receiptModel) {
+  onDoubleClicked(datos: receiptListModel) {
     this.id = datos.id;
     this.openComponentReceiptView();
   }
-  onDoubleClick(datos: receiptModel) {
+  onDoubleClick(datos: receiptListModel) {
     this.id = datos.id;
     this.openComponentReceiptView();
   }
-  onClick(datos: receiptModel, index: number): void {
+  onClick(datos: receiptListModel, index: number): void {
     this.index = index;
     this.selectedIndex = index;
     this.selectedReceipt = datos;
@@ -137,6 +137,7 @@ export class ReceiptListComponent extends BaseComponent implements OnInit {
       nzClosable: false,
     });
   }
+  
   myNavegation(event: any) {
     switch (event.key) {
       case 'ArrowDown':
@@ -184,7 +185,7 @@ export class ReceiptListComponent extends BaseComponent implements OnInit {
       ) {
         this.service.getReceipt(this.queryReceiptParams).subscribe({
           next: (r) => {
-            r.data.map((data: receiptModel) =>
+            r.data.map((data: receiptListModel) =>
               this.receiptList.push(data)
             );
             this.loading = false;
