@@ -24,6 +24,9 @@ namespace Kiltex.SistemaGestion.Services.Mapper
 
             CreateMap<InvoiceSPReportTotal, DtoResponseInvoiceReportTotals>().ReverseMap();
 
+            CreateMap<Invoice, DtoRequestListInvoice>()
+                .ForMember(destination => destination.createdBy, option => option.MapFrom(source => !string.IsNullOrEmpty(source.User.FirstName) ? source.User.FirstName : ""));
+
         }
     }
 }

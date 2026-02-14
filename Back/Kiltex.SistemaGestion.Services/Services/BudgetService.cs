@@ -140,17 +140,21 @@ namespace Kiltex.SistemaGestion.Services.Services
             }
         }
 
-        public async Task<OperationResponse<DtoPagination<DtoResponseBudget>>> ListBudget(RequestPaginatedData<string> request)
+        public async Task<OperationResponse<DtoPagination<DtoResponseBudget>>> ListBudget(RequestPaginatedData<SpecificFilter> request)
         {
 
             try
             {
                 var query = _contextSql
                                     .Budgets
-                                    .Include(p=>p.BudgetDetails)
                                     .Include(p => p.User)
                                     .AsNoTracking()
-                                    .Where(p => !p.IsInactive && p.BudgetNumber.ToString().Contains(request.Filter ?? ""));
+                                    .Where(p => ((!p.IsInactive) &&
+                                    (request.Filter.Number.HasValue && request.Filter.Number != 0) ? p.BudgetNumber == request.Filter.Number : true) &&
+                                    ((!request.Filter.Date.Contains("") || request.Filter.Date != null) ? p.DateTime.Date.ToString().Contains(request.Filter.Date) : true)
+                                       &&
+                                     (!string.IsNullOrEmpty(request.Filter.CustomerName) ? p.CustomerName.ToLower().Contains(request.Filter.CustomerName) : true)
+                                     );
 
                 var count = await query.CountAsync().ConfigureAwait(false);
 

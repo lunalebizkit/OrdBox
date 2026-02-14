@@ -78,14 +78,14 @@ namespace Kiltex.SistemaGestion.Services.Services
             }
         }
 
-        public async Task<OperationResponse<DtoPagination<DtoRequestInvoice>>> ListInvoices(RequestPaginatedData<SpecificFilter> request)
+        public async Task<OperationResponse<DtoPagination<DtoRequestListInvoice>>> ListInvoices(RequestPaginatedData<SpecificFilter> request)
         {
             try
             {
                 var query = _contextSql
                                     .Invoices
                                     .AsNoTracking()
-                                    .Include(p => p.InvoiceDetails)
+                                    .Include(y => y.User)
                                     .Where(p => (!string.IsNullOrEmpty(request.Filter.Cuit) ? p.CustomerCuit.ToLower().Contains(request.Filter.Cuit) : true)
                                      && ((request.Filter.Number.HasValue && request.Filter.Number != 0) ? p.InvoiceNumber == request.Filter.Number : true)
                                      &&
@@ -102,10 +102,10 @@ namespace Kiltex.SistemaGestion.Services.Services
                                       .ToListAsync()
                                       .ConfigureAwait(false);
 
-                var result = _mapper.Map<List<DtoRequestInvoice>>(list);
+                var result = _mapper.Map<List<DtoRequestListInvoice>>(list);
 
 
-                return new OperationResponse<DtoPagination<DtoRequestInvoice>>(new DtoPagination<DtoRequestInvoice>
+                return new OperationResponse<DtoPagination<DtoRequestListInvoice>>(new DtoPagination<DtoRequestListInvoice>
                 {
                     Data = result,
                     PageSize = request.PageSize,

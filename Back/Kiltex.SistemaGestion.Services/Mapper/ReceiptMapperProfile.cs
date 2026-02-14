@@ -20,6 +20,9 @@ namespace Kiltex.SistemaGestion.Services.Mapper
 
             CreateMap<Receipt, DtoRequestReceipt>().ReverseMap();
 
+            CreateMap<Receipt, DtoRequestListReceipt>()
+                .ForMember(destiantion => destiantion.CreatedBy, option => option.MapFrom(source => !string.IsNullOrEmpty(source.User.FirstName) ? source.User.FirstName : ""));
+
             CreateMap<ReceiptDetails, DtoResponseReceiptDetail>().ReverseMap();
 
         }
