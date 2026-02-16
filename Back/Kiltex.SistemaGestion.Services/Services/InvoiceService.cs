@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Dapper;
 using Kiltex.SistemaGestion.Domain;
 using Kiltex.SistemaGestion.Domain.Enum;
 using Kiltex.SistemaGestion.Domain.Model;
@@ -10,6 +11,7 @@ using Kiltex.SistemaGestion.Services.LibroIvaDigital;
 using Kiltex.SistemaGestion.Services.LibrosIvaDigital;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
+using Kiltex.SistemaGestion.Services.Scripts;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -130,8 +132,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                 {
                     if (invoiceModel.CustomerId == 0)
                     {
-                        var user = await _contextSql.Customers.AsNoTracking().FirstOrDefaultAsync(p => p.Name.ToLower() == "admin");
-                        invoiceModel.CustomerId = user.Id;
+                        invoiceModel.CustomerId = GetUserAdminId();
                     }
 
                     var regex = new Regex(@"^-?[0-9][0-9,\.]+$");
@@ -273,6 +274,26 @@ namespace Kiltex.SistemaGestion.Services.Services
 
             }
         }
+
+        #region Private Method
+        private byte GetUserAdminId()
+        {
+            try
+            {
+                using (var connection = new SqlConnection(ConnectionString))
+                {
+                    return connection.Query<byte>(SqlScripts.GetUserAdminId).First();
+
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
+                throw;
+            }
+        }
+
+        #endregion
 
         #region Alicuota Digital
 
