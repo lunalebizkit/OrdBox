@@ -242,6 +242,8 @@ namespace Kiltex.SistemaGestion.Api.Controllers.PDF
 
             var dtoDetalle = new DtoRequestDetallePDF()
             {
+
+                QuittanceProductDetails = factura.Data?.QuittanceProductDetails.ToList(),
                 QuittanceDetails = factura.Data.QuittanceDetails,
                 Banco = factura.Data.QuittanceDetails.Select(p => p.Bank).FirstOrDefault(),
                 CheckNumber = factura.Data.QuittanceDetails.Select(p => p.CheckNumber).FirstOrDefault(),
