@@ -25,20 +25,15 @@ namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse
 
         public decimal? Total { get; set; }
 
-        public List<DtoResponseQuittanceDetails> QuittanceDetails { get; set; }
+        public List<DtoResponseQuittanceDetails>? QuittanceDetails { get; set; }
+        public List<DtoResponseQuittanceProductDetail>? QuittanceProductDetails { get; set; }
     }
 
     public class DtoResponseQuittanceDetails
     {
-
         public long QuittanceId { get; set; }
         public string? CheckNumber { get; set; }
-
         public decimal? Total { get; set; }
-
         public string? Bank { get; set; }
-        //public string? Concept { get; set; }
-
-        //public decimal Cash { get; set; }
     }
 }

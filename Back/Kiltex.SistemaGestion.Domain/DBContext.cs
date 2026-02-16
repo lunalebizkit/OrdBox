@@ -215,7 +215,7 @@ namespace Kiltex.SistemaGestion.Domain
         public virtual DbSet<DeliveryNotesDetails> DeliveryNotesDetails { get; set; }
         public virtual DbSet<Quittance> Quittance { get; set; }
         public virtual DbSet<QuittanceDetails> QuittanceDetails { get; set; }
-
+        public virtual DbSet<QuittanceProductDetails> QuittanceProductDetails { get; set; }
         public virtual DbSet<InvoiceSPReport> InvoiceSPReports { get; set; }
         public virtual DbSet<InvoiceSPReportTotal> InvoiceSPReportTotals { get; set; }   
 

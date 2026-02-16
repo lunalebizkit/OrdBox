@@ -24,6 +24,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                 var model = await _contextSql
                                .Quittance
                                .Include(x => x.QuittanceDetails)
+                               .Include(x => x.QuittanceProductDetails)
                                .AsNoTracking()
                                .FirstOrDefaultAsync(p => p.Id == id)
                                .ConfigureAwait(false);
@@ -94,7 +95,6 @@ namespace Kiltex.SistemaGestion.Services.Services
         {
             try
             {
-
                 var newModel = _mapper.Map<Quittance>(model);
 
                 if (newModel.Id == 0)
