@@ -397,8 +397,7 @@ export class debitMemoComponent extends BaseComponent implements OnInit {
     if (this.product == '00') {
         this.addNewEditProduct();
         return;
-    }
-    
+    }    
 
     if (this.isValidForm(this.formDebitMemo)) {
 
@@ -435,8 +434,8 @@ export class debitMemoComponent extends BaseComponent implements OnInit {
                   .subTotal += model.cashSalePrice * model.quantity;
                 /**cashSalePrice es el precio de Costo */
                 this.totalCalculate();
-                this.isLoading = false;
                 this.formProductSearch.controls['productSearchFilter'].setValue('');
+                this.isLoading = false;
               } else {
                 const product: ProductsModel = r.data[0];
                 /* Parseo el Producto a la grilla de Tabla */

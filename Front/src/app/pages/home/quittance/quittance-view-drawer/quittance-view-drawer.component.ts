@@ -16,7 +16,7 @@ import { BaseComponent } from 'src/app/common/components/base/base.component';
 import { HeaderOperationsButtonsComponent } from 'src/app/common/components/headers/buttons.oparations.header.component';
 import { EntityService } from '../../customers/customer.service';
 import { ProductService } from '../../products/product.service';
-import { quittanceDetails, quittanceModel } from '../model';
+import { quittanceDetails, quittanceModel, QuittanceProductDetails } from '../model';
 import { QuittanceService } from '../quittance.service';
 
 @Component({
@@ -66,7 +66,8 @@ export class QuittanceViewDrawerComponent
   type: any;
   
   
- quittanceDetails: quittanceDetails[]=[]
+ quittanceDetails: quittanceDetails[]=[];
+ quittanceProductDetails: QuittanceProductDetails[]=[];
 
   form!: FormGroup;
   constructor(
@@ -98,7 +99,8 @@ export class QuittanceViewDrawerComponent
             this.cash=r.cash,
             this.concept= r.concept,
             this.total= r.total
-            this.quittanceDetails = r.quittanceDetails; 
+            this.quittanceDetails = r.quittanceDetails;
+            this.quittanceProductDetails = r.quittanceProductDetails;
             this.isLoading = false;
           
         },

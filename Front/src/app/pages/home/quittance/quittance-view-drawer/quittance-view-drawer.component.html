@@ -43,10 +43,58 @@
   </nz-collapse-panel>
 
   <nz-collapse-panel nzHeader="Detalle" [nzActive]="true" [nzShowArrow]="true" class="Recibo">
-    <label><b>* Recibi(mos) la suma de: </b></label>
-    <span>{{ currencyFormat(this.cash) }}</span>
+    <nz-content>
+        <nz-table [nzBordered]="true" nzTemplateMode [nzSize]="'small'" *ngIf="quittanceProductDetails.length > 0">
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Código Interno</th>
+              <th>Producto</th>
+              <th [nzAlign]="'center'">Cantidad</th>
+              <th [nzAlign]="'center'">Precio Unidad</th>
+              <th [nzAlign]="'center'">SubTotal</th>
+              <th>Iva</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let data of quittanceProductDetails">
+              <td>{{ data.productCode }}</td>
+              <td> <span *ngIf="data.productId > 0; else isEditProduct">
+                {{ data.productId }}
+              </span>
+              <ng-template #isEditProduct>                
+              </ng-template></td>
+              <td>{{ data.productName }}</td>
+              <td [nzAlign]="'right'">{{ data.quantity }}</td>
+              <td [nzAlign]="'right'">{{ this.currencyFormat(data.price) }}</td>
+              <td [nzAlign]="'right'">
+                {{ this.currencyFormat(data.quantity * data.price) }}
+              </td>
+              <td>{{ data.iva }}</td>
+            </tr>
+          </tbody>
+            <tfoot class="tfoot-container">
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>             
+                <td><b>Total </b></td>
+                <td><span style="color: blue; font-size: 15px; font-weight: bold">
+                    {{ this.currencyFormat(total) }}
+                  </span>
+                </td>
+                <td></td>
+              </tr>
+            </tfoot>
+        </nz-table>
+      </nz-content>
+    <div *ngIf="this.cash > 0">
+      <label><b>* Recibi(mos) la suma de: </b></label>
+      <span>{{ currencyFormat(this.cash) }}</span>
+    </div>
 
-    <div style="flex: 1">
+    <div style="flex: 1" *ngIf="this.concept">
       <label><b>* En concepto de: </b></label>
       <span>{{ this.concept }}</span>
     </div>
@@ -67,10 +115,5 @@
         </div>
       </div>
     </ng-container>
-
-    <div style="margin-left: 700px">
-      <label><b>Total: </b></label>
-      <b style="color: red; font-size: 15px; font-weight: bold">{{ this.currencyFormat(this.total) }}</b>
-    </div>
   </nz-collapse-panel>
 </nz-collapse>
