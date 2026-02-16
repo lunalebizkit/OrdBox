@@ -66,6 +66,10 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("dateTime");
 
+                    b.Property<bool>("IsInactive")
+                        .HasColumnType("bit")
+                        .HasColumnName("is_inactive");
+
                     b.Property<string>("Observation")
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("observation");
@@ -991,6 +995,52 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                     b.ToTable("quittance_details");
                 });
 
+            modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.QuittanceProductDetails", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
+                    b.Property<decimal?>("Iva")
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("iva");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("price");
+
+                    b.Property<string>("ProductCode")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("product_code");
+
+                    b.Property<long>("ProductId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("product_id");
+
+                    b.Property<string>("ProductName")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("product_name");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int")
+                        .HasColumnName("quantity");
+
+                    b.Property<long>("QuittanceId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("quittance_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("QuittanceId");
+
+                    b.ToTable("quittance_product_details");
+                });
+
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.Receipt", b =>
                 {
                     b.Property<long>("Id")
@@ -1007,6 +1057,10 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                     b.Property<DateTime>("DateTime")
                         .HasColumnType("datetime2")
                         .HasColumnName("dateTime");
+
+                    b.Property<bool>("IsInactive")
+                        .HasColumnType("bit")
+                        .HasColumnName("is_inactive");
 
                     b.Property<decimal>("IvaTotal")
                         .HasColumnType("decimal(18,2)")
@@ -1287,7 +1341,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                             FirstName = "admin",
                             IsDeleted = false,
                             LastName = "admin",
-                            Password = "$MYHASH$V1$100$xm8aK0dEnyihoSeouDnmF/Ang0GWAcM1KNAIQIfwCLwHzeXO",
+                            Password = "$MYHASH$V1$100$hBxczFrtu1QZV7Px1deJIeiBTt5XwDYCi3m8CNuXNXrnz8DK",
                             RoleId = 1L,
                             UserName = "admin"
                         });
@@ -1572,6 +1626,25 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                     b.Navigation("Quittance");
                 });
 
+            modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.QuittanceProductDetails", b =>
+                {
+                    b.HasOne("Kiltex.SistemaGestion.Domain.Model.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Kiltex.SistemaGestion.Domain.Model.Quittance", "Quittance")
+                        .WithMany("QuittanceProductDetails")
+                        .HasForeignKey("QuittanceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("Quittance");
+                });
+
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.Receipt", b =>
                 {
                     b.HasOne("Kiltex.SistemaGestion.Domain.Model.Supplier", "Supplier")
@@ -1709,6 +1782,8 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.Quittance", b =>
                 {
                     b.Navigation("QuittanceDetails");
+
+                    b.Navigation("QuittanceProductDetails");
                 });
 
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.Receipt", b =>
