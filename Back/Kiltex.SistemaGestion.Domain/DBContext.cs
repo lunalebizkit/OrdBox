@@ -38,6 +38,11 @@ namespace Kiltex.SistemaGestion.Domain
                .HasMany(i => i.QuittanceDetails)
                .WithOne(i => i.Quittance)
                .OnDelete(DeleteBehavior.NoAction);
+            
+            builder.Entity<Quittance>()
+               .HasMany(i => i.QuittanceProductDetails)
+               .WithOne(i => i.Quittance)
+               .OnDelete(DeleteBehavior.NoAction);
 
             builder.Entity<CreditMemo>()
                 .HasMany(i => i.CreditMemoDetail)

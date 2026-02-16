@@ -1,10 +1,13 @@
 ﻿using AutoMapper;
+using Dapper;
 using Kiltex.SistemaGestion.Domain;
 using Kiltex.SistemaGestion.Domain.Model;
 using Kiltex.SistemaGestion.SDK.Error;
 using Kiltex.SistemaGestion.Services.Common;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
+using Kiltex.SistemaGestion.Services.Scripts;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
@@ -99,6 +102,17 @@ namespace Kiltex.SistemaGestion.Services.Services
 
                 if (newModel.Id == 0)
                 {
+                    if(model.QuittanceProductDetails != null && model.QuittanceProductDetails.Any())
+                    {
+                        foreach (var detail in newModel.QuittanceProductDetails)
+                        {                        
+                            if (detail.ProductId < 0)
+                            {
+                                detail.ProductId = -1;
+                            }
+                        }
+                    }
+
                     await _contextSql.Quittance.AddAsync(newModel, ct).ConfigureAwait(false);
                 }
                 else
@@ -148,6 +162,23 @@ namespace Kiltex.SistemaGestion.Services.Services
                 }
                 return await AddOrUpdate(model, ct).ConfigureAwait(false);
 
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
+                throw;
+            }
+        }
+
+        private byte GetUserAdminId()
+        {
+            try
+            {
+                using (var connection = new SqlConnection(ConnectionString))
+                {
+                  return connection.Query<byte>(SqlScripts.GetUserAdminId).First();
+                    
+                }
             }
             catch (Exception ex)
             {

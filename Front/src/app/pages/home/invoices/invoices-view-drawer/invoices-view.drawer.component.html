@@ -101,34 +101,6 @@
               <td>{{ data.iva }}</td>
             </tr>
           </tbody>
-
-          <!-- <tfoot class="tfoot-container {{ this.tipo }}">
-            <tr>
-              <td></td>
-              <tr *ngIf="type == 1;  elseBlock">
-              <td [colSpan]="2" *ngIf="ivaTotal > 0">
-                <b>{{ ivaTotal > 0 ? "IVA 21%" : "IVA" }} </b>
-                <span style="color: blue; font-size: 15px; font-weight: bold;"
-                  >{{ this.currencyFormat(ivaTotal) }}
-                </span>
-              </td>
-              <td *ngIf="type == 1; else elseBlock" [colSpan]="2">
-                <b>SubTotal </b>
-                <span style="color: blue; font-size: 15px; font-weight: bold;"
-                  >{{ this.currencyFormat(subTotal) }}
-                </span>
-              </td>
-              <td [colSpan]="2">
-                <b>Total </b
-                ><span style="color: blue; font-size: 15px; font-weight: bold;"
-                  >{{ this.currencyFormat(total) }}
-                </span>
-              </td>
-              <ng-template #elseBlock>
-                <td [colSpan]="2"></td>
-              </ng-template>
-            </tr>
-          </tfoot>-->
         </nz-table>
         <div class="contBoxGree">
           <tfoot class="tfoot-container">

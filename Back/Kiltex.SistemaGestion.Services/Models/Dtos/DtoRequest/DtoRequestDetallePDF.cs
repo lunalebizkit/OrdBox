@@ -27,6 +27,7 @@ namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest
         public List<DtoResponseBudgetDetail> BudgetDetails { get; set; }
         public List<DtoResponseDeliveryNotesDetail> DeliveryNotesDetails { get; set; }
         public List<DtoResponseQuittanceDetails> QuittanceDetails { get; set; }
+        public List<DtoResponseQuittanceProductDetail> QuittanceProductDetails { get; set; }
 
         public string? CheckNumber { get; set; }
 
