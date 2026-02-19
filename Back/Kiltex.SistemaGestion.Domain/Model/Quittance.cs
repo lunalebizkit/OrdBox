@@ -36,5 +36,6 @@ namespace Kiltex.SistemaGestion.Domain.Model
         public decimal? Cash { get; set; }
 
         public ICollection<QuittanceDetails> QuittanceDetails { get; set; } = new HashSet<QuittanceDetails>();
+        public ICollection<QuittanceProductDetails> QuittanceProductDetails { get; set; } = new HashSet<QuittanceProductDetails>();
     }
 }

@@ -92,7 +92,6 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
   /*
 ** Parametros de busqueda
 */
-
   paymentSelected: any;
   cuit!: string;
   product!: string;
@@ -104,7 +103,6 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
   value2!: string;
   value3!: string;
   isConditionDisabled: boolean = true;
-
 
   /*
 ** Parametros de busqueda

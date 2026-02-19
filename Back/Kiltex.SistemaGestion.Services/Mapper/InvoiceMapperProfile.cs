@@ -12,7 +12,6 @@ namespace Kiltex.SistemaGestion.Services.Mapper
             CreateMap<DtoRequestInvoice, Invoice>()
                 .AfterMap((o, d, c) =>
                 {
-                    //d.Total = o.InvoiceDetails.Sum(p => (p.Quantity * p.Price));
                     d.IvaTotal = o.InvoiceDetails.Sum( e => e.Quantity * (e.Price -(e.Price / (1 + e.Iva / 100.00m))) );                    
                 });
 
@@ -23,6 +22,9 @@ namespace Kiltex.SistemaGestion.Services.Mapper
             CreateMap<InvoiceSPReport, DtoResponseInviocesReport>().ReverseMap();
 
             CreateMap<InvoiceSPReportTotal, DtoResponseInvoiceReportTotals>().ReverseMap();
+
+            CreateMap<Invoice, DtoRequestListInvoice>()
+                .ForMember(destination => destination.createdBy, option => option.MapFrom(source => !string.IsNullOrEmpty(source.User.FirstName) ? source.User.FirstName : ""));
 
         }
     }

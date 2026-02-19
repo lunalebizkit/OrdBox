@@ -1,3 +1,8 @@
 .Recibo{
     background-color: var(--backg-C);
   }
+
+.tfoot-container {
+  background-color: #bebebe33;
+  padding: 5px 5px;
+}

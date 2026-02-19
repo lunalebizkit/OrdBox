@@ -1,15 +1,17 @@
 import { formatCurrency, formatDate } from '@angular/common';
-import { Component, ElementRef, Inject, LOCALE_ID, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Inject, Input, LOCALE_ID, OnInit, ViewChild } from '@angular/core';
 import { NzDrawerService } from 'ng-zorro-antd/drawer';
 import { Permission } from 'src/app/common/auth/models/permissions.enum';
 import { InvoiceService } from '../invoices.service';
 import { eInvoiceType } from '../model/invoice-type.Enum';
-import { receiptModel } from '../model/receipt.model';
+import { receiptListModel } from '../model/receipt.model';
 import { ReceiptViewDrawerComponent } from '../receipt-view-drawer/receipt-view-drawer.component';
 import { BaseComponent } from 'src/app/common/components/base/base.component';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { PopupConfirmationComponent } from 'src/app/common/components/popup-confirmation/popup-confirmation.component';
+import { initialSearchFilter, parseFilterCustomSeachData, resetQuerySearchFilter, SearchCustomFilterModel } from 'src/app/common/components/model/search.custom.filter.model';
+import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-receipt-list',
@@ -21,6 +23,7 @@ export class ReceiptListComponent extends BaseComponent implements OnInit {
   dia:any;
   id!: number;
   @ViewChild('popup') popupComponent!: PopupConfirmationComponent;
+  customRSearchForm!: FormGroup;
   /*
    ** Indicador de carga de la grilla
    */
@@ -29,25 +32,9 @@ export class ReceiptListComponent extends BaseComponent implements OnInit {
   /*
    ** Parametros de busqueda
    */
-  queryParams = {
-    filter: '',
-    page: 0,
-    pageSize: 10,
-  };
-  SpecificFilter = {
-    filter: {
-      supplier: "",
-      category: "",
-      statusid: 0,
-      number: 0,
-      cuit: "",
-      date: ""
-    },
-    page: 0,
-    pageSize: 20
-  }
+  queryReceiptParams: SearchCustomFilterModel = resetQuerySearchFilter();
 
-  receiptList: receiptModel[] = [];
+  receiptList: receiptListModel[] = [];
 
   selectedIndex!: number;
   selectedReceipt: any;
@@ -60,10 +47,18 @@ export class ReceiptListComponent extends BaseComponent implements OnInit {
     notificacionService: NzNotificationService,
     el: ElementRef,
     message: NzMessageService,
-  ) {super( notificacionService, el, message)}
+    private fb: FormBuilder
+  ) {super( notificacionService, el, message);
+    this.customRSearchForm = this.fb.group({
+      cuit: [''],
+      customerName: [''],
+      invoicenumber: [0],
+      date: [null]  
+    })
+  }
 
   ngOnInit(): void {
-    this.getData(this.SpecificFilter); 
+    this.getData(this.queryReceiptParams); 
   }
 
   /*
@@ -76,9 +71,9 @@ export class ReceiptListComponent extends BaseComponent implements OnInit {
    ** Evento al presionar buscar o presionar enter
    */
   search(): void {
-    this.getData(this.SpecificFilter);
-    this.SpecificFilter.page = 0;
-    this.SpecificFilter.pageSize = 20;
+    this.getData(this.queryReceiptParams);
+    this.queryReceiptParams.page = 0;
+    this.queryReceiptParams.pageSize = 20;
   }
 
   /*
@@ -87,7 +82,8 @@ export class ReceiptListComponent extends BaseComponent implements OnInit {
 
   getData(params: any): void {
     this.loading = true;
-    this.service.getReceipt(params).subscribe({
+    let loadedparams = parseFilterCustomSeachData(params, this.customRSearchForm, this.locale);
+    this.service.getReceipt(loadedparams).subscribe({
       next: (r) => {
         this.receiptList = r.data;
         this.totalItems = r.totalCount;
@@ -102,15 +98,7 @@ export class ReceiptListComponent extends BaseComponent implements OnInit {
       },
     });
   }
-  dateChange(date:any):void{
-    if(date){
-      this.dia = date
-      this.SpecificFilter.filter.date = this.formaterDate(date)
-    }else{
-      this.SpecificFilter.filter.date = ''
-    }
-  }
-
+  
   formaterDate(date: string | number | Date): string {
     return formatDate(date, 'YYYY-MM-dd', this.locale);
   }
@@ -120,15 +108,15 @@ export class ReceiptListComponent extends BaseComponent implements OnInit {
     return formatCurrency(data, this.locale!, '$', 'ARS', '1.1-2');
   }
 
-  onDoubleClicked(datos: receiptModel) {
+  onDoubleClicked(datos: receiptListModel) {
     this.id = datos.id;
     this.openComponentReceiptView();
   }
-  onDoubleClick(datos: receiptModel) {
+  onDoubleClick(datos: receiptListModel) {
     this.id = datos.id;
     this.openComponentReceiptView();
   }
-  onClick(datos: receiptModel, index: number): void {
+  onClick(datos: receiptListModel, index: number): void {
     this.index = index;
     this.selectedIndex = index;
     this.selectedReceipt = datos;
@@ -149,6 +137,7 @@ export class ReceiptListComponent extends BaseComponent implements OnInit {
       nzClosable: false,
     });
   }
+  
   myNavegation(event: any) {
     switch (event.key) {
       case 'ArrowDown':
@@ -186,17 +175,17 @@ export class ReceiptListComponent extends BaseComponent implements OnInit {
     );
     if (
       ScrollPosition <= 5 &&
-      this.totalItems / this.SpecificFilter.page > this.SpecificFilter.page
+      this.totalItems / this.queryReceiptParams.page > this.queryReceiptParams.page
     ) {
-      let page = this.SpecificFilter.page;
-      this.SpecificFilter .page = this.SpecificFilter.page + 1;
+      let page = this.queryReceiptParams.page;
+      this.queryReceiptParams .page = this.queryReceiptParams.page + 1;
       if (
         this.totalItems === undefined ||
-        this.SpecificFilter.page * this.SpecificFilter.pageSize <= this.totalItems
+        this.queryReceiptParams.page * this.queryReceiptParams.pageSize <= this.totalItems
       ) {
-        this.service.getReceipt(this.SpecificFilter).subscribe({
+        this.service.getReceipt(this.queryReceiptParams).subscribe({
           next: (r) => {
-            r.data.map((data: receiptModel) =>
+            r.data.map((data: receiptListModel) =>
               this.receiptList.push(data)
             );
             this.loading = false;
@@ -207,7 +196,7 @@ export class ReceiptListComponent extends BaseComponent implements OnInit {
           },
         });
       } else {
-        this.SpecificFilter.page = page;
+        this.queryReceiptParams.page = page;
       }
     }
   }

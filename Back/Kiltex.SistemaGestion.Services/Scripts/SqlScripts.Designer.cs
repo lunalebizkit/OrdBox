@@ -184,6 +184,16 @@ namespace Kiltex.SistemaGestion.Services.Scripts {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a SELECT TOP (1) [id]
+        ///  FROM [entity] WHERE LOWER([name]) = &apos;admin&apos;.
+        /// </summary>
+        internal static string GetUserAdminId {
+            get {
+                return ResourceManager.GetString("GetUserAdminId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a UPDATE [product] SET quantity = quantity + @recievedquantity WHERE Id = @productid.
         /// </summary>
         internal static string UpdateProductStockById {

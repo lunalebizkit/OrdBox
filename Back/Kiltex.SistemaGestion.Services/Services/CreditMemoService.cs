@@ -73,13 +73,14 @@ namespace Kiltex.SistemaGestion.Services.Services
             try
             {
                 var query = _contextSql
-                                    .CreditMemo
-                                 
+                                    .CreditMemo                                 
                                     .AsNoTracking()
-                                    .Include(p => p.CreditMemoDetail)
                                     .Where(p => (!string.IsNullOrEmpty(request.Filter.Cuit) ? p.CustomerCuit.ToLower().Contains(request.Filter.Cuit) : true)
-                                     && ((request.Filter.Number.HasValue && request.Filter.Number != 0) ? p.Id == request.Filter.Number : true) &&
-                                     ((!request.Filter.Date.Contains("") || request.Filter.Date != null) ? p.DateTime.Date.ToString().Contains(request.Filter.Date) : true));
+                                     && ((request.Filter.Number.HasValue && request.Filter.Number != 0) ? p.InvoiceNumber == request.Filter.Number : true) &&
+                                     ((!request.Filter.Date.Contains("") || request.Filter.Date != null) ? p.DateTime.Date.ToString().Contains(request.Filter.Date) : true)
+                                       &&
+                                     (!string.IsNullOrEmpty(request.Filter.CustomerName) ? p.CustomerName.ToLower().Contains(request.Filter.CustomerName) : true)
+                                     );
 
                 var count = await query.CountAsync().ConfigureAwait(false);
 
@@ -117,6 +118,12 @@ namespace Kiltex.SistemaGestion.Services.Services
                 {
         
                     creditModel = _mapper.Map<CreditMemo>(model);
+
+                    if (creditModel.CustomerId == 0)
+                    {
+                        var user = await _contextSql.Customers.AsNoTracking().FirstOrDefaultAsync(p => p.Name == "Admin");
+                        creditModel.CustomerId = user?.Id;
+                    }
 
                     foreach (CreditMemoDetail creditMemo in creditModel.CreditMemoDetail) { if (creditMemo.ProductId <= 0) { creditMemo.ProductId = -1;} }
 

@@ -72,7 +72,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                 throw;
             }
         }
-        public async Task<OperationResponse<DtoPagination<DtoRequestReceipt>>> ListReceipt(RequestPaginatedData<SpecificFilter> request)
+        public async Task<OperationResponse<DtoPagination<DtoRequestListReceipt>>> ListReceipt(RequestPaginatedData<SpecificFilter> request)
         {
 
             try
@@ -80,11 +80,14 @@ namespace Kiltex.SistemaGestion.Services.Services
                 var query = _contextSql
                                     .Receipts
                                     .AsNoTracking()
-                                    .Include(x => x.ReceiptDetails)
+                                    .Include(x => x.User)
                                      .Where(p =>(!  p.IsInactive) && (!string.IsNullOrEmpty(request.Filter.Cuit) ? p.SupplierCuit.ToLower().Contains(request.Filter.Cuit) : true)
                                      && ((request.Filter.Number.HasValue && request.Filter.Number != 0) ? p.ReceiptNumber == request.Filter.Number : true)
                                       &&
-                                     ((!request.Filter.Date.Contains("") || request.Filter.Date != null) ? p.DateTime.Date.ToString().Contains(request.Filter.Date) : true));
+                                     ((!request.Filter.Date.Contains("") || request.Filter.Date != null) ? p.DateTime.Date.ToString().Contains(request.Filter.Date) : true)
+                                      &&
+                                     (!string.IsNullOrEmpty(request.Filter.CustomerName) ? p.SupplierName.ToLower().Contains(request.Filter.CustomerName) : true)
+                                     );
 
                 var count = await query.CountAsync().ConfigureAwait(false);
 
@@ -93,9 +96,10 @@ namespace Kiltex.SistemaGestion.Services.Services
                                       .Take(request.PageSize)
                                       .ToListAsync()
                                       .ConfigureAwait(false);
-                var dto = _mapper.Map<List<DtoRequestReceipt>>(list);
 
-                return new OperationResponse<DtoPagination<DtoRequestReceipt>>(new DtoPagination<DtoRequestReceipt>
+                var dto = _mapper.Map<List<DtoRequestListReceipt>>(list);
+
+                return new OperationResponse<DtoPagination<DtoRequestListReceipt>>(new DtoPagination<DtoRequestListReceipt>
                 {
                     Data = dto,
                     PageSize = request.PageSize,

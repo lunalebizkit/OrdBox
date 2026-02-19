@@ -1,3 +1,16 @@
+export interface receiptListModel {
+  id: number;
+  supplierId: number;
+  createdBy: string;
+  receiptNumber: number;
+  supplierName: string;
+  supplierCuit: string;
+  supplierAddress: string;
+  dateTime: Date;
+  total: number;
+  type: number;
+}
+
 export interface receiptModel {
   id: number;
   supplierId: number;

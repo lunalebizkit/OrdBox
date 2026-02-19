@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
-using DocumentFormat.OpenXml.Office2013.Excel;
-using DocumentFormat.OpenXml.Spreadsheet;
+using Dapper;
 using Kiltex.SistemaGestion.Domain;
 using Kiltex.SistemaGestion.Domain.Enum;
 using Kiltex.SistemaGestion.Domain.Model;
@@ -12,6 +11,7 @@ using Kiltex.SistemaGestion.Services.LibroIvaDigital;
 using Kiltex.SistemaGestion.Services.LibrosIvaDigital;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
+using Kiltex.SistemaGestion.Services.Scripts;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -80,18 +80,21 @@ namespace Kiltex.SistemaGestion.Services.Services
             }
         }
 
-        public async Task<OperationResponse<DtoPagination<DtoRequestInvoice>>> ListInvoices(RequestPaginatedData<SpecificFilter> request)
+        public async Task<OperationResponse<DtoPagination<DtoRequestListInvoice>>> ListInvoices(RequestPaginatedData<SpecificFilter> request)
         {
             try
             {
                 var query = _contextSql
                                     .Invoices
                                     .AsNoTracking()
-                                    .Include(p => p.InvoiceDetails)
+                                    .Include(y => y.User)
                                     .Where(p => (!string.IsNullOrEmpty(request.Filter.Cuit) ? p.CustomerCuit.ToLower().Contains(request.Filter.Cuit) : true)
                                      && ((request.Filter.Number.HasValue && request.Filter.Number != 0) ? p.InvoiceNumber == request.Filter.Number : true)
                                      &&
-                                     ((!request.Filter.Date.Contains("") || request.Filter.Date != null) ? p.DateTime.Date.ToString().Contains(request.Filter.Date) : true));
+                                     ((!request.Filter.Date.Contains("") || request.Filter.Date != null) ? p.DateTime.Date.ToString().Contains(request.Filter.Date) : true)
+                                     &&
+                                     (!string.IsNullOrEmpty(request.Filter.CustomerName) ? p.CustomerName.ToLower().Contains(request.Filter.CustomerName) : true)
+                                     );
 
                 var count = await query.CountAsync().ConfigureAwait(false);
 
@@ -101,10 +104,10 @@ namespace Kiltex.SistemaGestion.Services.Services
                                       .ToListAsync()
                                       .ConfigureAwait(false);
 
-                var result = _mapper.Map<List<DtoRequestInvoice>>(list);
+                var result = _mapper.Map<List<DtoRequestListInvoice>>(list);
 
 
-                return new OperationResponse<DtoPagination<DtoRequestInvoice>>(new DtoPagination<DtoRequestInvoice>
+                return new OperationResponse<DtoPagination<DtoRequestListInvoice>>(new DtoPagination<DtoRequestListInvoice>
                 {
                     Data = result,
                     PageSize = request.PageSize,
@@ -129,8 +132,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                 {
                     if (invoiceModel.CustomerId == 0)
                     {
-                        var user = await _contextSql.Customers.AsNoTracking().FirstOrDefaultAsync(p => p.Name.ToLower() == "admin");
-                        invoiceModel.CustomerId = user.Id;
+                        invoiceModel.CustomerId = GetUserAdminId();
                     }
 
                     var regex = new Regex(@"^-?[0-9][0-9,\.]+$");
@@ -272,6 +274,26 @@ namespace Kiltex.SistemaGestion.Services.Services
 
             }
         }
+
+        #region Private Method
+        private byte GetUserAdminId()
+        {
+            try
+            {
+                using (var connection = new SqlConnection(ConnectionString))
+                {
+                    return connection.Query<byte>(SqlScripts.GetUserAdminId).First();
+
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
+                throw;
+            }
+        }
+
+        #endregion
 
         #region Alicuota Digital
 

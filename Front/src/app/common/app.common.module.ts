@@ -30,6 +30,8 @@ import { InvoiceTypePipe } from './pipes/invoice-type.pipe';
 import { SearchFilterComponent } from './components/search-filter/search.filter.component';
 import { NzCollapseModule } from 'ng-zorro-antd/collapse';
 import { IvaConditionTypePipe } from './pipes/ivacondition-type';
+import { SearchCustomFilterComponent } from './components/search-custom-filter/search.custom.filter.component';
+import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 
 @NgModule({
   imports: [
@@ -49,7 +51,8 @@ import { IvaConditionTypePipe } from './pipes/ivacondition-type';
     NzTypographyModule,
     NzTagModule,
     NzImageModule,
-    NzCollapseModule,    
+    NzCollapseModule,
+    NzDatePickerModule
   ],
   exports: [
     CommonModule,
@@ -77,6 +80,7 @@ import { IvaConditionTypePipe } from './pipes/ivacondition-type';
     InvoiceTypePipe,
     SearchFilterComponent,
     IvaConditionTypePipe,
+    SearchCustomFilterComponent
   ],
   declarations: [
     HeaderOperationsButtonsComponent,
@@ -90,6 +94,7 @@ import { IvaConditionTypePipe } from './pipes/ivacondition-type';
     InvoiceTypePipe,
     SearchFilterComponent,
     IvaConditionTypePipe,
+    SearchCustomFilterComponent
   ],
   entryComponents: [
     HeaderOperationsButtonsComponent,
@@ -97,6 +102,7 @@ import { IvaConditionTypePipe } from './pipes/ivacondition-type';
     PopupConfirmationComponent,
     ButtonOperationFooter,
     SearchFilterComponent,
+    SearchCustomFilterComponent
   ],
   providers: [],
 })

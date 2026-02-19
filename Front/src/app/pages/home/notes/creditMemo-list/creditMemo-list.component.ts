@@ -1,11 +1,12 @@
 import { formatCurrency, formatDate } from '@angular/common';
-import { Component, Inject, LOCALE_ID, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, Inject, Input, LOCALE_ID, OnInit } from '@angular/core';
 import { NzDrawerService } from 'ng-zorro-antd/drawer';
 import { Permission } from 'src/app/common/auth/models/permissions.enum';
 import { CreditMemoViewDrawerComponent } from '../creditMemo-view-drawer/creditMemo-view-drawer.component';
 import { CreditMemoModel } from '../model/creditMemo.model';
 import { NoteService } from '../notes.service';
+import { initialSearchFilter, parseFilterCustomSeachData, resetQuerySearchFilter, SearchCustomFilterModel } from 'src/app/common/components/model/search.custom.filter.model';
+import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-creditMemo-list',
@@ -13,7 +14,9 @@ import { NoteService } from '../notes.service';
   styleUrls: ['./creditMemo-list.component.css'],
 })
 export class creditMemoListComponent implements OnInit {
-
+  
+  customNCSearchForm!: FormGroup;
+  queryParams: SearchCustomFilterModel = resetQuerySearchFilter();
   id!: number;
   isLoading: boolean= false;
   loading!: boolean;
@@ -23,39 +26,32 @@ export class creditMemoListComponent implements OnInit {
   selectedIndex!: number;
   selectedCreditMemo: any;
   permissions = Permission;
-  dia:any;
-  queryParams = {
-    filter: '',
-    page: 0,
-    pageSize: 20
-  };
-  SpecificFilter = {
-    filter: {
-      supplier: "",
-      category: "",
-      statusid: 0,
-      number: 0,
-      cuit: "",
-      date: ""
-    },
-    page: 0,
-    pageSize: 20
-  }
+  dia:any;  
+  
   index!: number;
   constructor(
     private service: NoteService,
     @Inject(LOCALE_ID) public locale: string,
-    private drawerService: NzDrawerService
-  ){}
+    private drawerService: NzDrawerService,
+    private fb: FormBuilder
+  ){
+    this.customNCSearchForm = this.fb.group({
+          cuit: [''],
+          customerName: [''],
+          invoicenumber: [0],
+          date: [null]  
+        })
+  }
 
 
     ngOnInit(): void {
-        this.getData(this.SpecificFilter)
+        this.getData(this.queryParams)
     }
 
     getData(params: any): void {
       this.loading = true;
-      this.service.getCreditMemo(params).subscribe({
+      let loadedparams = parseFilterCustomSeachData(params, this.customNCSearchForm, this.locale);
+      this.service.getCreditMemo(loadedparams).subscribe({
         next: (r) => {
           this.creditMemoList = r.data;
           this.totalItems = r.totalCount;
@@ -74,18 +70,11 @@ export class creditMemoListComponent implements OnInit {
     formaterDate(date: string | number | Date): string {
       return formatDate(date, 'YYYY-MM-dd', this.locale);
     }
-    dateChange(date:any):void{
-      if(date){
-        this.dia = date
-        this.SpecificFilter.filter.date = this.formaterDate(date)
-      }else{
-        this.SpecificFilter.filter.date = ''
-      }
-    }
+    
     search(): void {
-      this.getData(this.SpecificFilter);
-      this.SpecificFilter.page = 0;
-      this.SpecificFilter.pageSize = 20;
+      this.getData(this.queryParams);
+      this.queryParams.page = 0;
+      this.queryParams.pageSize = 20;
     }
     openComponentCreditMemoView(): void {
       const drawerRefCustomer = this.drawerService.create<
@@ -159,15 +148,15 @@ export class creditMemoListComponent implements OnInit {
     );
     if (
       ScrollPosition <= 5 &&
-      this.totalItems / this.SpecificFilter.page > this.SpecificFilter.page
+      this.totalItems / this.queryParams.page > this.queryParams.page
     ) {
-      let page = this.SpecificFilter.page;
-      this.SpecificFilter.page = this.SpecificFilter.page + 1;
+      let page = this.queryParams.page;
+      this.queryParams.page = this.queryParams.page + 1;
       if (
         this.totalItems === undefined ||
-        this.SpecificFilter.page * this.SpecificFilter.pageSize <= this.totalItems
+        this.queryParams.page * this.queryParams.pageSize <= this.totalItems
       ) {
-        this.service.getCreditMemo(this.SpecificFilter).subscribe({
+        this.service.getCreditMemo(this.queryParams).subscribe({
           next: (r) => {
             r.data.map((credit: CreditMemoModel) =>
               this.creditMemoList.push(credit)
@@ -180,7 +169,7 @@ export class creditMemoListComponent implements OnInit {
           },
         });
       } else {
-        this.SpecificFilter.page = page;
+        this.queryParams.page = page;
       }
     }
   }

@@ -6,6 +6,8 @@ import { quittanceModel } from '../model';
 import { QuittanceService } from '../quittance.service';
 import { Router } from '@angular/router';
 import { QuittanceViewDrawerComponent } from '../quittance-view-drawer/quittance-view-drawer.component';
+import { parseFilterCustomSeachData, resetQuerySearchFilter, SearchCustomFilterModel } from 'src/app/common/components/model/search.custom.filter.model';
+import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-quittance-list',
@@ -13,6 +15,7 @@ import { QuittanceViewDrawerComponent } from '../quittance-view-drawer/quittance
   styleUrls: ['./quittance-list.component.css'],
 })
 export class QuittanceListComponent implements OnInit {
+  customQSearchForm!: FormGroup;
   permissions = Permission;
   dia:any;
   index!: number;
@@ -34,19 +37,7 @@ export class QuittanceListComponent implements OnInit {
   /*
    ** Parametros de busqueda
    */
-
-  SpecificFilter = {
-    filter: {
-      supplier: "",
-      category: "",
-      statusid: 0,
-      number: 0,
-      cuit: "",
-      date:"",
-    },
-    page: 0,
-    pageSize: 20
-  }
+  queryParams: SearchCustomFilterModel = resetQuerySearchFilter();  
 
   /*
    ** Constructor
@@ -55,8 +46,14 @@ export class QuittanceListComponent implements OnInit {
     private service: QuittanceService,
     private router: Router,
     @Inject(LOCALE_ID) public locale: string,
-    private drawerService: NzDrawerService
-  ) { }
+    private drawerService: NzDrawerService,
+    private fb: FormBuilder
+  ) { this.customQSearchForm = this.fb.group({
+      cuit: [''],
+      customerName: [''],
+      invoicenumber: [0],
+      date: [null]  
+    })}
 
   selectedIndex!: number;
   selectedQuittance: any;
@@ -65,15 +62,15 @@ export class QuittanceListComponent implements OnInit {
    ** Evento de inicio de angular
    */
   ngOnInit(): void {
-    this.getData(this.SpecificFilter);
+    this.getData(this.queryParams);
   }
   /*
    ** Evento al presionar buscar o presionar enter
    */
   search(): void {
-    this.getData(this.SpecificFilter);
-    this.SpecificFilter.page = 0;
-    this.SpecificFilter.pageSize = 20; 
+    this.getData(this.queryParams);
+    this.queryParams.page = 0;
+    this.queryParams.pageSize = 20; 
 
   }
   /*
@@ -82,7 +79,8 @@ export class QuittanceListComponent implements OnInit {
 
   getData(params: any): void {
     this.loading = true;
-    this.service.getQuittance(params).subscribe({
+    let loadedparams = parseFilterCustomSeachData(params, this.customQSearchForm, this.locale);
+    this.service.getQuittance(loadedparams).subscribe({
       next: (r) => {
         this.quittanceList = r.data;
         this.totalItems = r.totalCount;
@@ -103,15 +101,6 @@ export class QuittanceListComponent implements OnInit {
     return formatDate(date, 'YYYY-MM-dd', this.locale);
   }
  
-  dateChange(date:any):void{
-    if(date){
-      this.dia = date
-      this.SpecificFilter.filter.date =this.formaterDate(date)
-    }else{
-      this.SpecificFilter.filter.date = ''
-    }
-  }
-
   currencyFormat(data: any): string {
     if (!this.locale) return '';
     return formatCurrency(data, this.locale!, '$', 'ARS', '1.1-2');
@@ -173,15 +162,15 @@ export class QuittanceListComponent implements OnInit {
     );
     if (
       ScrollPosition <= 5 &&
-      this.totalItems / this.SpecificFilter.page > this.SpecificFilter.page
+      this.totalItems / this.queryParams.page > this.queryParams.page
     ) {
-      let page = this.SpecificFilter.page;
-      this.SpecificFilter.page = this.SpecificFilter.page + 1;
+      let page = this.queryParams.page;
+      this.queryParams.page = this.queryParams.page + 1;
       if (
         this.totalItems === undefined ||
-        this.SpecificFilter.page * this.SpecificFilter.pageSize <= this.totalItems
+        this.queryParams.page * this.queryParams.pageSize <= this.totalItems
       ) {
-        this.service.getQuittance(this.SpecificFilter).subscribe({
+        this.service.getQuittance(this.queryParams).subscribe({
           next: (r) => {
             r.data.map((quittance: quittanceModel) =>
               this.quittanceList.push(quittance)
@@ -194,7 +183,7 @@ export class QuittanceListComponent implements OnInit {
           },
         });
       } else {
-        this.SpecificFilter.page = page;
+        this.queryParams.page = page;
       }
     }
   }
@@ -214,6 +203,7 @@ export class QuittanceListComponent implements OnInit {
       nzClosable: false,
     });
   }
+
   reimprimirQuittance(id:number):void{
     let fecha: Date = new Date();
     let año: string = fecha.getFullYear().toString();
@@ -242,8 +232,7 @@ export class QuittanceListComponent implements OnInit {
     document.body.appendChild(downloadLink);
     downloadLink.click();
   }
-
- 
+   
 }
 
 

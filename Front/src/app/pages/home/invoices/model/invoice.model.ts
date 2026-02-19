@@ -1,4 +1,17 @@
-import { time } from "console";
+export interface InvoiceListModel {
+    id: number;
+    customerId: number;
+    createdBy: string;
+    invoiceNumber: number;
+    customerName: string;
+    customerCuit: string;
+    customerAddress: string;
+    dateTime: Date;
+    total: number;
+    ivaTotal: number;
+    type: number;
+    ivaSelected: number;
+}
 
 export interface InvoiceModel {
     id: number;

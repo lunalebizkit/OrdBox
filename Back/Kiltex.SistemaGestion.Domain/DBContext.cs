@@ -38,6 +38,11 @@ namespace Kiltex.SistemaGestion.Domain
                .HasMany(i => i.QuittanceDetails)
                .WithOne(i => i.Quittance)
                .OnDelete(DeleteBehavior.NoAction);
+            
+            builder.Entity<Quittance>()
+               .HasMany(i => i.QuittanceProductDetails)
+               .WithOne(i => i.Quittance)
+               .OnDelete(DeleteBehavior.NoAction);
 
             builder.Entity<CreditMemo>()
                 .HasMany(i => i.CreditMemoDetail)
@@ -215,7 +220,7 @@ namespace Kiltex.SistemaGestion.Domain
         public virtual DbSet<DeliveryNotesDetails> DeliveryNotesDetails { get; set; }
         public virtual DbSet<Quittance> Quittance { get; set; }
         public virtual DbSet<QuittanceDetails> QuittanceDetails { get; set; }
-
+        public virtual DbSet<QuittanceProductDetails> QuittanceProductDetails { get; set; }
         public virtual DbSet<InvoiceSPReport> InvoiceSPReports { get; set; }
         public virtual DbSet<InvoiceSPReportTotal> InvoiceSPReportTotals { get; set; }   
 
