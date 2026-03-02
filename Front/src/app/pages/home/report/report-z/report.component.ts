@@ -7,6 +7,7 @@ import { BaseComponent } from 'src/app/common/components/base/base.component';
 import { HeaderOperationsButtonsComponent } from 'src/app/common/components/headers/buttons.oparations.header.component';
 import { PopupConfirmationComponent } from 'src/app/common/components/popup-confirmation/popup-confirmation.component';
 import { ReportService } from '../report.service';
+import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-report-report-z',
@@ -15,17 +16,29 @@ import { ReportService } from '../report.service';
 })
 export class ReportComponent extends BaseComponent implements OnInit {
   @ViewChild('popup') popupComponent!: PopupConfirmationComponent;
+  @ViewChild('popdownload') popDownload!: PopupConfirmationComponent;
   @ViewChild('header') headerComponent!: HeaderOperationsButtonsComponent;
   @ViewChild('pop') popComponent!: PopupConfirmationComponent;
   isSaving=false;
+  form!: FormGroup;
+
   constructor( 
     notificacionService: NzNotificationService,
     el: ElementRef,
     message: NzMessageService,
     private service: ReportService,
-    private router: Router
+    private router: Router,
+    private fb: FormBuilder,
     ) {
-      super(notificacionService, el, message);
+    super(notificacionService, el, message);
+    this.form = this.fb.group({
+      fechaInicial: ['', Validators.required],
+      fechaFinal:['', Validators.required],
+    },
+      {
+        validators: [this.fechaRangoValidator],
+      }
+);
   }
 
   ngOnInit(): void {
@@ -49,15 +62,68 @@ export class ReportComponent extends BaseComponent implements OnInit {
       }
    })
   }
+  
+  downloadPrintReport(){
+    if (this.isValidForm(this.form)) {
+      this.isSaving = true;
+      let body = {
+        fechaInicial: this.formatFechaAAMMDD(this.form.controls['fechaInicial'].value),
+        fechaFinal: this.formatFechaAAMMDD(this.form.controls['fechaFinal'].value) 
+      }
+      this.service.downloadPrintReport(body.fechaInicial, body.fechaFinal).subscribe({
+        next: (r) => {    
+          this.isSaving = false;
+        },
+        error: (e) =>{
+          this.showMessageError(e.error.descripcion);
+          this.isSaving = false;   
+        }
+      });      
+    }
+    this.popDownload.handleCance()
+  }
 
   msjConfirmOk() {
     try {
       this.popComponent.showConfirmation() 
     } catch (error) {}
   }
+  
+  msjConfirmDownloadOk() {
+    try {
+      if (this.isValidForm(this.form))
+      this.popDownload.showConfirmation() 
+    } catch (error) {}
+  }
 
   handleOk(){
     this.reportZ()
   }
+
+  fechaRangoValidator(group: AbstractControl) {
+    const fechaInicial = group.get('fechaInicial')?.value;
+    const fechaFinal = group.get('fechaFinal')?.value;
+
+    if (!fechaInicial || !fechaFinal) {
+      return null;
+    }
+
+    const inicio = new Date(fechaInicial);
+    const fin = new Date(fechaFinal);
+
+    return inicio <= fin ? null : { rangoInvalido: true };
+  }
+
+  formatFechaAAMMDD(fecha: Date | string | null): string {
+    if (!fecha) return '';
+
+    const d = typeof fecha === 'string' ? new Date(fecha) : fecha;
+
+    const year = d.getFullYear().toString().slice(-2); // últimos 2 dígitos
+    const month = (d.getMonth() + 1).toString().padStart(2, '0'); // meses 01-12
+    const day = d.getDate().toString().padStart(2, '0'); // días 01-31
+
+    return `${year}${month}${day}`;
+}
 
 }

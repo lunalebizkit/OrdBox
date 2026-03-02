@@ -3,6 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { AuthGuard } from 'src/app/common/auth/permission/auth.guard';
 
 import { HomeComponent } from './home.component';
+import { PrintSettingsComponent } from './report/print-settings/print.settings.component';
 
 const routes: Routes = [
   {
@@ -68,48 +69,54 @@ const routes: Routes = [
         loadChildren: () =>
           import('./periods/periods.module').then((m) => m.PeriodsModule),
       },
-       {
+      {
         canActivate: [AuthGuard],
         path: 'iva',
         loadChildren: () =>
-          import('./iva-report/iva-report.module').then((m) => m.IvaReportModule ),
-      }, 
+          import('./iva-report/iva-report.module').then((m) => m.IvaReportModule),
+      },
       {
         canActivate: [AuthGuard],
         path: 'notes',
         loadChildren: () =>
-          import('./notes/notes.module').then((m) => m.NotesModule ),
+          import('./notes/notes.module').then((m) => m.NotesModule),
       },
       {
         canActivate: [AuthGuard],
         path: 'report',
-        loadChildren:()=>
-          import('./report/report.module').then((m)=> m.ReportModule)
+        loadChildren: () =>
+          import('./report/report.module').then((m) => m.ReportModule)
       },
       {
         canActivate: [AuthGuard],
         path: 'permission',
-        loadChildren:()=>
-          import('./permission-rol/permission-rol.module').then((m)=> m.PermissionModule)
+        loadChildren: () =>
+          import('./permission-rol/permission-rol.module').then((m) => m.PermissionModule)
       },
       {
         canActivate: [AuthGuard],
-        path:'budgets',
-        loadChildren:()=>
-        import('./budgets/budgets.module').then((m) => m.BudgetModule)
+        path: 'budgets',
+        loadChildren: () =>
+          import('./budgets/budgets.module').then((m) => m.BudgetModule)
       },
       {
         canActivate: [AuthGuard],
         path: 'deliveryNotes',
-        loadChildren:()=>
-          import('./deliveryNotes/deliveryNotes.module').then((m)=> m.DeliveryNotesModule)
+        loadChildren: () =>
+          import('./deliveryNotes/deliveryNotes.module').then((m) => m.DeliveryNotesModule)
       },
       {
-        canActivate: [AuthGuard], 
+        canActivate: [AuthGuard],
         path: 'quittance',
-        loadChildren:()=>
-          import('./quittance/quittance.module').then((m)=> m.QuittanceModule)
+        loadChildren: () =>
+          import('./quittance/quittance.module').then((m) => m.QuittanceModule)
       },
+      {
+        canActivate: [AuthGuard],
+        path: 'print/settings',
+        component: PrintSettingsComponent
+      }
+
     ],
   },
 ];
@@ -117,4 +124,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class HomeRoutingModule {}
+export class HomeRoutingModule { }

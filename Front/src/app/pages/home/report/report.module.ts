@@ -18,6 +18,7 @@ import { CommonModule } from '@angular/common';
 import { ReportRoutingModule } from './report-routing.module';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
+import { PrintSettingsComponent } from './print-settings/print.settings.component';
 
 @NgModule({
   imports: [ CommonModule,
@@ -40,7 +41,8 @@ import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
     NzDatePickerModule
   ],
   declarations: [
-    ReportComponent
+    ReportComponent,
+    PrintSettingsComponent
   ]
 })
 export class ReportModule { }

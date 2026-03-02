@@ -18,6 +18,7 @@ export class PopupConfirmationComponent implements OnInit {
    @Input('header') header!: string;
    @Input('message') message!: string;
    @Input('disabled') disabled!: boolean;
+   @Input('okLoading') okLoading!: boolean;
    @Output('handleOk') handleOk: EventEmitter<any> = new EventEmitter<any>();
   
 
