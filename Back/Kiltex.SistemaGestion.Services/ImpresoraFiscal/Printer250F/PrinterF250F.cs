@@ -82,15 +82,32 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
 
                                         if (statusResponse.RootElement.TryGetProperty(requestTypeName, out JsonElement abrirDocumento))
                                         {
-                                            if (requestTypeName == "AbrirDocumento")
+                                            switch ((string)requestTypeName)
                                             {
-                                                // Ahora buscamos si dentro de "AbrirDocumento" existe "NumeroComprobante"
-                                                if (abrirDocumento.TryGetProperty("NumeroComprobante", out JsonElement numeroComprobante))
-                                                {
-                                                    success = true;
-                                                    break;
-                                            }
-                                            else { continue; }
+                                                case "ObtenerPrimerBloqueReporteElectronico":
+                                                case "ObtenerSiguienteBloqueReporteElectronico":
+                                                    var bloqueElectronicoResponse = JsonConvert.DeserializeObject<DtoResponseObtenerReporteElectronico>(responseBody);
+                                                    var body = bloqueElectronicoResponse.BloqueElectronico;
+
+                                                    if (body != null && !string.IsNullOrEmpty(body?.Informacion))
+                                                    {
+                                                        success = true;
+                                                        break;
+                                                    }
+                                                    continue;
+
+                                                case "AbrirDocumento":
+                                                    // Ahora buscamos si dentro de "AbrirDocumento" existe "NumeroComprobante"
+                                                    if (abrirDocumento.TryGetProperty("NumeroComprobante", out JsonElement numeroComprobante))
+                                                    {
+                                                        success = true;
+                                                        break;
+                                                    }
+                                                    continue;
+
+                                                default:
+                                                    continue;
+
                                             }
 
                                             success = true;                                            
@@ -136,7 +153,7 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
 
             if (result != null && result.Body != null)
             {
-                foreach (var Item in result.Body.EstadoBody.Fiscal)
+                foreach (var Item in result.Body.Estado.Fiscal)
                 {
                     if (Item.ToString().Contains("Error"))
                     {
@@ -162,7 +179,7 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
 
         public async Task SetZona(int numeroLineas, string descripcion)
         {
-            var result = await RunCommand<Estado>(new ConfigurarZona
+            var result = await RunCommand<BaseEstado>(new ConfigurarZona
             {
                 ConfigurarZonaBody = new ConfigurarZonaBody
                 {
@@ -187,7 +204,7 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
 
             if (result != null && result.Body != null)
             {
-                foreach (var Item in result.Body.EstadoBody.Fiscal)
+                foreach (var Item in result.Body.Estado.Fiscal)
                 {
                     if (Item.ToString().Contains("Error"))
                     {
@@ -220,7 +237,7 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
 
             if (result != null && result.Body != null)
             {
-                foreach (var Item in result.Body.EstadoBody.Fiscal)
+                foreach (var Item in result.Body.Estado.Fiscal)
                 {
                     if (Item.ToString().Contains("Error"))
                     {
@@ -241,24 +258,26 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
         {
             var result = await RunCommand<DtoResponseReporteZ>(new CerrarJornadaFiscal { CerrarJornadaFiscalBody = new CerrarJornadaFiscalBody { Reporte = "ReporteZ" } });
 
-            if (result != null && result.Body != null)
+            if (result != null && result.Body != null && result.Body.Estado != null)
             {
-                foreach (var Item in result.Body.EstadoBody.Fiscal)
+                if (result.Body.Estado?.Fiscal != null)
                 {
-                    if (Item.ToString().Contains("Error"))
+                    foreach (var Item in result.Body?.Estado?.Fiscal)
                     {
-                        await CloseFactura(1, "");
-                        return null;
+                        if (Item.ToString().Contains("Error"))
+                        {
+                            await CloseFactura(1, "");
+                            return null;
+                        }
                     }
                 }
-
             }
             else
             {
                 return null;
             }
 
-            return result.Body.EstadoBody?.Fiscal.ToString();
+            return result.Body.Estado?.Fiscal.ToString();
 
         }
 
@@ -279,7 +298,7 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
             });
             if (result != null && result.Body != null)
             {
-                foreach (var Item in result.Body.EstadoBody.Fiscal)
+                foreach (var Item in result.Body.Estado.Fiscal)
                 {
                     if (Item.ToString().Contains("Error"))
                     {
@@ -316,7 +335,7 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
 
                 if (result != null && result.Body != null)
                 {
-                    foreach (var Item in result.Body.EstadoBody.Fiscal)
+                    foreach (var Item in result.Body.Estado.Fiscal)
                     {
                         if (Item.ToString().Contains("Error"))
                         {
@@ -365,7 +384,7 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
                 }
             });
 
-            foreach (var Item in result.Body.EstadoBody.Fiscal)
+            foreach (var Item in result.Body.Estado.Fiscal)
             {
                 if (Item.ToString().Contains("Error"))
                 {
@@ -389,7 +408,7 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
             });
             if (result != null && result.Body != null)
             {
-                foreach (var Item in result.Body.EstadoBody.Fiscal)
+                foreach (var Item in result.Body.Estado.Fiscal)
                 {
                     if (Item.ToString().Contains("Error"))
                     {
@@ -411,6 +430,18 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
         {
             return await RunCommand<DtoResponseConsultarVersion>(
                 new ConsultarVersion() { });
+        }
+        
+        public async Task<DtoResponseObtenerReporteElectronico> DownloadPrintReport(ObtenerPrimerBloqueReporteElectronico obtenerPrimerBloque)
+        {
+            return await RunCommand<DtoResponseObtenerReporteElectronico>(
+               obtenerPrimerBloque);
+        }
+        
+        public async Task<DtoResponseObtenerSiguienteBloqueReporteElectronico> DownloadNextBloquePrintReport(DtoObtenerSiguienteBloqueReporteElectronico obtenerSiguienteBloque)
+        {
+            return await RunCommand<DtoResponseObtenerSiguienteBloqueReporteElectronico>(
+               obtenerSiguienteBloque);
         }
 
         #region Private
