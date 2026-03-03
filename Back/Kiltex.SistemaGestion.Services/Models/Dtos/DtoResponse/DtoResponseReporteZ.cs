@@ -11,7 +11,7 @@ namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse
     }
 
 
-    public class DtoResponseReporteZBody : Estado
+    public class DtoResponseReporteZBody : BaseEstado
     {
 
     }

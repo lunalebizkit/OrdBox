@@ -11,7 +11,7 @@ namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse
         public DtoResponseCerrarDocBody Body { get; set; }
     }
 
-    public class DtoResponseCerrarDocBody : Estado
+    public class DtoResponseCerrarDocBody : BaseEstado
     {
         [JsonProperty("NumeroComprobante")]
         public string NumeroComprobante { get; set; }

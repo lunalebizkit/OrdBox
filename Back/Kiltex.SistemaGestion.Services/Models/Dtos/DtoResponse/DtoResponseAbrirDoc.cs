@@ -9,7 +9,7 @@ namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse
         [JsonProperty("AbrirDocumento")]
         public DtoResponseAbrirDocBody Body { get; set; }
     }
-    public  class DtoResponseAbrirDocBody :Estado
+    public  class DtoResponseAbrirDocBody : BaseEstado
     {
         [JsonProperty("NumeroComprobante")]
         public string? NumeroComprobante { get; set; }

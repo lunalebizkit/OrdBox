@@ -4,10 +4,10 @@
 namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.Printer250F.Dto
 {
 
-        public class Estado
+        public class BaseEstado
         {
             [JsonProperty("Estado")]
-            public Estadobody EstadoBody { get; set; }
+            public Estadobody? Estado { get; set; }
 
             [JsonProperty("Secuencia")]
             public int Secuencia { get; set; }

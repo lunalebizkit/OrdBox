@@ -7,7 +7,6 @@ using Kiltex.SistemaGestion.Services.ImpresoraFiscal.Printer250F;
 using Kiltex.SistemaGestion.Services.ImpresoraFiscal.Printer250F.Dto;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
 using Microsoft.Extensions.Configuration;
-using System.IO.Compression;
 using System.Text;
 
 namespace Kiltex.SistemaGestion.Services.Services
