@@ -370,6 +370,7 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
             {
                 11 => "TipoCUIT",
                 8 => "TipoDNI",
+                7 => "TipoDNI",
             };
 
             var result = await RunCommand<DtoResponseCargarDatosCliente>(new CargarDatosCliente

@@ -45,7 +45,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             catch (Exception ex)
             {
                 _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
-                throw;
+                return Error<bool>(new OperationExceptions(ErrorsCodes.C_010_ERROR_EXCEPTION, ErrorsMessages.GetMessage(ErrorsCodes.C_010_ERROR_EXCEPTION)));
             }
         }
         public async Task<OperationResponse<DtoResponseConsultarVersion>> PrintSettings()
@@ -72,7 +72,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             catch (Exception ex)
             {
                 _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
-                throw;
+                return Error<DtoResponseConsultarVersion>(new OperationExceptions(ErrorsCodes.C_010_ERROR_EXCEPTION, ErrorsMessages.GetMessage(ErrorsCodes.C_010_ERROR_EXCEPTION)));
             }
         }
         
@@ -125,7 +125,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             catch (Exception ex)
             {
                 _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
-                throw;
+                return Error<bool>(new OperationExceptions(ErrorsCodes.C_010_ERROR_EXCEPTION, ErrorsMessages.GetMessage(ErrorsCodes.C_010_ERROR_EXCEPTION)));
             }
         }
 
