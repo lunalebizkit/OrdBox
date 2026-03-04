@@ -5,6 +5,8 @@
 /Back/Kiltex.SistemaGestion.Services/obj
 /Back/Kiltex.SistemaGestion.Services/bin
 /Back/Kiltex.SitemaGestion.Api/obj
+/Back/Kiltex.SitemaGestion.Api/appsettings.json
+/Back/Kiltex.SitemaGestion.Api/appsettings.*.json
 /Back/Kiltex.SitemaGestion.Api/bin
 /Back/Kiltex.SitemaGestion.Api/.vs
 /Back/Kiltex.SitemaGestion.Api/logs

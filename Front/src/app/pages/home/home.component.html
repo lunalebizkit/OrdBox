@@ -119,12 +119,16 @@
           </li>          
         </ul>
       </li>
-<!--Crear una lista presupuetro-->   
+<!--Crear una lista presupuestro-->   
       <li nz-submenu nzTitle="Sistema" nzIcon="setting">
         <ul>
           <li nz-menu-item nzMatchRouter style="padding-left: 5%;">
             <span nz-icon [nzType]="'setting'" [nzTheme]="'twotone'"> </span>
             <a routerLink="/home/permission" style="padding-left: 8%;">Configuración</a>
+          </li>         
+          <li nz-menu-item nzMatchRouter style="padding-left: 5%;">
+            <span nz-icon [nzType]="'setting'" [nzTheme]="'twotone'"> </span>
+            <a routerLink="/home/print/settings" style="padding-left: 5%;">Impresora fiscal</a>
           </li>         
           <li nz-menu-item (click)="logOut()" style="padding-left: 5%;">
             <span nz-icon [nzType]="'api'" [nzTheme]="'twotone'" [nzTwotoneColor]="'#eb2f96'"> </span>

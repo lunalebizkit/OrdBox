@@ -1,29 +1,55 @@
 <nz-layout>
-    <nz-page-header class="list-header">
-        <nz-page-header-title>Reporte Z</nz-page-header-title>
-        <nz-page-header-extra>
-          <button
-            nz-tooltip
-            nzTooltipTitle="Generar Reporte Z"
-            nz-button
-            nzType="primary"
-            (click)="msjConfirmOk()"
-          >Generar Reporte Z
-          </button>
-        </nz-page-header-extra>
-      </nz-page-header>
-      <div style="height: 25em;"></div>
+  <nz-page-header class="list-header">
+    <nz-page-header-title>Reporte Z</nz-page-header-title>
+    <nz-page-header-extra>
+      <button nz-tooltip nzTooltipTitle="Generar Reporte Z" nz-button nzType="primary" (click)="msjConfirmOk()">Generar
+        Reporte Z
+      </button>
+    </nz-page-header-extra>
+  </nz-page-header>
+</nz-layout>
+<nz-layout>
+  <nz-page-header class="list-header">
+    <nz-page-header-title>Descargar informe Impresora fiscal</nz-page-header-title>
+    <nz-page-header-extra>
+      <button nz-tooltip nzTooltipTitle="Generar Reporte Z" nz-button nzType="primary"
+        (click)="msjConfirmDownloadOk()" 
+      [nzLoading]="isSaving">Descargar informe Impresora fiscal
+      </button>
+    </nz-page-header-extra>
+  </nz-page-header>
+  <nz-collapse>
+    <nz-collapse-panel [nzActive]="true">
+      <form nz-form [formGroup]="form" style="margin-top: 26px">
+        <nz-form-item>
+          <nz-form-label nzRequired [nzSm]="10" [nzXs]="24" nzFor="fechaInicial">Fecha Inicial</nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <nz-date-picker formControlName="fechaInicial" name="fechaInicial" nzFormat="dd/MM/yyyy"
+              [nzPlaceHolder]="'Fecha Inicial'" [nzDisabled]="isSaving"></nz-date-picker>
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-label nzRequired [nzSm]="10" [nzXs]="24" nzFor="fechaFinal">Fecha Final</nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <nz-date-picker formControlName="fechaFinal" name="fechaFinal" nzFormat="dd/MM/yyyy"
+              [nzPlaceHolder]="'Fecha Final'" [nzDisabled]="isSaving"></nz-date-picker>
+          </nz-form-control>
+        </nz-form-item>
+        <div *ngIf="form.errors?.['rangoInvalido']" style="color:red; margin-top:8px">
+          La fecha inicial debe ser menor o igual que la fecha final
+        </div>
+
+      </form>
+    </nz-collapse-panel>
+  </nz-collapse>
+  <div style="height: 25em;"></div>
 </nz-layout>
 
 
-<app-popup-confirmation
-  #pop
-  [title]="'Confirmar Reporte Z'"
-  [header]="'¿Está seguro que desea realizar un Reporte Z?'"
-  [message]="'Esta acción no se puede revertir'"
-  (handleOk)="reportZ()"
-  [disabled]="isSaving"
->
-  >
+<app-popup-confirmation #pop [title]="'Confirmar Reporte Z'" [header]="'¿Está seguro que desea realizar un Reporte Z?'"
+  [message]="'Esta acción no se puede revertir'" (handleOk)="reportZ()" [disabled]="isSaving" [okLoading]="isSaving">
 </app-popup-confirmation>
-
+<app-popup-confirmation #popdownload [title]="'Confirmar descargar informe'"
+  [header]="'¿Está seguro que desea descargar informe de impresora fiscal'"
+  [message]="'Esta acción no se puede revertir'" (handleOk)="downloadPrintReport()" [disabled]="isSaving" [okLoading]="isSaving">
+</app-popup-confirmation>

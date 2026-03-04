@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.Printer250F.Dto
 {
-    public class Reimprimir
+    public class CopiarComprobante
     {
         [JsonProperty("CopiarComprobante")]
         public object? CopiarComprobanteBody { get; set; }

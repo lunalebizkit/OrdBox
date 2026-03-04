@@ -10,7 +10,7 @@ namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse
         public DtoResponseReimprimirDoc? Body { get; set; }
     }
 
-    public partial class DtoResponseReimprimirDoc : Estado
+    public partial class DtoResponseReimprimirDoc : BaseEstado
     {
         [JsonProperty("Zeta")]
         public string? Zeta { get; set; }

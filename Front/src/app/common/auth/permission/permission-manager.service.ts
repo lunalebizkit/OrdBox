@@ -167,6 +167,12 @@ export class PermissionService {
           Permission.ReportZ,
         ],
       },
+      {
+        url: new RegExp('/home/print/settings'),
+        permissions: [
+          Permission.ReportZ,
+        ],
+      },
       //#endrregion
 
       //#regionBudget

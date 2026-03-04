@@ -14,4 +14,13 @@ export class ReportService {
   public reportZ(): Observable<any>{
     return this.api.get('ReporteZ')
   }
+
+  public getPrintSettings(): Observable<any>{
+    return this.api.get('ReporteZ/printsettings')
+  }
+  
+  public downloadPrintReport(fechaInicial: string, fechaFinal: string): Observable<any>{
+    return this.api.get(`ReporteZ/downloadprintreport?fechaInicial=${fechaInicial}&fechaFinal=${fechaFinal}`)
+  }  
+
 }

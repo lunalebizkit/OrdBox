@@ -1,4 +1,6 @@
 ﻿using Kiltex.SistemaGestion.Domain.Enum;
+using Kiltex.SistemaGestion.Services.ImpresoraFiscal.Printer250F.Dto;
+using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
 
 namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal
 {
@@ -19,16 +21,26 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal
     public interface IPrinter
     {
         Task<string> OpenInvoice(ETypeReceipt type, string documentClient, eTypeDocumentClient typeDocument = eTypeDocumentClient.Cuil, string address = "");
+
         Task<string> OpenND(ETypeReceipt type, string documentClient, eTypeDocumentClient typeDocument = eTypeDocumentClient.Cuil, string address = "");
 
         Task<string> OpenNC(ETypeReceipt type, string documentClient, eTypeDocumentClient typeDocument = eTypeDocumentClient.Cuil, string address = "");
 
         Task<string> CerrarJornadaFiscal();
+
         Task<string> PrintItem(string articulo, double cantidad, decimal monto, decimal iva = 21, string codigo = "9999999");
+
         Task<string> CloseFactura( int copias = 1, string email = "", bool withRetry = false);
 
         Task<string> CargarDatosCliente(string customerName, string customerCuit, string customerAddress, ETypeReceipt tipoDocumento );
 
         Task<string> ReimprimirDocumento( ETypeReceipt tipoDocumento,string numeroComprobante );
+
+        Task<DtoResponseConsultarVersion> ConsultarVersionImpresora(ConsultarVersion consultarVersion);
+
+        Task<DtoResponseObtenerReporteElectronico> DownloadPrintReport(ObtenerPrimerBloqueReporteElectronico obtenerPrimerBloque);
+
+        Task<DtoResponseObtenerSiguienteBloqueReporteElectronico> DownloadNextBloquePrintReport(DtoObtenerSiguienteBloqueReporteElectronico obtenerSiguienteBloque);
+
     }
 }

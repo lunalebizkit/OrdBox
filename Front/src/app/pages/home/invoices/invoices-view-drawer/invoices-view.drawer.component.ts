@@ -78,6 +78,7 @@ export class InvoicesViewDrawerComponent extends BaseComponent implements OnInit
 
   }
   getInvoice(id: number): void {
+    this.isLoading = true;
     if (id != 0)
     this.service.getInvoiceById(id).subscribe({
         next: (r: InvoiceModel) => {
@@ -128,14 +129,17 @@ export class InvoicesViewDrawerComponent extends BaseComponent implements OnInit
   
 /*Evento Reimprimir una factura */ 
 reimprimir(): void{
+  this.loading = true;
  this.service.Reprint(this.type, this.invoiceNumber).subscribe({
   next: (r:any)=>
   {
     this.showMessageSuccess('Reimpresion de la factura satisfactoria');
     this.popupComponent.isConfirmationvisible = false;
+    this.loading = false;
   }, 
   error: (e) =>{
     this.showMessageError(e.error.descripcion);
+    this.loading = false;
   }
  });
 }

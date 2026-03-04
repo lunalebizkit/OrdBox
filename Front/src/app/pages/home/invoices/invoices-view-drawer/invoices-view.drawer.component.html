@@ -160,6 +160,7 @@
     [title]="'Confirmar Reimpresion'"
     [header]="'¿Está seguro de que desea reimprimir esta factura?'"
     (handleOk)="hideReprint()"
+    [disabled]="loading"
   >
   </app-popup-confirmation>
 </nz-collapse>

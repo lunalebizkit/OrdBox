@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Kiltex.SistemaGestion.SDK.Error
+﻿namespace Kiltex.SistemaGestion.SDK.Error
 {
     public class ErrorsCodes
     {

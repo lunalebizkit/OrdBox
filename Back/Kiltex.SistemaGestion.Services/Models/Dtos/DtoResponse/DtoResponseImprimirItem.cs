@@ -10,7 +10,7 @@ namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse
         public DtoResponseImprimirItemBody Body { get; set; }
     }
 
-    public class DtoResponseImprimirItemBody : Estado
+    public class DtoResponseImprimirItemBody : BaseEstado
     {
         [JsonProperty("IndiceAuditoria")]
         public int IndiceAuditoria { get; set; }
