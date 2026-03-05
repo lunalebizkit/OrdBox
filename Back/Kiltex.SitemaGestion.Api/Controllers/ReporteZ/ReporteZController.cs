@@ -50,7 +50,18 @@ namespace Kiltex.SistemaGestion.Api.Controllers.ReporteZ
                 FechaFinal = fechaFinal,
                 FechaInicial = fechaInicial
             };
-            return Return(await _service.DownloadPrintReport(bloqueReporteElectronicoBody).ConfigureAwait(false));
+
+            var reporte = await _service.DownloadPrintReport(bloqueReporteElectronicoBody).ConfigureAwait(false);
+
+            if (reporte.Success) {            
+                string nombreArchivo = $"ReporteFiscal_{bloqueReporteElectronicoBody.FechaInicial}_{bloqueReporteElectronicoBody.FechaFinal}.zip";
+                return File(reporte.Data, "application/zip", nombreArchivo);
+            }
+            else
+            {
+                return BadRequest(reporte.Exception?.Info);
+            }
+
         }
     }
 }

@@ -20,7 +20,7 @@ export class ReportService {
   }
   
   public downloadPrintReport(fechaInicial: string, fechaFinal: string): Observable<any>{
-    return this.api.get(`ReporteZ/downloadprintreport?fechaInicial=${fechaInicial}&fechaFinal=${fechaFinal}`)
+    return this.api.get(`ReporteZ/downloadprintreport?fechaInicial=${fechaInicial}&fechaFinal=${fechaFinal}`, false, {responseType:'blob'});
   }  
 
 }

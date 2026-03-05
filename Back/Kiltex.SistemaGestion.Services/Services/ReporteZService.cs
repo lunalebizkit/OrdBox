@@ -76,14 +76,14 @@ namespace Kiltex.SistemaGestion.Services.Services
             }
         }
         
-        public async Task<OperationResponse<bool>> DownloadPrintReport(ObtenerPrimerBloqueReporteElectronicoBody bloqueReporteElectronicoBody)
+        public async Task<OperationResponse<byte[]>> DownloadPrintReport(ObtenerPrimerBloqueReporteElectronicoBody bloqueReporteElectronicoBody)
         {
             try
             {
                 if (_config.Status == false)
                 {
                     _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
-                    return Error<bool>(new OperationExceptions("000", "La impresora esta desactivada"));
+                    return Error<byte[]>(new OperationExceptions("000", "La impresora esta desactivada"));
                 }
 
                 var allBytes = new List<byte>();
@@ -91,10 +91,10 @@ namespace Kiltex.SistemaGestion.Services.Services
                 var firstReport = await _printer.DownloadPrintReport(new ObtenerPrimerBloqueReporteElectronico() {
                     ObtenerPrimerBloqueReporteElectronicoBody = bloqueReporteElectronicoBody });
 
-                if (firstReport == null)
+                if (firstReport == null || string.IsNullOrEmpty(firstReport?.BloqueElectronico?.Registro))
                 {
                     _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
-                    return Error<bool>(new OperationExceptions("000", "No se acceder a la impresora, verifique conexion a la impresora"));
+                    return Error<byte[]>(new OperationExceptions("000", "No se acceder a la impresora, verifique conexion a la impresora"));
                 }
 
                 if (firstReport.BloqueElectronico?.Registro == "BloqueInformacion")
@@ -111,21 +111,14 @@ namespace Kiltex.SistemaGestion.Services.Services
                         allBytes.AddRange(bloque);
                     }
 
-                }
+                }            
 
-                string downloadsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),"Downloads");
-                string nombreArchivo = $"ReporteFiscal_{bloqueReporteElectronicoBody.FechaInicial}_{bloqueReporteElectronicoBody.FechaFinal}.zip";
-
-                string archivoZip = Path.Combine(downloadsPath, nombreArchivo);
-
-                File.WriteAllBytes(archivoZip, allBytes.ToArray());              
-
-                return new OperationResponse<bool>(true);
+                return new OperationResponse<byte[]>(allBytes.ToArray());
             }
             catch (Exception ex)
             {
                 _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
-                return Error<bool>(new OperationExceptions(ErrorsCodes.C_010_ERROR_EXCEPTION, ErrorsMessages.GetMessage(ErrorsCodes.C_010_ERROR_EXCEPTION)));
+                return Error<byte[]>(new OperationExceptions(ErrorsCodes.C_010_ERROR_EXCEPTION, ErrorsMessages.GetMessage(ErrorsCodes.C_010_ERROR_EXCEPTION)));
             }
         }
 

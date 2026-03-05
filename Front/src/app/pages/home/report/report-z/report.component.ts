@@ -71,11 +71,13 @@ export class ReportComponent extends BaseComponent implements OnInit {
         fechaFinal: this.formatFechaAAMMDD(this.form.controls['fechaFinal'].value) 
       }
       this.service.downloadPrintReport(body.fechaInicial, body.fechaFinal).subscribe({
-        next: (r) => {    
+        next: (r) => {
+          const fileName = `ReporteFiscal_${body.fechaInicial}_${body.fechaFinal}.zip`;
+          this.downloadFile(r, fileName);
           this.isSaving = false;
         },
         error: (e) =>{
-          this.showMessageError(e.error.descripcion);
+          this.showMessageError("Ocurrio un error al ejecutar el método");
           this.isSaving = false;   
         }
       });      
@@ -124,6 +126,15 @@ export class ReportComponent extends BaseComponent implements OnInit {
     const day = d.getDate().toString().padStart(2, '0'); // días 01-31
 
     return `${year}${month}${day}`;
-}
+  }
 
+  downloadFile(response: Blob, fileName: string){  
+    const filtePath = window.URL.createObjectURL(response);
+    const downloadLink = document.createElement('a');
+    downloadLink.href = filtePath;
+    downloadLink.download = fileName;
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+  }
 }
