@@ -656,9 +656,13 @@ export class DeliveryNotesEditComponent extends BaseComponent implements OnInit 
   }
 
   changeProductPrice(price: number): void {
+
+    price = (this.esString(price) || this.esStringVacio(price)) ? 0 : price;
     //recupero el producto a editar
     let product = this.deliveryNotesDetailsList.filter(
       detail => detail.ownCode == this.editIdProductPrice)[0];
+    
+    if (!product) return;
 
     this.deliveryNotesDetailsList.filter(
       detail => detail.ownCode == this.editIdProductPrice
@@ -673,5 +677,13 @@ export class DeliveryNotesEditComponent extends BaseComponent implements OnInit 
     )[0].subTotal = product.quantity * price;
 
     this.totalCalculate();
+  }
+
+  esString(valor: unknown): boolean {
+    return typeof valor === "string";
+  }
+
+  esStringVacio(valor: unknown): boolean {
+    return typeof valor === "string" && valor.trim() === "";
   }
 }
