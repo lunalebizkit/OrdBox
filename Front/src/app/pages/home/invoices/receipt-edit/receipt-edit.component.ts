@@ -656,9 +656,13 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
   }
 
   changeProductPrice(price: number): void {
+
+    price = (this.esString(price) || this.esStringVacio(price)) ? 0 : price;
     //recupero el producto a editar
     let product = this.receiptDetails.filter(
       detail => detail.productId == this.editIdProductPrice)[0];
+
+    if (!product) return;
 
     this.receiptDetails.filter(
       detail => detail.productId == this.editIdProductPrice
@@ -673,6 +677,14 @@ export class ReceiptEditComponent extends BaseComponent implements OnInit {
     )[0].subTotal = product.quantity * price;
 
     this.totalCalculate();
+  }
+
+  esString(valor: unknown): boolean {
+    return typeof valor === "string";
+  }
+
+  esStringVacio(valor: unknown): boolean {
+    return typeof valor === "string" && valor.trim() === "";
   }
 }
 
