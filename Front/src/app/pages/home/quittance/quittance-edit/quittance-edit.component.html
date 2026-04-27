@@ -171,8 +171,8 @@
                   (click)="startEditProductPrice(data.ownCode)">
                   {{ this.currencyFormat(data.price) }}
                 </div>
-                <nz-input-number [hidden]="editIdProductPrice !== data.ownCode" [nzMin]="1" [(ngModel)]="data.price"
-                  (nzBlur)="stopEditProductPrice()" (ngModelChange)="changeProductPrice($event)"></nz-input-number>
+                <nz-input-number [hidden]="editIdProductPrice !== data.ownCode" [nzMin]="0" [(ngModel)]="data.price"
+                  (nzBlur)="stopEditProductPrice()" (ngModelChange)="changeProductPrice($event || 0)"></nz-input-number>
               </td>
               <td [nzAlign]="'right'">
                 {{ this.currencyFormat(data.subTotal) }}

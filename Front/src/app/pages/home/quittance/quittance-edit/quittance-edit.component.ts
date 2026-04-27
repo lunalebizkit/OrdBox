@@ -546,9 +546,13 @@ export class QuittanceEditComponent extends BaseComponent implements OnInit {
   }
 
   changeProductPrice(price: number): void {
+
+    price = (this.esString(price) || this.esStringVacio(price)) ? 0 : price;
     //recupero el producto a editar
     let product = this.quittanceProductDetailsGrid.filter(
       detail => detail.ownCode == this.editIdProductPrice)[0];
+
+    if (!product) return;
 
     this.quittanceProductDetailsGrid.filter(
       detail => detail.ownCode == this.editIdProductPrice
@@ -605,4 +609,12 @@ export class QuittanceEditComponent extends BaseComponent implements OnInit {
       console.error(error);
     }
   };
+
+esString(valor: unknown): boolean {
+  return typeof valor === "string";
+}
+
+esStringVacio(valor: unknown): boolean {
+  return typeof valor === "string" && valor.trim() === "";
+}
 }
