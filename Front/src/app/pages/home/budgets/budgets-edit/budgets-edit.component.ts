@@ -502,7 +502,7 @@ export class BudgetsEditComponent extends BaseComponent implements OnInit {
   handleOk() {
     try {
       this.budgetDetailsTest = this.budgetDetailsList.filter(element => element.ownCode != this.popupComponent.elementSelectedToDelete);
-      this.budgetDetails = this.budgetDetails.filter(element => element.id != this.popupComponent.elementSelectedToDelete);
+      this.budgetDetails = this.budgetDetails.filter(element => element.productId != this.popupComponent.elementSelectedToDelete);
       this.popupComponent.isDeleteConfirmationVisible = false;
 
       if (this.budgetDetailsList.length == 0) {
@@ -589,10 +589,14 @@ export class BudgetsEditComponent extends BaseComponent implements OnInit {
   }
 
   changeProductPrice(price: number): void {
+
+    price = (this.esString(price) || this.esStringVacio(price)) ? 0 : price;
     //recupero el producto a editar
     let product = this.budgetDetailsList.filter(
       detail => detail.ownCode == this.editIdProductPrice)[0];
-
+    
+    if (!product) return;
+    
     this.budgetDetailsList.filter(
       detail => detail.ownCode == this.editIdProductPrice
     )[0].price = price;
@@ -665,4 +669,12 @@ export class BudgetsEditComponent extends BaseComponent implements OnInit {
       }
     })
   }
+
+esString(valor: unknown): boolean {
+  return typeof valor === "string";
+}
+
+esStringVacio(valor: unknown): boolean {
+  return typeof valor === "string" && valor.trim() === "";
+}
 }
