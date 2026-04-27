@@ -690,9 +690,13 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
   }
 
   changeProductPrice(price: number): void {
+
+    price = (this.esString(price) || this.esStringVacio(price)) ? 0 : price;
     //recupero el producto a editar
     let product = this.invoiceDetailsList.filter(
       detail => detail.ownCode == this.editIdProductPrice)[0];
+      
+    if (!product) return;
 
     this.invoiceDetailsList.filter(
       detail => detail.ownCode == this.editIdProductPrice
@@ -771,5 +775,12 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
     };
   }
 
+  esString(valor: unknown): boolean {
+    return typeof valor === "string";
+  }
+
+  esStringVacio(valor: unknown): boolean {
+    return typeof valor === "string" && valor.trim() === "";
+  }
 }
 
