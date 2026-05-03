@@ -167,10 +167,12 @@ namespace Kiltex.SistemaGestion.Api.Controllers.PDF
             Paragraph encabezado = await _service.Encabezado(dtoEncabezado);
             Paragraph Cabecera = await _service.Cabecera(dtoCabecera);
             Paragraph Detalle = await _service.DetallePresupuestoYRemito(dtoDetalle);
+            Paragraph Observacion = await _service.Observacion(dtoCabecera.Observacion);
             Paragraph paragraph = new Paragraph();
             paragraph.Add(encabezado);
             paragraph.Add(Cabecera);
             paragraph.Add(Detalle);
+            paragraph.Add(Observacion);
             var contenido = await _service.Imprimir(paragraph);
             return File(contenido.Data, "application/pdf", $"Presupuesto_{DateTime.Now:dd-MM-yyyy}.pdf");
         }
@@ -210,10 +212,12 @@ namespace Kiltex.SistemaGestion.Api.Controllers.PDF
             Paragraph encabezado = await _service.Encabezado(dtoEncabezado);
             Paragraph Cabecera = await _service.Cabecera(dtoCabecera);
             Paragraph Detalle = await _service.DetallePresupuestoYRemito(dtoDetalle);
+            Paragraph Observacion = await _service.Observacion(dtoCabecera.Observacion);
             Paragraph paragraph = new Paragraph();
             paragraph.Add(encabezado);
             paragraph.Add(Cabecera);
             paragraph.Add(Detalle);
+            paragraph.Add(Observacion);
             var contenido = await _service.Imprimir(paragraph);
             return File(contenido.Data, "application/pdf", $"Remito_{DateTime.Now:dd-MM-yyyy}.pdf");
         }

@@ -16,6 +16,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System.Data;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Kiltex.SistemaGestion.Services.Services
@@ -292,6 +293,10 @@ namespace Kiltex.SistemaGestion.Services.Services
                 throw;
             }
         }
+        private static string TruncateString(string value, int lenght)
+        {
+            return value.Substring(0, Math.Min(value.Length, lenght));
+        }
 
         #endregion
 
@@ -312,7 +317,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             {
 
                 MemoryStream ms = new MemoryStream();
-                TextWriter tw = new StreamWriter(ms);
+                TextWriter tw = new StreamWriter(ms, Encoding.GetEncoding("ISO-8859-1"));
 
                 foreach (Invoice item in query)
                 {
@@ -565,15 +570,19 @@ namespace Kiltex.SistemaGestion.Services.Services
                 try
                 {
                     MemoryStream ms = new MemoryStream();
-                    TextWriter tw = new StreamWriter(ms);
+                    TextWriter tw = new StreamWriter(ms, Encoding.GetEncoding("ISO-8859-1"));
 
-                    List<ArchivoTxtDto> archivoTxtDtos = new List<ArchivoTxtDto>();
+                    List<string> archivoTxtDtos = new List<string>();
 
                     foreach (Invoice invoice in query)
                     {
                         ArchivoTxtDto archivoTxtDto = new ArchivoTxtDto();
+                        string newIvaLine = string.Empty;
 
-                        archivoTxtDto.FechaDeComprobante = invoice.DateTime.ToString("yyyyMMdd");
+                        string nombreCompletoComprador = invoice.CustomerName.ToUpper().Trim();
+                        string importeTotal = invoice.Total.ToString().Replace(",", "").Replace(".", "");
+
+                        archivoTxtDto.FechaDeComprobante = TruncateString(invoice.DateTime.ToString("yyyyMMdd"), 8);
 
                         if (invoice.Type == (int)ETypeReceipt.B || invoice.Type == (int)ETypeReceipt.EXENTO)
                         {
@@ -585,8 +594,8 @@ namespace Kiltex.SistemaGestion.Services.Services
                             archivoTxtDto.TipoDeComprobante = CustomizationConstant.FacturaA;
                         }
 
-                        archivoTxtDto.NumeroDeComprobante = invoice.InvoiceNumber.ToString().PadLeft(20, '0');
-                        archivoTxtDto.NumeroDeComprobanteHasta = invoice.InvoiceNumber.ToString().PadLeft(20, '0');
+                        archivoTxtDto.NumeroDeComprobante = TruncateString(invoice.InvoiceNumber.ToString().PadLeft(20, '0'), 20);
+                        archivoTxtDto.NumeroDeComprobanteHasta = TruncateString(invoice.InvoiceNumber.ToString().PadLeft(20, '0'), 20);
 
                         if (invoice.CustomerCuit.Length == 8)
                         {
@@ -608,45 +617,21 @@ namespace Kiltex.SistemaGestion.Services.Services
                         var cantidadAlicuota = invoice.InvoiceDetails.Select(y => y.Iva).Distinct().Count();
                         archivoTxtDto.AlicuotaIva = cantidadAlicuota.ToString();
 
-                        archivoTxtDto.NumeroDeIdentificacionComprador = invoice.CustomerCuit == CustomizationConstant.DefaultCUIT ? CustomizationConstant.DefaultNoCUIT : invoice.CustomerCuit.Trim().ToString().PadLeft(20, '0');
-                        archivoTxtDto.NombreCompletoComprador = invoice.CustomerName.ToUpper().Trim().ToString().PadRight(30, ' ');
+                        archivoTxtDto.NumeroDeIdentificacionComprador = invoice.CustomerCuit == CustomizationConstant.DefaultCUIT ? CustomizationConstant.DefaultNoCUIT : TruncateString(invoice.CustomerCuit.Trim().ToString().PadLeft(20, '0'), 20);
+                        archivoTxtDto.NombreCompletoComprador = TruncateString(nombreCompletoComprador.PadRight(30, ' '), 30);
 
-                        archivoTxtDto.ImporteTotal = invoice.Total.ToString().Replace(",", "").Replace(".", "");
-                        archivoTxtDto.ImporteTotal = archivoTxtDto.ImporteTotal.PadLeft(15, '0');
+                        archivoTxtDto.ImporteTotal = TruncateString(importeTotal.PadLeft(15, '0'), 15);
 
-                        archivoTxtDto.FechaDePago = invoice.DateTime.ToString("yyyyMMdd");
-                        archivoTxtDtos.Add(archivoTxtDto);
+                        archivoTxtDto.FechaDePago = TruncateString(invoice.DateTime.ToString("yyyyMMdd"), 8);
+
+                        newIvaLine = $"{archivoTxtDto.FechaDeComprobante}{archivoTxtDto.TipoDeComprobante}{archivoTxtDto.PuntoDeVenta}{archivoTxtDto.NumeroDeComprobante}{archivoTxtDto.NumeroDeComprobanteHasta}{archivoTxtDto.CodigoDocumento}{archivoTxtDto.NumeroDeIdentificacionComprador}{archivoTxtDto.NombreCompletoComprador}{archivoTxtDto.ImporteTotal}{archivoTxtDto.NetoGravado}{archivoTxtDto.NoCategorizados}{archivoTxtDto.OperacionesExentas}{archivoTxtDto.ImpuestosNacionales}{archivoTxtDto.IngresosBrutos}{archivoTxtDto.ImpuestosMunicipales}{archivoTxtDto.ImpuestosInternos}{archivoTxtDto.CodigoDeMoneda}{archivoTxtDto.TipoDeCambio}{archivoTxtDto.AlicuotaIva}{archivoTxtDto.CodigoDeOperacion}{archivoTxtDto.OtrosTributos}{archivoTxtDto.FechaDePago}";
+
+                        archivoTxtDtos.Add(TruncateString(newIvaLine.Trim(), 266));
                     }
 
-                    foreach (ArchivoTxtDto item in archivoTxtDtos)
+                    foreach (string item in archivoTxtDtos)
                     {
-                        await tw.WriteAsync
-                            (
-                                item.FechaDeComprobante +
-                                item.TipoDeComprobante +
-                                item.PuntoDeVenta +
-                                item.NumeroDeComprobante +
-                                item.NumeroDeComprobanteHasta +
-                                item.CodigoDocumento +
-                                item.NumeroDeIdentificacionComprador +
-                                item.NombreCompletoComprador +
-                                item.ImporteTotal +
-                                item.NetoGravado +
-                                item.NoCategorizados +
-                                item.OperacionesExentas + //consultar exento
-                                item.ImpuestosNacionales +
-                                item.IngresosBrutos +
-                                item.ImpuestosMunicipales +
-                                item.ImpuestosInternos +
-                                item.CodigoDeMoneda +
-                                item.TipoDeCambio +
-                                item.AlicuotaIva +
-                                item.CodigoDeOperacion +
-                                item.OtrosTributos +
-                                item.FechaDePago +
-                                '\n'
-
-                           );
+                        await tw.WriteAsync(item + "\r\n");
                     }
 
                     tw.Flush();
@@ -728,6 +713,9 @@ namespace Kiltex.SistemaGestion.Services.Services
 
         #endregion
 
+        #region Private
 
+
+        #endregion
     }
 }
