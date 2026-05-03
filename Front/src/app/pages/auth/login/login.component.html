@@ -5,11 +5,7 @@
         <div class="overlay">
           <img src="../../../../assets/img/OrdboXLogo.png" alt="logo" />
           <img src="../../../../assets/img/OrdboXLogo.png"  alt="logo1" class="logo1"/> 
-          <p class="copyright">
-            <a href="http://kiltex.com.ar" target="_blank" rel="noreferrer">
-                Gestion de Stock ©{{getYear()}} 
-            </a>
-          </p>
+          
         </div>
       </div>
       <div nz-col class="login-container" nzXs="24" nzLg="12">       
@@ -36,5 +32,12 @@
           </form>
         </div>
       </div>
+      <p class="copyright">
+        <a href="http://kiltex.com.ar" target="_blank" rel="noreferrer">
+            Gestion de Stock ©{{getYear() }} 
+        </a><span style="padding-left: 4px;">
+          - v{{ getVersion() }}
+        </span>
+      </p>
     </div>
   </div>

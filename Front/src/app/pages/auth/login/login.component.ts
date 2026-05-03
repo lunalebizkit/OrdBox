@@ -5,7 +5,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { Subscription } from 'rxjs';
 import { SecurityAuthService } from '../security-auth.service';
 import { AuthService } from 'src/app/common/auth/interceptors/auth.service';
-import { RolesConst } from 'src/app/common/auth/models/permission-rol.enum';
+import myData from 'package.json';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -106,5 +106,9 @@ export class LoginComponent implements OnInit, OnDestroy {
       this.singleExecutionSubscription.unsubscribe();
     }
     this.login();
+  }    
+  
+  getVersion(){
+    return myData.version;
   }
 }
