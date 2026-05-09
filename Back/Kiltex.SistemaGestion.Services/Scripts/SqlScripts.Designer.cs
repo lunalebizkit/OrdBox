@@ -136,6 +136,32 @@ namespace Kiltex.SistemaGestion.Services.Scripts {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a DECLARE @DesiredOffSet VARCHAR(6) = &apos;+00:00&apos;;
+        ///
+        ///SELECT [i].[id]
+        ///      ,[i].[invoice_number] AS [InvoiceNumber]
+        ///      ,[i].[customer_name] AS [CustomerName]
+        ///      ,[i].[customer_cuit] AS [CustomerCuit]
+        ///      ,[i].[dateTime]
+        ///      ,[i].[total]
+        ///      ,[i].[iva_total] AS [IvaTotal]
+        ///      ,[i].[type]
+        ///	  ,[id].[id]
+        ///	  ,[id].[invoice_id] AS [InvocieId]
+        ///      ,[id].[product_id] AS [ProductId]
+        ///      ,[id].[product_code]
+        ///      ,[id].[quantity]
+        ///      ,[id].[price]
+        ///      ,[id].[iva]
+        ///  FROM [invoice] [i] [resto de la cadena truncado]&quot;;.
+        /// </summary>
+        internal static string GetInvoiceByDate {
+            get {
+                return ResourceManager.GetString("GetInvoiceByDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a  SELECT (1) FROM [product] P
         ///  
         ///  WHERE P.id = @productid.

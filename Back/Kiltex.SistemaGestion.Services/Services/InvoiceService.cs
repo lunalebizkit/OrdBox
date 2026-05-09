@@ -276,6 +276,42 @@ namespace Kiltex.SistemaGestion.Services.Services
             }
         }
 
+        public IEnumerable<Invoice> GetInvoiceByDate(DateTime from, DateTime to, CancellationToken ct = default)
+        {
+            try
+            {
+                IEnumerable<Invoice> invoice = new List<Invoice>();
+                Dictionary<long, Invoice> invoiceDictionary = new Dictionary<long, Invoice>();
+                string invoicesScript = SqlScripts.GetInvoiceByDate;
+
+                using (var connection = new SqlConnection(ConnectionString))
+                {
+                    invoice = connection.Query<Invoice, InvoiceDetail, Invoice>
+                        (sql: invoicesScript,
+                            (invoice, detail) =>
+                            {
+                            if (!invoiceDictionary.TryGetValue(invoice.Id, out Invoice inv)) 
+                                {
+                                    inv = invoice;
+                                    invoiceDictionary.Add(inv.Id, inv);
+                                }
+                                inv.InvoiceDetails.Add(detail);
+
+                                return inv;
+                            },
+                        splitOn: "id",
+                        param: new { @textdatefrom = from, @textdateto = to });
+                }
+
+                return invoiceDictionary.Values.ToList();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
+                throw;
+            }
+        }
+
         #region Private Method
         private byte GetUserAdminId()
         {
@@ -302,14 +338,8 @@ namespace Kiltex.SistemaGestion.Services.Services
 
         #region Alicuota Digital
 
-        public async Task<OperationResponse<byte[]>> AlicuotaTxt(DateTime from, DateTime to, CancellationToken ct = default)
+        public async Task<OperationResponse<byte[]>> AlicuotaTxt(IEnumerable<Invoice> invoices, CancellationToken ct = default)
         {
-            var query = await _contextSql
-                           .Invoices
-                           .Include(s => s.InvoiceDetails)
-                           .AsNoTracking()
-                           .Where(x => x.DateTime.Date >= from && x.DateTime.Date <= to).ToArrayAsync();
-
 
             StringWriter OutPutFile = new StringWriter();
             List<AlicuotaIvaDto> alicuotaIvaDtos = new List<AlicuotaIvaDto>();
@@ -319,8 +349,12 @@ namespace Kiltex.SistemaGestion.Services.Services
                 MemoryStream ms = new MemoryStream();
                 TextWriter tw = new StreamWriter(ms, Encoding.GetEncoding("ISO-8859-1"));
 
-                foreach (Invoice item in query)
+                foreach (Invoice item in invoices)
                 {
+                    bool tieneIva10 = item.InvoiceDetails.Any(d => d.Iva == 10.5m);
+                    bool tieneIva21 = item.InvoiceDetails.Any(d => d.Iva == 21m);
+                    bool tieneIva27 = item.InvoiceDetails.Any(d => d.Iva == 27m);
+
                     decimal totalIva10 = 0;
                     decimal totalBaseIva10 = 0;
                     decimal totalIva21 = 0;
@@ -361,7 +395,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                         }
                      }
                     
-                    if (totalIva10 > 0m || totalBaseIva10B > 0m) 
+                    if (tieneIva10) 
                     {
 
                         AlicuotaIvaDto alicuotaIva = new AlicuotaIvaDto();
@@ -414,7 +448,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                         alicuotaIvaDtos.Add(alicuotaIva);
                     }
                     
-                    if (totalIva21 > 0m || totalBaseIva21B > 0m) 
+                    if (tieneIva21) 
                     {
                         AlicuotaIvaDto alicuotaIva = new AlicuotaIvaDto();
 
@@ -464,7 +498,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                         alicuotaIvaDtos.Add(alicuotaIva);
                     }
                     
-                    if (totalIva27 > 0m || totalBaseIva27B > 0m) 
+                    if (tieneIva27) 
                     {
                         AlicuotaIvaDto alicuotaIva = new AlicuotaIvaDto();
 
@@ -556,14 +590,8 @@ namespace Kiltex.SistemaGestion.Services.Services
 
 
         #region IvaDigital
-        public async Task<OperationResponse<byte[]>> ArchivoTxt(DateTime from, DateTime to, CancellationToken ct = default)
-        {
-            var query = await _contextSql
-                            .Invoices
-                            .Include(s => s.InvoiceDetails)
-                            .AsNoTracking()
-                            .Where(x => x.DateTime.Date >= from && x.DateTime.Date <= to).ToArrayAsync();
-
+        public async Task<OperationResponse<byte[]>> ArchivoTxt(IEnumerable<Invoice> invoices, CancellationToken ct = default)
+        { 
             StringWriter OutPutFile = new StringWriter();
 
             {
@@ -574,7 +602,7 @@ namespace Kiltex.SistemaGestion.Services.Services
 
                     List<string> archivoTxtDtos = new List<string>();
 
-                    foreach (Invoice invoice in query)
+                    foreach (Invoice invoice in invoices)
                     {
                         ArchivoTxtDto archivoTxtDto = new ArchivoTxtDto();
                         string newIvaLine = string.Empty;
@@ -617,7 +645,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                         var cantidadAlicuota = invoice.InvoiceDetails.Select(y => y.Iva).Distinct().Count();
                         archivoTxtDto.AlicuotaIva = cantidadAlicuota.ToString();
 
-                        archivoTxtDto.NumeroDeIdentificacionComprador = invoice.CustomerCuit == CustomizationConstant.DefaultCUIT ? CustomizationConstant.DefaultNoCUIT : TruncateString(invoice.CustomerCuit.Trim().ToString().PadLeft(20, '0'), 20);
+                        archivoTxtDto.NumeroDeIdentificacionComprador = invoice.CustomerCuit == CustomizationConstant.DefaultCUIT ? TruncateString(CustomizationConstant.DefaultNoCUIT.PadLeft(20, '0'), 20) : TruncateString(invoice.CustomerCuit.Trim().ToString().PadLeft(20, '0'), 20);
                         archivoTxtDto.NombreCompletoComprador = TruncateString(nombreCompletoComprador.PadRight(30, ' '), 30);
 
                         archivoTxtDto.ImporteTotal = TruncateString(importeTotal.PadLeft(15, '0'), 15);
