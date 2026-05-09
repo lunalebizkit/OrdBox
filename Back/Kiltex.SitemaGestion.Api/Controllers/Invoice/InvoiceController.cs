@@ -1,5 +1,6 @@
 ﻿using Kiltex.SistemaGestion.Api.Filter;
 using Kiltex.SistemaGestion.Domain.Enum;
+using Kiltex.SistemaGestion.Domain.Model;
 using Kiltex.SistemaGestion.Services.Common;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
 using Kiltex.SistemaGestion.Services.Services;
@@ -38,9 +39,11 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Invoice
         [AllowAccess(Permission = new EPermission[] { EPermission.GetInvoice })]
         public async Task<IActionResult> ArchivoTxt([FromQuery] DateTime from, DateTime to)
         {
-            var ivaDigital = await _service.ArchivoTxt(from, to).ConfigureAwait(false);
+            var invoices = _service.GetInvoiceByDate(from, to);
 
-            var ivaAlicuota = await _service.AlicuotaTxt(from, to).ConfigureAwait(false);
+            var ivaDigital = await _service.ArchivoTxt(invoices).ConfigureAwait(false);
+
+            var ivaAlicuota = await _service.AlicuotaTxt(invoices).ConfigureAwait(false);
 
             if (ivaDigital.Data == null || ivaAlicuota.Data == null)
             {
@@ -96,7 +99,8 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Invoice
         [AllowAccess(Permission = new EPermission[] {EPermission.GetInvoice})]
         public async Task<IActionResult> AlicuotaIvaTxt([FromQuery] DateTime from, DateTime to)
         {
-            var content = await _service.AlicuotaTxt(from, to).ConfigureAwait(false);
+            var invoices = _service.GetInvoiceByDate(from, to);
+            var content = await _service.AlicuotaTxt(invoices).ConfigureAwait(false);
             return File(content.Data, "text/plain", $"ListaReporteAlicuotaIva{DateTime.Now:dd-MM-yyyy-hh:mm:ss}.txt");
         }
 

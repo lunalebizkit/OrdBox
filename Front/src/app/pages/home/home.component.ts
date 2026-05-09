@@ -2,8 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from 'src/app/common/auth/interceptors/auth.service';
 import { RolesConst } from 'src/app/common/auth/models/permission-rol.enum';
-import myData from 'package.json';
-
 
 @Component({
   selector: 'app-home',
@@ -37,10 +35,6 @@ export class HomeComponent implements OnInit {
   getUser(){
     this.usuario=this.token.currentUser.userName;
     this.permiso= this.token.currentUser.permission;
-  }
-
-  getVersion(){
-    return myData.version;
   }
 
   logOut() {
