@@ -23,115 +23,111 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
         }
 
 
-        private async Task<T> RunCommand<T>(object request,bool reintentar = true, int sleep = 1500)
+        private async Task<T> RunCommand<T>(object request,bool reintentar = true, int retryWait = 1500)
         {
-            int retryWait = 1500;
             bool success = false;
-            string responseBody;
+            string responseBody = string.Empty;
             byte getStatusRetry = 0;
             byte getStatusMaxRetry = 10;
             try
             {
-                    var data = JsonConvert.SerializeObject(request);
+                var data = JsonConvert.SerializeObject(request);
 
-                    var requestTypeName = request.GetType().Name;
+                var requestTypeName = request.GetType().Name;
 
-                    _logger.LogRequestAndResponseInfo($"-----------request de Impresora---------{DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
-                    _logger.LogRequestAndResponseInfo(data);
+                _logger.LogRequestAndResponseInfo($"-----------request de Impresora---------{DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")}");
+                _logger.LogRequestAndResponseInfo(data);
 
-                    using HttpClient client = new();
+                using HttpClient client = new();
 
-                    var requestPrinter = new HttpRequestMessage
+                var requestPrinter = new HttpRequestMessage
+                {
+                    Method = HttpMethod.Get,
+                    RequestUri = new Uri(_config.Ip),
+                    Content = new StringContent(data, Encoding.UTF8, "application/json"),
+                };
+
+                var response = await client.SendAsync(requestPrinter).ConfigureAwait(false);
+
+                response.EnsureSuccessStatusCode();
+
+                responseBody = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+                _logger.LogRequestAndResponseInfo("-----------Response de Impresora---------");
+                _logger.LogRequestAndResponseInfo(responseBody);
+
+                var responseDeserialized = JsonConvert.DeserializeObject<T>(responseBody);
+
+                if (responseDeserialized != null)
+                {
+                    using JsonDocument document = JsonDocument.Parse(responseBody);
+
+                    if (document.RootElement.TryGetProperty("ControladorOcupado", out JsonElement controladorOcupado))
                     {
-                        Method = HttpMethod.Get,
-                        RequestUri = new Uri(_config.Ip),
-                        Content = new StringContent(data, Encoding.UTF8, "application/json"),
-                    };
+                        using JsonDocument requestType = JsonDocument.Parse(data);
 
-                    var response = await client.SendAsync(requestPrinter).ConfigureAwait(false);
-
-                    response.EnsureSuccessStatusCode();
-
-                    responseBody = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-
-                    _logger.LogRequestAndResponseInfo("-----------Response de Impresora---------");
-                    _logger.LogRequestAndResponseInfo(responseBody);
-
-                    var responseDeserialized = JsonConvert.DeserializeObject<T>(responseBody);
-
-                    if (responseDeserialized != null)
-                    {
-                        using JsonDocument document = JsonDocument.Parse(responseBody);
-
-                    // Buscamos si existe "ControladorOcupado" en el nivel raíz
-                        if (document.RootElement.TryGetProperty("ControladorOcupado", out JsonElement controladorOcupado))
+                        if (requestType.RootElement.TryGetProperty(requestTypeName, out JsonElement abrirDocument))
                         {
-                            using JsonDocument requestType = JsonDocument.Parse(data);
-
-                            if (requestType.RootElement.TryGetProperty(requestTypeName, out JsonElement abrirDocument))
+                            do
                             {
-                                do
+                                responseBody = await GetStatusForPrintWaiting();
+
+                                var responseBodyConverted = JsonConvert.DeserializeObject<T>(responseBody);
+
+                                if (responseBodyConverted != null)
                                 {
-                                    responseBody = await GetStatusForPrintWaiting();
+                                    using JsonDocument statusResponse = JsonDocument.Parse(responseBody);
 
-                                    var responseBodyConverted = JsonConvert.DeserializeObject<T>(responseBody);
-
-                                    if (responseBodyConverted != null)
+                                    if (statusResponse.RootElement.TryGetProperty(requestTypeName, out JsonElement abrirDocumento))
                                     {
-                                        using JsonDocument statusResponse = JsonDocument.Parse(responseBody);
-
-                                        if (statusResponse.RootElement.TryGetProperty(requestTypeName, out JsonElement abrirDocumento))
+                                        switch ((string)requestTypeName)
                                         {
-                                            switch ((string)requestTypeName)
-                                            {
-                                                case "ObtenerPrimerBloqueReporteElectronico":
-                                                case "ObtenerSiguienteBloqueReporteElectronico":
-                                                    var bloqueElectronicoResponse = JsonConvert.DeserializeObject<DtoResponseObtenerReporteElectronico>(responseBody);
-                                                    var body = bloqueElectronicoResponse.BloqueElectronico;
+                                            case "ObtenerPrimerBloqueReporteElectronico":
+                                            case "ObtenerSiguienteBloqueReporteElectronico":
+                                                var bloqueElectronicoResponse = JsonConvert.DeserializeObject<DtoResponseObtenerReporteElectronico>(responseBody);
+                                                var body = bloqueElectronicoResponse?.BloqueElectronico;
 
-                                                    if (body != null && !string.IsNullOrEmpty(body?.Informacion))
-                                                    {
-                                                        success = true;
-                                                        break;
-                                                    }
-                                                    continue;
+                                                if (body != null && !string.IsNullOrEmpty(body?.Informacion))
+                                                {
+                                                    success = true;
+                                                    break;
+                                                }
+                                                continue;
 
-                                                case "AbrirDocumento":
-                                                    // Ahora buscamos si dentro de "AbrirDocumento" existe "NumeroComprobante"
-                                                    if (abrirDocumento.TryGetProperty("NumeroComprobante", out JsonElement numeroComprobante))
-                                                    {
-                                                        success = true;
-                                                        break;
-                                                    }
-                                                    continue;
+                                            case "AbrirDocumento":
+                                                if (abrirDocumento.TryGetProperty("NumeroComprobante", out JsonElement numeroComprobante))
+                                                {
+                                                    success = true;
+                                                    break;
+                                                }
+                                                continue;
 
-                                                default:
-                                                    continue;
+                                            default:
+                                                continue;
 
-                                            }
-
-                                            success = true;                                            
                                         }
-                                    }
 
-                                    if (success)
-                                    {
-                                        break;
+                                        success = true;                                            
                                     }
+                                }
 
-                                    getStatusRetry++;
-                                    Thread.Sleep(retryWait);
-                                } while (!success && getStatusRetry < getStatusMaxRetry);
-                            }
-                        }            
+                                if (success)
+                                {
+                                    break;
+                                }
+
+                                getStatusRetry++;
+                                Thread.Sleep(retryWait);
+                            } while (!success && getStatusRetry < getStatusMaxRetry);
+                        }
+                    }            
                             
-                    }                
+                }                
                 
-                return JsonConvert.DeserializeObject<T>(responseBody);
+            return JsonConvert.DeserializeObject<T>(responseBody);
             }
             catch (Exception ex)
             {
-
                 _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
                 return default;
             }
@@ -436,13 +432,13 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
         public async Task<DtoResponseObtenerReporteElectronico> DownloadPrintReport(ObtenerPrimerBloqueReporteElectronico obtenerPrimerBloque)
         {
             return await RunCommand<DtoResponseObtenerReporteElectronico>(
-               obtenerPrimerBloque);
+               obtenerPrimerBloque, true, 6000);
         }
         
         public async Task<DtoResponseObtenerSiguienteBloqueReporteElectronico> DownloadNextBloquePrintReport(DtoObtenerSiguienteBloqueReporteElectronico obtenerSiguienteBloque)
         {
             return await RunCommand<DtoResponseObtenerSiguienteBloqueReporteElectronico>(
-               obtenerSiguienteBloque);
+               obtenerSiguienteBloque, true, 6000);
         }
 
         #region Private
