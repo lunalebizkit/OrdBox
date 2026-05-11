@@ -27,15 +27,15 @@ namespace Kiltex.SistemaGestion.Domain.Model
         {
             switch (tipo)
             {
-                case (int)ePriceProduct.CardSalePercentage:
+                case (int)EPriceProduct.CardSalePercentage:
                     this.CardSalePercentage = value;
                     this.CardSalePrice =this.PurchasePrice * (1 + (this.CardSalePercentage / 100.00m));
                     break;
-                case (int)ePriceProduct.CashSalePercentage:
+                case (int)EPriceProduct.CashSalePercentage:
                     this.CashSalePercentage = value;
                     this.CashSalePrice = this.PurchasePrice * (1 + (this.CashSalePercentage / 100.00m));
                     break;
-                case (int)ePriceProduct.SalePercentage:
+                case (int)EPriceProduct.SalePercentage:
                     this.SalePercentage = (int)value;
                     this.SalePrice = this.PurchasePrice * (1 + (this.SalePercentage / 100.00m));
                     break;
