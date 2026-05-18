@@ -1,7 +1,8 @@
-
 using Kiltex.SistemaGestion.Domain;
 using Kiltex.SistemaGestion.SDK.Error;
 using Kiltex.SistemaGestion.SDK.Extension.Jwt;
+using Kiltex.SistemaGestion.Services.ARCA;
+using Kiltex.SistemaGestion.Services.ARCA.Interface;
 using Kiltex.SistemaGestion.Services.ImpresoraFiscal;
 using Kiltex.SistemaGestion.Services.ImpresoraFiscal.Printer250F;
 using Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F;
@@ -59,6 +60,7 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddSingleton<IPrinter, PrinterF250F>();
 builder.Services.AddSingleton<PrinterStatus>(p => builder.Configuration.GetSection("PrinterStatus").Get<PrinterStatus>());
 builder.Services.AddSingleton<PrinterConfig>(p => builder.Configuration.GetSection("PrinterConfig").Get<PrinterConfig>());
+builder.Services.AddSingleton<IArcaIntegracion, ArcaIntegracionService>();
 builder.Services.AddAutoMapper(typeof(UserMapperProfile));
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<RolService>();
