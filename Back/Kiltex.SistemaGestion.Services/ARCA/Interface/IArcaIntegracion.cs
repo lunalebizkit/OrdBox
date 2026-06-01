@@ -7,4 +7,3 @@ namespace Kiltex.SistemaGestion.Services.ARCA.Interface
         Task<LoginTicketResponseDto> ObtenerLoginTicketAsync(string pfxPath, string pfxPassword, string service, string wsaaUrl, CancellationToken ct = default);
     }
 }
-}

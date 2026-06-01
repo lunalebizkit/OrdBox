@@ -5,7 +5,7 @@
         public string CuitEmisor { get; set; } = string.Empty; // usar string
         public int PuntoVenta { get; set; }
         public int TipoComprobante { get; set; }
-        public long NumeroComprobante { get; set; } // puede ser grande
+        public long NumeroComprobante { get; set; }
         public DateTime FechaEmision { get; set; }
         public string Moneda { get; set; } = "PES"; // ejemplo
         public decimal ImporteTotal { get; set; }

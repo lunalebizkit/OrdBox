@@ -2,6 +2,7 @@ using Kiltex.SistemaGestion.Domain;
 using Kiltex.SistemaGestion.SDK.Error;
 using Kiltex.SistemaGestion.SDK.Extension.Jwt;
 using Kiltex.SistemaGestion.Services.ARCA;
+using Kiltex.SistemaGestion.Services.ARCA.Dto;
 using Kiltex.SistemaGestion.Services.ARCA.Interface;
 using Kiltex.SistemaGestion.Services.ImpresoraFiscal;
 using Kiltex.SistemaGestion.Services.ImpresoraFiscal.Printer250F;
@@ -11,7 +12,6 @@ using Kiltex.SistemaGestion.Services.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.OpenApi.Models;
 using Serilog;
 
@@ -60,6 +60,7 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddSingleton<IPrinter, PrinterF250F>();
 builder.Services.AddSingleton<PrinterStatus>(p => builder.Configuration.GetSection("PrinterStatus").Get<PrinterStatus>());
 builder.Services.AddSingleton<PrinterConfig>(p => builder.Configuration.GetSection("PrinterConfig").Get<PrinterConfig>());
+builder.Services.AddSingleton<ArcaConfig>(p => builder.Configuration.GetSection("ArcaString").Get<ArcaConfig>());
 builder.Services.AddSingleton<IArcaIntegracion, ArcaIntegracionService>();
 builder.Services.AddAutoMapper(typeof(UserMapperProfile));
 builder.Services.AddScoped<UserService>();
