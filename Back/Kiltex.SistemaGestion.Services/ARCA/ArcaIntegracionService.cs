@@ -1,6 +1,14 @@
-﻿using Kiltex.SistemaGestion.Services.ARCA.Dto;
+﻿using AutoMapper;
+using DocumentFormat.OpenXml.InkML;
+using Kiltex.SistemaGestion.Domain;
+using Kiltex.SistemaGestion.Domain.Model;
+using Kiltex.SistemaGestion.SDK.Error;
+using Kiltex.SistemaGestion.Services.ARCA.Dto;
 using Kiltex.SistemaGestion.Services.ARCA.Dto.Response;
 using Kiltex.SistemaGestion.Services.ARCA.Interface;
+using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
+using Kiltex.SistemaGestion.Services.Services;
+using Microsoft.Extensions.Configuration;
 using System.Security;
 using System.Security.Cryptography.Pkcs;
 using System.Security.Cryptography.X509Certificates;
@@ -9,13 +17,12 @@ using System.Xml;
 
 namespace Kiltex.SistemaGestion.Services.ARCA
 {
-    public class ArcaIntegracionService : IArcaIntegracion
+    public class ArcaIntegracionService : BaseService, IArcaIntegracion
     {
-        private static long _globalUniqueId = DateTime.UtcNow.Second;
         private readonly HttpClient _httpClient;
         private readonly ArcaConfig _arcaConfig;
 
-        public ArcaIntegracionService(ArcaConfig arcaConfig, HttpClient? httpClient = null)
+        public ArcaIntegracionService(ErrorManager logger, DBContext context, IMapper mapper, IConfiguration configuration, ArcaConfig arcaConfig, HttpClient? httpClient = null) : base(logger, context, mapper, configuration)
         {
             _httpClient = httpClient ?? new HttpClient();
             _arcaConfig = arcaConfig;
@@ -23,6 +30,8 @@ namespace Kiltex.SistemaGestion.Services.ARCA
 
         public async Task<LoginTicketResponseDto> ObtenerLoginTicketAsync(string pfxPath, string pfxPassword, string service, string wsaaUrl, CancellationToken ct = default)
         {
+            var integrationLog = new DtoRequestIntegrationLog();
+
             pfxPassword = _arcaConfig.PfxPassword;
             pfxPath = _arcaConfig.PfxPath;
             wsaaUrl = "https://wsaahomo.afip.gov.ar/ws/services/LoginCms";
@@ -37,7 +46,10 @@ namespace Kiltex.SistemaGestion.Services.ARCA
             var xmlRequest = BuildLoginTicketRequestXml(uniqueId, generationTime, expirationTime, service);
             var cmsFirmadoBase64 = SignXmlCmsBase64(xmlRequest, pfxPath, pfxPassword);
 
-            string loginCmsResponseContent;
+            integrationLog = this.CreateLog(wsaaUrl, xmlRequest, uniqueId, generationTime, expirationTime);
+
+            string loginCmsResponseContent = string.Empty;
+
             try
             {
                 using var content = new StringContent(BuildLoginCmsSoapEnvelope(cmsFirmadoBase64), Encoding.UTF8, "text/xml");
@@ -45,27 +57,43 @@ namespace Kiltex.SistemaGestion.Services.ARCA
 
                 using var resp = await _httpClient.PostAsync(wsaaUrl, content, ct);
                 loginCmsResponseContent = await resp.Content.ReadAsStringAsync(ct);
-            }
-            catch (OperationCanceledException) when (ct.IsCancellationRequested)
-            {
-                throw;
-            }
+                var innerXml = ExtractInnerLoginCmsReturn(loginCmsResponseContent);
+
+                var dto = ParseLoginTicketResponse(innerXml ?? loginCmsResponseContent);
+                dto.XmlRequest = xmlRequest;
+                dto.XmlResponse = loginCmsResponseContent;
+
+                integrationLog.Success = true;
+                integrationLog.Token = dto.Token;
+                integrationLog.Sign = dto.Sign;
+
+                return dto;
+            }           
             catch (Exception ex)
             {
+                integrationLog.Success = false;
+               SaveIntegrationLog(integrationLog);
                 throw new Exception("Error llamando al WSAA: " + ex.Message, ex);
             }
+            finally
+            {
+                integrationLog.Response = loginCmsResponseContent;
+                SaveIntegrationLog(integrationLog);
+            }
 
-            var innerXml = ExtractInnerLoginCmsReturn(loginCmsResponseContent);
-            var dto = ParseLoginTicketResponse(innerXml ?? loginCmsResponseContent);
-            dto.XmlRequest = xmlRequest;
-            dto.XmlResponse = loginCmsResponseContent;
-            return dto;
         }
 
         #region Private
 
+        private void SaveIntegrationLog(DtoRequestIntegrationLog log)
+        {
+            IntegrationLog integration = _mapper.Map<IntegrationLog>(log);
+           _contextSql.IntegrationLogs.Add(integration);
+            _contextSql.SaveChanges();
+        }
+
         private static string BuildLoginTicketRequestXml(long uniqueId, DateTimeOffset generationTime, DateTimeOffset expirationTime, string service)
-        { 
+        {
             var xml = $@"<loginTicketRequest>
     <header>
         <uniqueId>{uniqueId}</uniqueId>
@@ -163,6 +191,20 @@ namespace Kiltex.SistemaGestion.Services.ARCA
             if (signNode != null) dto.Sign = signNode.InnerText.Trim();
 
             return dto;
+        }
+
+        private DtoRequestIntegrationLog CreateLog(string url, string xmlRequest, long? uniqueId, DateTimeOffset generationTime, DateTimeOffset expirationTime)
+        {
+            return new DtoRequestIntegrationLog
+            {
+                Id = 0,
+                Endpoint = url,
+                CreatedOn = DateTimeOffset.Now,
+                Request = xmlRequest,
+                UniqueId = uniqueId,
+                GenerationTime = generationTime.DateTime,
+                ExpirationTime = expirationTime.DateTime,
+            };
         }
 
         #endregion
