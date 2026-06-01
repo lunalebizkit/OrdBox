@@ -549,6 +549,61 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                     b.ToTable("entity");
                 });
 
+            modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.IntegrationLog", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
+                    b.Property<string>("Endpoint")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("endpoint");
+
+                    b.Property<DateTime>("ExpirationTime")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("expiration_time");
+
+                    b.Property<DateTime?>("GenerationTime")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("generation_time");
+
+                    b.Property<string>("Sign")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("sign");
+
+                    b.Property<bool>("Success")
+                        .HasColumnType("bit")
+                        .HasColumnName("success");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("token");
+
+                    b.Property<long?>("UniqueId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("unique_id");
+
+                    b.Property<string>("XmlRequest")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("xml_request");
+
+                    b.Property<string>("XmlResponse")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("xml_response");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("integration_log");
+                });
+
             modelBuilder.Entity("Kiltex.SistemaGestion.Domain.Model.Invoice", b =>
                 {
                     b.Property<long>("Id")
@@ -1341,7 +1396,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                             FirstName = "admin",
                             IsDeleted = false,
                             LastName = "admin",
-                            Password = "$MYHASH$V1$100$hBxczFrtu1QZV7Px1deJIeiBTt5XwDYCi3m8CNuXNXrnz8DK",
+                            Password = "$MYHASH$V1$100$Yqrhq/5PldL+jXQmXJWWPQU7TAlB0RkiJwZsn6MMYDaiGW3M",
                             RoleId = 1L,
                             UserName = "admin"
                         });
@@ -1637,7 +1692,7 @@ namespace Kiltex.SistemaGestion.Domain.Migrations
                     b.HasOne("Kiltex.SistemaGestion.Domain.Model.Quittance", "Quittance")
                         .WithMany("QuittanceProductDetails")
                         .HasForeignKey("QuittanceId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Product");

@@ -61,7 +61,7 @@ builder.Services.AddSingleton<IPrinter, PrinterF250F>();
 builder.Services.AddSingleton<PrinterStatus>(p => builder.Configuration.GetSection("PrinterStatus").Get<PrinterStatus>());
 builder.Services.AddSingleton<PrinterConfig>(p => builder.Configuration.GetSection("PrinterConfig").Get<PrinterConfig>());
 builder.Services.AddSingleton<ArcaConfig>(p => builder.Configuration.GetSection("ArcaString").Get<ArcaConfig>());
-builder.Services.AddSingleton<IArcaIntegracion, ArcaIntegracionService>();
+builder.Services.AddScoped<IArcaIntegracion, ArcaIntegracionService>();
 builder.Services.AddAutoMapper(typeof(UserMapperProfile));
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<RolService>();
