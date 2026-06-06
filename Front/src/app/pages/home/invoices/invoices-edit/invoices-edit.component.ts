@@ -509,6 +509,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
           customerId: this.customerId,
           userId: this.userId,
           invoiceNumber: this.totalItems,
+          cae: '',
           customerName: this.formInvoice.controls['customerName'].value,
           customerCuit: this.selectedDni ? this.formInvoice.controls['customerDni'].value : this.formInvoice.controls['customerCuit'].value,
           customerAddress: this.formInvoice.controls['address'].value,

@@ -42,6 +42,7 @@ export class InvoicesViewDrawerComponent extends BaseComponent implements OnInit
   customerAddress!: string;
   customerCuit!: string;
   invoiceNumber!: number;
+  cae!: string;
   ivaTotal!: number;
   ivaSelected!: number;
   iva21!: number;
@@ -89,6 +90,7 @@ export class InvoicesViewDrawerComponent extends BaseComponent implements OnInit
           this.customerName = r.customerName,
           this.observation = r.observation,
           this.invoiceNumber= r.invoiceNumber,
+          this.cae= r.cae,
           this.ivaTotal= r.ivaTotal,
           this.ivaSelected= r.ivaSelected,
           this.iva21= r.iva21,

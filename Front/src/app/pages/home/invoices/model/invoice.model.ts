@@ -3,6 +3,7 @@ export interface InvoiceListModel {
     customerId: number;
     createdBy: string;
     invoiceNumber: number;
+    cae: string;
     customerName: string;
     customerCuit: string;
     customerAddress: string;
@@ -18,6 +19,7 @@ export interface InvoiceModel {
     customerId: number;
     userId: number;
     invoiceNumber: number;
+    cae: string;
     customerName: string;
     customerCuit: string;
     customerAddress: string;
