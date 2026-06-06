@@ -22,6 +22,7 @@
 
         public int Type { get; set; }
         public string? Status { get; set; }
+        public string? CAE { get; set; }
 
     }
 }

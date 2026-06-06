@@ -15,6 +15,7 @@ SELECT [i].[id]
       ,[id].[quantity]
       ,[id].[price]
       ,[id].[iva]
+      ,[id].[cae]
   FROM [invoice] [i]
   INNER JOIN [invoice_detail] [id] ON [id].[invoice_id] = [i].[id]
   WHERE 

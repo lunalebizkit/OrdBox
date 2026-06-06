@@ -1,19 +1,22 @@
 ﻿using AutoMapper;
-using DocumentFormat.OpenXml.InkML;
 using Kiltex.SistemaGestion.Domain;
+using Kiltex.SistemaGestion.Domain.Enum;
 using Kiltex.SistemaGestion.Domain.Model;
 using Kiltex.SistemaGestion.SDK.Error;
 using Kiltex.SistemaGestion.Services.ARCA.Dto;
 using Kiltex.SistemaGestion.Services.ARCA.Dto.Response;
+using Kiltex.SistemaGestion.Services.ARCA.Enum;
 using Kiltex.SistemaGestion.Services.ARCA.Interface;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
+using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
 using Kiltex.SistemaGestion.Services.Services;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using System.Security;
 using System.Security.Cryptography.Pkcs;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Xml;
+using System.Xml.Linq;
 
 namespace Kiltex.SistemaGestion.Services.ARCA
 {
@@ -21,32 +24,184 @@ namespace Kiltex.SistemaGestion.Services.ARCA
     {
         private readonly HttpClient _httpClient;
         private readonly ArcaConfig _arcaConfig;
+        private readonly IConfiguration _configuration;
 
         public ArcaIntegracionService(ErrorManager logger, DBContext context, IMapper mapper, IConfiguration configuration, ArcaConfig arcaConfig, HttpClient? httpClient = null) : base(logger, context, mapper, configuration)
         {
             _httpClient = httpClient ?? new HttpClient();
             _arcaConfig = arcaConfig;
+            _configuration = configuration;
         }
 
-        public async Task<LoginTicketResponseDto> ObtenerLoginTicketAsync(string pfxPath, string pfxPassword, string service, string wsaaUrl, CancellationToken ct = default)
+        public async Task<FEParamGetTiposDocResponseDto> ObtenerTiposDocumentoAsync(CancellationToken ct = default)
         {
-            var integrationLog = new DtoRequestIntegrationLog();
+            try
+            {
+                string wsaaUrl = _arcaConfig.URLCAEBase;
+                var auth = await ObtenerLoginTicketAsync(ct);
+                string soapRequest = BuildGetTipoDocumentoRequestXml(auth.Token, auth.Sign, _configuration.GetSection("Pdf:Cuit").Value, "FEParamGetTiposDoc");
+                var httpContent = new StringContent(soapRequest, Encoding.UTF8, "text/xml");
+                httpContent.Headers.Clear();
+                httpContent.Headers.Add("Content-Type", "text/xml; charset=utf-8");
+                httpContent.Headers.Add("SOAPAction", "http://ar.gov.afip.dif.FEV1/FEParamGetTiposDoc");
+                var response = await _httpClient.PostAsync(wsaaUrl, httpContent, ct);
+                response.EnsureSuccessStatusCode();
+                string soapResponse = await response.Content.ReadAsStringAsync(ct);
+                return ParseDocumentTypesResponse(soapResponse);
 
-            pfxPassword = _arcaConfig.PfxPassword;
-            pfxPath = _arcaConfig.PfxPath;
-            wsaaUrl = "https://wsaahomo.afip.gov.ar/ws/services/LoginCms";
-            service = "wsfe";
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error llamando al WSAA: " + ex.Message, ex);
+            }
+        }
+
+        public async Task<FEParamGetTiposDocResponseDto> ObtenerTiposIvaAsync(CancellationToken ct = default)
+        {
+            try
+            {
+                string wsaaUrl = _arcaConfig.URLCAEBase;
+                var auth = await ObtenerLoginTicketAsync(ct);
+                string soapRequest = BuildGetTipoDocumentoRequestXml(auth.Token, auth.Sign, _configuration.GetSection("Pdf:Cuit").Value, "FEParamGetTiposIva");
+                var httpContent = new StringContent(soapRequest, Encoding.UTF8, "text/xml");
+                httpContent.Headers.Clear();
+                httpContent.Headers.Add("Content-Type", "text/xml; charset=utf-8");
+                httpContent.Headers.Add("SOAPAction", "http://ar.gov.afip.dif.FEV1/FEParamGetTiposIva");
+                var response = await _httpClient.PostAsync(wsaaUrl, httpContent, ct);
+
+                response.EnsureSuccessStatusCode();
+                string soapResponse = await response.Content.ReadAsStringAsync(ct);
+                return ParseIvaTypesResponse(soapResponse);
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error llamando al WSAA: " + ex.Message, ex);
+            }
+        }
+
+
+        public async Task<DtoResponseARCAInvoice> CrearComprobanteAsync(DtoRequestInvoice invoice, CancellationToken ct = default)
+        {
+            try
+            {
+                string wsaaUrl = _arcaConfig.URLCAEBase;
+                var auth = await ObtenerLoginTicketAsync(ct);
+                var ultimoComprobante = await ConsultarUltimoComprobanteAsync(invoice.Type, auth.Token, auth.Sign, ct);
+
+                if (ultimoComprobante.CbteNro != null )
+                {
+                    invoice.InvoiceNumber = int.Parse(ultimoComprobante.CbteNro) + 1;
+                }
+                else
+                {
+                    return new DtoResponseARCAInvoice
+                    {
+                        Resultado = "Error",
+                        Errores = new List<string> { "No se pudo obtener el último número de comprobante autorizado." }
+                    };
+                }
+
+                //var condicionFrenteIvaReceptor = await ObtenerCondicionFrenteIvaReceptorAsync(auth.Token, auth.Sign, long.Parse(invoice.CustomerCuit), ct);
+
+                //if (condicionFrenteIvaReceptor == null || !condicionFrenteIvaReceptor.Any())
+                //{
+                //    return new DtoResponseARCAInvoice
+                //    {
+                //        Resultado = "Error",
+                //        Errores = new List<string> { "No se pudo obtener la condición frente al IVA del receptor." }
+                //    };
+                //}
+
+                string soapRequest = BuildSoapRequest(invoice, auth.Token, auth.Sign);
+
+                var httpContent = new StringContent(soapRequest, Encoding.UTF8, "text/xml");
+                httpContent.Headers.Clear();
+                httpContent.Headers.Add("Content-Type", "text/xml; charset=utf-8");
+                httpContent.Headers.Add("SOAPAction", "http://ar.gov.afip.dif.FEV1/FECAESolicitar");
+                var response = await _httpClient.PostAsync(wsaaUrl, httpContent, ct);
+                
+                string soapResponse = await response.Content.ReadAsStringAsync();
+                if (!response.IsSuccessStatusCode)
+                {
+                    // Loguear el XML completo para ver el <faultstring>
+                    Console.WriteLine($"Error {response.StatusCode}: {soapResponse}");
+                    throw new Exception($"AFIP devolvió error {response.StatusCode}: {soapResponse}");
+                }
+
+
+                return ParseSoapResponse(soapResponse);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error llamando al WSAA: " + ex.Message, ex);
+            }
+        }
+
+        public async Task<DtoResponseArcaUltimoComprobante> ConsultarUltimoComprobanteAsync(int docType,string token, string sign, CancellationToken ct = default)
+        {
+            try
+            {
+                string wsaaUrl = _arcaConfig.URLCAEBase;
+                string soapRequest = BuildGetUltimoComprobanteRequestXml(token, sign, _configuration.GetSection("Pdf:Cuit").Value, "FECompUltimoAutorizado", docType);
+
+                var httpContent = new StringContent(soapRequest, Encoding.UTF8, "text/xml");
+                httpContent.Headers.Clear();
+                httpContent.Headers.Add("Content-Type", "text/xml; charset=utf-8");
+                httpContent.Headers.Add("SOAPAction", "http://ar.gov.afip.dif.FEV1/FECompUltimoAutorizado");
+                var response = await _httpClient.PostAsync(wsaaUrl, httpContent, ct);
+                string soapResponse = await response.Content.ReadAsStringAsync(ct);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    Console.WriteLine($"Error {response.StatusCode}: {soapResponse}");
+                    throw new Exception($"AFIP devolvió error {response.StatusCode}: {soapResponse}");
+                }
+
+                return ParseSoapUltimoComprobanteResponse(soapResponse);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error llamando al WSAA: " + ex.Message, ex);
+            }
+        }
+
+        public async Task<LoginTicketResponseDto> ObtenerLoginTicketAsync(CancellationToken ct = default)
+        {
+            DtoRequestIntegrationLog integrationLog = new();
+
+            string pfxPassword = _arcaConfig.PfxPassword;
+            string pfxPath = _arcaConfig.PfxPath;
+            string wsaaUrl = _arcaConfig.URLLogin;
+            string service = "wsfe";
 
             TimeZoneInfo argentinaTz = TimeZoneInfo.FindSystemTimeZoneById("Argentina Standard Time");
             DateTimeOffset ahora = TimeZoneInfo.ConvertTime(DateTimeOffset.UtcNow, argentinaTz);
+
+            IntegrationLog? existingLog = await _contextSql.IntegrationLogs.FirstOrDefaultAsync(l => (l.Success == true && l.GenerationTime.Value <= ahora.DateTime && l.ExpirationTime.Value >= ahora.DateTime)).ConfigureAwait(false);
+
+            if (existingLog != null)
+            {
+                return new LoginTicketResponseDto
+                {
+                    UniqueId = existingLog.UniqueId ?? 0,
+                    GenerationTime = existingLog.GenerationTime,
+                    ExpirationTime = existingLog.ExpirationTime,
+                    Token = existingLog.Token ?? string.Empty,
+                    Sign = existingLog.Sign ?? string.Empty,
+                    XmlRequest = existingLog.Request ?? string.Empty,
+                    XmlResponse = existingLog.Response ?? string.Empty
+                };
+            }
+
             long uniqueId = long.Parse(ahora.ToString("ddHHmmss"));
             DateTimeOffset generationTime = ahora.AddMinutes(-10);
-            DateTimeOffset expirationTime = ahora.AddMinutes(10);
+            DateTimeOffset expirationTime = ahora.AddHours(12);
 
             var xmlRequest = BuildLoginTicketRequestXml(uniqueId, generationTime, expirationTime, service);
             var cmsFirmadoBase64 = SignXmlCmsBase64(xmlRequest, pfxPath, pfxPassword);
 
-            integrationLog = this.CreateLog(wsaaUrl, xmlRequest, uniqueId, generationTime, expirationTime);
+            integrationLog = CreateLog(wsaaUrl, xmlRequest, uniqueId, generationTime, expirationTime);
 
             string loginCmsResponseContent = string.Empty;
 
@@ -63,16 +218,16 @@ namespace Kiltex.SistemaGestion.Services.ARCA
                 dto.XmlRequest = xmlRequest;
                 dto.XmlResponse = loginCmsResponseContent;
 
-                integrationLog.Success = true;
+                integrationLog.Success = resp.IsSuccessStatusCode;
                 integrationLog.Token = dto.Token;
                 integrationLog.Sign = dto.Sign;
 
                 return dto;
-            }           
+            }
             catch (Exception ex)
             {
                 integrationLog.Success = false;
-               SaveIntegrationLog(integrationLog);
+                SaveIntegrationLog(integrationLog);
                 throw new Exception("Error llamando al WSAA: " + ex.Message, ex);
             }
             finally
@@ -83,38 +238,359 @@ namespace Kiltex.SistemaGestion.Services.ARCA
 
         }
 
+        public async Task<List<DtoResponseArcaCondicionIvaReceptor>> ObtenerCondicionFrenteIvaReceptorAsync(string token, string sign, long cuit, CancellationToken ct = default)
+        {
+            try
+            {
+                string wsaaUrl = _arcaConfig.URLCAEBase;
+                string soapRequest = BuildGetCondicionFrenteIvaReceptorRequestXml(token, sign, cuit, "FEParamGetCondicionFrenteIvaReceptor");
+
+                var httpContent = new StringContent(soapRequest, Encoding.UTF8, "text/xml");
+                httpContent.Headers.Clear();
+                httpContent.Headers.Add("Content-Type", "text/xml; charset=utf-8");
+                httpContent.Headers.Add("SOAPAction", "http://ar.gov.afip.dif.FEV1/FEParamGetCondicionIvaReceptor");
+                var response = await _httpClient.PostAsync(wsaaUrl, httpContent, ct);
+                string soapResponse = await response.Content.ReadAsStringAsync(ct);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    Console.WriteLine($"Error {response.StatusCode}: {soapResponse}");
+                    throw new Exception($"AFIP devolvió error {response.StatusCode}: {soapResponse}");
+                }
+
+                return ParseSoapCondicionFrenteIvaReceptorResponse(soapResponse);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error llamando al WSAA: " + ex.Message, ex);
+            }
+        }
+
         #region Private
+
+        private string BuildSoapRequest(DtoRequestInvoice dto, string token, string sign)
+        {
+            XNamespace soapenv = "http://schemas.xmlsoap.org/soap/envelope/";
+            XNamespace ar = "http://ar.gov.afip.dif.FEV1/";
+            string cuitEmisor = _configuration.GetSection("Pdf:Cuit").Value;
+
+            var doc = new XDocument(
+                new XElement(soapenv + "Envelope",
+                    new XAttribute(XNamespace.Xmlns + "soapenv", soapenv),
+                    new XAttribute(XNamespace.Xmlns + "ar", ar),
+                    new XElement(soapenv + "Header"),
+                    new XElement(soapenv + "Body",
+                        new XElement(ar + "FECAESolicitar",
+                            new XElement(ar + "Auth",
+                                new XElement(ar + "Token", token),
+                                new XElement(ar + "Sign", sign),
+                                new XElement(ar + "Cuit", 20328120543)
+                            ),
+                            new XElement(ar + "FeCAEReq",
+                                new XElement(ar + "FeCabReq",
+                                    new XElement(ar + "CantReg", 1),
+                                    new XElement(ar + "PtoVta", CustomizationConstant.PuntoDeVenta),
+                                    new XElement(ar + "CbteTipo", MapDocumentType(dto.Type))
+                                ),
+                                new XElement(ar + "FeDetReq",
+                                    new XElement(ar + "FECAEDetRequest",
+                                        new XElement(ar + "Concepto", (int)EConcepto.Productos),
+                                        new XElement(ar + "DocTipo", MapPersonIdentificationType(dto.CustomerCuit)),
+                                        new XElement(ar + "DocNro", dto.CustomerCuit),
+                                        new XElement(ar + "CbteDesde", dto.InvoiceNumber),
+                                        new XElement(ar + "CbteHasta", dto.InvoiceNumber),
+                                        new XElement(ar + "CbteFch", dto.DateTime.ToString("yyyyMMdd")),
+                                        new XElement(ar + "ImpTotal", (dto.Total)),
+                                        new XElement(ar + "ImpTotConc", 0),
+                                        new XElement(ar + "ImpNeto", (dto.Total - dto.IvaTotal)),
+                                        new XElement(ar + "ImpOpEx", 0),
+                                        new XElement(ar + "ImpTrib", 0),
+                                        new XElement(ar + "ImpIVA", dto.IvaTotal),
+                                        new XElement(ar + "MonId", CustomizationConstant.TipoMoneda),
+                                        new XElement(ar + "MonCotiz", CustomizationConstant.MonCotiz),
+                                        new XElement(ar + "CondicionIVAReceptorId", MapCondicionFrenteIvaReceptor(dto.Type)),
+                                        // IVA
+                                        new XElement(ar + "Iva",
+                                            dto.InvoiceDetails
+                                            .GroupBy(y => y.Iva)
+                                            .Select(g =>
+                                                new XElement(ar + "AlicIva",
+                                                    new XElement(ar + "Id", MapIVAType(g.Key)),
+                                                    new XElement(ar + "BaseImp", g.Sum( i => (i.Price * i.Quantity) - Math.Round(CalculateIvaAmount(i), 2))),
+                                                    new XElement(ar + "Importe", g.Sum( i => Math.Round(CalculateIvaAmount(i), 2))))
+                                                )
+                                            )
+                                        )
+                                    )
+                                )
+                            )
+                        )
+                    )
+            );
+
+            return doc.ToString(SaveOptions.DisableFormatting);
+        }
+
+        #region Parseo de respuestas SOAP
+        private DtoResponseARCAInvoice ParseSoapResponse(string xml)
+        {
+            var doc = XDocument.Parse(xml);
+            XNamespace ns = "http://ar.gov.afip.dif.FEV1/";
+
+            var resultado = doc.Descendants(ns + "Resultado").FirstOrDefault()?.Value;
+            var cae = doc.Descendants(ns + "CAE").FirstOrDefault()?.Value;
+            var fechaVto = doc.Descendants(ns + "CAEFchVto").FirstOrDefault()?.Value;
+
+            var observaciones = doc.Descendants(ns + "Obs")
+                                   .Select(o => o.Element("Msg")?.Value ?? o.Value)
+                                   .Where(s => !string.IsNullOrEmpty(s))
+                                   .ToList();
+
+            var errores = doc.Descendants(ns + "Err")
+                            .Select(e => e.Element("Msg")?.Value ?? e.Value)
+                            .ToList();
+
+            return new DtoResponseARCAInvoice
+            {
+                Resultado = resultado,
+                Cae = cae,
+                FechaVencimientoCae = string.IsNullOrEmpty(fechaVto) ? null : DateTime.ParseExact(fechaVto, "yyyyMMdd", null),
+                Observaciones = observaciones,
+                Errores = errores
+            };
+        }
+
+        private DtoResponseArcaUltimoComprobante ParseSoapUltimoComprobanteResponse(string xml)
+        {
+            var doc = XDocument.Parse(xml);
+            XNamespace ns = "http://ar.gov.afip.dif.FEV1/";
+
+            var result = doc.Descendants(ns + "FECompUltimoAutorizadoResult").FirstOrDefault();
+
+            var errores = result?.Descendants(ns + "Err")
+                                 .Select(e => $"{e.Element(ns + "Code")?.Value} - {e.Element(ns + "Msg")?.Value}")
+                                 .ToList() ?? new List<string>();
+
+            var eventos = result?.Descendants(ns + "Evt")
+                                 .Select(e => $"{e.Element(ns + "Code")?.Value} - {e.Element(ns + "Msg")?.Value}")
+                                 .ToList() ?? new List<string>();
+
+            return new DtoResponseArcaUltimoComprobante
+            {
+                CbteNro = result?.Element(ns + "CbteNro")?.Value,
+                Errores = errores,
+                Observaciones = eventos
+            };
+        }
+
+        private FEParamGetTiposDocResponseDto ParseDocumentTypesResponse(string xml)
+        {
+            var doc = XDocument.Parse(xml);
+            XNamespace ns = "http://ar.gov.afip.dif.FEV1/";
+            var response = new FEParamGetTiposDocResponseDto
+            {
+                DocumentTypes = doc.Descendants(ns + "DocTipo")
+                           .Select(td => new DtoResponseDocumentType
+                           {
+                               Id = td.Element(ns + "Id")?.Value,
+                               Descripcion = td.Element(ns + "Desc")?.Value,
+                               FchDesde = td.Element(ns + "FchDesde")?.Value,
+                               FchHasta = td.Element(ns + "FchHasta")?.Value,
+                           })
+                           .ToList(),
+                Errors = doc.Descendants(ns + "Err")
+                    .Select(err => new DtoResponseError
+                    {
+                        Code = err.Element(ns + "Code")?.Value,
+                        Msg = err.Element(ns + "Msg")?.Value,
+                    })
+                    .ToList(),
+
+                Events = doc.Descendants(ns + "Evt")
+                    .Select(evt => new DtoResponseError
+                    {
+                        Code = evt.Element(ns + "Code")?.Value,
+                        Msg = evt.Element(ns + "Msg")?.Value,
+                    })
+                    .ToList()
+            };
+
+            return response;
+        }
+
+        private FEParamGetTiposDocResponseDto ParseIvaTypesResponse(string xml)
+        {
+            var doc = XDocument.Parse(xml);
+            XNamespace ns = "http://ar.gov.afip.dif.FEV1/";
+            var response = new FEParamGetTiposDocResponseDto
+            {
+                DocumentTypes = doc.Descendants(ns + "IvaTipo")
+                           .Select(td => new DtoResponseDocumentType
+                           {
+                               Id = td.Element(ns + "Id")?.Value,
+                               Descripcion = td.Element(ns + "Desc")?.Value,
+                               FchDesde = td.Element(ns + "FchDesde")?.Value,
+                               FchHasta = td.Element(ns + "FchHasta")?.Value,
+                           })
+                           .ToList(),
+                Errors = doc.Descendants(ns + "Err")
+                    .Select(err => new DtoResponseError
+                    {
+                        Code = err.Element(ns + "Code")?.Value,
+                        Msg = err.Element(ns + "Msg")?.Value,
+                    })
+                    .ToList(),
+
+                Events = doc.Descendants(ns + "Evt")
+                    .Select(evt => new DtoResponseError
+                    {
+                        Code = evt.Element(ns + "Code")?.Value,
+                        Msg = evt.Element(ns + "Msg")?.Value,
+                    })
+                    .ToList()
+            };
+
+            return response;
+        }
+
+        private List<DtoResponseArcaCondicionIvaReceptor> ParseSoapCondicionFrenteIvaReceptorResponse(string xml)
+        {
+            var doc = XDocument.Parse(xml);
+            XNamespace ns = "http://ar.gov.afip.dif.FEV1/";
+
+            var condiciones = doc.Descendants(ns + "CondicionIvaReceptor")
+                         .Select(c => new DtoResponseArcaCondicionIvaReceptor
+                         {
+                             Id = c.Element(ns + "Id")?.Value,
+                             Desc = c.Element(ns + "Desc")?.Value,
+                             Cmp_Clase = c.Element(ns + "Cmp_Clase")?.Value
+                         })
+                         .ToList();
+
+            return condiciones;
+        }
+
+        #endregion
+
+
+        private string BuildGetTipoDocumentoRequestXml(string token, string sign, string cuit, string operation)
+        {
+            XNamespace soapenv = "http://schemas.xmlsoap.org/soap/envelope/";
+            XNamespace ar = "http://ar.gov.afip.dif.FEV1/";
+
+            var doc = new XDocument(
+                new XElement(soapenv + "Envelope",
+                    new XAttribute(XNamespace.Xmlns + "soapenv", soapenv),
+                    new XAttribute(XNamespace.Xmlns + "ar", ar),
+                    new XElement(soapenv + "Header"),
+                    new XElement(soapenv + "Body",
+                        new XElement(ar + operation,
+                            new XElement(ar + "Auth",
+                                new XElement(ar + "Token", token),
+                                new XElement(ar + "Sign", sign),
+                                new XElement(ar + "Cuit", 20328120543)
+                            )
+                        )
+                    )
+                )
+            );
+
+            return doc.ToString(SaveOptions.DisableFormatting);
+        }
+        
+        private string BuildGetUltimoComprobanteRequestXml(string token, string sign, string cuit, string operation, int docType)
+        {
+            XNamespace soapenv = "http://schemas.xmlsoap.org/soap/envelope/";
+            XNamespace ar = "http://ar.gov.afip.dif.FEV1/";
+
+            var doc = new XDocument(
+                new XElement(soapenv + "Envelope",
+                    new XAttribute(XNamespace.Xmlns + "soapenv", soapenv),
+                    new XAttribute(XNamespace.Xmlns + "ar", ar),
+                    new XElement(soapenv + "Header"),
+                    new XElement(soapenv + "Body",
+                        new XElement(ar + "FECompUltimoAutorizado",
+                            new XElement(ar + "Auth",
+                                new XElement(ar + "Token", token),
+                                new XElement(ar + "Sign", sign),
+                                new XElement(ar + "Cuit", 20328120543)
+                            ),
+                            new XElement(ar + "PtoVta", CustomizationConstant.PuntoDeVenta),
+                            new XElement(ar + "CbteTipo", MapDocumentType(docType))
+                        )
+                    )
+                )
+            );
+
+            return doc.ToString(SaveOptions.DisableFormatting);
+        }
+
+        private string BuildGetCondicionFrenteIvaReceptorRequestXml(string token, string sign, long cuit, string operation)
+        {
+            XNamespace soapenv = "http://schemas.xmlsoap.org/soap/envelope/";
+            XNamespace ar = "http://ar.gov.afip.dif.FEV1/";
+
+            var doc = new XDocument(
+                new XElement(soapenv + "Envelope",
+                    new XAttribute(XNamespace.Xmlns + "soapenv", soapenv),
+                    new XAttribute(XNamespace.Xmlns + "ar", ar),
+                    new XElement(soapenv + "Header"),
+                    new XElement(soapenv + "Body",
+                        new XElement(ar + "FEParamGetCondicionIvaReceptor",
+                            new XElement(ar + "Auth",
+                                new XElement(ar + "Token", token),
+                                new XElement(ar + "Sign", sign),
+                                new XElement(ar + "Cuit", cuit)
+                            )
+                        )
+                    )
+                )
+            );
+
+            return doc.ToString(SaveOptions.DisableFormatting);
+        }
 
         private void SaveIntegrationLog(DtoRequestIntegrationLog log)
         {
             IntegrationLog integration = _mapper.Map<IntegrationLog>(log);
-           _contextSql.IntegrationLogs.Add(integration);
+
+            var existing = _contextSql.IntegrationLogs.FirstOrDefault();
+
+            if (existing != null)
+            {
+                _contextSql.IntegrationLogs.Add(integration);
+            }
+            else
+            {
+                _contextSql.Entry(existing).State = EntityState.Detached;
+                _contextSql.IntegrationLogs.Update(integration);
+            }
             _contextSql.SaveChanges();
         }
 
         private static string BuildLoginTicketRequestXml(long uniqueId, DateTimeOffset generationTime, DateTimeOffset expirationTime, string service)
         {
-            var xml = $@"<loginTicketRequest>
-    <header>
-        <uniqueId>{uniqueId}</uniqueId>
-        <generationTime>{generationTime.ToString("s")}</generationTime>
-        <expirationTime>{expirationTime.ToString("s")}</expirationTime>
-    </header>
-    <service>{service}</service>
-</loginTicketRequest>";
+            string genTime = generationTime.ToString("s");
+            string expTime = expirationTime.ToString("s");
 
-            return xml;
+            var doc = new XDocument(
+                new XElement("loginTicketRequest",
+                    new XElement("header",
+                        new XElement("uniqueId", uniqueId),
+                        new XElement("generationTime", genTime),
+                        new XElement("expirationTime", expTime)
+                    ),
+                    new XElement("service", service)
+                )
+            );
+
+            return doc.ToString(SaveOptions.DisableFormatting);
         }
 
         private static string SignXmlCmsBase64(string xml, string pfxPath, string pfxPassword)
         {
-            var cert = new X509Certificate2(
-     File.ReadAllBytes(pfxPath),
-     pfxPassword,
-     X509KeyStorageFlags.UserKeySet |
-     X509KeyStorageFlags.PersistKeySet |
-     X509KeyStorageFlags.Exportable
- );
+            var cert = new X509Certificate2(File.ReadAllBytes(pfxPath), pfxPassword,  X509KeyStorageFlags.UserKeySet | X509KeyStorageFlags.PersistKeySet | X509KeyStorageFlags.Exportable );
+
             if (!cert.HasPrivateKey) throw new InvalidOperationException("El certificado no contiene clave privada.");
             if (DateTime.UtcNow < cert.NotBefore.ToUniversalTime() || DateTime.UtcNow > cert.NotAfter.ToUniversalTime())
                 throw new InvalidOperationException("El certificado está fuera de vigencia.");
@@ -131,15 +607,23 @@ namespace Kiltex.SistemaGestion.Services.ARCA
 
         private static string BuildLoginCmsSoapEnvelope(string cmsBase64)
         {
-            return $@"<soapenv:Envelope xmlns:soapenv=""http://schemas.xmlsoap.org/soap/envelope/""
-                  xmlns:wsaa=""http://wsaa.view.sua.dvadac.desein.afip.gov"">
-  <soapenv:Header/>
-  <soapenv:Body>
-    <wsaa:loginCms>
-      <wsaa:in0>{SecurityElement.Escape(cmsBase64)}</wsaa:in0>
-    </wsaa:loginCms>
-  </soapenv:Body>
-</soapenv:Envelope>";
+            XNamespace soapenv = "http://schemas.xmlsoap.org/soap/envelope/";
+            XNamespace wsaa = "http://wsaa.view.sua.dvadac.desein.afip.gov";
+
+            var doc = new XDocument(
+                new XElement(soapenv + "Envelope",
+                    new XAttribute(XNamespace.Xmlns + "soapenv", soapenv),
+                    new XAttribute(XNamespace.Xmlns + "wsaa", wsaa),
+                    new XElement(soapenv + "Header"),
+                    new XElement(soapenv + "Body",
+                        new XElement(wsaa + "loginCms",
+                            new XElement(wsaa + "in0", cmsBase64)
+                        )
+                    )
+                )
+            );
+
+            return doc.ToString(SaveOptions.DisableFormatting);
         }
 
         private static string? ExtractInnerLoginCmsReturn(string soapResponse)
@@ -193,7 +677,7 @@ namespace Kiltex.SistemaGestion.Services.ARCA
             return dto;
         }
 
-        private DtoRequestIntegrationLog CreateLog(string url, string xmlRequest, long? uniqueId, DateTimeOffset generationTime, DateTimeOffset expirationTime)
+        private static DtoRequestIntegrationLog CreateLog(string url, string xmlRequest, long? uniqueId, DateTimeOffset generationTime, DateTimeOffset expirationTime)
         {
             return new DtoRequestIntegrationLog
             {
@@ -204,6 +688,76 @@ namespace Kiltex.SistemaGestion.Services.ARCA
                 UniqueId = uniqueId,
                 GenerationTime = generationTime.DateTime,
                 ExpirationTime = expirationTime.DateTime,
+            };
+        }
+
+
+        #endregion
+
+        #region MAPEO DE DATOS
+        private static int MapPersonIdentificationType(string customerCuit)
+        {
+            if (string.IsNullOrEmpty(customerCuit))
+            {
+                return 0;
+            }
+
+            if (customerCuit.Length == 8)
+            {
+                return (int)EDocumento.DNI;
+            }
+
+            if (customerCuit.Length == 11)
+            {
+                if (customerCuit == CustomizationConstant.DefaultCUIT)
+                {
+                    return (int)EDocumento.NoCUIT;
+                }
+                else
+                {
+                    return (int)EDocumento.CUIT;
+                }
+            }
+            else
+            {
+                return 0;
+            }
+        }
+
+        private static int MapDocumentType(int invoiceType)
+        {
+            return (ETypeReceipt)invoiceType switch
+            {
+                ETypeReceipt.A => (int)EInvoiceType.FacturaA,
+                ETypeReceipt.EXENTO or ETypeReceipt.B => (int)EInvoiceType.FacturaB,
+                _ => invoiceType,
+            };
+        }
+
+        private static int MapIVAType(decimal iva)
+        {
+            return (decimal)iva switch
+            {
+                (decimal)10.5 => (int)EIva.DIEZ,
+                (decimal)21 => (int)EIva.VEINTIUNO,
+                (decimal)27 => (int)EIva.VEINTISIETE,
+                _ => (int)iva,
+            };
+        }
+
+        private static decimal CalculateIvaAmount(DtoResponseInvoiceDetail e)
+        {
+            return ((e.Quantity * e.Price) - ((e.Quantity * e.Price) / (1 + e.Iva / 100.00m)));
+        }
+
+        private static int MapCondicionFrenteIvaReceptor(int invoiceType)
+        {
+            return (ETypeReceipt)invoiceType switch
+            {
+                ETypeReceipt.A => (int)EInvoiceType.FacturaA,
+                ETypeReceipt.EXENTO => (int)4,
+                ETypeReceipt.B => (int)5,
+                _ => invoiceType,
             };
         }
 

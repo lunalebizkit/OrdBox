@@ -1,5 +1,6 @@
 ﻿using Kiltex.SistemaGestion.Api.Filter;
 using Kiltex.SistemaGestion.Domain.Enum;
+using Kiltex.SistemaGestion.Services.ARCA.Interface;
 using Kiltex.SistemaGestion.Services.Common;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
 using Kiltex.SistemaGestion.Services.Services;
@@ -11,10 +12,12 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Invoice
     public class InvoiceController : ApiBaseController
     {
         private readonly InvoiceService _service;
+        private readonly IArcaIntegracion _arcaIntegracionService;
 
-        public InvoiceController(InvoiceService service)
+        public InvoiceController(InvoiceService service, IArcaIntegracion arcaIntegracionService)
         {
             _service = service;
+            _arcaIntegracionService = arcaIntegracionService;
         }
 
         /// <summary>
@@ -125,7 +128,21 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Invoice
         [AllowAccess(Permission = new EPermission[] { EPermission.CreateInvoice })]
         public async Task<IActionResult> New([FromBody] DtoRequestInvoice model)
         {
-            return Return(await _service.NewInvoice(model).ConfigureAwait(false));
+            var invoiceId = await _service.NewInvoice(model).ConfigureAwait(false);
+
+            if (invoiceId.Success && invoiceId.Data != null)
+            {
+                var invoice = await _service.GetById(invoiceId.Data.Id).ConfigureAwait(false);
+
+                var responseCAE = await _arcaIntegracionService.CrearComprobanteAsync(invoice.Data).ConfigureAwait(false);
+
+                if (!string.IsNullOrEmpty(responseCAE.Cae))
+                {
+                    await _service.Update(invoice.Data, responseCAE.Cae).ConfigureAwait(false);
+                }
+            }
+            
+            return Return(invoiceId);
         }
 
         /// <summary>
