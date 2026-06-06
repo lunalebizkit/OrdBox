@@ -47,6 +47,9 @@ namespace Kiltex.SistemaGestion.Domain.Model
 
         [Column("type")]
         public int Type { get; set; }
+        
+        [Column("cae")]
+        public string? CAE { get; set; }
 
         public ICollection<InvoiceDetail> InvoiceDetails { get; set; } = new HashSet<InvoiceDetail>();
 

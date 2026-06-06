@@ -11,5 +11,9 @@
 
         public const string FacturaA = "001";
         public const string FacturaB = "006";
+
+        public const byte PuntoDeVenta = 3;
+        public const string TipoMoneda = "PES";
+        public const double MonCotiz = 1.0;
     }
 }
