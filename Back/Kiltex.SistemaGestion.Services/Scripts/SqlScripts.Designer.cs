@@ -136,6 +136,23 @@ namespace Kiltex.SistemaGestion.Services.Scripts {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a SELECT [id]
+        ///      ,[invoice_id] AS [invoiceId]
+        ///      ,[request]
+        ///      ,[response]
+        ///      ,[endpoint]
+        ///      ,[success]
+        ///      ,[created_on] AS [createdOn]
+        ///  FROM [integration_log_invoice]
+        ///  WHERE [invoice_id] = @invoiceid.
+        /// </summary>
+        internal static string GetIntegrationLogInvoiceByInvoiceId {
+            get {
+                return ResourceManager.GetString("GetIntegrationLogInvoiceByInvoiceId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a DECLARE @DesiredOffSet VARCHAR(6) = &apos;+00:00&apos;;
         ///
         ///SELECT [i].[id]
@@ -153,7 +170,8 @@ namespace Kiltex.SistemaGestion.Services.Scripts {
         ///      ,[id].[quantity]
         ///      ,[id].[price]
         ///      ,[id].[iva]
-        ///  FROM [invoice] [i] [resto de la cadena truncado]&quot;;.
+        ///      ,[id].[cae]
+        ///  [resto de la cadena truncado]&quot;;.
         /// </summary>
         internal static string GetInvoiceByDate {
             get {

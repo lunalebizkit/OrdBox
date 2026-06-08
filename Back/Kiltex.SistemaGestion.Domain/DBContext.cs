@@ -224,6 +224,7 @@ namespace Kiltex.SistemaGestion.Domain
         public virtual DbSet<InvoiceSPReport> InvoiceSPReports { get; set; }
         public virtual DbSet<InvoiceSPReportTotal> InvoiceSPReportTotals { get; set; }
         public virtual DbSet<IntegrationLog> IntegrationLogs { get; set; }
+        public virtual DbSet<IntegrationLogInvoice> IntegrationLogInvoices { get; set; }
 
     }
 }

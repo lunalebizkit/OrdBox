@@ -98,7 +98,7 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Invoice
 
         [HttpGet]
         [Route("[action]")]
-        [AllowAccess(Permission = new EPermission[] {EPermission.GetInvoice})]
+        [AllowAccess(Permission = new EPermission[] { EPermission.GetInvoice })]
         public async Task<IActionResult> AlicuotaIvaTxt([FromQuery] DateTime from, DateTime to)
         {
             var invoices = _service.GetInvoiceByDate(from, to);
@@ -141,7 +141,7 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Invoice
                     await _service.Update(invoice.Data, responseCAE.Cae).ConfigureAwait(false);
                 }
             }
-            
+
             return Return(invoiceId);
         }
 
@@ -156,6 +156,19 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Invoice
         public async Task<IActionResult> InvoiceReport([FromBody] RequestPaginatedData<StoredProcedureFilter> filter)
         {
             return Return(await _service.InvoiceReport(filter).ConfigureAwait(false));
+        }
+
+        /// <summary>
+        /// Retorna el log de integración con ARCA de una factura específica, buscando por ID de la factura. Esto incluye detalles de la comunicación, errores y respuestas recibidas durante el proceso de integración.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("[action]")]
+        [AllowAccess(Permission = new EPermission[] { EPermission.GetInvoice })]
+        public async Task<IActionResult> GetIntegrationLogById(long id)
+        {
+            return Return(await _service.GetIntegrationLogById(id).ConfigureAwait(false));
         }
     }
 }

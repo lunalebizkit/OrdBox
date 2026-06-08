@@ -15,7 +15,6 @@ using Kiltex.SistemaGestion.Services.Scripts;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.VisualBasic;
 using System.Data;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -127,6 +126,8 @@ namespace Kiltex.SistemaGestion.Services.Services
         {
             var transaction = _contextSql.Database.BeginTransaction();
             var invoiceModel = _mapper.Map<Invoice>(model);
+            invoiceModel.DateTime = DateTime.Now;
+
             var newProduct = new Product();
             try
             {
@@ -341,6 +342,26 @@ namespace Kiltex.SistemaGestion.Services.Services
             catch (Exception ex)
             {
                 _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
+                throw;
+            }
+        }
+
+        public async Task<OperationResponse<IEnumerable<DtoResponseIntegrationLogInvoice>>> GetIntegrationLogById(long invoiceId, CancellationToken ct = default)
+        {
+            try
+            {
+                IEnumerable<DtoResponseIntegrationLogInvoice> logs = new List<DtoResponseIntegrationLogInvoice>();
+                string invoicesScript = SqlScripts.GetIntegrationLogInvoiceByInvoiceId;
+                using (var connection = new SqlConnection(ConnectionString))
+                {
+                    logs = await connection.QueryAsync<DtoResponseIntegrationLogInvoice>
+                        (invoicesScript, param: new { @invoiceid = invoiceId });
+                }
+                return new OperationResponse<IEnumerable<DtoResponseIntegrationLogInvoice>>(logs);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ErrorsCodes.C_010_ERROR_EXCEPTION, ErrorsMessages.GetMessage(ErrorsCodes.C_010_ERROR_EXCEPTION), ex: ex);
                 throw;
             }
         }
