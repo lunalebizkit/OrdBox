@@ -45,14 +45,14 @@ namespace Kiltex.SistemaGestion.Services.ARCA
                 httpContent.Headers.Add("Content-Type", "text/xml; charset=utf-8");
                 httpContent.Headers.Add("SOAPAction", "http://ar.gov.afip.dif.FEV1/FEParamGetTiposDoc");
                 var response = await _httpClient.PostAsync(wsaaUrl, httpContent, ct);
-                response.EnsureSuccessStatusCode();
                 string soapResponse = await response.Content.ReadAsStringAsync(ct);
-                return ParseDocumentTypesResponse(soapResponse);
 
+                return ParseDocumentTypesResponse(soapResponse);
             }
             catch (Exception ex)
             {
-                throw new Exception("Error llamando al WSAA: " + ex.Message, ex);
+                _logger.LogError(ErrorsCodes.C_010_ERROR_EXCEPTION, ErrorsMessages.GetMessage(ErrorsCodes.C_010_ERROR_EXCEPTION), ex: ex);
+                throw;
             }
         }
 
@@ -76,20 +76,27 @@ namespace Kiltex.SistemaGestion.Services.ARCA
             }
             catch (Exception ex)
             {
-                throw new Exception("Error llamando al WSAA: " + ex.Message, ex);
+                _logger.LogError(ErrorsCodes.C_010_ERROR_EXCEPTION, ErrorsMessages.GetMessage(ErrorsCodes.C_010_ERROR_EXCEPTION), ex: ex);
+                throw;
             }
         }
 
-
         public async Task<DtoResponseARCAInvoice> CrearComprobanteAsync(DtoRequestInvoice invoice, CancellationToken ct = default)
         {
+
+            IntegrationLogInvoice integrationLog = new IntegrationLogInvoice
+            {
+                CreatedOn = DateTimeOffset.Now,
+                Endpoint = _arcaConfig.URLCAEBase,
+                InvoiceId = invoice.Id
+            };
             try
             {
                 string wsaaUrl = _arcaConfig.URLCAEBase;
                 var auth = await ObtenerLoginTicketAsync(ct);
                 var ultimoComprobante = await ConsultarUltimoComprobanteAsync(invoice.Type, auth.Token, auth.Sign, ct);
 
-                if (ultimoComprobante.CbteNro != null )
+                if (ultimoComprobante.CbteNro != null)
                 {
                     invoice.InvoiceNumber = int.Parse(ultimoComprobante.CbteNro) + 1;
                 }
@@ -102,43 +109,41 @@ namespace Kiltex.SistemaGestion.Services.ARCA
                     };
                 }
 
-                //var condicionFrenteIvaReceptor = await ObtenerCondicionFrenteIvaReceptorAsync(auth.Token, auth.Sign, long.Parse(invoice.CustomerCuit), ct);
-
-                //if (condicionFrenteIvaReceptor == null || !condicionFrenteIvaReceptor.Any())
-                //{
-                //    return new DtoResponseARCAInvoice
-                //    {
-                //        Resultado = "Error",
-                //        Errores = new List<string> { "No se pudo obtener la condición frente al IVA del receptor." }
-                //    };
-                //}
-
                 string soapRequest = BuildSoapRequest(invoice, auth.Token, auth.Sign);
+
+                integrationLog.Request = soapRequest;
 
                 var httpContent = new StringContent(soapRequest, Encoding.UTF8, "text/xml");
                 httpContent.Headers.Clear();
                 httpContent.Headers.Add("Content-Type", "text/xml; charset=utf-8");
                 httpContent.Headers.Add("SOAPAction", "http://ar.gov.afip.dif.FEV1/FECAESolicitar");
                 var response = await _httpClient.PostAsync(wsaaUrl, httpContent, ct);
-                
                 string soapResponse = await response.Content.ReadAsStringAsync();
+
+                integrationLog.Success = response.IsSuccessStatusCode;
+                integrationLog.Response = soapResponse;
+
                 if (!response.IsSuccessStatusCode)
                 {
-                    // Loguear el XML completo para ver el <faultstring>
+                    integrationLog.Success = false;
                     Console.WriteLine($"Error {response.StatusCode}: {soapResponse}");
                     throw new Exception($"AFIP devolvió error {response.StatusCode}: {soapResponse}");
                 }
-
 
                 return ParseSoapResponse(soapResponse);
             }
             catch (Exception ex)
             {
-                throw new Exception("Error llamando al WSAA: " + ex.Message, ex);
+                _logger.LogError(ErrorsCodes.C_010_ERROR_EXCEPTION, ErrorsMessages.GetMessage(ErrorsCodes.C_010_ERROR_EXCEPTION), ex: ex);
+                throw;
+            }
+            finally
+            {
+                SaveIntegrationLogInvoice(integrationLog);
             }
         }
 
-        public async Task<DtoResponseArcaUltimoComprobante> ConsultarUltimoComprobanteAsync(int docType,string token, string sign, CancellationToken ct = default)
+        public async Task<DtoResponseArcaUltimoComprobante> ConsultarUltimoComprobanteAsync(int docType, string token, string sign, CancellationToken ct = default)
         {
             try
             {
@@ -162,7 +167,8 @@ namespace Kiltex.SistemaGestion.Services.ARCA
             }
             catch (Exception ex)
             {
-                throw new Exception("Error llamando al WSAA: " + ex.Message, ex);
+                _logger.LogError(ErrorsCodes.C_010_ERROR_EXCEPTION, ErrorsMessages.GetMessage(ErrorsCodes.C_010_ERROR_EXCEPTION), ex: ex);
+                throw;
             }
         }
 
@@ -228,7 +234,8 @@ namespace Kiltex.SistemaGestion.Services.ARCA
             {
                 integrationLog.Success = false;
                 SaveIntegrationLog(integrationLog);
-                throw new Exception("Error llamando al WSAA: " + ex.Message, ex);
+                _logger.LogError(ErrorsCodes.C_010_ERROR_EXCEPTION, ErrorsMessages.GetMessage(ErrorsCodes.C_010_ERROR_EXCEPTION), ex: ex);
+                throw;
             }
             finally
             {
@@ -262,74 +269,14 @@ namespace Kiltex.SistemaGestion.Services.ARCA
             }
             catch (Exception ex)
             {
-                throw new Exception("Error llamando al WSAA: " + ex.Message, ex);
+                _logger.LogError(ErrorsCodes.C_010_ERROR_EXCEPTION, ErrorsMessages.GetMessage(ErrorsCodes.C_010_ERROR_EXCEPTION), ex: ex);
+                throw;
             }
         }
 
         #region Private
+        #endregion
 
-        private string BuildSoapRequest(DtoRequestInvoice dto, string token, string sign)
-        {
-            XNamespace soapenv = "http://schemas.xmlsoap.org/soap/envelope/";
-            XNamespace ar = "http://ar.gov.afip.dif.FEV1/";
-            string cuitEmisor = _configuration.GetSection("Pdf:Cuit").Value;
-
-            var doc = new XDocument(
-                new XElement(soapenv + "Envelope",
-                    new XAttribute(XNamespace.Xmlns + "soapenv", soapenv),
-                    new XAttribute(XNamespace.Xmlns + "ar", ar),
-                    new XElement(soapenv + "Header"),
-                    new XElement(soapenv + "Body",
-                        new XElement(ar + "FECAESolicitar",
-                            new XElement(ar + "Auth",
-                                new XElement(ar + "Token", token),
-                                new XElement(ar + "Sign", sign),
-                                new XElement(ar + "Cuit", 20328120543)
-                            ),
-                            new XElement(ar + "FeCAEReq",
-                                new XElement(ar + "FeCabReq",
-                                    new XElement(ar + "CantReg", 1),
-                                    new XElement(ar + "PtoVta", CustomizationConstant.PuntoDeVenta),
-                                    new XElement(ar + "CbteTipo", MapDocumentType(dto.Type))
-                                ),
-                                new XElement(ar + "FeDetReq",
-                                    new XElement(ar + "FECAEDetRequest",
-                                        new XElement(ar + "Concepto", (int)EConcepto.Productos),
-                                        new XElement(ar + "DocTipo", MapPersonIdentificationType(dto.CustomerCuit)),
-                                        new XElement(ar + "DocNro", dto.CustomerCuit),
-                                        new XElement(ar + "CbteDesde", dto.InvoiceNumber),
-                                        new XElement(ar + "CbteHasta", dto.InvoiceNumber),
-                                        new XElement(ar + "CbteFch", dto.DateTime.ToString("yyyyMMdd")),
-                                        new XElement(ar + "ImpTotal", (dto.Total)),
-                                        new XElement(ar + "ImpTotConc", 0),
-                                        new XElement(ar + "ImpNeto", (dto.Total - dto.IvaTotal)),
-                                        new XElement(ar + "ImpOpEx", 0),
-                                        new XElement(ar + "ImpTrib", 0),
-                                        new XElement(ar + "ImpIVA", dto.IvaTotal),
-                                        new XElement(ar + "MonId", CustomizationConstant.TipoMoneda),
-                                        new XElement(ar + "MonCotiz", CustomizationConstant.MonCotiz),
-                                        new XElement(ar + "CondicionIVAReceptorId", MapCondicionFrenteIvaReceptor(dto.Type)),
-                                        // IVA
-                                        new XElement(ar + "Iva",
-                                            dto.InvoiceDetails
-                                            .GroupBy(y => y.Iva)
-                                            .Select(g =>
-                                                new XElement(ar + "AlicIva",
-                                                    new XElement(ar + "Id", MapIVAType(g.Key)),
-                                                    new XElement(ar + "BaseImp", g.Sum( i => (i.Price * i.Quantity) - Math.Round(CalculateIvaAmount(i), 2))),
-                                                    new XElement(ar + "Importe", g.Sum( i => Math.Round(CalculateIvaAmount(i), 2))))
-                                                )
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                    )
-            );
-
-            return doc.ToString(SaveOptions.DisableFormatting);
-        }
 
         #region Parseo de respuestas SOAP
         private DtoResponseARCAInvoice ParseSoapResponse(string xml)
@@ -472,6 +419,70 @@ namespace Kiltex.SistemaGestion.Services.ARCA
 
         #endregion
 
+        #region Create XML Requests, Firmar y Logueo
+
+        private string BuildSoapRequest(DtoRequestInvoice dto, string token, string sign)
+        {
+            XNamespace soapenv = "http://schemas.xmlsoap.org/soap/envelope/";
+            XNamespace ar = "http://ar.gov.afip.dif.FEV1/";
+            string cuitEmisor = _configuration.GetSection("Pdf:Cuit").Value;
+
+            var doc = new XDocument(
+                new XElement(soapenv + "Envelope",
+                    new XAttribute(XNamespace.Xmlns + "soapenv", soapenv),
+                    new XAttribute(XNamespace.Xmlns + "ar", ar),
+                    new XElement(soapenv + "Header"),
+                    new XElement(soapenv + "Body",
+                        new XElement(ar + "FECAESolicitar",
+                            new XElement(ar + "Auth",
+                                new XElement(ar + "Token", token),
+                                new XElement(ar + "Sign", sign),
+                                new XElement(ar + "Cuit", cuitEmisor.Replace("-", ""))
+                            ),
+                            new XElement(ar + "FeCAEReq",
+                                new XElement(ar + "FeCabReq",
+                                    new XElement(ar + "CantReg", 1),
+                                    new XElement(ar + "PtoVta", CustomizationConstant.PuntoDeVenta),
+                                    new XElement(ar + "CbteTipo", MapDocumentType(dto.Type))
+                                ),
+                                new XElement(ar + "FeDetReq",
+                                    new XElement(ar + "FECAEDetRequest",
+                                        new XElement(ar + "Concepto", (int)EConcepto.Productos),
+                                        new XElement(ar + "DocTipo", MapPersonIdentificationType(dto.CustomerCuit)),
+                                        new XElement(ar + "DocNro", dto.CustomerCuit),
+                                        new XElement(ar + "CbteDesde", dto.InvoiceNumber),
+                                        new XElement(ar + "CbteHasta", dto.InvoiceNumber),
+                                        new XElement(ar + "CbteFch", dto.DateTime.ToString("yyyyMMdd")),
+                                        new XElement(ar + "ImpTotal", (dto.Total)),
+                                        new XElement(ar + "ImpTotConc", 0),
+                                        new XElement(ar + "ImpNeto", (dto.Total - dto.IvaTotal)),
+                                        new XElement(ar + "ImpOpEx", 0),
+                                        new XElement(ar + "ImpTrib", 0),
+                                        new XElement(ar + "ImpIVA", dto.IvaTotal),
+                                        new XElement(ar + "MonId", CustomizationConstant.TipoMoneda),
+                                        new XElement(ar + "MonCotiz", CustomizationConstant.MonCotiz),
+                                        new XElement(ar + "CondicionIVAReceptorId", MapCondicionFrenteIvaReceptor(dto.Type)),
+                                        // IVA
+                                        new XElement(ar + "Iva",
+                                            dto.InvoiceDetails
+                                            .GroupBy(y => y.Iva)
+                                            .Select(g =>
+                                                new XElement(ar + "AlicIva",
+                                                    new XElement(ar + "Id", MapIVAType(g.Key)),
+                                                    new XElement(ar + "BaseImp", g.Sum(i => (i.Price * i.Quantity) - Math.Round(CalculateIvaAmount(i), 2))),
+                                                    new XElement(ar + "Importe", g.Sum(i => Math.Round(CalculateIvaAmount(i), 2))))
+                                                )
+                                            )
+                                        )
+                                    )
+                                )
+                            )
+                        )
+                    )
+            );
+
+            return doc.ToString(SaveOptions.DisableFormatting);
+        }
 
         private string BuildGetTipoDocumentoRequestXml(string token, string sign, string cuit, string operation)
         {
@@ -497,7 +508,7 @@ namespace Kiltex.SistemaGestion.Services.ARCA
 
             return doc.ToString(SaveOptions.DisableFormatting);
         }
-        
+
         private string BuildGetUltimoComprobanteRequestXml(string token, string sign, string cuit, string operation, int docType)
         {
             XNamespace soapenv = "http://schemas.xmlsoap.org/soap/envelope/";
@@ -550,24 +561,6 @@ namespace Kiltex.SistemaGestion.Services.ARCA
             return doc.ToString(SaveOptions.DisableFormatting);
         }
 
-        private void SaveIntegrationLog(DtoRequestIntegrationLog log)
-        {
-            IntegrationLog integration = _mapper.Map<IntegrationLog>(log);
-
-            var existing = _contextSql.IntegrationLogs.FirstOrDefault();
-
-            if (existing != null)
-            {
-                _contextSql.IntegrationLogs.Add(integration);
-            }
-            else
-            {
-                _contextSql.Entry(existing).State = EntityState.Detached;
-                _contextSql.IntegrationLogs.Update(integration);
-            }
-            _contextSql.SaveChanges();
-        }
-
         private static string BuildLoginTicketRequestXml(long uniqueId, DateTimeOffset generationTime, DateTimeOffset expirationTime, string service)
         {
             string genTime = generationTime.ToString("s");
@@ -587,9 +580,12 @@ namespace Kiltex.SistemaGestion.Services.ARCA
             return doc.ToString(SaveOptions.DisableFormatting);
         }
 
+        #endregion
+
+
         private static string SignXmlCmsBase64(string xml, string pfxPath, string pfxPassword)
         {
-            var cert = new X509Certificate2(File.ReadAllBytes(pfxPath), pfxPassword,  X509KeyStorageFlags.UserKeySet | X509KeyStorageFlags.PersistKeySet | X509KeyStorageFlags.Exportable );
+            var cert = new X509Certificate2(File.ReadAllBytes(pfxPath), pfxPassword, X509KeyStorageFlags.UserKeySet | X509KeyStorageFlags.PersistKeySet | X509KeyStorageFlags.Exportable);
 
             if (!cert.HasPrivateKey) throw new InvalidOperationException("El certificado no contiene clave privada.");
             if (DateTime.UtcNow < cert.NotBefore.ToUniversalTime() || DateTime.UtcNow > cert.NotAfter.ToUniversalTime())
@@ -597,7 +593,6 @@ namespace Kiltex.SistemaGestion.Services.ARCA
 
             var contentBytes = Encoding.UTF8.GetBytes(xml);
             var contentInfo = new ContentInfo(contentBytes);
-            // Atención: revisa el manual WSAA si requiere detached = true/false. Aquí uso detached = true (común en ejemplos).
             var signedCms = new SignedCms(contentInfo, detached: false);
             var signer = new CmsSigner(cert) { IncludeOption = X509IncludeOption.EndCertOnly };
             signedCms.ComputeSignature(signer);
@@ -626,7 +621,7 @@ namespace Kiltex.SistemaGestion.Services.ARCA
             return doc.ToString(SaveOptions.DisableFormatting);
         }
 
-        private static string? ExtractInnerLoginCmsReturn(string soapResponse)
+        private string? ExtractInnerLoginCmsReturn(string soapResponse)
         {
             try
             {
@@ -643,8 +638,9 @@ namespace Kiltex.SistemaGestion.Services.ARCA
                 innerDoc.LoadXml(innerXmlEscaped);
                 return string.IsNullOrWhiteSpace(innerXmlEscaped) ? null : innerXmlEscaped;
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError(ErrorsCodes.C_010_ERROR_EXCEPTION, ErrorsMessages.GetMessage(ErrorsCodes.C_010_ERROR_EXCEPTION), ex: ex);
                 return null;
             }
         }
@@ -677,6 +673,34 @@ namespace Kiltex.SistemaGestion.Services.ARCA
             return dto;
         }
 
+
+
+        #region Integration Logs
+        private void SaveIntegrationLog(DtoRequestIntegrationLog log)
+        {
+            try
+            {
+                IntegrationLog integration = _mapper.Map<IntegrationLog>(log);
+
+                var existing = _contextSql.IntegrationLogs.FirstOrDefault();
+
+                if (existing != null)
+                {
+                    _contextSql.IntegrationLogs.Add(integration);
+                }
+                else
+                {
+                    _contextSql.Entry(existing).State = EntityState.Detached;
+                    _contextSql.IntegrationLogs.Update(integration);
+                }
+                _contextSql.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ErrorsCodes.C_010_ERROR_EXCEPTION, ErrorsMessages.GetMessage(ErrorsCodes.C_010_ERROR_EXCEPTION), ex: ex);
+            }
+        }
+
         private static DtoRequestIntegrationLog CreateLog(string url, string xmlRequest, long? uniqueId, DateTimeOffset generationTime, DateTimeOffset expirationTime)
         {
             return new DtoRequestIntegrationLog
@@ -691,7 +715,18 @@ namespace Kiltex.SistemaGestion.Services.ARCA
             };
         }
 
-
+        private void SaveIntegrationLogInvoice(IntegrationLogInvoice log)
+        {
+            try
+            {
+                _contextSql.IntegrationLogInvoices.Add(log);
+                _contextSql.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ErrorsCodes.C_010_ERROR_EXCEPTION, ErrorsMessages.GetMessage(ErrorsCodes.C_010_ERROR_EXCEPTION), ex: ex);
+            }
+        }
         #endregion
 
         #region MAPEO DE DATOS
