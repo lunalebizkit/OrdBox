@@ -10,7 +10,8 @@ import { PopupConfirmationComponent } from "src/app/common/components/popup-conf
 import { InvoiceService } from "../invoices.service";
 import { eInvoiceType } from "../model/invoice-type.Enum";
 import { InvoiceDetails, InvoiceModel } from "../model/invoice.model";
-
+import { InvoiceLog } from "../model/invoice-log-integration";
+import { XMLParser } from "fast-xml-parser";
 
 
 @Component({
@@ -22,23 +23,24 @@ export class InvoicesViewDrawerComponent extends BaseComponent implements OnInit
   router: any;
   @Input() set filter(value: number) {
     this.id = value;
-}
+  }
 
 
-@ViewChild('header') headerComponent!: HeaderOperationsButtonsComponent;
-@ViewChild('popupReimprimir') popupComponent!: PopupConfirmationComponent;
-@Input('btnReprintText') btnReprintText: string = 'Reimprimir';
+  @ViewChild('header') headerComponent!: HeaderOperationsButtonsComponent;
+  @ViewChild('popupReimprimir') popupComponent!: PopupConfirmationComponent;
+  @Input('btnReprintText') btnReprintText: string = 'Reimprimir';
 
   // variables Generales
-  isLoading=true;
+  isLoading = true;
   loading!: boolean;
+  logLoading!: boolean;
   isSaving!: boolean;
   id!: number;
   tipo!: string;
 
   //Variables del comprobante
   type!: eInvoiceType;
-  invoiceDetail: InvoiceDetails []= [];
+  invoiceDetail: InvoiceDetails[] = [];
   customerAddress!: string;
   customerCuit!: string;
   invoiceNumber!: number;
@@ -58,8 +60,7 @@ export class InvoicesViewDrawerComponent extends BaseComponent implements OnInit
   percIngBrutos!: number;
   percIva!: number;
   concNoGravado!: number;
-
-   
+  invoiceLog: InvoiceLog[] = [];
 
   constructor(
     notificacionService: NzNotificationService,
@@ -68,101 +69,120 @@ export class InvoicesViewDrawerComponent extends BaseComponent implements OnInit
     message: NzMessageService,
     private drawerRef: NzDrawerRef<string>,
     @Inject(LOCALE_ID) public locale: string
-     ) {
+  ) {
     super(notificacionService, el, message);
   }
 
   ngOnInit(): void {
-    if (this.id != null || this.id != undefined || this.id != 0) {
-      this.getInvoice(this.id)
-  }
+    
+    if (this.id != null || this.id != undefined || this.id != 0)
+      { this.getInvoice(this.id)}
 
   }
+
   getInvoice(id: number): void {
     this.isLoading = true;
     if (id != 0)
-    this.service.getInvoiceById(id).subscribe({
+      this.service.getInvoiceById(id).subscribe({
         next: (r: InvoiceModel) => {
-       
+
           this.type = r.type,
-          this.customerAddress = r.customerAddress,
-          this.customerCuit = r.customerCuit,
-          this.customerName = r.customerName,
-          this.observation = r.observation,
-          this.invoiceNumber= r.invoiceNumber,
-          this.cae= r.cae,
-          this.ivaTotal= r.ivaTotal,
-          this.ivaSelected= r.ivaSelected,
-          this.iva21= r.iva21,
-          this.iva27= r.iva27,
-          this.iva10=r.iva10,
-          this.total = r.total,
-          this.userId = r.userId,
-          this.dateTime = r.dateTime,
-          this.invoiceDetail= r.invoiceDetails
-          this.subTotal= r.total - r.ivaTotal;          
-          this.isLoading = false;          
+            this.customerAddress = r.customerAddress,
+            this.customerCuit = r.customerCuit,
+            this.customerName = r.customerName,
+            this.observation = r.observation,
+            this.invoiceNumber = r.invoiceNumber,
+            this.cae = r.cae,
+            this.ivaTotal = r.ivaTotal,
+            this.ivaSelected = r.ivaSelected,
+            this.iva21 = r.iva21,
+            this.iva27 = r.iva27,
+            this.iva10 = r.iva10,
+            this.total = r.total,
+            this.userId = r.userId,
+            this.dateTime = r.dateTime,
+            this.invoiceDetail = r.invoiceDetails
+          this.subTotal = r.total - r.ivaTotal;
+          this.isLoading = false;
         },
         error: () => { this.isLoading = false; }
-    })
+      });
+      this.getIntegrationLog(id);
   }
 
-  getTipo(tipo : number):any {
-    switch (tipo){
-      case  eInvoiceType.A :
+  getTipo(tipo: number): any {
+    switch (tipo) {
+      case eInvoiceType.A:
         return this.tipo = 'factA'
-      case  eInvoiceType.B :
-       return this.tipo = 'factB'
+      case eInvoiceType.B:
+        return this.tipo = 'factB'
     }
   }
 
-  invoiceType(id: any):string{
+  invoiceType(id: any): string {
     return eInvoiceType[id]
   }
 
-   currencyFormat(data: any):string  { 
-    if(!this.locale) return '';
+  currencyFormat(data: any): string {
+    if (!this.locale) return '';
     return formatCurrency(data, this.locale!, '$', 'ARS', '1.1-2')
   }
   close(): void {
     this.drawerRef.close();
   };
 
-  
-/*Evento Reimprimir una factura */ 
-reimprimir(): void{
-  this.loading = true;
- this.service.Reprint(this.type, this.invoiceNumber).subscribe({
-  next: (r:any)=>
-  {
-    this.showMessageSuccess('Reimpresion de la factura satisfactoria');
-    this.popupComponent.isConfirmationvisible = false;
-    this.loading = false;
-  }, 
-  error: (e) =>{
-    this.showMessageError(e.error.descripcion);
-    this.loading = false;
-  }
- });
-}
 
-hideReprint() {
-  if(this.invoiceNumber == 0){
-    this.showMessageError('El numero de factura no puede estar en 0');
-    this.popupComponent.isConfirmationvisible = false;
-
-  }else{
-  
-  try{
-    this.reimprimir();
-  }catch(error){
-
-  console.log(error);
-  this.popupComponent.isConfirmationvisible = false;
-  }
+  /*Evento Reimprimir una factura */
+  reimprimir(): void {
+    this.loading = true;
+    this.service.Reprint(this.type, this.invoiceNumber).subscribe({
+      next: (r: any) => {
+        this.showMessageSuccess('Reimpresion de la factura satisfactoria');
+        this.popupComponent.isConfirmationvisible = false;
+        this.loading = false;
+      },
+      error: (e) => {
+        this.showMessageError(e.error.descripcion);
+        this.loading = false;
+      }
+    });
   }
 
-}
+  hideReprint() {
+    if (this.invoiceNumber == 0) {
+      this.showMessageError('El numero de factura no puede estar en 0');
+      this.popupComponent.isConfirmationvisible = false;
+
+    } else {
+
+      try {
+        this.reimprimir();
+      } catch (error) {
+
+        console.log(error);
+        this.popupComponent.isConfirmationvisible = false;
+      }
+    }
+  }
+
+  getIntegrationLog(id: number):Array<InvoiceLog> | any {
+    this.logLoading = true;
+    this.service.getIntegrationLogById(id).subscribe({
+      next:(r: Array<InvoiceLog>) =>{
+        this.invoiceLog = r;
+        this.logLoading = false;
+      },
+      error:(e) =>{
+        this.logLoading = false;
+      }
+    })
+  }
+
+  parserXML(data: string){    
+    const xmlParser = new XMLParser();
+    let parsed = xmlParser.parse(data);
+    return JSON.stringify(parsed, null, 2)
+  }
 
 }
 

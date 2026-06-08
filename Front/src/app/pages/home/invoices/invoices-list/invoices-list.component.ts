@@ -99,7 +99,7 @@ export class InvoicesListComponent implements OnInit {
   }
   
   formaterDate(date: string | number | Date): string {
-    return formatDate(date, 'YYYY-MM-dd', this.locale);
+    return formatDate(date, 'YYYY-MM-dd hh:mm', this.locale);
   }
 
   currencyFormat(data: any): string {

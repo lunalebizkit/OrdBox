@@ -2,7 +2,7 @@
   #header
   (onCloseClick)="close()"
   [btnReprintText]="'Reimprimir'"
-  [hideReprint]="false"
+  [hideReprint]="this.cae != null"
   [hideFacturaPro]="false"
   [hideClose]="true"
   [hideUpdate]="true"
@@ -10,7 +10,7 @@
   [hideCerrar]="true"
   [hideFacturaPro]="true"
   [hideBack]="true"
-  [disabled]="invoiceNumber == 0 ? true : false"
+  [disabled]="(invoiceNumber == 0) ? true : false"
   [title]="'Comprobantes de Venta'"
   [iconReprint]="'file-excel'"
   [iconBack]="'rollback'"
@@ -32,7 +32,7 @@
         </span>
         <br /> 
         <b><label>* Fecha: </label></b>
-        <span>{{ dateTime ? (dateTime | date : "YYYY-MM-dd") : "N/A" }}</span>
+        <span>{{ dateTime ? (dateTime | date : "YYYY-MM-dd hh:mm") : "N/A" }}</span>
         <br /> 
         <b><label>* Cliente: </label></b>
         <span>{{ customerName }}</span>
@@ -158,6 +158,47 @@
     </nz-collapse-panel>
   </nz-collapse>
 
+  <nz-collapse>
+    <nz-collapse-panel
+      nzHeader="Log ARCA"
+      [nzActive]="true"
+      [nzShowArrow]="true"
+      class="{{ this.tipo }}"
+    >
+    <nz-content>
+      <nz-table [nzBordered]="true" nzTemplateMode [nzSize]="'small'">
+          <thead>
+            <tr>
+              <th>Envio</th>
+              <th>Respuesta</th>
+              <th>Correcto</th>
+              <th>Fecha</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of this.invoiceLog">
+              <td>
+                <nz-collapse>
+                  <nz-collapse-panel nzHeader="XML Original">
+                    <pre style="max-width:300px; overflow-x:auto;">{{parserXML(item.request)}}</pre>
+                  </nz-collapse-panel>
+                </nz-collapse>
+              </td>
+              <td>
+                <nz-collapse>
+                  <nz-collapse-panel nzHeader="XML Original">
+                    <pre style="max-width:300px; overflow-x:auto;">{{parserXML(item.response)}}</pre>
+                  </nz-collapse-panel>
+                </nz-collapse>
+              </td>
+              <td>{{item.success}}</td>
+              <td>{{item.createdOn | date : "YYYY-MM-dd hh:mm"}}</td>
+            </tr>
+          </tbody>
+      </nz-table>
+    </nz-content>
+    </nz-collapse-panel>
+  </nz-collapse>
   <app-popup-confirmation
     #popupReimprimir
     [title]="'Confirmar Reimpresion'"
