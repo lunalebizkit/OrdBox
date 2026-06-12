@@ -1,6 +1,7 @@
 ﻿
 using iTextSharp.text;
 using iTextSharp.text.pdf;
+using Kiltex.SistemaGestion.Domain.Enum;
 using Kiltex.SistemaGestion.SDK.Error;
 using Kiltex.SistemaGestion.Services.Common;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
@@ -25,7 +26,7 @@ namespace Kiltex.SistemaGestion.Services.Services
         private bool mostrarIvaA;
         private bool mostrarIvaB;
         private BaseColor boldColor = BaseColor.Black;
-        private Font textFont = FontFactory.GetFont(FontFactory.HELVETICA, 9);
+        private Font textFont = FontFactory.GetFont(FontFactory.HELVETICA, 8);
         public PdfService(ErrorManager logger, IConfiguration configuration, IWebHostEnvironment env)
 
         {
@@ -34,13 +35,12 @@ namespace Kiltex.SistemaGestion.Services.Services
             _logger = logger;
         }
 
-        public async Task<OperationResponse<byte[]>> Imprimir(Paragraph paragraph, Paragraph tableTotals = null)
+        public async Task<OperationResponse<byte[]>> Imprimir(Paragraph paragraph, DtoRequestInvoice invoice = null)
         {
             using (MemoryStream stream = new MemoryStream())
             {
-                Document document = new Document();
+                Document document = new Document(PageSize.A4, 5f, 5f, 10f, 10f);
 
-                // Establecer el nombre y ubicación del archivo PDF resultante
                 string filePath = Path.Combine(_Env.ContentRootPath, "PDF_Factura");
                 string fileName = $"archivo_{DateTime.Now.ToString("yyyyMMdd")}.pdf";
                 string fullPath = Path.Combine(filePath, fileName);
@@ -51,17 +51,18 @@ namespace Kiltex.SistemaGestion.Services.Services
 
                 try
                 {
-                    // Crear el escritor PDF
                     PdfWriter writer = PdfWriter.GetInstance(document, stream);
 
+                    if (invoice != null && !string.IsNullOrEmpty(invoice.CAE))
+                    {
+                        writer.PageEvent = new FooterWithCAEEvent(invoice);
+                    }
                     document.Open();
                     document.Add(paragraph);
                     document.Close();
 
-                    // Obtener los bytes del MemoryStream después de cerrarlo
                     byte[] pdfBytes = stream.ToArray();
 
-                    // Guardar el contenido del MemoryStream en un archivo en el disco
                     File.WriteAllBytes(fullPath, pdfBytes);
 
                     return new OperationResponse<byte[]>(pdfBytes);
