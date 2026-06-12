@@ -521,7 +521,8 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
           total: this.total,
           ivaTotal: this.ivaTotal,
           ivaSelected: this.ivaSelected,
-
+          caeExpirationTime: null,
+          integrationSuccess: false,
           type: (this.formInvoice.controls['type'].value == eInvoiceType.B) ?(this.formInvoice.controls['ivaCondition'].value == eIvaCondition.Exento ? eInvoiceType.EXENTO : eInvoiceType.B) : eInvoiceType.A,
           invoiceDetails: this.invoiceDetails,
         };

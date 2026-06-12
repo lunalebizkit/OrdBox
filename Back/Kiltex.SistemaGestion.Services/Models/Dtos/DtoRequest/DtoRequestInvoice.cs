@@ -26,14 +26,22 @@ namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest
         public decimal Total { get; set; }
 
         public decimal IvaTotal { get; set; }
+
         public decimal? Iva21 { get; set; }
+
         public decimal? Iva27 { get; set; }
+
         public decimal? Iva10 { get; set; }
 
         public int Type { get; set; }
+
         public string? Status { get; set; }
+
         public string? CAE { get; set; }
+
         public DateTime? CAEExpirationDate { get; set; }
+
+        public bool IntegrationSuccess { get; set; }
 
         public List<DtoResponseInvoiceDetail> InvoiceDetails { get; set; }
 

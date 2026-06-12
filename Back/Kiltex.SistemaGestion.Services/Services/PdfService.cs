@@ -1346,6 +1346,9 @@ namespace Kiltex.SistemaGestion.Services.Services
                 table.AddCell(cell1);
                 paragraph.Add(table);
             }
+
+            return paragraph;
+        }
             
         public Paragraph CabeceraArca(DtoRequestInvoice invoice)
         {
@@ -1489,7 +1492,11 @@ namespace Kiltex.SistemaGestion.Services.Services
                 textoDerecha = new()
                 {
                 new Chunk("CUIT: ", fontTextBold),
-                new Chunk(invoice.CustomerCuit, fontText)
+                new Chunk(invoice.CustomerCuit, fontText),
+                Chunk.Newline,
+                Chunk.Newline,
+                new Chunk("Condicion: ", fontTextBold),
+                new Chunk(MapCondicion(invoice.Type), fontText)
                 };
             }
 
@@ -1768,6 +1775,17 @@ namespace Kiltex.SistemaGestion.Services.Services
                 ETypeReceipt.A => "A",
                 ETypeReceipt.B => "B",
                 _ => "B"
+            };
+        }
+        
+        private static string MapCondicion(int invoiceType)
+        {
+            return (ETypeReceipt)invoiceType switch
+            {
+                ETypeReceipt.A => "Responsable Inscripto",
+                ETypeReceipt.B => "Consumidor final",
+                ETypeReceipt.EXENTO => "Excento",
+                _ => ""
             };
         }
 

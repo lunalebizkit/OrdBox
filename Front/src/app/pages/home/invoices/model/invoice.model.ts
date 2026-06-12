@@ -12,6 +12,8 @@ export interface InvoiceListModel {
     ivaTotal: number;
     type: number;
     ivaSelected: number;
+    caeExpirationTime: Date | null,
+    integrationSuccess: boolean | null
 }
 
 export interface InvoiceModel {
@@ -32,6 +34,8 @@ export interface InvoiceModel {
     ivaTotal: number;
     type: number;
     ivaSelected: number;
+    caeExpirationTime: Date | null;
+    integrationSuccess: boolean | null;
     invoiceDetails: InvoiceDetails[]
 }
 export interface InvoiceDetails {

@@ -15,8 +15,7 @@ namespace Kiltex.SistemaGestion.Services.Mapper
                     d.IvaTotal = o.InvoiceDetails.Sum(e => (e.Quantity * e.Price) - ((e.Quantity * e.Price) / (1 + e.Iva / 100.00m)));
                 });
 
-            CreateMap<Invoice, DtoRequestInvoice>()
-                .ForMember(destination => destination.CAEExpirationDate, option => option.Ignore());
+            CreateMap<Invoice, DtoRequestInvoice>();
 
             CreateMap<InvoiceDetail, DtoResponseInvoiceDetail>().ReverseMap();
 

@@ -233,7 +233,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             }
         }
 
-        public async Task<OperationResponse<IdResponse<long>>> Update(DtoRequestInvoice model, string cae, CancellationToken ct = default)
+        public async Task<OperationResponse<IdResponse<long>>> Update(DtoRequestInvoice model, string cae, DateTime expiration, CancellationToken ct = default)
         {
             var transaction = _contextSql.Database.BeginTransaction();
             var invoiceModel = _mapper.Map<Invoice>(model);
@@ -251,6 +251,8 @@ namespace Kiltex.SistemaGestion.Services.Services
 
                     invoiceModel.CAE = cae;
                     invoiceModel.InvoiceNumber = invoiceModel.InvoiceNumber;
+                    invoiceModel.CAEExpirationDate = expiration;
+                    invoiceModel.IntegrationSuccess = true;
 
                     _contextSql.Entry(invoice).State = EntityState.Detached;
                     _contextSql.Invoices.Update(invoiceModel);

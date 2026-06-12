@@ -51,6 +51,12 @@ namespace Kiltex.SistemaGestion.Domain.Model
         [Column("cae")]
         public string? CAE { get; set; }
 
+        [Column("cae_expiration_date")]
+        public DateTime? CAEExpirationDate { get; set; }
+        
+        [Column("integration_success")]
+        public bool? IntegrationSuccess { get; set; }
+
         public ICollection<InvoiceDetail> InvoiceDetails { get; set; } = new HashSet<InvoiceDetail>();
 
 

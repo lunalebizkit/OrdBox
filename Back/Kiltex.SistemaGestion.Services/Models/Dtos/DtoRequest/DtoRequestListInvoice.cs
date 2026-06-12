@@ -24,5 +24,9 @@
         public string? Status { get; set; }
         public string? CAE { get; set; }
 
+        public DateTime? CAEExpirationDate { get; set; }
+
+        public bool? IntegrationSuccess { get; set; }
+
     }
 }

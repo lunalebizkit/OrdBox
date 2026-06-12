@@ -105,5 +105,10 @@ export class InvoiceService {
     return this.api.get(`invoice/GetIntegrationLogById?id=${id}`, false)
 
   }
+
+  public printInvoiceARCA(id: number): Observable<any> {
+    return this.api.get(`Pdf/pdfcomprobanteventaarca?id=${id}`, false, {responseType:'blob' as 'json'}) 
+
+  }
 }
 

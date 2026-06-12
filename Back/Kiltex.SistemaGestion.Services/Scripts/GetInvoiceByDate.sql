@@ -16,6 +16,9 @@ SELECT [i].[id]
       ,[id].[price]
       ,[id].[iva]
       ,[id].[cae]
+      ,[id].[cae_expiration_date] AS [CaeExpirationDate]
+      ,[id].[integration_success] AS [IntegrationSuccess]
+
   FROM [invoice] [i]
   INNER JOIN [invoice_detail] [id] ON [id].[invoice_id] = [i].[id]
   WHERE 

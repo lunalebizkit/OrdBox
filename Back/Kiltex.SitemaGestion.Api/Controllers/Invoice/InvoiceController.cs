@@ -138,7 +138,7 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Invoice
 
                 if (!string.IsNullOrEmpty(responseCAE.Cae))
                 {
-                    await _service.Update(invoice.Data, responseCAE.Cae).ConfigureAwait(false);
+                    await _service.Update(invoice.Data, responseCAE.Cae, responseCAE.FechaVencimientoCae.Value).ConfigureAwait(false);
                 }
             }
 
