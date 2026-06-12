@@ -33,7 +33,7 @@ namespace Kiltex.SistemaGestion.Services.Services
 
             float x = document.LeftMargin;
             float y = document.BottomMargin + _marginFromBottom;
-            table.WriteSelectedRows(0, -1, x, y + table.TotalHeight, cb);
+            table.WriteSelectedRows(0, -1, x, 35f, cb);
         }
     }
 }

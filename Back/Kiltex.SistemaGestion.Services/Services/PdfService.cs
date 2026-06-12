@@ -39,7 +39,7 @@ namespace Kiltex.SistemaGestion.Services.Services
         {
             using (MemoryStream stream = new MemoryStream())
             {
-                Document document = new Document(PageSize.A4, 5f, 5f, 10f, 10f);
+                Document document = new Document(PageSize.A4, 5f, 5f, 15f, 40f);
 
                 string filePath = Path.Combine(_Env.ContentRootPath, "PDF_Factura");
                 string fileName = $"archivo_{DateTime.Now.ToString("yyyyMMdd")}.pdf";
@@ -1521,6 +1521,7 @@ namespace Kiltex.SistemaGestion.Services.Services
         public Paragraph DetalleFacturaArca(DtoRequestInvoice invoice)
         {
             Font textFont = FontFactory.GetFont(FontFactory.HELVETICA, 8);
+            Font fontTextBoldIvas = FontFactory.GetFont(FontFactory.HELVETICA, 10, Font.BOLD, BaseColor.Black);
             Paragraph paragraph = new Paragraph();
 
             PdfPCell emptyCell = new PdfPCell()
@@ -1640,15 +1641,17 @@ namespace Kiltex.SistemaGestion.Services.Services
                 {
                     totalIva.AddCell(emptyCell);
                     totalIva.AddCell(emptyCell);
-                    totalIva.AddCell(new PdfPCell(new Phrase("Iva 10: ", textFont))
+                    totalIva.AddCell(new PdfPCell(new Phrase("Iva 10: ", fontTextBoldIvas))
                     {
                         HorizontalAlignment = Element.ALIGN_RIGHT,
+                        Border = PdfCell.NO_BORDER
                     });
 
                     //table2.AddCell(emptyCell);
-                    totalIva.AddCell(new PdfPCell(new Phrase(string.Format("{0,7:##.00}", "$" + Math.Round(invoice.Iva10.Value, 2)), textFont))
+                    totalIva.AddCell(new PdfPCell(new Phrase(string.Format("{0,7:##.00}", "$" + Math.Round(invoice.Iva10.Value, 2)), fontTextBoldIvas))
                     {
                         HorizontalAlignment = Element.ALIGN_RIGHT,
+                        Border = PdfCell.NO_BORDER
                     });
                 }
 
@@ -1656,15 +1659,17 @@ namespace Kiltex.SistemaGestion.Services.Services
                 {
                     totalIva.AddCell(emptyCell);
                     totalIva.AddCell(emptyCell);
-                    totalIva.AddCell(new PdfPCell(new Phrase("Iva 21: ", textFont))
+                    totalIva.AddCell(new PdfPCell(new Phrase("Iva 21: ", fontTextBoldIvas))
                     {
                         HorizontalAlignment = Element.ALIGN_RIGHT,
+                        Border = PdfCell.NO_BORDER
                     });
 
 
-                    totalIva.AddCell(new PdfPCell(new Phrase(string.Format("{0,7:##.00}", "$" + Math.Round(invoice.Iva21.Value, 2)), textFont))
+                    totalIva.AddCell(new PdfPCell(new Phrase(string.Format("{0,7:##.00}", "$" + Math.Round(invoice.Iva21.Value, 2)), fontTextBoldIvas))
                     {
                         HorizontalAlignment = Element.ALIGN_RIGHT,
+                        Border = PdfCell.NO_BORDER
                     });
 
                 }
@@ -1675,14 +1680,16 @@ namespace Kiltex.SistemaGestion.Services.Services
                     totalIva.AddCell(emptyCell);
                     totalIva.AddCell(emptyCell);
 
-                    totalIva.AddCell(new PdfPCell(new Phrase("Iva 27: ", textFont))
+                    totalIva.AddCell(new PdfPCell(new Phrase("Iva 27: ", fontTextBoldIvas))
                     {
                         HorizontalAlignment = Element.ALIGN_RIGHT,
+                        Border = PdfCell.NO_BORDER
                     });
 
-                    totalIva.AddCell(new PdfPCell(new Phrase(string.Format("{0,7:##.00}", "$" + Math.Round(invoice.Iva27.Value, 2)), textFont))
+                    totalIva.AddCell(new PdfPCell(new Phrase(string.Format("{0,7:##.00}", "$" + Math.Round(invoice.Iva27.Value, 2)), fontTextBoldIvas))
                     {
                         HorizontalAlignment = Element.ALIGN_RIGHT,
+                        Border = PdfCell.NO_BORDER
                     });
                 }
 
@@ -1697,41 +1704,41 @@ namespace Kiltex.SistemaGestion.Services.Services
 
                 totalIva.AddCell(emptyCell);
                 totalIva.AddCell(emptyCell);
-                totalIva.AddCell(new PdfPCell(new Phrase("IvaTotal: ", textFont))
+                totalIva.AddCell(new PdfPCell(new Phrase("IvaTotal: ", fontTextBoldIvas))
                 {
                     HorizontalAlignment = Element.ALIGN_RIGHT,
                     Border = PdfCell.NO_BORDER,
                 });
 
-                totalIva.AddCell(new PdfPCell(new Phrase(string.Format("{0,7:##.00}", "$" + invoice.IvaTotal.ToString()), textFont))
+                totalIva.AddCell(new PdfPCell(new Phrase(string.Format("{0,7:##.00}", "$" + invoice.IvaTotal.ToString()), fontTextBoldIvas))
                 {
                     HorizontalAlignment = Element.ALIGN_RIGHT,
                     Border = PdfCell.NO_BORDER,
 
-                });
-
-                totalIva.AddCell(emptyCell);
-                totalIva.AddCell(emptyCell);
-                totalIva.AddCell(new PdfPCell(new Phrase("SubTotal: ", textFont))
-                {
-                    HorizontalAlignment = Element.ALIGN_RIGHT,
-                    Border = PdfCell.NO_BORDER,
-                });
-                totalIva.AddCell(new PdfPCell(new Phrase("$" + subTotal.ToString(), textFont))
-                {
-                    HorizontalAlignment = Element.ALIGN_RIGHT,
-                    Border = PdfCell.NO_BORDER,
                 });
 
                 totalIva.AddCell(emptyCell);
                 totalIva.AddCell(emptyCell);
-
-                totalIva.AddCell(new PdfPCell(new Phrase("Total:", textFont))
+                totalIva.AddCell(new PdfPCell(new Phrase("SubTotal: ", fontTextBoldIvas))
                 {
                     HorizontalAlignment = Element.ALIGN_RIGHT,
                     Border = PdfCell.NO_BORDER,
                 });
-                totalIva.AddCell(new PdfPCell(new Phrase(string.Format("{0,7:##.00}", "$" + invoice.Total.ToString()), textFont))
+                totalIva.AddCell(new PdfPCell(new Phrase("$" + subTotal.ToString(), fontTextBoldIvas))
+                {
+                    HorizontalAlignment = Element.ALIGN_RIGHT,
+                    Border = PdfCell.NO_BORDER,
+                });
+
+                totalIva.AddCell(emptyCell);
+                totalIva.AddCell(emptyCell);
+
+                totalIva.AddCell(new PdfPCell(new Phrase("Total:", fontTextBoldIvas))
+                {
+                    HorizontalAlignment = Element.ALIGN_RIGHT,
+                    Border = PdfCell.NO_BORDER,
+                });
+                totalIva.AddCell(new PdfPCell(new Phrase(string.Format("{0,7:##.00}", "$" + invoice.Total.ToString()), fontTextBoldIvas))
                 {
                     HorizontalAlignment = Element.ALIGN_RIGHT,
                     Border = PdfCell.NO_BORDER,
@@ -1748,12 +1755,12 @@ namespace Kiltex.SistemaGestion.Services.Services
                 totalIva.AddCell(emptyCell);
                 totalIva.AddCell(emptyCell);
 
-                totalIva.AddCell(new PdfPCell(new Phrase("Total:", textFont))
+                totalIva.AddCell(new PdfPCell(new Phrase("Total:", fontTextBoldIvas))
                 {
                     HorizontalAlignment = Element.ALIGN_RIGHT,
                     Border = PdfCell.NO_BORDER,
                 });
-                totalIva.AddCell(new PdfPCell(new Phrase(string.Format("{0,7:##.00}", "$" + invoice.Total.ToString()), textFont))
+                totalIva.AddCell(new PdfPCell(new Phrase(string.Format("{0,7:##.00}", "$" + invoice.Total.ToString()), fontTextBoldIvas))
                 {
                     HorizontalAlignment = Element.ALIGN_RIGHT,
                     Border = PdfCell.NO_BORDER,
