@@ -33,6 +33,7 @@ namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest
         public int Type { get; set; }
         public string? Status { get; set; }
         public string? CAE { get; set; }
+        public DateTime? CAEExpirationDate { get; set; }
 
         public List<DtoResponseInvoiceDetail> InvoiceDetails { get; set; }
 
