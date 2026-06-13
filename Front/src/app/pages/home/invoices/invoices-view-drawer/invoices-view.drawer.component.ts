@@ -29,6 +29,7 @@ export class InvoicesViewDrawerComponent extends BaseComponent implements OnInit
   @ViewChild('header') headerComponent!: HeaderOperationsButtonsComponent;
   @ViewChild('popupReimprimir') popupComponent!: PopupConfirmationComponent;
   @Input('btnReprintText') btnReprintText: string = 'Reimprimir';
+  @ViewChild('popupFacturaARCA') popupARCAComponent!: PopupConfirmationComponent;
 
   // variables Generales
   isLoading = true;
@@ -39,6 +40,8 @@ export class InvoicesViewDrawerComponent extends BaseComponent implements OnInit
   tipo!: string;
 
   //Variables del comprobante
+  invoice: InvoiceModel | null = null;
+
   type!: eInvoiceType;
   invoiceDetail: InvoiceDetails[] = [];
   customerAddress!: string;
@@ -85,7 +88,7 @@ export class InvoicesViewDrawerComponent extends BaseComponent implements OnInit
     if (id != 0)
       this.service.getInvoiceById(id).subscribe({
         next: (r: InvoiceModel) => {
-
+          this.invoice = r;
           this.type = r.type,
             this.customerAddress = r.customerAddress,
             this.customerCuit = r.customerCuit,
@@ -156,7 +159,11 @@ export class InvoicesViewDrawerComponent extends BaseComponent implements OnInit
     } else {
 
       try {
-        this.reimprimir();
+        if (this.invoice?.integrationSuccess == true && this.invoice.cae != null) {
+          this.imprimirInvoiceArca(this.invoice.id)
+        } else{
+          this.reimprimir();
+        }
       } catch (error) {
 
         console.log(error);
@@ -180,10 +187,64 @@ export class InvoicesViewDrawerComponent extends BaseComponent implements OnInit
 
   parserXML(data: string){    
     const xmlParser = new XMLParser();
+    if (data == null) {return '';}
     let parsed = xmlParser.parse(data);
     return JSON.stringify(parsed, null, 2)
   }
 
+  imprimirInvoiceArca(id: number): void {
+    let fecha: Date = new Date();
+    let año: string = fecha.getFullYear().toString();
+    let mes = (fecha.getMonth() + 1).toString().padStart(2, '0');
+    let dia = fecha.getDate().toString().padStart(2, '0');
+    let hora: string = fecha.getHours().toString().padStart(2, '0');
+    let minutos: string = fecha.getMinutes().toString().padStart(2, '0');
+    let segundos: string = fecha.getSeconds().toString().padStart(2, '0');
+    const fileName = `Factura_${año}${mes}${dia}${hora}${minutos}${segundos}`;
+    this.service.printInvoiceARCA(id).subscribe({
+      next: (r) => { this.downloadFile(r, fileName); }
+
+    }).add(()=>{
+      this.popupComponent.isConfirmationvisible = false;
+    });
+  }
+
+  downloadFile(response: any, fileName: string) {
+    const dataType = response.type;
+    const binaryData = [];
+
+    binaryData.push(response);
+
+    const filtePath = window.URL.createObjectURL(new Blob(binaryData, { type: dataType }))
+    const downloadLink = document.createElement('a');
+    downloadLink.href = filtePath;
+    downloadLink.setAttribute('download', fileName);
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+  }
+
+  createArca(id: number | any):void{
+    this.loading = true;
+    try{
+      if (id != null) {
+        this.service.createInvoiceARCA(id).subscribe({
+          next: ()=>{},
+          error: (e)=>{
+  
+          }
+        });
+      }
+    }
+    catch (error){
+      console.log(error);
+      this.popupARCAComponent.isConfirmationvisible = false;
+    }
+    finally{
+      this.popupARCAComponent.isConfirmationvisible = false;
+      this.loading = false;
+      this.close();
+    }
+  }
 }
 
 

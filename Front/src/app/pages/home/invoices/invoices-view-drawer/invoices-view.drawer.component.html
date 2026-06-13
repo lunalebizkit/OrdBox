@@ -2,7 +2,7 @@
   #header
   (onCloseClick)="close()"
   [btnReprintText]="'Reimprimir'"
-  [hideReprint]="this.cae != null"
+  [hideReprint]="this.invoice?.integrationSuccess == null"
   [hideFacturaPro]="false"
   [hideClose]="true"
   [hideUpdate]="true"
@@ -17,6 +17,11 @@
   [iconTitle]="'container'"
   (onReprintClick)="popupReimprimir.showConfirmation()"
   [colors]="'#52c41a'"
+
+  [btnFacturaARCAText]="'Factura ARCA'"
+  [disabledARCA]="this.invoice?.integrationSuccess == true"
+  [hideARCA]="this.invoice?.integrationSuccess == null"
+  (onFacturaARCAClick)="popupARCAComponent.showConfirmation()"
 >
 </app-header-op-buttons>
 
@@ -204,6 +209,14 @@
     [title]="'Confirmar Reimpresion'"
     [header]="'¿Está seguro de que desea reimprimir esta factura?'"
     (handleOk)="hideReprint()"
+    [disabled]="loading"
+  >
+  </app-popup-confirmation>
+  <app-popup-confirmation
+    #popupFacturaARCA
+    [title]="'Confirmar enviar factura a ARCA'"
+    [header]="'¿Está seguro de que desea crear esta factura?'"
+    (handleOk)="createArca(this.invoice?.id)"
     [disabled]="loading"
   >
   </app-popup-confirmation>

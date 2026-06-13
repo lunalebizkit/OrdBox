@@ -125,6 +125,7 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Invoice
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
+        [Route("")]
         [AllowAccess(Permission = new EPermission[] { EPermission.CreateInvoice })]
         public async Task<IActionResult> New([FromBody] DtoRequestInvoice model)
         {
@@ -132,14 +133,7 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Invoice
 
             if (invoiceId.Success && invoiceId.Data != null)
             {
-                var invoice = await _service.GetById(invoiceId.Data.Id).ConfigureAwait(false);
-
-                var responseCAE = await _arcaIntegracionService.CrearComprobanteAsync(invoice.Data).ConfigureAwait(false);
-
-                if (!string.IsNullOrEmpty(responseCAE.Cae))
-                {
-                    await _service.Update(invoice.Data, responseCAE.Cae, responseCAE.FechaVencimientoCae.Value).ConfigureAwait(false);
-                }
+               await GetCAEInvoiceAsync(invoiceId.Data.Id);
             }
 
             return Return(invoiceId);
@@ -170,5 +164,30 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Invoice
         {
             return Return(await _service.GetIntegrationLogById(id).ConfigureAwait(false));
         }
+        
+        
+        [HttpGet]
+        [Route("getcaeinvoice")]
+        [AllowAccess(Permission = new EPermission[] { EPermission.GetInvoice })]
+        public async Task<IActionResult> GetCAEInvoice(long id)
+        {
+            await GetCAEInvoiceAsync(id);
+            return Ok();
+        }
+
+        #region PRIVATE
+
+        private async Task GetCAEInvoiceAsync(long invoiceId)
+        {
+            var invoice = await _service.GetById(invoiceId).ConfigureAwait(false);
+            var responseCAE = await _arcaIntegracionService.CrearComprobanteAsync(invoice.Data).ConfigureAwait(false);
+
+            if (!string.IsNullOrEmpty(responseCAE.Cae))
+            {
+                await _service.Update(invoice.Data, responseCAE.Cae, responseCAE.FechaVencimientoCae.Value).ConfigureAwait(false);
+            }
+        }
+
+        #endregion
     }
 }
