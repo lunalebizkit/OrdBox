@@ -165,27 +165,39 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Invoice
             return Return(await _service.GetIntegrationLogById(id).ConfigureAwait(false));
         }
         
-        
+        /// <summary>
+        /// Invoca un llamado a ARCA integracion y agrga observacion
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("getcaeinvoice")]
         [AllowAccess(Permission = new EPermission[] { EPermission.GetInvoice })]
-        public async Task<IActionResult> GetCAEInvoice(long id)
+        public async Task<IActionResult> GetCAEInvoice(long id, string? observacion)
         {
-            await GetCAEInvoiceAsync(id);
-            return Ok();
+           return await GetCAEInvoiceAsync(id, DateTime.Now, observacion);
         }
 
         #region PRIVATE
 
-        private async Task GetCAEInvoiceAsync(long invoiceId)
+        private async Task<IActionResult> GetCAEInvoiceAsync(long invoiceId, DateTime? dateTime = null, string? observacion = null)
         {
             var invoice = await _service.GetById(invoiceId).ConfigureAwait(false);
-            var responseCAE = await _arcaIntegracionService.CrearComprobanteAsync(invoice.Data).ConfigureAwait(false);
 
-            if (!string.IsNullOrEmpty(responseCAE.Cae))
+            if (invoice.Success && invoice.Data != null)
             {
-                await _service.Update(invoice.Data, responseCAE.Cae, responseCAE.FechaVencimientoCae.Value).ConfigureAwait(false);
+                invoice.Data.DateTime = dateTime == null ? invoice.Data.DateTime : DateTime.Now;
+
+                if (!string.IsNullOrEmpty(observacion)) { invoice.Data.Observation = observacion; }
+
+                var responseCAE = await _arcaIntegracionService.CrearComprobanteAsync(invoice.Data).ConfigureAwait(false);
+
+                if (!string.IsNullOrEmpty(responseCAE.Cae) || responseCAE.InvoiceNumber > 0)
+                {
+                  return Return(await _service.Update(invoice.Data, responseCAE).ConfigureAwait(false));
+                }
             }
+            return BadRequest("No se encontro número de factura");
         }
 
         #endregion
