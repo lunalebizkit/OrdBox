@@ -43,6 +43,8 @@ namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest
 
         public bool IntegrationSuccess { get; set; }
 
+        public long? InvoiceNumberArca { get; set; }
+
         public List<DtoResponseInvoiceDetail> InvoiceDetails { get; set; }
 
     }

@@ -15,7 +15,7 @@ import { InvoiceDetailList, InvoiceDetails, InvoiceModel, invoiceGridParser, inv
 import { PopupConfirmationComponent } from "src/app/common/components/popup-confirmation/popup-confirmation.component";
 import { InvoiceService } from "../invoices.service";
 import { ActivatedRoute, Router } from "@angular/router";
-import { ePayment, ePaymentType, paymentTypes } from "../model/invoice-payment.Enum";
+import { ePayment, paymentTypes } from "../model/invoice-payment.Enum";
 import { eInvoiceType, eIvaCondition, InvoiceType, IvaCondition } from "../model/invoice-type.Enum";
 import { formatCurrency, formatDate } from '@angular/common';
 import { Inject, LOCALE_ID } from '@angular/core';

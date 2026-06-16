@@ -4,6 +4,7 @@ using Kiltex.SistemaGestion.Domain;
 using Kiltex.SistemaGestion.Domain.Enum;
 using Kiltex.SistemaGestion.Domain.Model;
 using Kiltex.SistemaGestion.SDK.Error;
+using Kiltex.SistemaGestion.Services.ARCA.Dto.Response;
 using Kiltex.SistemaGestion.Services.Common;
 using Kiltex.SistemaGestion.Services.ImpresoraFiscal;
 using Kiltex.SistemaGestion.Services.ImpresoraFiscal.Printer250F;
@@ -25,6 +26,7 @@ namespace Kiltex.SistemaGestion.Services.Services
     {
         private readonly PrinterStatus _config;
         private readonly IPrinter _printer;
+
         public InvoiceService(ErrorManager logger, DBContext context, IMapper maper, IPrinter printer, PrinterStatus config, IConfiguration configuration) :
             base(logger, context, maper, configuration)
         {
@@ -233,7 +235,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             }
         }
 
-        public async Task<OperationResponse<IdResponse<long>>> Update(DtoRequestInvoice model, string cae, DateTime expiration, CancellationToken ct = default)
+        public async Task<OperationResponse<IdResponse<long>>> Update(DtoRequestInvoice model, DtoResponseARCAInvoice responseARCAInvoice,CancellationToken ct = default)
         {
             var transaction = _contextSql.Database.BeginTransaction();
             var invoiceModel = _mapper.Map<Invoice>(model);
@@ -249,10 +251,10 @@ namespace Kiltex.SistemaGestion.Services.Services
                     
                     Invoice invoice = await _contextSql.Invoices.FirstAsync(p => p.Id == invoiceModel.Id).ConfigureAwait(false);
 
-                    invoiceModel.CAE = cae;
-                    invoiceModel.InvoiceNumber = invoiceModel.InvoiceNumber;
-                    invoiceModel.CAEExpirationDate = expiration;
-                    invoiceModel.IntegrationSuccess = true;
+                    invoiceModel.CAE = string.IsNullOrEmpty(responseARCAInvoice.Cae) ? null : responseARCAInvoice.Cae;
+                    invoiceModel.CAEExpirationDate = responseARCAInvoice.FechaVencimientoCae.HasValue ? responseARCAInvoice.FechaVencimientoCae.Value : null;
+                    invoiceModel.IntegrationSuccess = !string.IsNullOrEmpty(responseARCAInvoice.Cae);
+                    invoiceModel.InvoiceNumber = responseARCAInvoice.InvoiceNumber;
 
                     _contextSql.Entry(invoice).State = EntityState.Detached;
                     _contextSql.Invoices.Update(invoiceModel);
@@ -795,8 +797,7 @@ namespace Kiltex.SistemaGestion.Services.Services
         #endregion
 
         #region Private
-
-
+               
         #endregion
     }
 }
