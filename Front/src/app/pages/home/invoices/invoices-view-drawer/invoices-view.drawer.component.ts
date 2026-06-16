@@ -1,6 +1,6 @@
 import { formatCurrency } from "@angular/common";
 import { Component, ElementRef, Inject, Input, LOCALE_ID, OnInit, ViewChild } from "@angular/core";
-import { FormGroup } from "@angular/forms";
+import { FormBuilder, FormGroup } from "@angular/forms";
 import { NzDrawerRef } from "ng-zorro-antd/drawer";
 import { NzMessageService } from "ng-zorro-antd/message";
 import { NzNotificationService } from "ng-zorro-antd/notification";
@@ -12,6 +12,7 @@ import { eInvoiceType } from "../model/invoice-type.Enum";
 import { InvoiceDetails, InvoiceModel } from "../model/invoice.model";
 import { InvoiceLog } from "../model/invoice-log-integration";
 import { XMLParser } from "fast-xml-parser";
+import { Router } from "@angular/router";
 
 
 @Component({
@@ -20,11 +21,7 @@ import { XMLParser } from "fast-xml-parser";
   styleUrls: ['./invoices-view.drawer.component.css'],
 })
 export class InvoicesViewDrawerComponent extends BaseComponent implements OnInit {
-  router: any;
-  @Input() set filter(value: number) {
-    this.id = value;
-  }
-
+  @Input() set filter(value: number) { this.id = value; }
 
   @ViewChild('header') headerComponent!: HeaderOperationsButtonsComponent;
   @ViewChild('popupReimprimir') popupComponent!: PopupConfirmationComponent;
@@ -40,7 +37,7 @@ export class InvoicesViewDrawerComponent extends BaseComponent implements OnInit
   tipo!: string;
 
   //Variables del comprobante
-  invoice: InvoiceModel | null = null;
+  invoice!: InvoiceModel;
 
   type!: eInvoiceType;
   invoiceDetail: InvoiceDetails[] = [];
@@ -59,11 +56,11 @@ export class InvoicesViewDrawerComponent extends BaseComponent implements OnInit
   userId!: number;
   dateTime!: Date;
   subTotal!: number;
-  form!: FormGroup;
   percIngBrutos!: number;
   percIva!: number;
   concNoGravado!: number;
   invoiceLog: InvoiceLog[] = [];
+  formObservacion!: FormGroup;
 
   constructor(
     notificacionService: NzNotificationService,
@@ -71,9 +68,14 @@ export class InvoicesViewDrawerComponent extends BaseComponent implements OnInit
     el: ElementRef,
     message: NzMessageService,
     private drawerRef: NzDrawerRef<string>,
-    @Inject(LOCALE_ID) public locale: string
+    @Inject(LOCALE_ID) public locale: string,
+    private router: Router,
+    private fb: FormBuilder,
   ) {
     super(notificacionService, el, message);
+    this.formObservacion = this.fb.group({
+      observation: ['']
+    });
   }
 
   ngOnInit(): void {
@@ -130,8 +132,8 @@ export class InvoicesViewDrawerComponent extends BaseComponent implements OnInit
     if (!this.locale) return '';
     return formatCurrency(data, this.locale!, '$', 'ARS', '1.1-2')
   }
-  close(): void {
-    this.drawerRef.close();
+  close(data?: boolean): void {
+    this.drawerRef.close(data);
   };
 
 
@@ -224,13 +226,16 @@ export class InvoicesViewDrawerComponent extends BaseComponent implements OnInit
   }
 
   createArca(id: number | any):void{
+    
+    let observacion = this.formObservacion.controls['observation'].value;
     this.loading = true;
     try{
       if (id != null) {
-        this.service.createInvoiceARCA(id).subscribe({
-          next: ()=>{},
+        this.service.createInvoiceARCA(id, observacion).subscribe({
+          next: (r)=>{ this.router.navigate(['/home/invoices/invoices-sale']);},
           error: (e)=>{
-  
+            console.log(e);
+            
           }
         });
       }
@@ -242,9 +247,18 @@ export class InvoicesViewDrawerComponent extends BaseComponent implements OnInit
     finally{
       this.popupARCAComponent.isConfirmationvisible = false;
       this.loading = false;
-      this.close();
+      this.close(true);
     }
   }
+
+  isFacturaArcaDisabled(): boolean {
+    return (this.invoice?.integrationSuccess === true || this.invoice?.cae != null);
+  }
+  
+  showObservationForm(): boolean {
+    return (this.invoice?.integrationSuccess == false || (this.invoice?.cae == null && this.invoice?.caeExpirationTime == null));
+  }
+
 }
 
 

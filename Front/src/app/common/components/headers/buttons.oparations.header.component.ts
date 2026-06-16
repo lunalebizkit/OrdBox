@@ -20,6 +20,7 @@ export class HeaderOperationsButtonsComponent implements OnInit {
   @Input('btnPrintText') btnPrintText: string = 'Imprimir';
   @Input('btnCerrarText') btnCerrarText: string = 'Cerrar';
   @Input('btnFacturaProText') btnFacturaProText: string = 'Factura Proforma';
+  @Input('btnFacturaARCAText') btnFacturaARCAText: string = 'Factura ARCA';
 
 
   @Input('tagText') tagText: string = '';
@@ -37,6 +38,7 @@ export class HeaderOperationsButtonsComponent implements OnInit {
   @Input('iconReprint') iconReprint!: string;
   @Input('iconPrint') iconPrint!: string;
   @Input('iconFacturaPro') iconFacturaPro!: string;
+  @Input('iconFacturaARCA') iconFacturaARCA!: string;
 
 
   @Input('showSpinner') showSpinner!: boolean;
@@ -52,10 +54,12 @@ export class HeaderOperationsButtonsComponent implements OnInit {
   @Input('hidePrint') hidePrint: boolean = true;
   @Input('hideCerrar') hideCerrar: boolean = false;
   @Input('hideFacturaPro') hideFacturaPro: boolean = false;
+  @Input('hideARCA') hideARCA: boolean = true;
 
 
   @Input('hideEmail') hideEmail: boolean = true;
   @Input('disabled') disabled: boolean = false;
+  @Input('disabledARCA') disabledARCA: boolean = true;
 
   @Output('onSaveClick') onSaveClick: EventEmitter<any> =
     new EventEmitter<any>();
@@ -79,6 +83,8 @@ export class HeaderOperationsButtonsComponent implements OnInit {
     @Output('onCerrarClick') onCerrarClick: EventEmitter<any> =
     new EventEmitter<any>();  
     @Output('onFacturaProClick') onFacturaProClick: EventEmitter<any> =
+    new EventEmitter<any>();  
+    @Output('onFacturaARCAClick') onFacturaARCAClick: EventEmitter<any> =
     new EventEmitter<any>();  
   
 

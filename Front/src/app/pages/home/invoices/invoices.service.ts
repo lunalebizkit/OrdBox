@@ -110,8 +110,8 @@ export class InvoiceService {
     return this.api.get(`Pdf/pdfcomprobanteventaarca?id=${id}`, false, {responseType:'blob' as 'json'}) ;
   }
   
-  public createInvoiceARCA(id: number): Observable<any> {
-    return this.api.get(`invoice/getcaeinvoice?id=${id}`, false) ;
+  public createInvoiceARCA(id: number, observacion: string | null): Observable<any> {
+    return this.api.get(`invoice/getcaeinvoice?id=${id}&observacion=${observacion ?? ''}`, false) ;
   }
 }
 

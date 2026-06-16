@@ -192,8 +192,8 @@ export class InvoicesListComponent implements OnInit {
   openComponentInvoicesView(): void {
     const drawerRefCustomer = this.drawerService.create<
       InvoicesViewDrawerComponent,
-      { filter: number },
-      number
+      { filter: number }
+      
     >({
       nzContent: InvoicesViewDrawerComponent,
       nzSize: 'large',
@@ -203,6 +203,15 @@ export class InvoicesListComponent implements OnInit {
       },
       nzClosable: false,
     });
+
+    drawerRefCustomer.afterClose.subscribe({
+      next: (isRefresh : [boolean]) =>{
+        if (isRefresh){
+          this.queryParams = resetQuerySearchFilter();
+        this.search();}
+      },
+      error: ()=>{}
+    })
   }
 
   reimprimirInvoice(id: number, invoiceNumber: number): void {

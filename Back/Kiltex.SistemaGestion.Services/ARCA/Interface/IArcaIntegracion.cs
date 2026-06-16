@@ -10,5 +10,9 @@ namespace Kiltex.SistemaGestion.Services.ARCA.Interface
         Task<DtoResponseARCAInvoice> CrearComprobanteAsync(DtoRequestInvoice invoice, CancellationToken ct = default);
 
         Task<FEParamGetTiposDocResponseDto> ObtenerTiposIvaAsync(CancellationToken ct = default);
+
+        Task<DtoResponseArcaUltimoComprobante> ConsultarUltimoComprobanteAsync(int docType, string token, string sign, CancellationToken ct = default);
+
+        Task<LoginTicketResponseDto> ObtenerLoginTicketAsync(CancellationToken ct = default);
     }
 }

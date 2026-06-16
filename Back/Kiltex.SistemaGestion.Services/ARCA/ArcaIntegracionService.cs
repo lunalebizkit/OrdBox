@@ -130,7 +130,7 @@ namespace Kiltex.SistemaGestion.Services.ARCA
                     throw new Exception($"AFIP devolvió error {response.StatusCode}: {soapResponse}");
                 }
 
-                return ParseSoapResponse(soapResponse);
+                return ParseSoapResponse(soapResponse, invoice.InvoiceNumber);
             }
             catch (Exception ex)
             {
@@ -279,7 +279,7 @@ namespace Kiltex.SistemaGestion.Services.ARCA
 
 
         #region Parseo de respuestas SOAP
-        private DtoResponseARCAInvoice ParseSoapResponse(string xml)
+        private DtoResponseARCAInvoice ParseSoapResponse(string xml,long invoiceNumber)
         {
             var doc = XDocument.Parse(xml);
             XNamespace ns = "http://ar.gov.afip.dif.FEV1/";
@@ -299,6 +299,7 @@ namespace Kiltex.SistemaGestion.Services.ARCA
 
             return new DtoResponseARCAInvoice
             {
+                InvoiceNumber = invoiceNumber,
                 Resultado = resultado,
                 Cae = cae,
                 FechaVencimientoCae = string.IsNullOrEmpty(fechaVto) ? null : DateTime.ParseExact(fechaVto, "yyyyMMdd", null),

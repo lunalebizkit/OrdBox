@@ -2,6 +2,7 @@
 {
     public class DtoResponseARCAInvoice
     {
+        public long InvoiceNumber { get; set; }
         public string Resultado { get; set; }
         public string Cae { get; set; }
         public DateTime? FechaVencimientoCae { get; set; }

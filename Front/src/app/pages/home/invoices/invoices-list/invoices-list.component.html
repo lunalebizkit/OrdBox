@@ -112,7 +112,7 @@
                   (click)="onDoubleClicked(data)"
                 ></i>
               </a>
-              <a (click)="reimprimirInvoice(data.id, data.invoiceNumber)" *ngIf="!data.integrationSuccess">
+              <a (click)="reimprimirInvoice(data.id, data.invoiceNumber)" *ngIf="data.integrationSuccess == null">
                 <i
                   nz-icon
                   nz-tooltip
@@ -123,7 +123,7 @@
                   style="font-size: 16px; margin-right: 2px"
                 ></i>
               </a>
-              <a (click)="imprimirInvoiceArca(data.id, data.invoiceNumber)" *ngIf="data.integrationSuccess">
+              <a (click)="imprimirInvoiceArca(data.id, data.invoiceNumber)" *ngIf="data.integrationSuccess == true">
                 <i
                   nz-icon
                   nz-tooltip
