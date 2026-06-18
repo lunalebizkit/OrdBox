@@ -10,6 +10,7 @@ using Kiltex.SistemaGestion.Services.ARCA.Interface;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
 using Kiltex.SistemaGestion.Services.Services;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System.Security.Cryptography.Pkcs;
@@ -25,12 +26,14 @@ namespace Kiltex.SistemaGestion.Services.ARCA
         private readonly HttpClient _httpClient;
         private readonly ArcaConfig _arcaConfig;
         private readonly IConfiguration _configuration;
+        private IWebHostEnvironment _Env;
 
-        public ArcaIntegracionService(ErrorManager logger, DBContext context, IMapper mapper, IConfiguration configuration, ArcaConfig arcaConfig, HttpClient? httpClient = null) : base(logger, context, mapper, configuration)
+        public ArcaIntegracionService(ErrorManager logger, DBContext context, IMapper mapper, IConfiguration configuration, ArcaConfig arcaConfig, IWebHostEnvironment env, HttpClient? httpClient = null) : base(logger, context, mapper, configuration)
         {
             _httpClient = httpClient ?? new HttpClient();
             _arcaConfig = arcaConfig;
             _configuration = configuration;
+            _Env = env;
         }
 
         public async Task<FEParamGetTiposDocResponseDto> ObtenerTiposDocumentoAsync(CancellationToken ct = default)
@@ -525,7 +528,7 @@ namespace Kiltex.SistemaGestion.Services.ARCA
                             new XElement(ar + "Auth",
                                 new XElement(ar + "Token", token),
                                 new XElement(ar + "Sign", sign),
-                                new XElement(ar + "Cuit", 20328120543)
+                                new XElement(ar + "Cuit", cuit.Replace("-", ""))
                             ),
                             new XElement(ar + "PtoVta", CustomizationConstant.PuntoDeVenta),
                             new XElement(ar + "CbteTipo", MapDocumentType(docType))
