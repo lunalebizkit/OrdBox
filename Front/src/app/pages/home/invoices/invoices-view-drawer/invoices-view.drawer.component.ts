@@ -13,6 +13,7 @@ import { InvoiceDetails, InvoiceModel } from "../model/invoice.model";
 import { InvoiceLog } from "../model/invoice-log-integration";
 import { XMLParser } from "fast-xml-parser";
 import { Router } from "@angular/router";
+import { InvoiceVersion } from "src/app/common/auth/models/invoice-versions.enum";
 
 
 @Component({
@@ -38,6 +39,7 @@ export class InvoicesViewDrawerComponent extends BaseComponent implements OnInit
 
   //Variables del comprobante
   invoice!: InvoiceModel;
+  invoiceVersion= InvoiceVersion;
 
   type!: eInvoiceType;
   invoiceDetail: InvoiceDetails[] = [];

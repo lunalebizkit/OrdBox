@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Kiltex.SistemaGestion.Domain.Enum;
 using Kiltex.SistemaGestion.Domain.Model;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
@@ -10,6 +11,7 @@ namespace Kiltex.SistemaGestion.Services.Mapper
         public InvoiceMapperProfile()
         {
             CreateMap<DtoRequestInvoice, Invoice>()
+                .ForMember(destination => destination.Version, option => option.MapFrom(source => CustomizationConstant.CurrentVersion))
                 .AfterMap((o, d, c) =>
                 {
                     d.IvaTotal = o.InvoiceDetails.Sum(e => (e.Quantity * e.Price) - ((e.Quantity * e.Price) / (1 + e.Iva / 100.00m)));

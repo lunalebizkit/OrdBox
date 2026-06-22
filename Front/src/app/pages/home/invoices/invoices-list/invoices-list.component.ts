@@ -7,6 +7,7 @@ import { InvoicesViewDrawerComponent } from '../invoices-view-drawer/invoices-vi
 import { Permission } from 'src/app/common/auth/models/permissions.enum';
 import { SearchCustomFilterModel, parseFilterCustomSeachData, resetQuerySearchFilter } from 'src/app/common/components/model/search.custom.filter.model';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { InvoiceVersion } from 'src/app/common/auth/models/invoice-versions.enum';
 
 @Component({
   selector: 'app-invoices-list',
@@ -22,6 +23,7 @@ export class InvoicesListComponent implements OnInit {
   index!: number;
   id!: number;
   dato!: any
+  invoiceVersion= InvoiceVersion;
   /*
    ** Catidad total de entidades
    */

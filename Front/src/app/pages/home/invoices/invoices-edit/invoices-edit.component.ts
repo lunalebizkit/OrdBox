@@ -25,6 +25,7 @@ import { PeriodsService } from "../../periods/periods.service";
 import { IvaType } from "../model/iva-type.Enum";
 import { isNil } from "ng-zorro-antd/core/util";
 import { forkJoin, map } from "rxjs";
+import { InvoiceVersion } from "src/app/common/auth/models/invoice-versions.enum";
 
 
 
@@ -525,6 +526,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
           integrationSuccess: false,
           type: (this.formInvoice.controls['type'].value == eInvoiceType.B) ?(this.formInvoice.controls['ivaCondition'].value == eIvaCondition.Exento ? eInvoiceType.EXENTO : eInvoiceType.B) : eInvoiceType.A,
           invoiceDetails: this.invoiceDetails,
+          version: InvoiceVersion.Arca
         };
         this.isSaving = true;
         this.serviceInvoice.saveInvoice(model)

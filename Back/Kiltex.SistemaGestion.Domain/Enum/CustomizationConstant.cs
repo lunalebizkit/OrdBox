@@ -15,5 +15,7 @@
         public const byte PuntoDeVenta = 3;
         public const string TipoMoneda = "PES";
         public const double MonCotiz = 1.0;
+
+        public const byte CurrentVersion = 1;
     }
 }

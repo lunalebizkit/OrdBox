@@ -1521,7 +1521,7 @@ namespace Kiltex.SistemaGestion.Services.Services
         public Paragraph DetalleFacturaArca(DtoRequestInvoice invoice)
         {
             Font textFont = FontFactory.GetFont(FontFactory.HELVETICA, 8);
-            Font fontTextBoldIvas = FontFactory.GetFont(FontFactory.HELVETICA, 10, Font.BOLD, BaseColor.Black);
+            Font fontTextBoldIvas = FontFactory.GetFont(FontFactory.HELVETICA, 9, Font.BOLD, BaseColor.Black);
             Paragraph paragraph = new Paragraph();
 
             PdfPCell emptyCell = new PdfPCell()
@@ -1633,7 +1633,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             #region Total con IVA
 
             PdfPTable totalIva = new PdfPTable(4);
-            totalIva.SpacingBefore = 10f;
+            totalIva.SpacingBefore = 30f;
 
             if ((ETypeReceipt)invoice.Type == ETypeReceipt.A)
             {

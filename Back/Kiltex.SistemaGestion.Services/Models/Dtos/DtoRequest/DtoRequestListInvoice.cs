@@ -28,5 +28,7 @@
 
         public bool? IntegrationSuccess { get; set; }
 
+        public byte Version { get; set; }
+
     }
 }

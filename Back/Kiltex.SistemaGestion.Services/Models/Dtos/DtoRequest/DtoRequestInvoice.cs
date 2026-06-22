@@ -45,6 +45,8 @@ namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest
 
         public long? InvoiceNumberArca { get; set; }
 
+        public byte Version { get; set; }
+
         public List<DtoResponseInvoiceDetail> InvoiceDetails { get; set; }
 
     }
