@@ -13,6 +13,7 @@ using Kiltex.SistemaGestion.Services.Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using System.Security.Cryptography.Pkcs;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -27,6 +28,8 @@ namespace Kiltex.SistemaGestion.Services.ARCA
         private readonly ArcaConfig _arcaConfig;
         private readonly IConfiguration _configuration;
         private IWebHostEnvironment _Env;
+        private static string _requestUltimoComprobante = string.Empty;
+        private static string _responseUltimoComprobante = string.Empty;
 
         public ArcaIntegracionService(ErrorManager logger, DBContext context, IMapper mapper, IConfiguration configuration, ArcaConfig arcaConfig, IWebHostEnvironment env, HttpClient? httpClient = null) : base(logger, context, mapper, configuration)
         {
@@ -97,14 +100,18 @@ namespace Kiltex.SistemaGestion.Services.ARCA
             {
                 string wsaaUrl = _arcaConfig.URLCAEBase;
                 var auth = await ObtenerLoginTicketAsync(ct);
+
                 var ultimoComprobante = await ConsultarUltimoComprobanteAsync(invoice.Type, auth.Token, auth.Sign, ct);
 
-                if (ultimoComprobante.CbteNro != null)
+                if (ultimoComprobante.CbteNro != null && ultimoComprobante.Errores.Any() == false)
                 {
                     invoice.InvoiceNumber = int.Parse(ultimoComprobante.CbteNro) + 1;
                 }
                 else
                 {
+                    integrationLog.Request = _requestUltimoComprobante;
+                    integrationLog.Success = false;
+                    integrationLog.Response = _responseUltimoComprobante;
                     return new DtoResponseARCAInvoice
                     {
                         Resultado = "Error",
@@ -129,7 +136,6 @@ namespace Kiltex.SistemaGestion.Services.ARCA
                 if (!response.IsSuccessStatusCode)
                 {
                     integrationLog.Success = false;
-                    Console.WriteLine($"Error {response.StatusCode}: {soapResponse}");
                     throw new Exception($"AFIP devolvió error {response.StatusCode}: {soapResponse}");
                 }
 
@@ -152,6 +158,7 @@ namespace Kiltex.SistemaGestion.Services.ARCA
             {
                 string wsaaUrl = _arcaConfig.URLCAEBase;
                 string soapRequest = BuildGetUltimoComprobanteRequestXml(token, sign, _configuration.GetSection("Pdf:Cuit").Value, "FECompUltimoAutorizado", docType);
+                _requestUltimoComprobante = soapRequest;
 
                 var httpContent = new StringContent(soapRequest, Encoding.UTF8, "text/xml");
                 httpContent.Headers.Clear();
@@ -159,6 +166,38 @@ namespace Kiltex.SistemaGestion.Services.ARCA
                 httpContent.Headers.Add("SOAPAction", "http://ar.gov.afip.dif.FEV1/FECompUltimoAutorizado");
                 var response = await _httpClient.PostAsync(wsaaUrl, httpContent, ct);
                 string soapResponse = await response.Content.ReadAsStringAsync(ct);
+                _responseUltimoComprobante = soapResponse;
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    Console.WriteLine($"Error {response.StatusCode}: {soapResponse}");
+                    throw new Exception($"AFIP devolvió error {response.StatusCode}: {soapResponse}");
+                }
+
+                return ParseSoapUltimoComprobanteResponse(soapResponse);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ErrorsCodes.C_010_ERROR_EXCEPTION, ErrorsMessages.GetMessage(ErrorsCodes.C_010_ERROR_EXCEPTION), ex: ex);
+                throw;
+            }
+        }
+        
+        public async Task<DtoResponseArcaUltimoComprobante> ConsultarPuntodeVentaAsync(string token, string sign, CancellationToken ct = default)
+        {
+            try
+            {
+                string wsaaUrl = _arcaConfig.URLCAEBase;
+                string soapRequest = BuildGetPuntoDeVentaRequestXml(token, sign, _configuration.GetSection("Pdf:Cuit").Value);
+                _requestUltimoComprobante = soapRequest;
+
+                var httpContent = new StringContent(soapRequest, Encoding.UTF8, "text/xml");
+                httpContent.Headers.Clear();
+                httpContent.Headers.Add("Content-Type", "text/xml; charset=utf-8");
+                httpContent.Headers.Add("SOAPAction", "http://ar.gov.afip.dif.FEV1/FEParamGetPtosVenta");
+                var response = await _httpClient.PostAsync(wsaaUrl, httpContent, ct);
+                string soapResponse = await response.Content.ReadAsStringAsync(ct);
+                _responseUltimoComprobante = soapResponse;
 
                 if (!response.IsSuccessStatusCode)
                 {
@@ -180,7 +219,7 @@ namespace Kiltex.SistemaGestion.Services.ARCA
             DtoRequestIntegrationLog integrationLog = new();
 
             string pfxPassword = _arcaConfig.PfxPassword;
-            string pfxPath = _arcaConfig.PfxPath;
+            string pfxPath = Path.Combine(_Env.ContentRootPath, "Assets", _arcaConfig.PfxPath);
             string wsaaUrl = _arcaConfig.URLLogin;
             string service = "wsfe";
 
@@ -532,6 +571,31 @@ namespace Kiltex.SistemaGestion.Services.ARCA
                             ),
                             new XElement(ar + "PtoVta", CustomizationConstant.PuntoDeVenta),
                             new XElement(ar + "CbteTipo", MapDocumentType(docType))
+                        )
+                    )
+                )
+            );
+
+            return doc.ToString(SaveOptions.DisableFormatting);
+        }
+        
+        private string BuildGetPuntoDeVentaRequestXml(string token, string sign, string cuit)
+        {
+            XNamespace soapenv = "http://schemas.xmlsoap.org/soap/envelope/";
+            XNamespace ar = "http://ar.gov.afip.dif.FEV1/";
+
+            var doc = new XDocument(
+                new XElement(soapenv + "Envelope",
+                    new XAttribute(XNamespace.Xmlns + "soapenv", soapenv),
+                    new XAttribute(XNamespace.Xmlns + "ar", ar),
+                    new XElement(soapenv + "Header"),
+                    new XElement(soapenv + "Body",
+                        new XElement(ar + "FEParamGetPtosVenta",
+                            new XElement(ar + "Auth",
+                                new XElement(ar + "Token", token),
+                                new XElement(ar + "Sign", sign),
+                                new XElement(ar + "Cuit", cuit.Replace("-", ""))
+                            )
                         )
                     )
                 )
