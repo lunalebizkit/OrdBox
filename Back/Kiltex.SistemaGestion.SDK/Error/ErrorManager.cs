@@ -43,5 +43,10 @@ namespace Kiltex.SistemaGestion.SDK.Error
         {
             _logger.LogInformation($"{code} - {ErrorsMessages.GetMessage(code)}: Data {(data != null ? JsonConvert.SerializeObject(data) : String.Empty)}");
         }
+
+        public void LogRequestAndResponseInfo(string data)
+        {
+            _logger.LogInformation(data);
+        }
     }
 }

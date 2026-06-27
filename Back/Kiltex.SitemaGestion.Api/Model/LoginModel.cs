@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Kiltex.SitemaGestion.Api.Model
+namespace Kiltex.SistemaGestion.Api.Model
 {
     public class LoginModel
     {
@@ -10,7 +10,6 @@ namespace Kiltex.SitemaGestion.Api.Model
         [Required]
         public string Password { get; set; }
 
-        //[Required]
         public string Recaptcha { get; set; }
     }
 }

@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Inject, LOCALE_ID, OnInit, ViewChild } from '@angular/core';
 
 import { ProductsModel } from '../model/product.model';
 import { ProductService } from '../product.service';
@@ -12,6 +12,10 @@ import { CategoriesService } from '../../categories/category.services';
 import { BrandsService } from '../../brands/brands.services';
 import { EntityService } from '../../customers/customer.service';
 import { HeaderOperationsButtonsComponent } from 'src/app/common/components/headers/buttons.oparations.header.component';
+import { PopupConfirmationComponent } from 'src/app/common/components/popup-confirmation/popup-confirmation.component';
+import { formatCurrency } from '@angular/common';
+import { CategoryModel } from '../../categories/model/category.model';
+import { BrandsModel } from '../../brands/model/brands.model';
 
 @Component({
   selector: 'app-products-list',
@@ -21,12 +25,14 @@ import { HeaderOperationsButtonsComponent } from 'src/app/common/components/head
 export class UpdatePriceProductsComponent extends BaseComponent implements OnInit {
  
   @ViewChild('header') headerComponent!: HeaderOperationsButtonsComponent;
+  @ViewChild('popup') popupComponent!: PopupConfirmationComponent;
 /*
   ** Listado de los productos
   */
   productList: ProductsModel[] = [];
   selectedValue = null;
-
+  categorieList: CategoryModel [] = [];
+  brandList: BrandsModel [] = [];
   /*
   ** Indicador de carga de la grilla
   */
@@ -41,15 +47,16 @@ export class UpdatePriceProductsComponent extends BaseComponent implements OnIni
   /*
   ** Lista de opciones a actualizar
   */
-  updateList= [ {value:1 , label:'Precio Costo'},
-  {value:2 , label:'Porcentaje'}, 
-  {value:3 , label:'Porcentaje Efectivo'}, 
-  {value:4 , label:'Porcentaje Tarjeta'}, 
-  {value:5 , label:'Porcentaje Lista'}];
+  updateList= [ {value:1 , label:'Se incrementará el Precio Costo en un valor de'},
+  {value:2 , label:'Se incrementaraá el Precio Costo en un porcentaje de'}, 
+  {value:3 , label:'Se Modificará el Porcentaje Efectivo por'}, 
+  {value:4 , label:'Se Modificará el Porcentaje Tarjeta por '}, 
+  {value:5 , label:'Se Modificará el Porcentaje Lista por'}];
 
   /*
   ** Lista de Productos
   */
+ 
   productLinesList = [];
   allCategories = [];
   allBrands= [];
@@ -69,6 +76,7 @@ export class UpdatePriceProductsComponent extends BaseComponent implements OnIni
       product:'',
       brand: 0,
       category: 0,
+      status: 0,
       supplier:[]},
     page: 0,
     pageSize: 50
@@ -87,7 +95,9 @@ export class UpdatePriceProductsComponent extends BaseComponent implements OnIni
   form!: FormGroup;
   formSearch!: FormGroup;
   
-
+  selectedIndex: number = 0; 
+  selectedProduct: any;
+  productId!: number;
   /*
   ** Constructor
   */
@@ -101,7 +111,8 @@ export class UpdatePriceProductsComponent extends BaseComponent implements OnIni
     message: NzMessageService,
     private route: ActivatedRoute,
     private fb: FormBuilder,    
-    private router: Router,)
+    private router: Router,
+    @Inject(LOCALE_ID) public locale: string)
      {
     super(notificacionService, el, message);
     this.form = this.fb.group({
@@ -135,6 +146,7 @@ export class UpdatePriceProductsComponent extends BaseComponent implements OnIni
         category: this.formSearch.controls['category'].value,
         supplier:this.formSearch.controls['supplier'].value
       }
+      this.isSaving = true;
       this.service.UpdatePriceProduct(model).subscribe({
         next: (r) => {
           this.showNotificationSuccess(
@@ -149,8 +161,12 @@ export class UpdatePriceProductsComponent extends BaseComponent implements OnIni
           this.showMessageError('No se pudo Actualizar los Productos')
         }
       })
+    } else{
+      this.showMessageError('No Selecciono Parametros de Actualización')
     }
   };
+
+
   getAllCategories(): void {
     this.isLoadingCategory = true;
     this.serviceCategory.getByFilter(this.queryData).subscribe({
@@ -177,7 +193,8 @@ export class UpdatePriceProductsComponent extends BaseComponent implements OnIni
         this.allBrands = []
       }
     })
-  }
+  };
+  
   getAllSupplier(): void {
     this.serviceEntity.getSuppliers(this.queryData).subscribe({
       next: (r) => {
@@ -192,6 +209,22 @@ export class UpdatePriceProductsComponent extends BaseComponent implements OnIni
   back(){    
     this.router.navigate(['../list'], { relativeTo: this.route });
   };
+
+  handleOk() {
+    try {
+     this.updateList = this.updateList.
+      filter(element => element.value!= this.popupComponent.elementSelected);
+    this.popupComponent.isConfirmationvisible = false; 
+    if (this.isValidForm(this.form)){
+      this.update();
+    } else{
+      this.showMessageError('No Selecciono Parametros de Actualización')
+    }
+    } catch (error) {
+      console.log(error);
+      
+    }
+  }
   
   
 
@@ -202,16 +235,13 @@ export class UpdatePriceProductsComponent extends BaseComponent implements OnIni
     clearTimeout(this.timeout);
     this.timeout = setTimeout(()=>{
       
-      if (value.length > 2){
+      if (value.length > 0){
         this.allSuppliers= [];
         this.queryData.filter= value;
         this.getAllSupplier();
-      }  }, 1000);
-    
-    
-    
-    // this.searchChange$.next(value);
-  }
+      }  }, 1000);    
+  };
+
   getData(params: any): void {
     this.loading = true;
     this.service.getProductsByUpdatePrice(params).subscribe({
@@ -226,6 +256,53 @@ export class UpdatePriceProductsComponent extends BaseComponent implements OnIni
       }
     })}
     
+    //Busca por categoria
+  onSearch2(data: string): void {
+    if (data.length > 2) {
+      this.queryData.page = 0;
+      this.queryData.filter = data;
+      this.getCategory(this.queryData);
+    }
+  }
+
+  getCategory(params:any):void{
+    this.loading = true;
+    this.serviceCategory.getByFilter(params).subscribe({
+      next: (r) => {
+        this.categorieList = r.data;
+        this.totalItems = r.totalCount;
+        this.loading = false;
+      },
+      error: () => {
+        this.loading = false;
+        this.categorieList = [];
+      },
+    });
+  }
+
+  //Busca por marca
+  onSearchBrand(data: string): void {
+    if (data.length > 2) {
+      this.queryData.page = 0;
+      this.queryData.filter = data;
+      this.getBrand(this.queryData);
+    }
+  }
+
+  getBrand(params:any):void{
+    this.loading = true;
+    this.serviceBrand.getByFilter(params).subscribe({
+      next: (r) => {
+        this.brandList = r.data;
+        this.totalItems = r.totalCount;
+        this.loading = false;
+      },
+      error: () => {
+        this.loading = false;
+        this.brandList = [];
+      },
+    });
+  }
 
   /*
   ** Evento al presionar buscar o presionar enter
@@ -252,6 +329,61 @@ supplierSelectedChange(id: any): void {
    this.queryParams.filter.supplier=this.formSearch.controls['supplier'].value;
  
 }
-formatterPesoOPorcentaje =(value: number):string => (this.optionSelected == 1) ? `$ ${value}` : `${value} %`;
+formatterPesoOPorcentaje =(value: number):string => (this.optionSelected == 1) ? formatCurrency(value, this.locale, '$', 'ARS', '1.1-2') : `${value} %`;
 
+onClick(datos:any, index:number): void {
+  this.selectedIndex = index 
+  this.selectedProduct = datos
+  }  
+
+/*
+  ** Evento navegaciòn por teclado en tablas
+  */
+
+  myNavegation(event:any) {
+    switch (event.key) {
+      case "ArrowDown":
+        let nextCell = this.productList.length > this.selectedIndex ? ++ this.selectedIndex : this.productList.length;
+        if(this.productList[nextCell] !== undefined){
+          this.selectedProduct= this.productList[nextCell];  
+      } 
+        break; 
+      case "ArrowUp":
+        let previousCell= this.selectedIndex > 0 ? -- this.selectedIndex : 0; 
+        if (this.productList[previousCell] !== undefined ){
+          this.selectedProduct= this.productList[previousCell];
+      }
+        break 
+    } 
+  }
+
+/*
+  ** Evento scroll infinito
+  */
+
+onScroll(event:any): void { 
+  let scrollHeight= event.target.scrollHeight;
+  let scrolltop= event.target.scrollTop;
+  let client= event.target.clientHeight
+  let ScrollPosition= Math.abs( Math.round(scrollHeight - (scrolltop + client)));  
+  if((ScrollPosition <= 5) && (this.totalItems / this.queryParams.page) > this.queryParams.page){ 
+    this.queryParams.page ++ ; 
+    if(this.totalItems === undefined ||(this.queryParams.page * this.queryParams.pageSize <= this.totalItems)){ 
+      this.service.getProductsByUpdatePrice(this.queryParams)
+      .subscribe({
+        next:(r)=>{
+          r.data.map((product: ProductsModel)=>
+          this.productList.push(product))  
+          this.loading= false 
+        },
+        error: ()=>{  this.loading = false;
+        this.productList= [];}
+      }) 
+    }
+  }
+  };
+
+  currencyFormat(data: any):string  {    
+    return formatCurrency(data, this.locale, '$', 'ARS', '1.1-2')
+  }
 }

@@ -1,0 +1,139 @@
+<app-header-op-buttons
+  #header
+  (onCloseClick)="close()"
+  [hideClose]="true"
+  [hideUpdate]="true"
+  [hideSave]="true"
+  [hideBack]="true"
+  [title]="'Comprobantes de Compra'"
+  [iconBack]="'rollback'"
+  [iconTitle]="'container'"
+  [hideCerrar]="true"
+  [hideFacturaPro]="true"
+  [colors]="'#52c41a'"
+>
+</app-header-op-buttons>
+
+<nz-collapse class="{{ this.tipo }}">
+  <nz-collapse-panel nzHeader="Encabezado" [nzActive]="true">
+    <div style="display: flex; flex-direction: row">
+      <div style="flex: 1; margin: 10px;">
+        <b><label> * Fecha: </label></b>
+        <span>{{ dateTime ? (dateTime | date : "YYYY-MM-dd") : "N/A" }}</span>
+        <br />
+        <br />
+        <b><label>* Cliente: </label></b>
+        <span>{{ supplierName }}</span>
+        <br />
+        <br />
+        <b><label>* Observación: </label></b>
+        <span>{{ observation }}</span>
+      </div>
+      <div style="flex: 1; margin: 10px;">
+        <b><label>* Tipo: </label></b>
+        <span>
+          <nz-page-header-tags>
+            <nz-tag [nzColor]="'blue'">{{ type | invoiceTypeFilter }}</nz-tag>
+          </nz-page-header-tags>
+        </span>
+        <br />
+        <br />
+        <b><label>* Cuit: </label></b>
+        <span>{{ supplierCuit | cuit }}</span>
+        <br />
+      </div>
+      <div style="flex: 1; margin: 10px;">
+        <b><label>* Número de Referencia: </label></b>
+        <span>{{ this.receiptNumber }}</span>
+        <br />
+        <br />
+        <b><label>* Dirección: </label></b>
+        <span>{{ supplierAddress }}</span>
+      </div>
+    </div>
+  </nz-collapse-panel>
+
+  <nz-collapse-panel nzHeader="Detalle" [nzActive]="true" [nzShowArrow]="true" >
+  <nz-collapse class="{{ this.tipo }}">
+    
+      <nz-content>
+        <nz-table [nzBordered]="true" nzTemplateMode [nzSize]="'small'">
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Código Interno</th>
+              <th>Producto</th>
+              <th [nzAlign]="'center'">Cantidad</th>
+              <th [nzAlign]="'center'">Precio Unidad</th>
+              <th [nzAlign]="'center'">SubTotal</th>
+              <th>Iva</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let data of receiptDetails">
+              <td>{{ data.productCode }}</td>
+              <td> <span *ngIf="data.productId > 0; else isEditProduct">
+                {{ data.productId }}
+              </span>
+              <ng-template #isEditProduct>                
+              </ng-template></td>
+              <td>{{ data.productName }}</td>
+              <td [nzAlign]="'right'">{{ data.quantity }}</td>
+              <td [nzAlign]="'right'">{{ this.currencyFormat(data.price) }}</td>
+              <td [nzAlign]="'right'">
+                {{ this.currencyFormat(data.quantity * data.price) }}
+              </td>
+              <td>{{ data.iva }}</td>
+            </tr>
+          </tbody>
+          <tfoot class="{{ this.tipo }}">
+            <tr>
+              <td colspan="2" *ngIf="type == 1; else elseBlock">
+                <b>Iva </b>
+                <span style="color: blue; font-size: 15px; font-weight: bold;"
+                  >{{ this.currencyFormat(ivaTotal) }}
+                </span>
+              </td>
+              <td colspan="1">
+                <b>Conc. No Gravado </b
+                ><span style="color: blue; font-size: 15px; font-weight: bold;"
+                  >{{ this.currencyFormat(concNoGravado) }}
+                </span>
+              </td>
+              <td colspan="1">
+                <b>Perc. Iva </b
+                ><span style="color: blue; font-size: 15px; font-weight: bold;"
+                  >{{ this.currencyFormat(percIva) }}
+                </span>
+              </td>
+              <td colspan="1">
+                <b>Perc. Ing. Brutos </b
+                ><span style="color: blue; font-size: 15px; font-weight: bold;"
+                  >{{ this.currencyFormat(percIngBrutos) }}
+                </span>
+              </td>
+              <td colspan="1" *ngIf="type == 1; else elseBlock2">
+                <b>SubTotal </b>
+                <span style="color: blue; font-size: 15px ; font-weight: bold;"
+                  >{{ this.currencyFormat(subTotal) }}
+                </span>
+              </td>
+              <td colspan="1">
+                <b>Total </b
+                ><span style="color: blue; font-size: 15px ; font-weight: bold;"
+                  >{{ this.currencyFormat(total) }}
+                </span>
+              </td>
+              <ng-template #elseBlock>
+                <td colspan="2"></td>
+              </ng-template>
+              <ng-template #elseBlock2>
+                <td></td>
+              </ng-template>
+            </tr>
+          </tfoot>
+        </nz-table>
+      </nz-content>
+    
+  </nz-collapse>
+

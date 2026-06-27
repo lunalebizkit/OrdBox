@@ -1,74 +1,132 @@
 <nz-layout>
-    <nz-page-header class="list-header">
-      <nz-page-header-title>Listado de Comprobantes</nz-page-header-title>
-      <nz-page-header-extra>
-        <a routerLink="/home/invoices/new"> <button nz-tooltip nzTooltipTitle="Nuevo" nz-button nzType="primary"
-            nzShape="circle"><i nz-icon nzType="plus" nzTheme="outline"></i></button></a>
-      </nz-page-header-extra>
-    </nz-page-header>
-  
-    <nz-content>  
-        <nz-collapse>
-          <nz-collapse-panel nzSize="small" nzHeader="Filtros">
-            <form nz-form >
-              <div nz-row [nzGutter]="[8,1]">
-  
-                <div nz-col nzSpan="24">
-                  <nz-form-item>
-                    <nz-form-label>Búsqueda</nz-form-label>
-                    <nz-form-control>                  
-                      <nz-input-group [nzSuffix]="clearQuery">
-                        <input [ngModelOptions]="{standalone: true}" type="text" placeholder="Ingrese Nombre o CUIT-DNI" nz-input
-                          (keydown.enter)="search()" [(ngModel)]="queryParams.filter" />
-                      </nz-input-group>
-                      
-                      <ng-template #clearQuery>
-                        <i nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle"
-                          *ngIf="queryParams.filter" (click)="queryParams.filter = ''; search()"></i>
-                      </ng-template>
-                    </nz-form-control>
-                  </nz-form-item>
-                </div>
-  
-              </div>
-  
-            </form>
-          </nz-collapse-panel>
-        </nz-collapse> 
-  
-        <!-- Tabla -->
-     
-      <div>
-        <nz-table  class="table-list" nzShowSizeChanger [nzData]="invoicesList" nzBordered=false [nzSize]="'small'" [nzLoading]="loading"
-          [nzTotal]="totalItems" [nzPageSize]="queryParams.pageSize" [nzPageIndex]="queryParams.page + 1" 
-          [nzPaginationType]="'small'" (nzQueryParams)="onQueryParamsChange($event)">
-          <thead>
-            <tr>                     
-              <th>Numero</th>
-              <th>Fecha</th>
-              <th>Cuit</th>
-              <th>Nombre</th>
-              <th [nzAlign]="'center'">Total</th>       
-              <th [nzAlign]="'center'">Tipo</th>       
-              <th [nzAlign]="'center'">Accion</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let data of invoicesList" class="small-text"  id="{{data.id}}">     
-              <td>{{data.id}}</td>
-              <td>{{ this.formaterDate(data.dateTime) }}</td>
-              <td>{{data.customerCuit}}</td>
-              <td>{{data.customerName}}</td> 
-              <td [nzAlign]="'right'"><b>{{ this.currencyFormat(data.total) }}</b></td>
-              <td [nzAlign]="'center'">{{ this.getInvoiceType(data.type) }}</td>                 
-              <td style="text-align: center;">
-                   <a routerLink="/home/invoices/view/{{data.id}}">
-                    <i nz-icon nzType="eye" nzTheme="outline" style="font-size: 16px;"></i>
-                  </a>                   
-                </td>         
-            </tr>
-          </tbody>
-        </nz-table>
-      </div>
-    </nz-content>
-  </nz-layout>
+  <nz-page-header class="list-header">
+    <nz-page-header-title
+      >Listado de Comprobantes de Venta</nz-page-header-title
+    >
+    <nz-page-header-extra>
+      <button
+        *authPermission="[permissions.CreateInvoice]"
+        nz-tooltip
+        nzTooltipTitle="Nuevo"
+        nz-button
+        nzType="primary"
+        nzShape="circle"
+        routerLink="/home/invoices/invoices-sale/new"
+      >
+        <i nz-icon nzType="plus" nzTheme="outline"></i>
+      </button>
+    </nz-page-header-extra>
+  </nz-page-header>
+
+  <nz-content>
+    <nz-collapse>
+      <app-search-custom-filter [customSearchForm]="customSearchForm" (onSearchCustomClick)="search()"></app-search-custom-filter>
+    </nz-collapse>
+
+    <!-- Tabla -->
+    <div class="table" (scroll)="onScroll($event)">
+      <nz-table
+        class="tabla"
+        nzShowSizeChanger
+        [nzData]="invoicesList"
+        nzBordered="false"
+        [nzSize]="'small'"
+        [nzLoading]="loading"
+        [nzPaginationType]="'small'"
+        nzShowPagination="false"
+      >
+        <thead>
+          <tr>
+            <th>Número</th>
+            <th>Fecha</th>
+            <th>Cuit/Cuil</th>
+            <th>Nombre</th>
+            <th [nzAlign]="'center'">Total</th>
+            <th [nzAlign]="'center'">Tipo</th>
+            <th [nzAlign]="'center'">Creado por</th>
+            <th nzWidth="200px" [nzAlign]="'center'">Notas</th>
+            <th [nzAlign]="'center'">Acción</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            id="{{ i }}"
+            *ngFor="let data of invoicesList; let i = index"
+            class="small-text"
+            tabindex="-1"
+            (click)="onClick(data, i)"
+            (keydown)="myNavegation($event)"
+            [style.background-color]="
+              data === selectedInvoice ? 'lightblue' : ''
+            "
+            (keydown.enter)="onEnter($event)"
+            (dblclick)="onDoubleClicked(data)"
+          >
+            <td>{{ data.invoiceNumber | number : "8.0-0" | noComma }}</td>
+            <td>{{ this.formaterDate(data.dateTime) }}</td>
+            <td>{{ data.customerCuit | cuit }}</td>
+            <td>{{ data.customerName }}</td>
+            <td [nzAlign]="'right'">
+              <b>{{ this.currencyFormat(data.total) }}</b>
+            </td>
+            <td [nzAlign]="'center'">{{ data.type | invoiceTypeFilter }}</td>
+            <td>{{ data.createdBy }}</td>
+            <ng-container>
+              <td style="text-align: center">
+                <a>
+                  <button
+                    nz-button
+                    nzType="primary"
+                    nzSize="small"
+                    style="
+                      background-color: rgb(3, 155, 3);
+                      margin-right: 20px;
+                      border-color: rgb(3, 155, 3);
+                    "
+                    routerLink="/home/notes/credit"
+                    [queryParams]="{
+                      id: data.id
+                    }"
+                  >
+                    Crédito
+                  </button>
+                </a>
+                <button
+                  nz-button
+                  nzSize="small"
+                  nzType="primary"
+                  routerLink="/home/notes/debit"
+                  [queryParams]="{ id: data.id }"
+                >
+                  Débito
+                </button>
+              </td>
+            </ng-container>
+            <td style="text-align: center">
+              <a>
+                <i
+                  nz-icon
+                  nzType="eye"
+                  nzTheme="outline"
+                  style="font-size: 17px; margin-right: 20px"
+                  (click)="onDoubleClicked(data)"
+                ></i>
+              </a>
+              <a (click)="reimprimirInvoice(data.id, data.invoiceNumber)">
+                <i
+                  nz-icon
+                  nz-tooltip
+                  nzTooltipTitle="Descargar pdf"
+                  nzType="file-pdf"
+                  nzTheme="twotone"
+                  [nzTwotoneColor]="'#f5222d'"
+                  style="font-size: 16px; margin-right: 2px"
+                ></i>
+              </a>
+            </td>
+          </tr>
+        </tbody>
+      </nz-table>
+    </div>
+  </nz-content>
+</nz-layout>

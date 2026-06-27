@@ -1,0 +1,63 @@
+USE [Ordbox]
+GO
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE OR ALTER PROCEDURE [InvoiceReports]
+	@dateFrom DATETIME = NULL,
+	@dateTo DATETIME = NULL,
+	@categoryId INT = NULL
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+DECLARE @TOTALINVOICES TABLE ([id] INT, [product_name] NVARCHAR(100), [quantity]INT, 
+[price] DECIMAL(18,2), [subTotal]DECIMAL(18,2), [customer_name] NVARCHAR(100), [dateTime] DATE);
+
+;With Invoices as (SELECT [in].[id]
+      ,[in].[customer_name]
+      ,[in].[customer_cuit]
+      ,[in].[dateTime]
+      ,[in].[total]
+      ,[in].[iva_total]
+      ,[in].[type]
+	  ,[ind].[product_name]
+	  ,[ind].[quantity]
+	  ,[ind].[price]
+  FROM [invoice] [in]
+  INNER JOIN
+  [invoice_detail] [ind] ON [in].[id] = [ind].[invoice_id]
+  
+  LEFT JOIN [product] [pr] ON [pr].[id] = [ind].[product_id]
+
+  LEFT JOIN [category] [cat]
+  ON [cat].[id] = [pr].[category_id]
+  
+  WHERE (@dateFrom IS NULL OR CONVERT(DATE, [in].[dateTime]) >= CONVERT(DATE, @dateFrom))
+  AND (@dateTo IS NULL OR CONVERT(DATE, [in].[dateTime]) <= CONVERT(DATE, @dateTo))
+  AND (@categoryId IS NULL OR [cat].[id] = @categoryId))
+
+  INSERT INTO @TOTALINVOICES
+  select  
+      ROW_NUMBER() OVER (PARTITION BY [dateTime] ORDER BY [dateTime]) AS [id],
+	  LEFT([product_name], 100) AS [product_name], [quantity], [price],([quantity] * [price]) AS [subTotal],
+	  LEFT([customer_name], 100) AS [customer_name], CONVERT(DATE,[dateTime] ) AS [dateTime]
+	  from Invoices
+	  GROUP BY [dateTime], [product_name], [quantity], [price], [customer_name];
+
+-- Consulta combinada para mostrar ventas detalladas y totales por fecha
+    SELECT
+		[id],
+        [dateTime] AS [Date],
+        [product_name] AS [ProductName],
+        [quantity] AS [Quantity],
+        [price] AS [Price],
+        [subTotal] AS [SubTotal],
+        [customer_name] AS [CustomerName]
+    FROM @TOTALINVOICES
+
+
+END

@@ -19,7 +19,7 @@ import { NzImageModule } from "ng-zorro-antd/image";
 import { NzUploadModule } from 'ng-zorro-antd/upload';
 import { SuppliersRoutingModule } from "./suppliers-routing.module";
 import { SuppliersListComponent } from "./suppliers-list/suppliers-list.component";
-import { SuppliersEditComponent } from "./suppliers-edit/suppliers-edit.component";
+import { SuppliersEditDrawerComponent } from "./suppliers-edit-drawer/suppliers-edit.drawer.component";
 
 @NgModule({
     imports: [CommonModule,
@@ -30,7 +30,6 @@ import { SuppliersEditComponent } from "./suppliers-edit/suppliers-edit.componen
     NzInputNumberModule,
     NzInputModule,
     NzSelectModule,
-    CommonModule,
     AppCommonModule,
     NzTableModule,
     NzGridModule,
@@ -42,6 +41,6 @@ import { SuppliersEditComponent } from "./suppliers-edit/suppliers-edit.componen
     NzSpaceModule,
     NzImageModule  
     ],
-    declarations:[SuppliersListComponent, SuppliersEditComponent ]
+    declarations:[SuppliersListComponent, SuppliersEditDrawerComponent ]
 })
 export class SuppliersModule {}

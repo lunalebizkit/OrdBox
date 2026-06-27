@@ -1,0 +1,12 @@
+th {
+    background:  rgb(100, 192, 223);
+}
+.factA{
+    background-color: var(--backg-A);
+  }
+  .factB{
+    background-color: var(--backg-B);
+  }
+  .factC{
+    background-color: var(--backg-C);
+  }

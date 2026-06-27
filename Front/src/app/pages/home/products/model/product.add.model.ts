@@ -2,7 +2,7 @@ export interface ProductAddModel {
    
     id: number,
     description: string,
-    code: number,
+    code: string,
     categoryid: number,
     brandid: number,
     quantity: number,
@@ -16,6 +16,7 @@ export interface ProductAddModel {
     pointOrder: number,
     observation: string,
     supplierid: number,
+    barCode: string
 }
 export interface Image {
     uid: string;

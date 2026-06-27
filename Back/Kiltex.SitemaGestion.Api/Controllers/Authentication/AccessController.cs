@@ -1,13 +1,20 @@
-﻿using Kiltex.SistemaGestion.Domain.Enum;
-using Kiltex.SistemaGestion.SDK.Security;
+﻿
 using Kiltex.SistemaGestion.Services.Services;
-using Kiltex.SitemaGestion.Api.Model;
+using Kiltex.SistemaGestion.Api.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using Newtonsoft.Json;
+using Kiltex.SistemaGestion.SDK.Jwt;
+using Kiltex.SistemaGestion.Api.Extension;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Kiltex.SistemaGestion.Domain.Model;
+using Usuario = Kiltex.SistemaGestion.Domain.Model.User;
+using Kiltex.SistemaGestion.Services.Common;
 
-namespace Kiltex.SitemaGestion.Api.Controllers.Authentication
+namespace Kiltex.SistemaGestion.Api.Controllers.Authentication
 {
     public class AccessController : ApiBaseController
     {
@@ -24,36 +31,38 @@ namespace Kiltex.SitemaGestion.Api.Controllers.Authentication
                 return Forbid();
                  
             }
-            var authClaims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.Name, usuario.Data.FirstName),
-                    new Claim(ClaimTypes.Role, usuario.Data.Rol.Key),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-                };
-            //if (usuario.Data.Rol.Key == ERol.Admin)
-            //{
-            //    if (user.Data.UserPharmacy.Count > 0)
-            //    {
-            //        authClaims.Add(new Claim("pharmacyId", user.Data.UserPharmacy.First().PharmacyId.ToString()));
-            //        authClaims.Add(new Claim("pharmacySapCode", user.Data.UserPharmacy.First().Pharmacy.SapCode.ToString()));
-            //    }
-            //}
-            authClaims.Add(new Claim(ClaimTypes.Role, $"{usuario.Data.Rol.Key}"));
 
+            var permission = usuario.Data.Rol.PermissionXRols.Select(y => y.Permission.EnumPermission).ToArray();
+                        
             var token = JWTService.CreateDefaultToken(
                 configuration["Jwt:Issuer"],
                 configuration["Jwt:Audience"],
-                   120,
+                360,
                 configuration["Jwt:SecretKey"],
-                authClaims);
+                GenerateClaims(usuario));
+
             return Ok(new
             {
+                id = usuario.Data.Id,
                 userName = usuario.Data.UserName,
                 firstName = usuario.Data.FirstName,
                 rol = usuario.Data.Rol.Key,
+                permission,
                 token = new JwtSecurityTokenHandler().WriteToken(token),
-                expiration = token.ValidTo
+            expiration = token.ValidTo
             });
+
+        }
+        private static ClaimsIdentity GenerateClaims(OperationResponse<Usuario> usuario)
+        {
+            var claims = new ClaimsIdentity();
+            claims.AddClaim(new Claim(ClaimTypes.Name, usuario.Data.FirstName));
+            claims.AddClaim(new Claim(ClaimTypes.Role, usuario.Data.Rol.Key));
+            var permission = usuario.Data.Rol.PermissionXRols.Select(y => y.Permission.EnumPermission).ToArray();
+            claims.AddClaim(new Claim(UserExtension.claimPermission,  JsonConvert.SerializeObject(permission)));
+
+
+            return claims;
         }
     }
 }

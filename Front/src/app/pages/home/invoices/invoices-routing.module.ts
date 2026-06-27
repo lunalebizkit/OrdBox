@@ -1,19 +1,20 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { InvoicesEditComponent } from './invoices-edit/invoices-edit.component';
+import { ReceiptListComponent } from './receipt-list/receipt-list.component';
 import { InvoicesListComponent } from './invoices-list/invoices-list.component';
-import { InvoicesViewComponent } from './invoices-view/invoices-view.component';
+import { ReceiptEditComponent } from './receipt-edit/receipt-edit.component';
+import { InvoicesReportComponent } from './invoices-report/invoices-report.component';
 
-const routes: Routes =[
-   
-    { path: 'new', component: InvoicesEditComponent},
-    { path: '', component: InvoicesListComponent},
-    { path: 'view/:id', component: InvoicesViewComponent},
- 
-  
+const routes: Routes = [
+  { path: 'invoices-sale', component: InvoicesListComponent },
+  { path: 'invoices-sale/new', component: InvoicesEditComponent },
+  { path: 'receipt', component: ReceiptListComponent },
+  { path: 'receipt/new', component: ReceiptEditComponent },
+  { path: 'report', component: InvoicesReportComponent }
 ];
 @NgModule({
-    imports: [RouterModule.forChild(routes)],
-    exports: [RouterModule]
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule],
 })
 export class InvoicesRoutingMoudule {}

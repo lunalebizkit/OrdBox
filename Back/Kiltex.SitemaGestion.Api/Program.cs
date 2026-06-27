@@ -1,14 +1,28 @@
+
 using Kiltex.SistemaGestion.Domain;
 using Kiltex.SistemaGestion.SDK.Error;
 using Kiltex.SistemaGestion.SDK.Extension.Jwt;
+using Kiltex.SistemaGestion.Services.ImpresoraFiscal;
+using Kiltex.SistemaGestion.Services.ImpresoraFiscal.Printer250F;
+using Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F;
 using Kiltex.SistemaGestion.Services.Mapper;
 using Kiltex.SistemaGestion.Services.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.OpenApi.Models;
+using Serilog;
+
+
 
 var builder = WebApplication.CreateBuilder(args);
+var logger = new LoggerConfiguration()
+  .ReadFrom.Configuration(builder.Configuration)
+  .Enrich.FromLogContext()
+  .CreateLogger();
+//builder.Logging.ClearProviders();
+builder.Logging.AddSerilog(logger);
 var connectionString = builder.Configuration.GetConnectionString("sqlconnection");
 // Add services to the container.
 
@@ -39,11 +53,12 @@ builder.Services.AddSwaggerGen(c =>
                                 }
                             },
                             System.Array.Empty<string>()
-
-                    }
+        }
                 });
 });
-
+builder.Services.AddSingleton<IPrinter, PrinterF250F>();
+builder.Services.AddSingleton<PrinterStatus>(p => builder.Configuration.GetSection("PrinterStatus").Get<PrinterStatus>());
+builder.Services.AddSingleton<PrinterConfig>(p => builder.Configuration.GetSection("PrinterConfig").Get<PrinterConfig>());
 builder.Services.AddAutoMapper(typeof(UserMapperProfile));
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<RolService>();
@@ -54,7 +69,19 @@ builder.Services.AddSingleton<ErrorManager>();
 builder.Services.AddScoped<InvoiceService>();
 builder.Services.AddScoped<EntityService>();
 builder.Services.AddScoped<SupplierOrderService>();
+builder.Services.AddScoped<ReceiptService>();
+builder.Services.AddScoped<PeriodService>();
+builder.Services.AddScoped<IvaService>();
+builder.Services.AddScoped<DebitMemoService>();
+builder.Services.AddScoped<CreditMemoService>();
+builder.Services.AddScoped<EmailService>();
+builder.Services.AddScoped<ReporteZService>();
+builder.Services.AddScoped<DeliveryNotesService>();
+builder.Services.AddScoped<BudgetService>();
+builder.Services.AddScoped<QuittanceService>();
 builder.Services.AddDbContext<DBContext>(x => x.UseSqlServer(connectionString));
+builder.Services.AddScoped<ReimprimirDocService>();
+builder.Services.AddScoped<PdfService>();
 builder.Services.AddCors(options =>
    {
        options.AddPolicy("AllowAll", builder =>
@@ -86,8 +113,8 @@ app.UseCors("AllowAll");
 app.UseHttpsRedirection();
 
 
-//app.UseAuthentication();
-//app.UseAuthorization();
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 

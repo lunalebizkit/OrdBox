@@ -1,76 +1,89 @@
 <nz-layout>
-    <nz-page-header class="list-header">
-      <nz-page-header-title>Listado de Proveedores</nz-page-header-title>
-      <nz-page-header-extra>
-        <a routerLink="/home/suppliers/new"> <button nz-tooltip nzTooltipTitle="Nuevo" nz-button nzType="primary"
-            nzShape="circle"><i nz-icon nzType="plus" nzTheme="outline"></i></button></a>
-      </nz-page-header-extra>
-    </nz-page-header>
-  
-    <nz-content>  
-         <nz-collapse>
-          <nz-collapse-panel nzSize="small" nzHeader="Filtros">
-            <form nz-form (ngSubmit)="search()">
-              <div nz-row [nzGutter]="[8,1]">
-  
-                <div nz-col nzSpan="24">
-                  <nz-form-item>
-                    <nz-form-label>Búsqueda</nz-form-label>
-                    <nz-form-control>                  
-                      <nz-input-group [nzSuffix]="clearQuery">
-                        <input [ngModelOptions]="{standalone: true}" type="text" placeholder="Ingrese Nombre o CUIT-DNI" nz-input
-                          (keydown.enter)="search()" [(ngModel)]="queryParams.filter" />
-                      </nz-input-group>
-                      
-                      <ng-template #clearQuery>
-                        <i nz-icon class="ant-input-clear-icon" nzTheme="fill" nzType="close-circle"
-                          *ngIf="queryParams.filter" (click)="queryParams.filter = ''; search()"></i>
-                      </ng-template>
-                    </nz-form-control>
-                  </nz-form-item>
-                </div>
-  
-              </div>
-  
-            </form>
-          </nz-collapse-panel>
-        </nz-collapse> 
-  
-        <!-- Tabla -->
-     
-      <div>
-        <nz-table class="table-list" [nzData]="entityList" nzBordered=true [nzSize]="'small'" [nzLoading]="loading"
-          [nzTotal]="totalItems" [nzPageSize]="queryParams.pageSize" [nzPageIndex]="queryParams.page + 1" 
-          [nzPaginationType]="'small'" (nzQueryParams)="onQueryParamsChange($event)">
-          <thead>
-            <tr>                     
-              <th>Nombre</th>
-              <th>Dni</th>
-              <th>Cuit</th>
-              <th>Direccion</th>       
-              <th>Observacion</th>       
-              <th>Telefono/s</th>       
-              <th>Email/s</th>       
-              <th>Accion</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let data of entityList" class="small-text">          
-              <td>{{data.name}}</td>
-              <td>{{data.dni}}</td>
-              <td>{{data.cuit}}</td>
-              <td>{{data.address}}</td> 
-              <td>{{data.observation}}</td>
-              <td>{{data.phoneEntity}}</td>
-              <td>{{data.emailEntity}}</td>                      
-              <td style="text-align: center;">
-                  <a routerLink="/home/suppliers/edit/{{data.id}}">
-                    <i nz-icon nzType="edit" nzTheme="outline"></i>
-                  </a>                  
-                </td>        
-            </tr>
-          </tbody>
-        </nz-table>
-      </div>
-    </nz-content>
-  </nz-layout>
+  <nz-page-header class="list-header">
+    <nz-page-header-title>Listado de Proveedores</nz-page-header-title>
+    <nz-page-header-extra>
+      <button
+        *authPermission="[permissions.CreateSupplier, permissions.EditSupplier]"
+        nz-tooltip
+        nzTooltipTitle="Nuevo"
+        nz-button
+        nzType="primary"
+        nzShape="circle"
+      >
+        <i
+          nz-icon
+          nzType="plus"
+          nzTheme="outline"
+          (click)="openComponentSupplierEdit()"
+        ></i>
+      </button>
+    </nz-page-header-extra>
+  </nz-page-header>
+  <nz-content>    
+    <app-search-filter [title]="'Filtros'" [(model)]="queryParams.filter" (keydown.enter)="search()" [palceHolder]="'Ingrese Nombre o CUIT-DNI'" (onSearchClick)="search()"></app-search-filter>
+    
+    <!-- Tabla -->
+
+    <div class="table" (scroll)="onScroll($event)">
+      <nz-table
+        class="tabla"
+        [nzData]="entityList"
+        nzBordered="false"
+        [nzSize]="'small'"
+        [nzLoading]="loading"
+        nzShowPagination="false"
+        nzTableLayout="fixed"
+      >
+        <thead>
+          <tr>
+            <th nzEllipsis nzWidth="50px">Nombre</th>
+            <th nzEllipsis nzWidth="50px">Dni</th>
+            <th nzEllipsis nzWidth="50px">Cuit</th>
+            <th nzEllipsis nzWidth="90px">Dirección</th>
+            <th nzEllipsis nzWidth="130px">Observación</th>
+            <th nzEllipsis nzWidth="100px">Teléfono/s</th>
+            <th nzEllipsis nzWidth="90px">Email/s</th>
+            <th nzEllipsis nzWidth="45px" style="text-align: center;" *authPermission="[permissions.DeleteUser]">Acción</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            id="{{ i }}"
+            *ngFor="let data of entityList; let i = index"
+            class="small-text"
+            (dblclick)="onDoubleClicked(data)"
+            tabindex="-1"
+            (click)="onClick(data, i)"
+            (keydown)="myNavegation($event)"
+            [style.background-color]="
+              data === selectedSuppliers ? 'lightblue' : ''
+            "
+            (keydown.enter)="onEnter($event)"
+          >
+            <td nzEllipsis>{{ data.name }}</td>
+            <td nzEllipsis>{{ data.dni }}</td>
+            <td nzEllipsis>{{ data.cuit  | cuit  }}</td>
+            <td nzEllipsis>{{ data.address }}</td>
+            <td nzEllipsis>{{ data.observation }}</td>
+            <td nzEllipsis>{{ data.phoneEntity }}</td>
+            <td nzEllipsis>{{ data.emailEntity }}</td>
+            <td style="text-align: center;" *authPermission="[permissions.DeleteUser]">
+              <nz-space [nzSplit]="spaceSplit">
+                <ng-template #spaceSplit>
+                </ng-template>                
+                <a *nzSpaceItem (click)="popup.showDeleteConfirmation(data.id)">
+                  <i nz-tooltip nzTooltipTitle="Eliminar" nz-icon nzType="delete" [nzTheme]="'twotone'"
+                    [nzTwotoneColor]="'#FF0000'"></i>
+                </a>
+              </nz-space>
+            </td>
+          </tr>
+        </tbody>
+      </nz-table>
+    </div>
+  </nz-content>
+</nz-layout>
+<app-popup-confirmation #popup [title]="'Confirmar eliminación'"
+  [header]="'¿Está seguro de que desea eliminar el proveedor seleccionado?'"
+  [message]="'Esta acción no se puede revertir'" (handleOk)="handleOk()">
+</app-popup-confirmation>

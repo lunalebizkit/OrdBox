@@ -1,103 +1,193 @@
 ﻿
 
 using AutoMapper;
+using Dapper;
 using Kiltex.SistemaGestion.Domain;
 using Kiltex.SistemaGestion.Domain.Model;
 using Kiltex.SistemaGestion.SDK.Error;
 using Kiltex.SistemaGestion.Services.Common;
-using Kiltex.SistemaGestion.Services.Models.Dtos;
+using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
+using Kiltex.SistemaGestion.Services.Scripts;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace Kiltex.SistemaGestion.Services.Services
 {
     public class BrandService : BaseService
     {
-        public BrandService(ErrorManager logger, DBContext context, IMapper maper) :
-            base(logger, context, maper)
-        {}
-        public async Task<OperationResponse<DtoBrand>> GetById(long id)
+        public BrandService(ErrorManager logger, DBContext context, IMapper maper, IConfiguration configuration) :
+            base(logger, context, maper, configuration)
+        { }
+        public async Task<OperationResponse<DtoResponseBrand>> GetById(long id)
         {
-            var marca = await _contextSql
-                               .Brands
-                               .AsNoTracking()
-                               .FirstOrDefaultAsync(p => p.Id == id)
-                               .ConfigureAwait(false);
-            if (marca == null)
+            try
+            {
+                var marca = await _contextSql
+                                   .Brands
+                                   .AsNoTracking()
+                                   .FirstOrDefaultAsync(p => p.Id == id)
+                                   .ConfigureAwait(false);
+                if (marca == null)
+                {
+                    _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
+                    return Error<DtoResponseBrand>(new OperationExceptions("000", $"Marca no encontrada Id: {id}"));
 
-                return new OperationResponse<DtoBrand>(null, false, new OperationExceptions("000", $"Marca no encontrada {id}"));
+                }
 
-            var result = _mapper.Map<DtoBrand>(marca);
+                var result = _mapper.Map<DtoResponseBrand>(marca);
 
-            return new OperationResponse<DtoBrand>(result);
+                return new OperationResponse<DtoResponseBrand>(result);
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
+                throw;
+            }
         }
-        public async Task<OperationResponse<IdResponse<long>>> Add(DtoBrand model, CancellationToken ct = default)
+        public async Task<OperationResponse<IdResponse<long>>> Add(DtoResponseBrand model, CancellationToken ct = default)
         {
             model.Id = 0;
             return await AddOrUpdate(model, ct).ConfigureAwait(false);
         }
-        public async Task<OperationResponse<IdResponse<long>>> AddOrUpdate(DtoBrand model, CancellationToken ct = default)
+        public async Task<OperationResponse<IdResponse<long>>> AddOrUpdate(DtoResponseBrand model, CancellationToken ct = default)
         {
-            var countBrands = await _contextSql
-                                .Brands
-                                .AsNoTracking()
-                                .CountAsync(p => p.Description.ToLower() == model.Description.ToLower() && p.Id != model.Id, ct);
-            if (countBrands > 0)
+            try
             {
-                return Error<IdResponse<long>>(ErrorsCodes.C_009_ERROR_DUPLICATE, "Ya existe una marca con ese nombre");
-            }
+                var countBrands = await _contextSql
+                                    .Brands
+                                    .AsNoTracking()
+                                    .CountAsync(p => p.Description.ToUpper() == model.Description.ToUpper() && p.Id != model.Id, ct);
+                if (countBrands > 0)
+                {
+                    _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_009_ERROR_DUPLICATE));
+                    return Error<IdResponse<long>>(new OperationExceptions("009", "Ya existe una marca con ese nombre"));
+                }
 
-            var brandModel = _mapper.Map<Brand>(model);
-            
-            if (brandModel.Id == 0)
-            {
-                await _contextSql.Brands.AddAsync(brandModel, ct).ConfigureAwait(false);
-            }
-            else
-            {
-                var oldBrand = await _contextSql
-                                .Brands
-                                .AsNoTracking()
-                                .FirstAsync(p => p.Id == brandModel.Id)
-                                .ConfigureAwait(false);
-                _contextSql.Brands.Update(brandModel);
-            }
-            await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
+                var brandModel = _mapper.Map<Brand>(model);
 
-            return Ok(new IdResponse<long>(brandModel.Id));
+                if (brandModel.Id == 0)
+                {
+                    await _contextSql.Brands.AddAsync(brandModel, ct).ConfigureAwait(false);
+                }
+                else
+                {
+                    var oldModel = await _contextSql
+                                    .Brands
+                                    .FirstAsync(p => p.Id == brandModel.Id)
+                                    .ConfigureAwait(false);
+
+                    _contextSql.Entry(oldModel).State = EntityState.Detached;
+
+                    _contextSql.Brands.Update(brandModel);
+                }
+                await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
+
+                return Ok(new IdResponse<long>(brandModel.Id));
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
+                throw;
+            }
         }
 
-        public async Task<OperationResponse<IdResponse<long>>> Update(DtoBrand model, CancellationToken ct = default)
+        public async Task<OperationResponse<IdResponse<long>>> Update(DtoResponseBrand model, CancellationToken ct = default)
         {
-            if (model.Id <= 0)
+
+            try
             {
-                return Error<IdResponse<long>>("000", "La Marca no tiene ID");
+                if (model.Id <= 0)
+                {
+                    _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
+                    return Error<IdResponse<long>>(new OperationExceptions("000", "La Marca no tiene ID"));
+                }
+
+                return await AddOrUpdate(model, ct).ConfigureAwait(false);
+
             }
-
-            return await AddOrUpdate(model, ct).ConfigureAwait(false);
-        }
-        public async Task<OperationResponse<DtoPagination<DtoBrand>>> ListBrands(RequestPaginatedData<string> request)
-        {
-            var query = _contextSql
-                                .Brands
-                                .AsNoTracking()
-                                .Where(p => ((p.Description.ToLower().Contains(request.Filter ?? ""))));
-
-            var count = await query.CountAsync().ConfigureAwait(false);
-
-            var list = await query.OrderBy(p => p.Id)
-                                  .Skip(request.Page * request.PageSize)
-                                  .Take(request.PageSize)
-                                  .ToListAsync()
-                                  .ConfigureAwait(false);
-            var dto = _mapper.Map<List<DtoBrand>>(list);
-
-            return new OperationResponse<DtoPagination<DtoBrand>>(new DtoPagination<DtoBrand>
+            catch (Exception ex)
             {
-                Data = dto,
-                PageSize = request.PageSize,
-                TotalCount = count
-            });
+                _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
+                throw;
+            }
         }
-      
+        public async Task<OperationResponse<DtoPagination<DtoResponseBrand>>> ListBrands(RequestPaginatedData<string> request)
+        {
+            try
+            {
+                var query = _contextSql
+                                    .Brands
+                                    .AsNoTracking()
+                                    .Where(p => ((p.Description.ToLower().Contains(request.Filter ?? "")) && p.Id > 0));
+
+                var count = await query.CountAsync().ConfigureAwait(false);
+
+                var list = await query.OrderBy(p => p.Id)
+                                      .Skip(request.Page * request.PageSize)
+                                      .Take(request.PageSize)
+                                      .ToListAsync()
+                                      .ConfigureAwait(false);
+                var dto = _mapper.Map<List<DtoResponseBrand>>(list);
+
+                return new OperationResponse<DtoPagination<DtoResponseBrand>>(new DtoPagination<DtoResponseBrand>
+                {
+                    Data = dto,
+                    PageSize = request.PageSize,
+                    TotalCount = count
+                });
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
+                throw;
+            }
+        }
+        //Elimianr Marca
+        public async Task<OperationResponse<IdResponse<long>>> Delete(long id, CancellationToken ct = default)
+        {
+            using (var connection = new SqlConnection(ConnectionString))
+            {
+                try
+                {
+                    var brand = connection.Query(SqlScripts.GetBrandById, new { @brandid = id }).FirstOrDefault();
+
+                    if (brand != null)
+                    {
+                        _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_010_ERROR_EXCEPTION));
+                        return Error<IdResponse<long>>(new OperationExceptions(ErrorsCodes.C_010_ERROR_EXCEPTION, "La Marca tiene productos asociados"));
+                    }
+                    else
+                    {
+                        var savedBrand = await _contextSql.Brands.FirstOrDefaultAsync(p => p.Id == id, ct).ConfigureAwait(false);
+
+                        if (savedBrand != null)
+                        {
+                            _contextSql.Brands.Remove(savedBrand);
+
+                            await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
+
+                            return Ok(new IdResponse<long>(id));
+                        }
+                        else
+                        {
+                            _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_004_ELEMENT_NOT_FOUND));
+                            return Error<IdResponse<long>>(new OperationExceptions(ErrorsCodes.C_004_ELEMENT_NOT_FOUND, ErrorsMessages.GetMessage(ErrorsCodes.C_004_ELEMENT_NOT_FOUND)));
+                        }
+                    }
+
+
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
+                    throw;
+                }
+            }
+        }
+
     }
 }

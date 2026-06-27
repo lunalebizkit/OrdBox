@@ -37,7 +37,6 @@ export class InvoiceCustomerSearchComponent implements OnInit {
     } 
 
   ngOnInit(): void {
-    this.getAllCustomer();
    }
 
   close(): void {

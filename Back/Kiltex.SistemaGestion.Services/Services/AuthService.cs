@@ -2,31 +2,41 @@
 using Kiltex.SistemaGestion.Domain;
 using Kiltex.SistemaGestion.Domain.Model;
 using Kiltex.SistemaGestion.SDK.Error;
+using Kiltex.SistemaGestion.SDK.Security;
 using Kiltex.SistemaGestion.Services.Common;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace Kiltex.SistemaGestion.Services.Services
 {
     public class AuthService : BaseService
     {
-        public AuthService(ErrorManager logger, DBContext context, IMapper mapper) :
-           base(logger, context, mapper)
+        public AuthService(ErrorManager logger, DBContext context, IMapper mapper, IConfiguration config) :
+           base(logger, context, mapper, config)
         { }
 
         public async Task<OperationResponse<User>> GetUserLogin(string email, string password)
         {
-            var user = await _contextSql.Users
-                                    .AsNoTracking()
-                                    .Include(p => p.Rol)
-                                    .FirstOrDefaultAsync(p => p.Email == email && !p.IsDeleted)
-                                    .ConfigureAwait(false);
+            try
+            {
+              var user = await _contextSql.Users
+                                        .AsNoTracking()
+                                        .Include(p => p.Rol)
+                                        .FirstOrDefaultAsync(p => p.Email == email && !p.IsDeleted)
+                                        .ConfigureAwait(false);
 
-            //if (user == null || !SecurePasswordHasher.Verify(password, user.Password))
-            //{
-            //    return Error<User>(new OperationExceptions("001", "El usuario no es válido"));
-            //}
+                if (user == null || !SecurePasswordHasher.Verify(password, user.Password))
+                {
+                    return Error<User>(new OperationExceptions("001", "El usuario no es válido"));
+                }
 
-            return Ok(user);
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("GetUserLogin", ex: ex);
+                throw;
+            }
         }
     }
 }

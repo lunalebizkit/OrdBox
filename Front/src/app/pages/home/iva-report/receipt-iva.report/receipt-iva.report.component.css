@@ -1,0 +1,31 @@
+.list-header {
+    position: relative;
+    height: 64px;
+    padding: 10px;
+    background: var(--background);
+    box-shadow: -1px 1px 5px 1px var(--box-shadow);
+    margin-bottom: 10px;
+  }
+  .tabla th{
+    font-size: 12px;
+  }
+  .tabla td{
+  font-size: 11px; 
+  }
+  .table{
+    scroll-behavior: smooth;
+    border-collapse: collapse;
+  } 
+  .tabla {
+    width: 100%;
+    table-layout: fixed;
+  }
+  .factA{
+    background-color: var(--backg-A);
+  }
+  .factB{
+    background-color: var(--backg-B);
+  }
+  .factC{
+    background-color: var(--backg-C);
+  }

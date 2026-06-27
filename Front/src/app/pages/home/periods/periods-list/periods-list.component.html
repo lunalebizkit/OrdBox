@@ -1,0 +1,159 @@
+<nz-layout>
+  <nz-page-header class="list-header">
+    <nz-page-header-title>Listado de Períodos</nz-page-header-title>
+    <nz-page-header-extra>
+      <button
+        *authPermission="[permissions.CreatePeriod, permissions.EditPeriod]"
+        nz-tooltip
+        nzTooltipTitle="Nuevo"
+        nz-button
+        nzType="primary"
+        nzShape="circle"
+        (click)="openComponentPeriod()"
+      >
+        <i nz-icon nzType="plus" nzTheme="outline"></i>
+      </button>
+    </nz-page-header-extra>
+  </nz-page-header>
+  <nz-collapse>
+    <nz-collapse-panel nzSize="small" nzHeader="Filtros">
+      <div nz-row>
+        
+          <nz-form-item>
+            <nz-form-label >Fecha</nz-form-label>
+            <nz-form-control >
+              <nz-date-picker
+              nzFormat="dd/MM/yyyy"
+              [(ngModel)]="dia"
+              name="date"
+              [nzPlaceHolder]="'Fecha'"       
+              (ngModelChange)="dateChange($event)"
+              [nzAllowClear]="true"
+              ></nz-date-picker>
+            </nz-form-control>
+          </nz-form-item>
+          <button nz-button nzType="primary" style="margin-left: 90px; font-size: 14px;" (click)="search()">
+            <i nz-icon nzType="search"></i>
+            Buscar
+          </button>
+
+      </div>
+    </nz-collapse-panel>
+  </nz-collapse>
+  <div class="table" (scroll)="onScroll($event)">
+    <nz-table
+      #groupingTable
+      class="tabla"
+      [nzData]="periodList"
+      nzBordered="false"
+      [nzSize]="'small'"
+      nzTableLayout="fixed"
+      nzShowPagination="false"
+    >
+      <thead>
+        <tr>
+          <th nzEllipsis nzWidth="200px" [nzAlign]="'center'">Inicio período</th>
+          <th nzEllipsis nzWidth="200px" [nzAlign]="'center'">Fin período</th>
+          <th nzEllipsis nzWidth="150px" [nzAlign]="'center'">Estado</th>
+          <th nzEllipsis nzWidth="100px" [nzAlign]="'center'">Acción</th>
+          <th nzEllipsis nzWidth="250px" [nzAlign]="'center'">Reportes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          id="{{ i }}"
+          *ngFor="let period of periodList; let i = index"
+          class="small-text"
+          (dblclick)="onDoubleClicked(period)"
+          tabindex="-1"
+          (click)="onClick(period, i)"
+          (keydown)="myNavegation($event)"
+          [style.background-color]="
+            period === selectedPeriod ? 'lightblue' : ''
+          "
+          (keydown.enter)="onEnter($event, period)"
+        >
+          <td nzEllipsis [nzAlign]="'center'">{{ this.formaterDate(period.initPeriod) }}</td>
+          <td nzEllipsis [nzAlign]="'center'">{{ this.formaterDate(period.endPeriod) }}</td>
+          <td nzEllipsis [nzAlign]="'center'" *ngIf="period.status === true">Activo</td>
+          <td nzEllipsis [nzAlign]="'center'" *ngIf="period.status === false">Cerrado</td>
+          <td nzEllipsis [nzAlign]="'center'" *ngIf="period.status === true">
+            <a
+              #active
+              nz-tooltip
+              nzTooltipTitle="Abierto"
+              nzTooltipPlacement="rightTop"
+              style="color: rgb(248, 46, 46)"
+              (click)="popup.showDeleteConfirmation(period.id)"
+            >
+              <i
+                nz-icon
+                nzType="close-circle"
+                nzTheme="outline"
+                style="font-size: 18px"
+              >
+              </i>
+            </a>
+          </td>
+          <td nzEllipsis [nzAlign]="'center'" *ngIf="period.status === false">
+            <a
+              #close
+              nz-tooltip
+              nzTooltipTitle="Cerrado"
+              nzTooltipPlacement="rightTop"
+              style="color: darkgrey; " 
+            >
+              <i
+                nz-icon
+                nzType="close-circle"
+                nzTheme="outline"
+                style="font-size: 18px"
+              >
+              </i>
+            </a>
+          </td>
+          <ng-container>
+            <td style="text-align: center">
+                <button
+                  nz-button
+                  nzType="primary"
+                  nzSize="small"
+                  style="background-color: rgb(2, 145, 2); font-size:10px; border-color: rgb(2, 145, 2);margin-right: 25px"
+                  routerLink="/home/iva/ivaCompra"
+                  [queryParams]="{
+                    from: formaterDate(period.initPeriod),
+                    to: formaterDate(period.endPeriod)
+                  }"
+                >
+                  Iva Compra
+                </button>
+          
+              <button
+                nz-button
+                nzSize="small"
+                nzType="primary"
+                style="font-size:10px"
+                routerLink="/home/iva/ivaVenta"
+                [queryParams]="{
+                  from: formaterDate(period.initPeriod),
+                  to: formaterDate(period.endPeriod)
+                }"
+              >
+                Iva Venta
+              </button>
+            </td>
+          </ng-container>
+        </tr>
+      </tbody>
+    </nz-table>
+  </div>
+</nz-layout>
+<app-popup-confirmation
+  #popup
+  [title]="'Confirmar Cierre Período'"
+  [header]="'¿Está seguro de que desea cerrar el Período seleccionado?'"
+  [message]="'Esta acción no se puede revertir'"
+  (handleOk)="handleOk()"
+  [disabled]="isSaving"
+>
+</app-popup-confirmation>

@@ -1,0 +1,51 @@
+<nz-layout>
+    <nz-page-header class="list-header">
+        <nz-page-header-title>Impresora fiscal</nz-page-header-title>
+        <nz-page-header-extra>
+          <button
+            nz-tooltip
+            nzTooltipTitle="Impresora fiscal"
+            nz-button
+            nzType="primary"
+            (click)="getPrintSettings()"
+          >Ver estado de impresora fiscal
+          </button>
+        </nz-page-header-extra>
+      </nz-page-header>
+      <div style="height: 25em;" *ngIf="this.printStatusmodel == undefined"></div>
+      <nz-collapse *ngIf="this.printStatusmodel != null">
+        <nz-collapse-panel nzHeader="Información" [nzActive]="true">
+            <div style="display: flex; flex-direction: row">
+              <div style="flex: 1">
+                <b><label>* Fecha: </label></b>
+                <span>{{ this.printStatusmodel.fechaFirmware }}</span>
+                <br />
+                <b><label>* Versión: </label></b>
+                <span>
+                  <nz-page-header-tags>
+                    <nz-tag [nzColor]="'blue'">{{ this.printStatusmodel.version }}</nz-tag>
+                  </nz-page-header-tags>
+                </span>
+                <br />
+                
+              </div>
+              <div style="flex: 1">
+                <b><label>* Nombre producto: </label></b>
+                <span>{{ this.printStatusmodel.nombreProducto }}</span>
+                <br />
+                <b><label>* Versión motor: </label></b>
+                <span>{{ this.printStatusmodel.versionMotor }}</span>
+                <br />
+              </div>
+              <div style="flex: 1">
+                <b><label>* Marca: </label></b>
+                <span>{{ this.printStatusmodel.marca }}</span>
+                <br />
+                <b><label>* Versión protocolo: </label></b>
+                <span>{{ this.printStatusmodel.versionProtocolo }}</span>
+                <br />
+              </div>
+            </div>
+          </nz-collapse-panel>
+      </nz-collapse>
+</nz-layout>

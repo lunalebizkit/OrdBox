@@ -9,7 +9,7 @@ import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzDrawerModule } from 'ng-zorro-antd/drawer';
-import { ReactiveFormsModule, FormGroup } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { IconsProviderModule } from 'src/app/icons-provider.module';
 import { SecurityAuthService } from './security-auth.service';
 import {NzAvatarModule} from 'ng-zorro-antd/avatar';
@@ -17,8 +17,9 @@ import { NzLayoutModule } from 'ng-zorro-antd/layout';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
-// import { PermissionService } from './permission/permission-manager.service';
-// import { ResetpasswordComponent } from './resetpassword/resetpassword.component';
+import { AppCommonModule } from 'src/app/common/app.common.module';
+import { NzTabsModule } from 'ng-zorro-antd/tabs';
+import { NzTransferModule } from 'ng-zorro-antd/transfer';
 
 @NgModule({
   imports: [
@@ -36,9 +37,13 @@ import { NzDividerModule } from 'ng-zorro-antd/divider';
     NzLayoutModule,
     NzMenuModule,
     NzCardModule,
-    NzDividerModule
-    
+    NzDividerModule,
+    AppCommonModule,
+    NzDrawerModule,
+    NzTabsModule,
+    NzTransferModule
   ],
+
   declarations: [LoginComponent],
   providers: [
     SecurityAuthService

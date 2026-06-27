@@ -4,7 +4,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 
 @Component({
-  template: ""
+  template: '',
 })
 export class BaseComponent {
   /**
@@ -14,7 +14,7 @@ export class BaseComponent {
     private notification: NzNotificationService,
     private el: ElementRef,
     private message: NzMessageService
-    ) { }
+  ) {}
 
   /**
    * Show Success message
@@ -22,33 +22,30 @@ export class BaseComponent {
    * @param content
    */
   public showNotificationSuccess(title: string, content: string) {
-    this.notification.create(
-      'success',
-      title,
-      content
-    );
+    this.notification.create('success', title, content);
   }
 
   public showMessageError(message: string) {
-    this.message.create(
-      'error',
-      message);
+    this.message.create('error', message);
   }
 
   public showMessageSuccess(message: string) {
-    this.message.create(
-      'success',
-      message);
+    this.message.create('success', message);
   }
   /**
    * Determina si un form es valido
    * @param form
    * @returns
    */
-  public isValidForm(form: FormGroup, showMessageError: boolean = true): boolean {
+  public isValidForm(
+    form: FormGroup,
+    showMessageError: boolean = true
+  ): boolean {
     for (const key of Object.keys(form.controls)) {
       if (form.controls[key].invalid) {
-        const invalidControl = this.el.nativeElement.querySelector('[formcontrolname="' + key + '"]');
+        const invalidControl = this.el.nativeElement.querySelector(
+          '[formcontrolname="' + key + '"]'
+        );
 
         if (invalidControl) {
           invalidControl.focus();
@@ -76,17 +73,15 @@ export class BaseComponent {
     }
   }
 
-    /**
+  /**
    * Convierte a base64 la imagen
    */
-     getBase64(file: File): Promise<string | ArrayBuffer | null> {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = error => reject(error);
-      });
-    }
-
-  
+  getBase64(file: File): Promise<string | ArrayBuffer | null> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+  }
 }

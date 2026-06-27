@@ -1,0 +1,380 @@
+import { formatDate } from '@angular/common';
+import {
+  Component,
+  ElementRef,
+  Inject,
+  LOCALE_ID,
+  OnInit,
+
+} from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { NzDrawerService } from 'ng-zorro-antd/drawer';
+import { NzMessageService } from 'ng-zorro-antd/message';
+import { NzNotificationService } from 'ng-zorro-antd/notification';
+import { BaseComponent } from 'src/app/common/components/base/base.component';
+import { CategoriesService } from '../../categories/category.services';
+import { EntityService } from '../../customers/customer.service';
+import { eStatus, StatusType } from '../models/status-type.enum';
+import {
+  NewOrder,
+  NewOrderDetail,
+  orderDetailbyIdParser,
+} from '../models/order.model';
+import { OrdersEditDrawerComponent } from '../orders-edit-drawer/orders-edit.drawer.component';
+import { OrdersService } from '../orders.service';
+import { Permission } from 'src/app/common/auth/models/permissions.enum';
+import { CustomerModel } from '../../customers/model/customer.model';
+import { CategoryModel } from '../../categories/model/category.model';
+
+@Component({
+  selector: 'app-orders-list',
+  templateUrl: './orders-list.component.html',
+  styleUrls: ['./orders-list.component.css'],
+})
+export class OrdersListComponent extends BaseComponent implements OnInit {
+  permissions = Permission;
+  formSearch!: FormGroup;
+  formSupplierSearch!: FormGroup;
+  isLoading = false;
+  timeout!: any;
+  allCategories = [];
+  allSuppliers: { value: string; label: string }[] = [];
+  allOrders: NewOrder[] = [];
+  orderDetailList: NewOrderDetail[] = [];
+  allStatus = StatusType;
+  /*
+   ** id del usuario a editar, si es nuevo...
+   */
+  id!: number;
+  loading!: boolean;
+
+  /*
+   ** Parametros de busqueda Filtrada
+   */
+  queryParams = {
+    filter: {
+      product: '',
+      brand: 0,
+      category: 0,
+      status: 1,
+      date: '',
+      supplier: [0],
+      
+    },
+    page: 0,
+    pageSize: 20,
+  };
+  /*
+   ** Parametros de busqueda
+   */
+  queryData = {
+    filter: '',
+    page: 0,
+    pageSize: 20,
+  };
+  entityList: CustomerModel[] = [];
+  categorieList: CategoryModel [] = [];
+  totalItems = 0;
+  selectedIndex!: number;
+  selectedOrders!: NewOrder;
+  index!: number;
+  editId!: number;
+  router: any;
+
+  constructor(
+    private serviceOrders: OrdersService,
+    private serviceCategory: CategoriesService,
+    private serviceEntity: EntityService,
+    notificacionService: NzNotificationService,
+    el: ElementRef,
+    message: NzMessageService,
+    private fb: FormBuilder,
+    private drawerService: NzDrawerService,
+    @Inject(LOCALE_ID) public locale: string
+  ) {
+    super(notificacionService, el, message);
+    this.formSearch = this.fb.group({
+      status: [1],
+      supplier: [[]],
+      category: [0],
+      date: ['']
+    })
+    this.formSupplierSearch = this.fb.group({
+      supplierId: ['', [Validators.required]],
+    });
+  }
+  ngOnInit(): void {
+    this.getAllOrders();
+    this.getStatusName(this.id)
+  }
+  /*
+   ** Indicador de carga de marcas y lineas
+   */
+  loadingBrands!: boolean;
+  isLoadingCategory = false;
+  isLoadingBrand = false;
+  isLoadingEntity = false;
+  isSaving = false;
+
+  getAllOrders(): void {
+    this.isLoading = true;
+    this.serviceOrders.getOrders(this.queryParams).subscribe({
+      next: (r) => {
+        this.isLoading = false;
+        this.allOrders = r.data;
+        this.totalItems = r.totalCount;
+        this.selectedIndex = 0;
+        this.selectedOrders = this.allOrders[this.selectedIndex];
+        document.getElementById(this.selectedIndex.toString())?.focus();
+      },
+      error: () => {
+        this.isLoading = false;
+        this.allOrders = [];
+      },
+    });
+  }
+
+  getAllCategories(): void {
+    this.isLoadingCategory = true;
+    this.serviceCategory.getByFilter(this.queryData).subscribe({
+      next: (r) => {
+        this.isLoadingCategory = false;
+        this.allCategories = r.data.map(
+          (category: { id: any; description: any }) => {
+            return { value: category.id, label: category.description };
+          }
+        );
+      },
+      error: () => {
+        this.isLoadingCategory = false;
+        this.allCategories = [];
+      },
+    });
+  }
+
+  getAllSupplier(): void {
+    this.isLoadingEntity = true;
+    this.serviceEntity.getSuppliers(this.queryData).subscribe({
+      next: (r) => {
+        this.isLoadingEntity = false;
+        this.allSuppliers = r.data.map((entity: { id: any; name: any }) => {
+          return { value: entity.id, label: entity.name };
+        });
+      },
+      error: () => {
+        this.isLoadingEntity = false;
+        this.allSuppliers = [];
+      },
+    });
+  }
+
+  /*
+   ** Evento de busqueda datos en el server
+   */
+  onSearch(data: string): void {
+    if (data.length > 2) {
+      this.queryData.page = 0;
+      this.queryData.filter = data;
+      this.getSupplier(this.queryData);
+    }
+  }
+
+  
+
+  getSupplier(params: any): void {
+    this.loading = true;
+    this.serviceEntity.getSuppliers(params).subscribe({
+      next: (r) => {
+        this.entityList = r.data;
+        this.totalItems = r.totalCount;
+        this.loading = false;
+      },
+      error: () => {
+        this.loading = false;
+        this.entityList = [];
+      },
+    });
+  }
+
+  //Busca por categoria
+  onSearch2(data: string): void {
+    if (data.length > 2) {
+      this.queryData.page = 0;
+      this.queryData.filter = data;
+      this.getCategory(this.queryData);
+    }
+  }
+
+  getCategory(params:any):void{
+    this.loading = true;
+    this.serviceCategory.getByFilter(params).subscribe({
+      next: (r) => {
+        this.categorieList = r.data;
+        this.totalItems = r.totalCount;
+        this.loading = false;
+      },
+      error: () => {
+        this.loading = false;
+        this.categorieList = [];
+      },
+    });
+  }
+
+  onSelect(id: number): void {
+    this.orderDetailList = this.allOrders.filter(
+      (order) => order.id == id
+    )[0].orderDetail;
+  }
+
+  supplierSelectedChange(id: any): void {
+
+      if (id == 0 || id == null) {
+        this.queryParams.filter.supplier = [0];
+      } else {
+        this.queryParams.filter.supplier = [id];
+      }
+  }
+
+
+  dateSelectedChange(id: any): void {
+    this.queryParams.filter.date = id == null ? '' : this.formaterDate(id) ;  
+  }
+  categorySelectedChange(id: number): void {
+    this.queryParams.filter.category = id;
+  }
+
+  statusSelectedChange(id: number): void {
+    this.queryParams.filter.status = id;
+  }
+  formaterDate(date: string | number | Date): string {
+    return formatDate(date, 'YYYY-MM-dd', this.locale);
+  }
+
+  /*
+   ** Evento al presionar buscar o presionar enter
+   */
+  search(): void {
+    this.queryParams.page = 0;
+    this.orderDetailList = [];
+    this.getAllOrders();
+  }
+
+  getStatusName(id: number) {
+    return eStatus[id];
+  }
+  onDoubleClicked(datos: any) {
+    this.id = datos.id;
+    this.openComponentOrdersEdit();
+  }
+  onClick(datos: NewOrder, index: number): void {
+    this.index = index;
+    this.selectedIndex = index;
+    this.selectedOrders = datos;
+    this.onSelect(datos.id);
+  }
+
+  onEnter(e: any) {
+    this.selectedOrders = this.allOrders[this.index];
+    this.id = this.allOrders[this.index].id;
+    this.openComponentOrdersEdit();
+  }
+
+  /*
+   ** Evento de navegacion por teclado
+   */
+  myNavegation(event: any) {
+    switch (event.key) {
+      case 'ArrowDown':
+        let nextCell =
+          this.allOrders.length > this.selectedIndex
+            ? ++this.selectedIndex
+            : this.allOrders.length;
+        if (this.allOrders[nextCell] !== undefined) {
+          this.selectedOrders = this.allOrders[nextCell];
+          this.index = nextCell;
+          document.getElementById(nextCell.toString())?.focus();
+          this.onSelect(this.selectedOrders.id);
+        }
+        break;
+      case 'ArrowUp':
+        let previousCell = this.selectedIndex > 0 ? --this.selectedIndex : 0;
+        if (this.allOrders[previousCell] !== undefined) {
+          this.selectedOrders = this.allOrders[previousCell];
+          this.index = previousCell;
+          document.getElementById(previousCell.toString())?.focus();
+          this.onSelect(this.selectedOrders.id);
+        }
+        break;
+    }
+  }
+  async reload(url: string): Promise<boolean> {
+    await this.router.navigateByUrl('.', { skipLocationChange: true });
+    return this.router.navigateByUrl(url);
+  }
+  /*
+   ** Evento de scroll infinito
+   */
+  onScroll(event: any): void {
+    let scrollHeight = event.target.scrollHeight;
+    let scrolltop = event.target.scrollTop;
+    let client = event.target.clientHeight;
+    let ScrollPosition = Math.abs(
+      Math.round(scrollHeight - (scrolltop + client))
+    );
+    if (
+      ScrollPosition <= 5 &&
+      this.totalItems / this.queryParams.page > this.queryParams.page
+    ) {
+      let page = this.queryParams.page;
+      this.queryParams.page = this.queryParams.page + 1;
+      if (
+        this.totalItems === undefined ||
+        this.queryParams.page * this.queryParams.pageSize <= this.totalItems
+      ) {
+        this.serviceOrders.getOrders(this.queryParams).subscribe({
+          next: (r) => {
+            r.data.map((order: NewOrder) => this.allOrders.push(order));
+            this.isLoading = false;
+          },
+          error: () => {
+            this.isLoading = false;
+            this.allOrders = [];
+          },
+        });
+      } else {
+        this.queryParams.page = page;
+      }
+    }
+  }
+  openComponentOrdersEdit(): void {
+    const drawerRefCustomer = this.drawerService.create<
+      OrdersEditDrawerComponent,
+      { filter: number },
+      number
+    >({
+      nzContent: OrdersEditDrawerComponent,
+      nzSize: 'large',
+      nzWidth: '90%',
+      nzContentParams: {
+        filter: this.id > 0 ? this.id : 0,
+      },
+      nzClosable: false,
+    });
+    drawerRefCustomer.afterClose.subscribe({
+      next: (data) => {
+        this.orderDetailList = [];
+        this.queryParams.page = 0;
+        this.id = 0;
+        this.ngOnInit()
+        if (data != undefined && data != 0) {
+          this.ngOnInit(); 
+        }
+      },
+      error: () => {
+        this.orderDetailList = [];
+        this.allOrders = []
+        this.id = 0;
+      },
+    });
+  }
+}

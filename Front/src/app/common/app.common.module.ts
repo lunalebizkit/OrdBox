@@ -18,9 +18,20 @@ import { NzTypographyModule } from 'ng-zorro-antd/typography';
 import { NzImageModule } from 'ng-zorro-antd/image';
 
 import { PopupConfirmationComponent } from './components/popup-confirmation/popup-confirmation.component';
- import { HeaderOperationsButtonsComponent } from './components/headers/buttons.oparations.header.component';
- import { BaseComponent } from './components/base/base.component';
-
+import { HeaderOperationsButtonsComponent } from './components/headers/buttons.oparations.header.component';
+import { BaseComponent } from './components/base/base.component';
+import { AuthModule } from './auth/auth.module';
+import { PermissionDirective } from './directives/permission.directive';
+import { AuthModalComponent } from './auth/auth-modal/auth-modal.component';
+import { CuitPipe } from './pipes/cuit.pipe';
+import { NoCommaPipe } from './pipes/no-comma.pipe';
+import { ButtonOperationFooter } from './components/footers/button.operation.footer.component';
+import { InvoiceTypePipe } from './pipes/invoice-type.pipe';
+import { SearchFilterComponent } from './components/search-filter/search.filter.component';
+import { NzCollapseModule } from 'ng-zorro-antd/collapse';
+import { IvaConditionTypePipe } from './pipes/ivacondition-type';
+import { SearchCustomFilterComponent } from './components/search-custom-filter/search.custom.filter.component';
+import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 
 @NgModule({
   imports: [
@@ -39,9 +50,11 @@ import { PopupConfirmationComponent } from './components/popup-confirmation/popu
     NzNotificationModule,
     NzTypographyModule,
     NzTagModule,
-    NzImageModule
-    ], 
-    exports: [
+    NzImageModule,
+    NzCollapseModule,
+    NzDatePickerModule
+  ],
+  exports: [
     CommonModule,
     ReactiveFormsModule,
     FormsModule,
@@ -55,26 +68,42 @@ import { PopupConfirmationComponent } from './components/popup-confirmation/popu
     NzButtonModule,
     NzPageHeaderModule,
     NzNotificationModule,
-     HeaderOperationsButtonsComponent,
+    HeaderOperationsButtonsComponent,
     NzTypographyModule,
     NzTagModule,
-     PopupConfirmationComponent,
-     
- 
+    PopupConfirmationComponent,
+    AuthModule,
+    PermissionDirective,
+    CuitPipe,
+    NoCommaPipe,
+    ButtonOperationFooter,
+    InvoiceTypePipe,
+    SearchFilterComponent,
+    IvaConditionTypePipe,
+    SearchCustomFilterComponent
   ],
   declarations: [
-     HeaderOperationsButtonsComponent, 
-     BaseComponent, 
-     PopupConfirmationComponent
-     
-
+    HeaderOperationsButtonsComponent,
+    BaseComponent,
+    PopupConfirmationComponent,
+    PermissionDirective,
+    AuthModalComponent,
+    CuitPipe,
+    NoCommaPipe,
+    ButtonOperationFooter,
+    InvoiceTypePipe,
+    SearchFilterComponent,
+    IvaConditionTypePipe,
+    SearchCustomFilterComponent
   ],
   entryComponents: [
-     HeaderOperationsButtonsComponent, 
-     BaseComponent,
-      PopupConfirmationComponent],
-  providers: [
-    
-  ]
+    HeaderOperationsButtonsComponent,
+    BaseComponent,
+    PopupConfirmationComponent,
+    ButtonOperationFooter,
+    SearchFilterComponent,
+    SearchCustomFilterComponent
+  ],
+  providers: [],
 })
-export class AppCommonModule { }
+export class AppCommonModule {}

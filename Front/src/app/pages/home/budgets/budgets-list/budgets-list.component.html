@@ -1,0 +1,113 @@
+<nz-layout>
+  <nz-page-header class="list-header">
+    <nz-page-header-title>Listado de Presupuestos</nz-page-header-title>
+    <nz-page-header-extra>
+      <button
+        *authPermission="[permissions.GetBudget]"
+        nz-tooltip
+        nzTooltipTitle="Nuevo"
+        nz-button
+        nzType="primary"
+        nzShape="circle"
+        routerLink="/home/budgets/new"
+      >
+        <i nz-icon nzType="plus" nzTheme="outline"></i></button
+      ><!-- -->
+    </nz-page-header-extra>
+  </nz-page-header>
+  <nz-content>
+    <!-- Busqueda -->
+     <app-search-custom-filter [customSearchForm]="customBSearchForm" (onSearchCustomClick)="search()"></app-search-custom-filter>
+   <!-- Tabla -->
+
+    <div class="table" (scroll)="onScroll($event)">
+      <nz-table
+        class="tabla"
+        [nzData]="budgetsList"
+        nzBordered="true"
+        [nzLoading]="loading"
+        [nzSize]="'small'"
+        nzShowPagination="false"
+        nzTableLayout="fixed"
+      >
+        <thead>
+          <tr>
+            <th nzEllipsis nzWidth="100px">Numero</th>
+            <th nzEllipsis nzWidth="160px">Fecha</th>
+            <th nzEllipsis nzWidth="100px">Nombre</th>
+            <th nzEllipsis nzWidth="100px">Dirección</th>
+            <th nzEllipsis nzWidth="100px">Total</th>
+            <th [nzAlign]="'center'" nzEllipsis nzWidth="70px">Acción</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr
+            id="{{ i }}"
+            *ngFor="let budget of budgetsList; let i = index"
+            class="small-text"
+            tabindex="-1"
+            (click)="onClick(budget, i)"
+            (keydown)="myNavegation($event)"
+            [style.background-color]="
+              budget === selectedBudget ? 'lightblue' : ''
+            "
+            (dblclick)="onDoubleClicked(budget.id)"
+            (keydown.enter)="onEnter($event)"
+          >
+            <td nzEllipsis>{{ budget.budgetNumber }}</td>
+            <td nzEllipsis>{{ this.formaterDate(budget.dateTime) }}</td>
+            <td nzEllipsis>{{ budget.customerName }}</td>
+            <td nzEllipsis>{{ budget.customerAddress }}</td>
+            <td nzEllipsis>
+              <b>{{ this.currencyFormat(budget.total) }}</b>
+            </td>
+
+            <!-- <a *nzSpaceItem routerLink="/home/users/edit/{{user.id}}">
+              <i nz-tooltip nzTooltipTitle="Editar" nz-icon nzType="edit"></i>
+            </a> -->
+
+            <td style="text-align: center">              
+              <nz-space [nzSplit]="spaceSplit">
+                <ng-template #spaceSplit>
+                </ng-template>
+                <a (click)="reimprimirBudgets(budget.id)">
+                  <i
+                  nz-icon
+                  nz-tooltip
+                  nzTooltipTitle="Descargar pdf"
+                  nzType="file-pdf"
+                  nzTheme="twotone"
+                  [nzTwotoneColor]="'#f5222d'"
+                  style="font-size: 16px; margin-right: 20px"
+                ></i>
+                </a>
+                <ng-template #spaceSplit>
+                </ng-template>                
+                <a routerLink="/home/budgets/edit/{{ budget.id }}">
+                  <i
+                    nz-icon
+                    nzType="edit"
+                    nzTheme="outline"
+                    style="margin-right: 20px; color: green; font-size: 16px;"
+                  ></i>
+                </a>                             
+                <ng-template #spaceSplit>
+                </ng-template>                
+                <a *nzSpaceItem (click)="popup.showDeleteConfirmation(budget.id)">
+                  <i nz-tooltip nzTooltipTitle="Eliminar" nz-icon nzType="delete" [nzTheme]="'twotone'"
+                    [nzTwotoneColor]="'#FF0000'" style="font-size: 16px;"></i>
+                </a>
+              </nz-space>
+            </td>
+          </tr>
+        </tbody>
+      </nz-table>
+    </div>
+  </nz-content>
+</nz-layout>
+
+<app-popup-confirmation #popup [title]="'Confirmar eliminación'"
+  [header]="'¿Está seguro de que desea eliminar el presupuesto seleccionado?'"
+  [message]="'Esta acción no se puede revertir'" (handleOk)="handleOk()">
+</app-popup-confirmation>

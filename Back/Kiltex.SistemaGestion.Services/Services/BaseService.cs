@@ -2,6 +2,7 @@
 using Kiltex.SistemaGestion.Domain;
 using Kiltex.SistemaGestion.SDK.Error;
 using Kiltex.SistemaGestion.Services.Common;
+using Microsoft.Extensions.Configuration;
 
 namespace Kiltex.SistemaGestion.Services.Services
 {
@@ -10,12 +11,23 @@ namespace Kiltex.SistemaGestion.Services.Services
         internal readonly ErrorManager _logger;
         internal readonly IMapper _mapper;
         internal readonly DBContext _contextSql;
+        private ErrorManager logger;
+        private IMapper maper;
+        protected readonly string ConnectionString;
+
+        public BaseService(ErrorManager logger, IMapper maper)
+        {
+            this.logger = logger;
+            this.maper = maper;
+        }
+
         public BaseService(ErrorManager logger,
-            DBContext context, IMapper mapper)
+            DBContext context, IMapper mapper, IConfiguration configuration)
         {
             _logger = logger;
             _contextSql = context;
             _mapper = mapper;
+            ConnectionString = configuration.GetConnectionString("sqlconnection");
         }
         public static OperationResponse<T> Error<T>(OperationExceptions error)
         {

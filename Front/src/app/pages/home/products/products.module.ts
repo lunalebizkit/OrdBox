@@ -3,7 +3,6 @@ import { CommonModule } from "@angular/common";
 
 import { ProductsRoutingMoudule } from "./products-routing.module";
 import { ProductsListComponent } from "./products-list/products-list.component";
-import { ProductsEditComponent } from './products-edit/products-edit.component';
 import { UpdatePriceProductsComponent } from "./update-price-product/update-price-products.component";
 
 import { NzLayoutModule } from "ng-zorro-antd/layout";
@@ -23,6 +22,12 @@ import { NzUploadModule } from 'ng-zorro-antd/upload';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { AgGridModule } from 'ag-grid-angular';
 import { NzIconModule } from "ng-zorro-antd/icon";
+import { ProductsEditDrawerComponent } from "./products-edit-drawer/products-edit.drawer.component";
+import { ProductsReportComponent } from "./products-report/products-report.component";
+import { InfiniteScrollModule } from "ngx-infinite-scroll";
+import { NzToolTipModule } from "ng-zorro-antd/tooltip";
+import { ProductCodeBarModal } from "./products-barcode-modal/products-barcode-modal.component";
+import { NzModalModule } from "ng-zorro-antd/modal";
 
 @NgModule({
     imports: [CommonModule,
@@ -44,13 +49,13 @@ import { NzIconModule } from "ng-zorro-antd/icon";
     NzInputNumberModule,
     NzCollapseModule,
     NzUploadModule,
-    // AttributeModule,
     NzSpaceModule,
     NzImageModule,
-    AgGridModule
-  
-    // NzDescriptionsModule
+    AgGridModule,
+    NzToolTipModule,
+    InfiniteScrollModule,
+    NzModalModule  
     ],
-    declarations:[ ProductsListComponent, ProductsEditComponent, UpdatePriceProductsComponent]
+    declarations:[ ProductsListComponent, UpdatePriceProductsComponent, ProductsEditDrawerComponent, ProductsReportComponent, ProductCodeBarModal]
 })
 export class ProductsModule {}

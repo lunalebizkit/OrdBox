@@ -15,20 +15,28 @@ import { InvoiceDetailList, InvoiceDetails, InvoiceModel, invoiceGridParser, inv
 import { PopupConfirmationComponent } from "src/app/common/components/popup-confirmation/popup-confirmation.component";
 import { InvoiceService } from "../invoices.service";
 import { ActivatedRoute, Router } from "@angular/router";
-import { ePayment } from "../model/invoice-payment.Enum";
-import { InvoiceType } from "../model/invoice-type.Enum";
-import { formatCurrency } from '@angular/common';
+import { ePayment, ePaymentType, paymentTypes } from "../model/invoice-payment.Enum";
+import { eInvoiceType, eIvaCondition, InvoiceType, IvaCondition } from "../model/invoice-type.Enum";
+import { formatCurrency, formatDate } from '@angular/common';
 import { Inject, LOCALE_ID } from '@angular/core';
 import { ProductService } from "../../products/product.service";
+import { AuthService } from "src/app/common/auth/interceptors/auth.service";
+import { PeriodsService } from "../../periods/periods.service";
+import { IvaType } from "../model/iva-type.Enum";
+import { isNil } from "ng-zorro-antd/core/util";
+import { forkJoin, map } from "rxjs";
+
+
+
 @Component({
   selector: 'app-invoices-edit',
   templateUrl: './invoices-edit.component.html',
   styleUrls: ['./invoices-edit.component.css']
 })
 export class InvoicesEditComponent extends BaseComponent implements OnInit {
-
   @ViewChild('popup') popupComponent!: PopupConfirmationComponent;
   @ViewChild('header') headerComponent!: HeaderOperationsButtonsComponent;
+  @ViewChild('pop') popComponent!: PopupConfirmationComponent;
 
   @ViewChild('drawerTemplate', { static: false }) drawerTemplate?: TemplateRef<{
     $implicit: { filter: string },
@@ -36,38 +44,45 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
   }>;
 
   /*
- ** Catidad total de productos
+ ** Cantidad total de productos
  */
-  totalItems: number=0;
-  subtotal: number=0;
-  iva: number=21;
-  total: number=0;
-  userId = 5;
+  invoiceType = InvoiceType;
+  ivaCondition = IvaCondition;
+  ivaType = IvaType;
+  eIvaCondition = eIvaCondition;
+  typeSelectedId: number = 1;
+  ivaSelectedId: number = 1;
+  ivaSelected!: number;
+  iva10: number = parseFloat('10.5');
+  iva21: number = 21;
+  iva27: number = 27;
+  totalItems: number = 0;
+  subtotal: number = 0;
+  iva: number = 21;
+  total: number = 0;
   invoiceListTest: InvoiceDetailList[] = [];
-
-  isLoading: boolean= false;
+  isLoading: boolean = false;
   loading!: boolean;
   isSaving!: boolean;
-
   formInvoice!: FormGroup;
   formProductSearch!: FormGroup;
   formProduct!: FormGroup;
   formCustomerSearch!: FormGroup;
   formInvoiceModel!: FormGroup;
-
+  editProductId: number = 0;
 
   name: string = environment.name;
   date = Date.now();
-  startDate = Date.now();
-  type = InvoiceType;
-  payment: { value: string; label: string }[] = Object.entries(ePayment).map(([value, label]) => ({ value, label }))
-  
+  startDate = this.formaterDate(Date.now());
+
+  payment= paymentTypes;
+
   /*
  ** Lista de Productos
- */  
+ */
   customer: CustomerModel[] = [];
   invoiceDetailsList: InvoiceDetailList[] = [];
-  invoiceDetails: InvoiceDetails[] = [];
+  invoiceDetails: InvoiceDetails[] = []
 
   /*
   **Variables de la tabla detalle
@@ -77,24 +92,34 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
   /*
 ** Parametros de busqueda
 */
- 
   paymentSelected: any;
   cuit!: string;
   product!: string;
   customerId!: number;
-  typeSelectedId: number=1;
-  ivaTotal: number=0;
-  invoiceA: boolean= true;
+  ivaTotal: number = 0;
+  invoiceA: boolean = true;
+  value!: string;
+  value1!: string;
+  value2!: string;
+  value3!: string;
+  isConditionDisabled: boolean = true;
 
-    /*
-  ** Parametros de busqueda
-  */
+  /*
+** Parametros de busqueda
+*/
   queryParams = {
     filter: '',
     page: 0,
     pageSize: 10
   };
 
+  selectedDni: boolean = false;
+  dni: any;
+  iva21Undefined!: number;
+  iva27Undefined!: number;
+  iva10Undefined!: number;
+  editIdProductName: number | null = null;
+  editIdProductPrice: number | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -102,50 +127,102 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
     private serviceEntity: EntityService,
     private serviceProduct: ProductService,
     private serviceInvoice: InvoiceService,
+    public serviceUser: AuthService,
+    public servicePeriod: PeriodsService,
     el: ElementRef,
     private router: Router,
+
     private route: ActivatedRoute,
     message: NzMessageService,
     private drawerService: NzDrawerService,
     @Inject(LOCALE_ID) public locale: string
-   ) {
+  ) {
     super(notificacionService, el, message);
     this.formInvoice = this.fb.group({
       dateTime: [new Date(this.startDate), Validators.required],
       type: [1, Validators.required],
-      payment: ['', Validators.required],
-      address: ['', Validators.required],
-      customerCuit: ['', Validators.required],
-      customerName: ['', Validators.required],
-      observation: ['']
-    });   
+      payment: [eInvoiceType.A, Validators.required],
+      address: ['',],
+      customerCuit: ['', [Validators.required, Validators.pattern(/^\d{11}$/)]],
+      customerDni: ['',],
+      customerName: ['',],
+      observation: [''],
+      ivaCondition: [eIvaCondition.RespInscrip, Validators.required]
+    });
     this.formCustomerSearch = this.fb.group({})
     this.formProductSearch = this.fb.group({
       productSearchFilter: ['']
     })
   }
+  userId: number = this.serviceUser.currentUser.id
 
-  ngOnInit(): void {    
+  ngOnInit(): void {
+    this.paymentSelected = Object.entries(ePayment).find(([key, value]) => value === 'Contado')?.[0];
+    this.servicePeriod.periodActive(this.startDate).subscribe({
+      next: () => {
+        this.showNotificationSuccess(
+          'verificación correcta',
+          `Su fecha se encuentra en un período activo`
+        );
+
+        this.isSaving = false;
+      },
+      error: () => {
+        this.isSaving = false;
+        this.showMessageError('No se encontro período activo');
+      }
+
+    })
   }
 
-  typeSelectedChange(id: any): void {
-    this.typeSelectedId = id;    
-    if (id == 1) {      
-      this.invoiceA = true;
-    }else{
-      this.invoiceA= false;
-    }    
+  typeSelectedChange(id: eInvoiceType): void {
+    this.typeSelectedId = id;
+
+    this.invoiceA = (id == eInvoiceType.A);
+    this.isConditionDisabled = (id == eInvoiceType.A);
+
+    if (this.invoiceA){
+      this.formInvoice.controls['ivaCondition'].setValue(eIvaCondition.RespInscrip);
+      if (!this.selectedDni){
+        this.formInvoice.controls['customerDni'].setValue('');
+        this.formInvoice.controls['customerDni'].setValidators([]);
+        this.formInvoice.controls['customerDni'].updateValueAndValidity();
+      }
+      // validacion para CUIT
+      this.formInvoice.get('customerCuit')?.reset();
+      this.formInvoice.get('customerCuit')?.clearValidators();
+      this.formInvoice.get('customerCuit')?.updateValueAndValidity();
+      this.formInvoice.get('customerCuit')?.setValidators([Validators.required, Validators.pattern(/^\d{11}$/)]);
+      this.formInvoice.get('customerCuit')?.updateValueAndValidity();
+    }
+    else{
+      this.formInvoice.controls['ivaCondition'].setValue(null);
+      // validacion para CUIT
+      this.formInvoice.get('customerCuit')?.reset();
+      this.formInvoice.get('customerCuit')?.clearValidators();
+      this.formInvoice.get('customerCuit')?.updateValueAndValidity();
+      if (!this.selectedDni){
+        this.formInvoice.get('customerCuit')?.setValidators([Validators.required, Validators.pattern(/^\d{11}$/)]);
+      }else{        
+        this.formInvoice.get('customerCuit')?.setValidators([]);
+      }
+      this.formInvoice.get('customerCuit')?.updateValueAndValidity();
+    }
+    
   }
 
   paymentSelectedChange(id: any): void {
-    this.paymentSelected = id;
+   let paymentName = this.payment.filter(data => data.value == id)[0].label;
+    this.paymentSelected = Object.entries(ePayment).find(([key, value]) => value === paymentName)?.[0];
+    this.updatePriceByPaymentSelectedChange();
   }
-
+  
   openComponentCustomer(): void {
     const drawerRefCustomer = this.drawerService.create<InvoiceCustomerSearchComponent, {}, CustomerModel>({
       nzTitle: 'Cliente',
       nzContent: InvoiceCustomerSearchComponent,
       nzSize: 'large',
+      nzWidth: '90%',
       nzClosable: false
     });
     drawerRefCustomer.afterClose.subscribe({
@@ -153,8 +230,9 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
         if (data != undefined) {
           this.customerId = data.id;
           this.formInvoice.controls['address'].setValue(data.address);
-          this.formInvoice.controls['customerCuit'].setValue(data.cuit);
+          this.formInvoice.controls['customerCuit'].setValue(!isNil(data.cuit) ? data.cuit.replace(/[^a-zA-Z0-9 ]/g, '') : null);
           this.formInvoice.controls['customerName'].setValue(data.name);
+          this.formInvoice.controls['customerDni'].setValue(data.dni)
         }
       },
       error: () => {
@@ -165,150 +243,186 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
   };
 
   openComponentProduct(): void {
-    if (this.isValidForm(this.formInvoice)) {
-      const drawerRefProduct = this.drawerService.create<InvoiceProductSearchComponent, { filter: string }, ProductsModel>({
+
+    if (this.isValidPayment()) {
+
+      if (this.formProductSearch.controls['productSearchFilter'].value == '00') {
+        this.addNewEditProduct();
+        return;
+      }
+      const drawerRefProduct = this.drawerService.create<InvoiceProductSearchComponent, { filter: string }, [ProductsModel]>({
         nzTitle: 'Productos',
         nzContent: InvoiceProductSearchComponent,
         nzSize: 'large',
+        nzWidth: '90%',
         nzContentParams: {
           filter: this.formProductSearch.controls['productSearchFilter'].value
         },
         nzClosable: false
-      });      
+      });
       drawerRefProduct.afterClose.subscribe({
 
-        next: (data: ProductsModel) => {
-          
+        next: (data: [ProductsModel]) => {
+
           if (data != undefined) {
-            if (this.invoiceDetails.find(item => item.productId == data.id)) {
+            data.forEach((productItem) => {
+              if (this.invoiceDetails.find(item => item.productId == productItem.id)) {
                 /*Actualizo la lista que envio al back */
-                   this.invoiceDetails.filter(item => item.productId == data.id)[0]
-                  .quantity += 1;                        
+                this.invoiceDetails.filter(item => item.productId == productItem.id)[0]
+                  .quantity += 1;
 
-                   /*Actualizo la lista de la tabla */
-                  let newListElement = this.invoiceDetailsList.filter(item => item.ownCode == data.id)[0];
-               
-                  newListElement.quantity += 1;
-                  newListElement.subTotal += this.bindPrice(data) * newListElement.quantity;
-                
-                  this.totalCalculate();
-                  this.isLoading= false;
-                  this.formProductSearch.controls['productSearchFilter'].setValue('');
-                }else {
+                /*Actualizo la lista de la tabla */
+                let newListElement = this.invoiceDetailsList.filter(item => item.ownCode == productItem.id)[0];
+                newListElement.quantity += 1;
+                newListElement.subTotal += this.bindPrice(productItem) * newListElement.quantity;
 
-                  /* Parseo dato a la grilla de Tabla */
-              const model: InvoiceDetailList = invoiceGridParser(data, this.iva, this.bindPrice(data));
-             this.invoiceListTest.push(model)
-             this.invoiceDetailsList = this.invoiceListTest;
-             /* Parseo dato a Dto Factura Detalle */
-             const modelDetail : InvoiceDetails = invoiceDetailParser(data, this.iva, this.bindPrice(data));
-             this.invoiceDetails.push(modelDetail);                
-            this.totalCalculate();
-            this.isLoading= false;
-            this.formProductSearch.controls['productSearchFilter'].setValue('');
-             }
-          }},
-          error: () => {
-            this.isLoading= false;
-            this.invoiceDetailsList = [];
-            this.formProductSearch.controls['productSearchFilter'].setValue('');
-          }
-
-        })
-    } else { return; }
-  };
- 
-  searchCustomer(): void {
-    this.cuit =
-      this.formInvoice.controls['customerCuit'].value;
-    if (this.cuit === '00'){
-      this.formInvoice.controls['address'].setValue('S/D');
-      this.formInvoice.controls['customerCuit'].setValue('00');
-      this.formInvoice.controls['customerName'].setValue('Admin');
-      this.customerId= 0;
-      return;
-    }else{
-    if (this.cuit.length >= 6) {
-      this.serviceEntity.getByCuit(this.cuit).subscribe({
-        next: (data) => {
-          this.formInvoice.controls['address'].setValue(data.address);
-          this.formInvoice.controls['customerCuit'].setValue(data.cuit);
-          this.formInvoice.controls['customerName'].setValue(data.name);
-        },
-        error: () => {this.showMessageError('No se encontro Cliente'); }
-      });
-    }}
-  };
-
-  searchProduct():void {
-    this.product= this.formProductSearch.controls['productSearchFilter'].value;
-    this.queryParams.filter= this.product;   
-    if (this.product.length > 0) {
-      this.serviceProduct.getProducts(this.queryParams).subscribe({
-        next: (r) => { 
-          this.isLoading= true;      
-          if (r.data.length == 1) {
-            const model : ProductsModel= r.data[0];            
-            if (this.invoiceDetails.find(item => item.productId == model.id)) {
-              /*Actualizo la lista que envio al back */
-                 this.invoiceDetails.filter(item => item.productId == model.id)[0]
-                .quantity += 1;                        
-
-                 /*Actualizo la lista de la tabla */
-                this.invoiceDetailsList.filter(item => item.ownCode == model.id)[0]
-                .quantity += 1;
-
-                this.invoiceDetailsList.filter(item => item.ownCode == model.id)[0]
-                .subTotal +=  this.bindPrice(model) * model.quantity ;
                 this.totalCalculate();
-                this.isLoading= false;
+                this.isLoading = false;
                 this.formProductSearch.controls['productSearchFilter'].setValue('');
-              }else {
-             const product: ProductsModel= r.data[0];  
-                  /* Parseo el Producto a la grilla de Tabla */
-                  const model: InvoiceDetailList = invoiceGridParser(product, this.iva, this.bindPrice(product));
-                  this.invoiceListTest.push(model)
-                  this.invoiceDetailsList = this.invoiceListTest;
-                    /* Parseo dato a Dto Factura Detalle */
-             const modelDetail : InvoiceDetails = invoiceDetailParser(product, this.iva, this.bindPrice(product));
-             this.invoiceDetails.push(modelDetail);           
-          this.totalCalculate();
-          this.isLoading= false;
-          this.formProductSearch.controls['productSearchFilter'].setValue('');
+              } else {
+
+                /* Parseo dato a la grilla de Tabla */
+                const model: InvoiceDetailList = invoiceGridParser(productItem, this.iva, this.bindPrice(productItem));
+                this.invoiceListTest.push(model)
+                this.invoiceDetailsList = this.invoiceListTest;
+                /* Parseo dato a Dto Factura Detalle */
+                const modelDetail: InvoiceDetails = invoiceDetailParser(productItem, this.iva, this.bindPrice(productItem));
+                this.invoiceDetails.push(modelDetail);
+                this.totalCalculate();
+                this.isLoading = false;
+                this.formProductSearch.controls['productSearchFilter'].setValue('');
+              }
+            })
           }
-            
-          }else{
-            this.isLoading= false;
-            this.openComponentProduct();
-          }
-          
         },
         error: () => {
-          this.isLoading= false;
-          this.formProductSearch.controls['productSearchFilter'].setValue(''); }
+          this.isLoading = false;
+          this.invoiceDetailsList = [];
+          this.formProductSearch.controls['productSearchFilter'].setValue('');
+        }
+
       })
-    }else{
-      this.isLoading= false;
-      this.queryParams.filter= '';
-      this.openComponentProduct();
     }
   };
 
-  totalCalculate(): void {    
+  searchCustomer(): void {
+    this.cuit =
+      this.formInvoice.controls['customerCuit'].value;
+    if (this.cuit === '00') {
+      this.formInvoice.controls['address'].setValue('-');
+      this.formInvoice.controls['customerCuit'].setValue('99999999995');
+      this.formInvoice.controls['customerName'].setValue('-');
+      this.customerId = 0;
+      return;
+    } else {
+      if (this.cuit.length >= 6) {
+        this.serviceEntity.getByCuit(this.cuit).subscribe({
+          next: (data) => {
+            this.formInvoice.controls['address'].setValue(data.address);
+            this.formInvoice.controls['customerCuit'].setValue(data.cuit);
+            this.formInvoice.controls['customerName'].setValue(data.name);
+            this.formInvoice.controls['customerDni'].setValue(data.dni)
+          },
+          error: () => { this.showMessageError('No se encontro Cliente'); }
+        });
+      }
+    }
+  };
+
+  searchProduct(): void {
+    if (this.isValidPayment()) {
+      this.product = this.formProductSearch.controls['productSearchFilter'].value;
+      const productParams = {
+        filter: {
+          product: this.product,
+          code: '',
+          barCode: '',
+          brand: 0,
+          category: 0,
+          status: 0,
+          supplier: [] as Number[]
+        },
+        page: 0,
+        pageSize: 50
+      };
+
+      if (this.product == '00') {
+        this.addNewEditProduct();
+        return;
+      }
+      if (this.product.length > 0) {
+        this.serviceProduct.getProducts(productParams).subscribe({
+          next: (r) => {
+            this.isLoading = true;
+            if (r.data.length == 1) {
+              const model: ProductsModel = r.data[0];
+              if (this.invoiceDetails.find(item => item.productId == model.id)) {
+                /*Actualizo la lista que envio al back */
+                this.invoiceDetails.filter(item => item.productId == model.id)[0]
+                  .quantity += 1;
+
+                /*Actualizo la lista de la tabla */
+                this.invoiceDetailsList.filter(item => item.ownCode == model.id)[0]
+                  .quantity += 1;
+
+                this.invoiceDetailsList.filter(item => item.ownCode == model.id)[0]
+                  .subTotal += this.bindPrice(model) * model.quantity;
+                this.formProductSearch.controls['productSearchFilter'].setValue('');
+              }
+              else {
+                const product: ProductsModel = r.data[0];
+                /* Parseo el Producto a la grilla de Tabla */
+                const model: InvoiceDetailList = invoiceGridParser(product, this.iva, this.bindPrice(product));
+                this.invoiceListTest.push(model)
+                this.invoiceDetailsList = this.invoiceListTest;
+                /* Parseo dato a Dto Factura Detalle */
+                const modelDetail: InvoiceDetails = invoiceDetailParser(product, this.iva, this.bindPrice(product));
+                this.invoiceDetails.push(modelDetail);
+
+                this.formProductSearch.controls['productSearchFilter'].setValue('');
+              }
+
+              this.totalCalculate();
+              this.isLoading = false;
+            } else {
+              this.isLoading = false;
+              this.openComponentProduct();
+            }
+
+          },
+          error: () => {
+            this.isLoading = false;
+            this.formProductSearch.controls['productSearchFilter'].setValue('');
+          }
+        })
+      }
+      else {
+        this.isLoading = false;
+        this.openComponentProduct();
+      }
+    }
+  };
+
+  formatter = (data: number = 0) =>
+    formatCurrency(data, this.locale, '$', 'ARS', '1.1-2');
+
+  totalCalculate(): void {
     this.subtotal = 0;
     this.total = 0;
     this.ivaTotal = 0;
     try {
       this.invoiceDetailsList.forEach(detail => {
-        this.subtotal +=  ( detail.price * detail.quantity - this.ivaCalculate(detail.price * detail.quantity, detail.iva) ) ;         
+        /**Caluclo subtotal = precio y multiplico por cantidad*/
+        this.subtotal += detail.quantity *
+          this.ivaCalculate(detail.price, detail.iva);
       });
-      this.invoiceDetailsList.forEach( dato => {
-        this.ivaTotal +=  this.ivaCalculate(dato.price  * dato.quantity, dato.iva);
-       this.total +=   dato.price  * dato.quantity ;     
-      })
-    } catch (error) {
-      console.log(error)
-    }   
+      this.invoiceDetailsList.forEach((dato) => {
+        /**Calculo iva restandolo al precio y multiplico por cantidad*/
+        this.ivaTotal += (dato.price - this.ivaCalculate(dato.price, dato.iva)) * dato.quantity;
+        this.total += dato.price * dato.quantity;
+      });
+
+    } catch (error) { }
   };
 
   bindPrice(data: ProductsModel): number {
@@ -326,31 +440,66 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
     }
   };
 
-  ivaCalculate(data: number, iva:number): number {         
-    return (data * iva / 100); 
-  }
+  ivaCalculate(data: number, iva: number): number {
+    let newIva = 1 + (iva / 100);
+    return (data / newIva);
+  };
+
 
   handleOk() {
     try {
       this.invoiceListTest = this.invoiceDetailsList.
-      filter(element => element.ownCode != this.popupComponent.elementSelectedToDelete);
-      this.invoiceDetails= this.invoiceDetails.
-      filter(element => element.productId != this.popupComponent.elementSelectedToDelete);
-    this.popupComponent.isDeleteConfirmationVisible = false;
-    if (this.invoiceListTest.length == 0){
-      this.invoiceDetailsList= []
-    } else{
-      this.invoiceDetailsList = this.invoiceListTest;
-    }
-   
-    this.totalCalculate();
+        filter(element => element.ownCode != this.popupComponent.elementSelectedToDelete);
+      this.invoiceDetails = this.invoiceDetails.
+        filter(element => element.productId != this.popupComponent.elementSelectedToDelete);
+      this.popupComponent.isDeleteConfirmationVisible = false;
+      if (this.invoiceListTest.length == 0) {
+        this.invoiceDetailsList = []
+      } else {
+        this.invoiceDetailsList = this.invoiceListTest;
+      }
+
+      this.totalCalculate();
     } catch (error) {
       console.log(error);
-      
+
     }
   };
+
+  msjConfirmOk() {
+    try {
+      this.invoiceDetailsList = this.invoiceDetailsList.
+        filter(element => element.ownCode != this.popupComponent.elementSelected);
+
+      this.popupComponent.isConfirmationvisible = false;
+
+      if (this.invoiceDetailsList.length == 0) {
+        this.showMessageError('No ha seleccionado producto');
+        return;
+      }
+
+      if (!this.isValidProductName()) {
+        this.showMessageError('Hay productos sin descripción');
+        return;
+      }
+
+      if (this.isValidForm(this.formInvoice) &&
+        this.isValidForm(this.formCustomerSearch) && this.isValidForm(this.formProductSearch)) {
+        this.popComponent.showConfirmation()
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   save(): void {
     if (this.isValidForm(this.formInvoice)) {
+
+      if (this.selectedDni && this.formInvoice.controls['customerDni'].value.length < 8) {
+        return this.showMessageError('DNI Invalido');
+      };
+
+
       if (this.invoiceDetails.length == 0) {
         this.showMessageError('No hay Productos Seleccionados');
 
@@ -360,86 +509,267 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
           customerId: this.customerId,
           userId: this.userId,
           invoiceNumber: this.totalItems,
-          customerName: this.formInvoice.controls['customerName'].value,          
-          customerCuit: this.formInvoice.controls['customerCuit'].value,  
-          customerAddress: this.formInvoice.controls['address'].value,          
+          customerName: this.formInvoice.controls['customerName'].value,
+          customerCuit: this.selectedDni ? this.formInvoice.controls['customerDni'].value : this.formInvoice.controls['customerCuit'].value,
+          customerAddress: this.formInvoice.controls['address'].value,
           observation: this.formInvoice.controls['observation'].value,
           dateTime: this.formInvoice.controls['dateTime'].value,
-          total: this.totalItems,
+          iva21: this.iva21Undefined,
+          iva27: this.iva27Undefined,
+          iva10: this.iva10Undefined,
+          total: this.total,
           ivaTotal: this.ivaTotal,
-          type: this.formInvoice.controls['type'].value,
-          invoiceDetails: this.invoiceDetails
+          ivaSelected: this.ivaSelected,
+
+          type: (this.formInvoice.controls['type'].value == eInvoiceType.B) ?(this.formInvoice.controls['ivaCondition'].value == eIvaCondition.Exento ? eInvoiceType.EXENTO : eInvoiceType.B) : eInvoiceType.A,
+          invoiceDetails: this.invoiceDetails,
         };
         this.isSaving = true;
         this.serviceInvoice.saveInvoice(model)
           .subscribe({
-            next: () => {
+            next: (r) => {
               this.showNotificationSuccess(
                 'Guardado correcto',
                 `Comprobante creado correctamente`
               );
               this.isSaving = false;
-              this.router.navigate(['/home/invoices']);
-
+              this.router.navigate(['/home/invoices/invoices-sale']);
             },
-            error: () => {
+            error: (r) => {
               this.isSaving = false;
-              this.showMessageError('No se pudo crear el Comprobante')
+              this.showMessageError(r.error.descripcion)
             }
           });
+
       }
+
     }
   };
 
   startEdit(id: number): void {
     this.editId = id;
   };
+
   startEditIva(id: number): void {
     this.editIdIva = id;
   }
 
+  startEditProductName(id: number): void {
+    this.editIdProductName = id;
+  }
+
+  startEditProductPrice(id: number): void {
+    this.editIdProductPrice = id;
+  }
   stopEdit(): void {
     this.editId = null;
   };
   stopEditIva(): void {
     this.editIdIva = null;
   }
-  changeQuantity(quantity: number):void{
-    if (quantity == 0 || quantity == null){
-      quantity= 1;
-    }
-    let product= this.invoiceDetailsList.filter(detail => detail.ownCode == this.editId)[0];
+  stopEditProductName(): void {
+    this.editIdProductName = null;
+  }
 
-    this.invoiceDetailsList.filter(detail => detail.ownCode == this.editId)[0].subTotal= quantity * product.price;
+  stopEditProductPrice(): void {
+    this.editIdProductPrice = null;
+  }
+
+  changeQuantity(quantity: number): void {
+    if (quantity == 0 || quantity == null) {
+      quantity = 1;
+    }
+    let product = this.invoiceDetailsList.filter(
+      detail => detail.ownCode == this.editId)[0];
+
+    this.invoiceDetailsList.filter(
+      detail => detail.ownCode == this.editId
+    )[0].subTotal = quantity * product.price;
 
     this.totalCalculate();
-    this.invoiceDetails.filter(detail => detail.productId == this.editId)[0].quantity= quantity;
-      
+    this.invoiceDetails.filter(
+      detail => detail.productId == this.editId
+    )[0].quantity = quantity;
+
   };
-  changeIvaValue(iva: number):void{    
-    if (iva == 0 || iva == null){
-      iva = 1;
-    }
+
+  changeIvaValue(iva: number, id: number): void {
+    let newIva = Number(iva);
     try {
-      this.invoiceDetailsList.filter(detail => detail.ownCode == this.editIdIva)[0].iva= iva;     
-    
-      this.invoiceDetails.filter(detail => detail.productId == this.editIdIva)[0].iva= iva;
+      this.invoiceDetails.filter(
+        (detail) => detail.productId == id
+      )[0].iva = newIva;
+
+      this.invoiceDetailsList.filter(
+        (detail) => detail.productId == id
+      )[0].iva = newIva;
       this.totalCalculate();
+
+      this.stopEditIva();
+
     } catch (error) {
       console.error(error);
-      
-    };    
+    }
   };
-  back(){    
+
+  back() {
     this.router.navigate(['../'], { relativeTo: this.route });
   };
 
-  currencyFormat(data: any):string  {    
+  currencyFormat(data: any): string {
     return formatCurrency(data, this.locale, '$', 'ARS', '1.1-2')
   }
+
+  formaterDate(date: string | number | Date): string {
+    return formatDate(date, 'MM/dd/YYYY', this.locale);
+  }
+
+  select(e: any) {
+    this.selectedDni = !this.selectedDni;
+    if (this.selectedDni) {      
+      this.formInvoice.controls['customerDni'].setValidators([Validators.required, Validators.minLength(8), Validators.maxLength(8)]);
+      this.formInvoice.controls['customerDni'].updateValueAndValidity();
+
+      this.formInvoice.get('customerCuit')?.setValidators([]);
+      this.formInvoice.get('customerCuit')?.updateValueAndValidity();
+    } else {
+      this.formInvoice.controls['customerDni'].setValue('');
+      this.formInvoice.controls['customerDni'].setValidators([]);
+      this.formInvoice.controls['customerDni'].updateValueAndValidity();
+
+      this.formInvoice.get('customerCuit')?.setValidators([Validators.required, Validators.pattern(/^\d{11}$/)]);
+      this.formInvoice.get('customerCuit')?.updateValueAndValidity();
+    }
+  }
+  direction() {
+    this.router.navigate(['/home/invoices/invoices-sale']);
+  }
+
+  addNewEditProduct(): void {
+    this.editProductId--;
+    let newEditProduct: ProductsModel = {
+      id: this.editProductId,
+      quantity: 1,
+      code: '',
+      description: '',
+      cashSalePrice: 0,
+      categoryName: '',
+      brandName: '',
+      purchasePrice: 0,
+      salePrice: 0,
+      salePercentage: 0,
+      cardSalePrice: 0,
+      cashSalePercentage: 0,
+      cardSalePercentage: 0,
+      pointOrder: 0,
+      observation: '',
+      supplierName: '',
+      isDeleted: false,
+      barCode: ''
+    };
+    /* Parseo el Producto a la grilla de Tabla */
+    const model: InvoiceDetailList = invoiceGridParser(newEditProduct, this.iva, this.bindPrice(newEditProduct));
+    this.invoiceListTest.push(model)
+    this.invoiceDetailsList = this.invoiceListTest;
+    /* Parseo dato a Dto Factura Detalle */
+    const modelDetail: InvoiceDetails = invoiceDetailParser(newEditProduct, this.iva, this.bindPrice(newEditProduct));
+    this.invoiceDetails.push(modelDetail);
+
+    this.formProductSearch.controls['productSearchFilter'].setValue('');
+  }
+
+  changeProductName(name: string): void {
+    this.invoiceDetailsList.filter(
+      detail => detail.ownCode == this.editIdProductName
+    )[0].productName = name;
+
+    this.invoiceDetails.filter(
+      detail => detail.productId == this.editIdProductName
+    )[0].productName = name;
+
+  }
+
+  changeProductPrice(price: number): void {
+    //recupero el producto a editar
+    let product = this.invoiceDetailsList.filter(
+      detail => detail.ownCode == this.editIdProductPrice)[0];
+
+    this.invoiceDetailsList.filter(
+      detail => detail.ownCode == this.editIdProductPrice
+    )[0].price = price;
+
+    this.invoiceDetails.filter(
+      detail => detail.productId == this.editIdProductPrice
+    )[0].price = price;
+
+    this.invoiceDetailsList.filter(
+      detail => detail.ownCode == this.editIdProductPrice
+    )[0].subTotal = product.quantity * price;
+
+    this.totalCalculate();
+  }
+
+  isValidProductName(): boolean {
+    return this.invoiceDetails.every(y => typeof y.productName === "string" && y.productName.trim() !== "")
+  }
+
+  isValidPayment(): boolean {
+    let result = this.formInvoice.controls['payment'].invalid;
+
+    if (result) {
+      this.formInvoice.controls['payment'].markAsDirty();
+      this.formInvoice.controls['payment'].updateValueAndValidity();
+    }
+
+    return !result;
+  }
+
+  updatePriceByPaymentSelectedChange(): void {
+
+    if (this.invoiceDetails.length > 0) {
+      
+      this.isLoading = true;
+      let invoiceDetailsAux = this.invoiceDetailsList.filter(data => data.productId > 0);
+
+      if (invoiceDetailsAux.length > 0) {
+
+        this.invoiceDetailsList = [];
+        this.invoiceListTest = [];
+        this.invoiceDetails = [];
+
+        const observables = invoiceDetailsAux.map(data =>
+          this.serviceProduct.getById(data.productId).pipe(
+            map(product => ({
+              product,
+              iva: data.iva,
+              quantity: data.quantity
+            }))
+          )
+        );
+
+        forkJoin(observables).subscribe({
+          next: (results) => {
+            results.forEach(({ product, iva, quantity }) => {
+              const model: InvoiceDetailList = invoiceGridParser(product, iva, this.bindPrice(product), quantity);
+              this.invoiceListTest.push(model);
+              this.invoiceDetailsList = this.invoiceListTest;
+
+              const modelDetail: InvoiceDetails = invoiceDetailParser(product, iva, this.bindPrice(product), quantity);
+              this.invoiceDetails.push(modelDetail);
+            });
+
+            this.totalCalculate();
+            this.isLoading = false;
+          },
+          error: (err) => {
+            console.error('Error al obtener productos', err);
+            this.isLoading = false;
+          }
+        });
+      }
+      this.isLoading = false;
+    };
+  }
+
 }
-
-
-
-
 

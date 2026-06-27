@@ -1,0 +1,17 @@
+.factA{
+    background-color: var(--backg-A);
+  }
+  .factB{
+    background-color: var(--backg-B);
+  }
+  .factC{
+    background-color: var(--backg-C);
+  }
+  .bold{
+    color: red !important;
+    font-weight:bold  !important;
+}
+
+.ant-descriptions-item-container{
+  font-weight: bold !important;
+}

@@ -1,0 +1,84 @@
+.todo{
+   
+    padding-bottom: 45%;
+    width: 100%;
+    left: 10%;
+    height: 230%;
+
+}
+
+#contenedor{
+    border: 1px solid black;
+    position: relative;
+    top: 15px;
+    left: 26px;
+    width: 70%;
+    
+}
+#izquierdo{
+    float: left;
+    padding: 10px;
+    width: 300px;
+    margin: 40px;
+    text-align: center;
+   
+}
+
+#derecho{
+    position: absolute;
+    left: 150%;
+    float: right;
+    padding: 10px;
+    width: 350px;
+    margin: 40px;
+    text-align: center;
+}
+
+#firma{
+    float: left;
+    font-size: 18px;
+    width: 200px;
+    margin: 40px;
+    text-align: left;
+    padding: 30px;
+  
+}
+
+#medio{
+    width: 50%;
+    border: 1px solid black;
+    position: relative;
+    top: 15px;
+    left: 26px;
+    width: 70%;
+    float: left;
+    padding: 5px;
+}
+
+.tabla{
+   
+    border: 1px solid black;
+    position: relative;
+    top: 15px;
+    left: 26px;
+    width: 70%;
+    height: 80%;
+    padding: 5px;
+}
+
+#total{
+    position: relative;
+    top: 55px;
+    left: 260%;
+    
+}
+
+.footer{
+    border: 1px solid black;
+    position: relative;
+    top: 15px;
+    left: 26px;
+    width: 70%;
+    
+    
+}

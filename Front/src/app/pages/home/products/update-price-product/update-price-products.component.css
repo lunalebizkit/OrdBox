@@ -1,4 +1,7 @@
 .list-header {
+  position: relative;
+  height: 64px; 
+  padding: 10px;
   background: #fff;
   box-shadow: -1px 1px 5px 1px #a3a1a3;
 }
@@ -18,14 +21,27 @@
   color: white;
   border-color: white;
 }
-  .table-list{
-    overflow: auto;
+  .tabla th{
+    font-size: 12px;
+    position: sticky;
+    top: 0; 
+    padding: 6%;
+    z-index: 2;
+    background-color: rgb(240, 237, 237);
+  }
+  .tabla td{
+    font-size: 11px; 
+    padding: 6%;
+  }
+  .table{
+    overflow-y: scroll;
+    height: 65vh;
+    scroll-behavior: smooth;
+    position: relative;
+    border-collapse: collapse;
+  } 
+  .tabla {
+    width: 100%;
     table-layout: fixed;
   }
-  th{
-    font-size: 10px;
-  }
-  td{
-    font-size: 10px;
-    
-  }
+ 

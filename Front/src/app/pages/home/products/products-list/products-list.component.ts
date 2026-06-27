@@ -1,167 +1,445 @@
-import { Component, OnInit } from '@angular/core';
+import { formatCurrency } from '@angular/common';
+import { Component, ElementRef, HostListener, Inject, LOCALE_ID, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { NzTableQueryParams } from 'ng-zorro-antd/table';
+import { NzDrawerService } from 'ng-zorro-antd/drawer';
+import { Permission } from 'src/app/common/auth/models/permissions.enum';
 import { ProductsModel } from '../model/product.model';
 import { ProductService } from '../product.service';
-
+import { ProductsEditDrawerComponent } from '../products-edit-drawer/products-edit.drawer.component';
+import { BaseComponent } from 'src/app/common/components/base/base.component';
+import { NzNotificationService } from 'ng-zorro-antd/notification';
+import { NzMessageService } from 'ng-zorro-antd/message';
+import { PopupConfirmationComponent } from 'src/app/common/components/popup-confirmation/popup-confirmation.component';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { CategoriesService } from '../../categories/category.services';
+import { BrandsService } from '../../brands/brands.services';
+import { CategoryModel } from '../../categories/model/category.model';
+import { BrandsModel } from '../../brands/model/brands.model';
+import { NzModalService } from 'ng-zorro-antd/modal';
+import { ProductCodeBarModal } from '../products-barcode-modal/products-barcode-modal.component';
+import { isNil } from 'ng-zorro-antd/core/util';
+import { EntityService } from '../../customers/customer.service';
 
 @Component({
   selector: 'app-products-list',
   templateUrl: './products-list.component.html',
-  styleUrls: ['./products-list.component.css']
+  styleUrls: ['./products-list.component.css'],
 })
-export class ProductsListComponent implements OnInit {
+export class ProductsListComponent extends BaseComponent implements OnInit { 
+  @HostListener('document:keydown', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent) {
+    if (event.key === 'F4' && !this.isDrawerOpen) {
+      this.createComponentModal();       
+    }
+  }  
+  permissions = Permission;
   /*
-    ** Listado de los productos
-    */
+   ** Listado de los productos
+   */
   productList: ProductsModel[] = [];
-
+  categorieList: CategoryModel [] = [];
+  brandList: BrandsModel [] = [];
+  allSuppliers: { value: string, label: string }[] = [];
+  supplierSelected:any= [];
   /*
-  ** Indicador de carga de la grilla
-  */
+   ** id del usuario a editar, si es nuevo...
+   */
+  id!: number;
+  clickId!: number;
+  formSearch!: FormGroup;
+  timeout!: any;
+  /*
+   ** Indicador de carga de la grilla
+   */
   loading = false;
-
+  isDrawerOpen!: boolean;
+  searchInactiveProduct = false;
   /*
-  ** Catidad total de productos
-  */
+   ** Catidad total de productos
+   */
   totalItems = 0;
 
   /*
-  ** Lista de marcas
-  */
+   ** Lista de marcas
+   */
   brandsList = [];
 
   /*
-  ** Lista de Productos
-  */
+   ** Lista de Productos
+   */
   productLinesList = [];
 
   /*
-  ** Indicador de carga de marcas y lineas
-  */
+   ** Indicador de carga de marcas y lineas
+   */
   loadingBrands!: boolean;
-
+  isLoading!: boolean;
+  
   /*
   ** Parametros de busqueda
   */
   queryParams = {
-    filter: '',
-    page: 0, 
-    PageSize:100,   
+    filter: {
+      product:'',
+      brand: 0,
+      code: '',
+      barCode:'',
+      category: 0,
+      status: 0,
+      supplier:[]},
+    page: 0,
+    pageSize: 50
   };
 
-  /*
-  ** Constructor
-  */
-  constructor(private service: ProductService, private router: Router) {
+  queryData = {
+    filter: '',
+    page: 0,
+    pageSize: 50
+  };
 
-  }
-  selectedIndex: number = 0; 
+  formProductsEditComponent: any;
+
+  /*
+   ** Constructor
+   */
+  constructor(
+    private service: ProductService,
+    private drawerService: NzDrawerService,
+    private serviceCategory: CategoriesService,
+    private serviceBrand: BrandsService,
+    private serviceEntity: EntityService,
+    @Inject(LOCALE_ID) public locale: string,
+    notificacionService: NzNotificationService,
+    private fb: FormBuilder, 
+    el: ElementRef,
+    message: NzMessageService,
+    private modalService: NzModalService
+  ) { super( notificacionService, el, message);
+    this.formSearch = this.fb.group({
+      product: ['', ],
+      code: ['', ],
+      brand: [0, ],
+       supplier: [[], ],
+       category: [0, ]     
+    })}
+
+  selectedIndex!: number;
   selectedProduct: any;
+  productId!: number | null;
+  index!: number;
 
   /*
-  ** Evento de inicio de angular
-  */
+   ** Evento de inicio de angular
+   */
   ngOnInit(): void {
-
-  }
-
-  /*
-  ** Evento que se ejecuta ante algun cambio en la grillas (sorting,paging or filtering)
-  */
-  onQueryParamsChange(params: NzTableQueryParams): void {
-    this.queryParams.filter = localStorage.getItem('productListFilter')!;
-     this.queryParams.page = params.pageIndex - 1;
-    this.queryParams.PageSize = params.pageSize;    
     this.getData(this.queryParams);
-  } 
-
+  }
   /*
-  ** Evento de busqueda datos en el servers
-  */
+   ** Evento de busqueda datos en el servers
+   */
 
- getData(params: any): void {
+  getData(params: any): void {
     this.loading = true;
     this.service.getProducts(params).subscribe({
       next: (r) => {
         this.productList = r.data;
         this.totalItems = r.totalCount;
         this.loading = false;
+        this.selectedIndex = 0;
+        this.selectedProduct = this.productList[this.selectedIndex];
       },
       error: () => {
         this.loading = false;
-        this.productList = []; 
-      }
-    })
-  } 
+        this.productList = [];
+      },
+    });
+  }
+
+  getInactiveData(params: any): void {
+    this.loading = true;
+    this.service.getInactivesProducts(params).subscribe({
+      next: (r) => {
+        this.productList = r.data;
+        this.totalItems = r.totalCount;
+        this.loading = false;
+        this.selectedIndex = 0;
+        this.selectedProduct = this.productList[this.selectedIndex];
+      },
+      error: () => {
+        this.loading = false;
+        this.productList = [];
+      },
+    });
+  }
   /*
-  ** Evento al presionar buscar o presionar enter
-  */
-  
-  search(): void { 
-   this.queryParams.page=0; 
-    this.getData(this.queryParams); 
- 
-  }; 
-  onDoubleClicked (datos:any) {
-  var data = datos.id
-  this.router.navigate(['home/products/edit/', data]); 
+   ** Evento al presionar buscar o presionar enter
+   */
+
+  search(): void {
+    this.queryParams.page = 0;    
+    this.searchInactiveProduct = false;
+    this.getData(this.queryParams);
   }
-  onClick(datos:any, index:number): void {
-  this.selectedIndex = index 
-  this.selectedProduct = datos;
-  }  
-  onKeyPress( datos:any) {
-    var data = datos.id
-    this.router.navigate(['home/products/edit/', data]); 
-  } 
+  searchInactive(): void {
+    this.queryParams.page = 0;
+    this.searchInactiveProduct = true;
+    this.getInactiveData(this.queryParams);
+  }
+  onDoubleClicked(datos: ProductsModel) {
+    this.id = datos.id;
+    this.openComponentProductsEdit();
+  }
 
- /*
-  ** Evento navegaciòn por teclado en tablas
-  */
+  onClick(datos: ProductsModel, index: number): void {
+    this.index = index;
+    this.selectedIndex = index;
+    this.selectedProduct = datos;
+  }
 
-  myNavegation(event:any) {
+  onEnter(e: any) {
+    this.selectedProduct = this.productList[this.index];
+    this.id = this.productList[this.index].id;
+    this.openComponentProductsEdit();
+  }
+
+  /*
+   ** Evento navegaciòn por teclado en tablas
+   */
+
+  myNavegation(event: any) {
     switch (event.key) {
-      case "ArrowDown":
-        let nextCell = this.productList.length > this.selectedIndex ? ++ this.selectedIndex : this.productList.length;
-        if(this.productList[nextCell] !== undefined){
-          this.selectedProduct= this.productList[nextCell];  
-      } 
-        break; 
-      case "ArrowUp":
-        let previousCell= this.selectedIndex > 0 ? -- this.selectedIndex : 0; 
-        if (this.productList[previousCell] !== undefined ){
-          this.selectedProduct= this.productList[previousCell];
-      }
-        break 
-    } 
+      case 'ArrowDown':
+        let nextCell =
+          this.productList.length > this.selectedIndex
+            ? ++this.selectedIndex
+            : this.productList.length;
+        if (this.productList[nextCell] !== undefined) {
+          this.selectedProduct = this.productList[nextCell];
+          this.index = nextCell;
+          document.getElementById(nextCell.toString())?.focus();
+        }
+        break;
+      case 'ArrowUp':
+        let previousCell = this.selectedIndex > 0 ? --this.selectedIndex : 0;
+        if (this.productList[previousCell] !== undefined) {
+          this.selectedProduct = this.productList[previousCell];
+          this.index = previousCell;
+          document.getElementById(previousCell.toString())?.focus();
+        }
+        break;
+    }
   }
 
- /*
-  ** Evento de scroll infinito
-  */
-  onScroll(event:any): void { 
-    let scrollHeight= event.target.scrollHeight;
-    let scrolltop= event.target.scrollTop;
-    let client= event.target.clientHeight
-    let ScrollPosition= scrollHeight - (scrolltop + client);
-    console.log(ScrollPosition)
+  /*
+   ** Evento de scroll infinito
+   */
 
-    if((ScrollPosition === 0 || ScrollPosition ===1 ) && (this.totalItems / this.queryParams.page) > this.queryParams.page){ 
-    this.queryParams.page= this.queryParams.page +1; 
-      if(this.totalItems === undefined ||(this.queryParams.page * this.queryParams.PageSize <= this.totalItems)){ 
-        this.service.getProducts(this.queryParams)
+  onScroll(event: any): void {
+    let scrollHeight = event.target.scrollHeight;
+    let scrolltop = event.target.scrollTop;
+    let client = event.target.clientHeight;
+    let ScrollPosition = Math.abs(Math.round(scrollHeight - (scrolltop + client)));
+    if (ScrollPosition <= 5 && (this.totalItems / this.queryParams.page > this.queryParams.page)) {
+      let page = this.queryParams.page;
+      this.queryParams.page = this.queryParams.page + 1;
+      if (
+        this.totalItems === undefined ||
+        this.queryParams.page * this.queryParams.pageSize <= this.totalItems
+      ) {
+        (!this.searchInactiveProduct ? this.service.getProducts(this.queryParams) : this.service.getInactivesProducts(this.queryParams))
         .subscribe({
-          next:(r)=>{
-            r.data.map((product: ProductsModel)=>
-            this.productList.push(product))  
-            this.loading= false 
+          next: (r) => {
+            r.data.map((product: ProductsModel) =>
+              this.productList.push(product)
+            );
+            this.loading = false;
           },
-          error: ()=>{  this.loading = false;
-          this.productList= [];}
-        }) 
-        console.log(this.queryParams)
+          error: () => {
+            this.loading = false;
+            this.productList = [];
+          },
+        });
+      } else {
+        this.queryParams.page = page;
       }
     }
-  } 
+  }
+  openComponentProductsEdit(): void {
+    this.isDrawerOpen = true;
+    const drawerRefCustomer = this.drawerService.create<
+      ProductsEditDrawerComponent,
+      { filter: number },
+      number
+    >({
+      nzContent: ProductsEditDrawerComponent,
+      nzSize: 'large',
+      nzWidth: '90%', 
+      nzContentParams: {
+        filter: this.id > 0 ? this.id : 0,
+      },
+      nzClosable: false,
+    });
+    
+    drawerRefCustomer.afterClose.subscribe({
+      next: (data) => {
+        this.isDrawerOpen = false;
+        this.id = 0;
+        if (data != undefined && data != 0) {
+          this.service.getById(data).subscribe({
+            next: (r: ProductsModel) => {
+              this.isDrawerOpen = false;
+              this.productList[
+                this.productList.findIndex((r) => r.id == data)
+              ] != undefined
+                ? (this.productList[
+                    this.productList.findIndex((r) => r.id == data)
+                  ] = r)
+                : this.productList.push(r);
+                this.onClick(r,this.index);
+            },
+            error: () => {
+              this.id = 0;
+              this.isDrawerOpen = false;
+            },
+          });
+        }
+        if (data === 0){
+          this.search();
+        }
+      },
+      error: () => {
+        this.id = 0;
+        this.isDrawerOpen = false;
+      },
+    });
+  }
+
+  currencyFormat(data: any):string  {    
+    return formatCurrency(data, this.locale, '$', 'ARS', '1.1-2')
+  }
+   //Busca por marca
+   onSearchBrand(data: string): void {
+    if (data.length > 0) {
+      this.queryData.page = 0;
+      this.queryData.filter = data;
+      this.getBrand(this.queryData);
+    }
+  }
+
+  getBrand(params:any):void{
+    this.loadingBrands = true;
+    this.serviceBrand.getByFilter(params).subscribe({
+      next: (r) => {
+        this.brandList = r.data;
+        this.totalItems = r.totalCount;
+        this.loadingBrands = false;
+      },
+      error: () => {
+        this.loadingBrands = false;
+        this.brandList = [];
+      },
+    });
+  }
+
+  brandSelectedChange(id: any): void {
+    this.queryParams.filter.brand= id;
+    
+  }
+  
+  categorySelectedChange(id: any): void {
+    this.queryParams.filter.category= id;      
+  }
+
+    //Busca por categoria
+    onSearchCategory(data: string): void {
+      if (data.length > 0) {
+        this.queryData.page = 0;
+        this.queryData.filter = data;
+        this.getCategory(this.queryData);
+      }
+    }
+
+    getCategory(params:any):void{
+      this.loading = true;
+      this.serviceCategory.getByFilter(params).subscribe({
+        next: (r) => {
+          this.categorieList = r.data;
+          this.totalItems = r.totalCount;
+          this.loading = false;
+        },
+        error: () => {
+          this.loading = false;
+          this.categorieList = [];
+        },
+      });
+    }
+    createComponentModal(): void {
+      const modal = this.modalService.create({
+        nzTitle: 'Código de Barra',
+        nzContent: ProductCodeBarModal  
+      });    
+    
+      // Return a result when closed
+      modal.afterClose.subscribe({
+        next: (data: string) =>{
+          this.queryParams.filter.barCode= '';
+          if (!isNil(data) && (data)){
+            this.queryParams.filter.barCode = data;
+          }
+          this.getData(this.queryParams);
+        }, 
+        error: e => {console.log(e);}      
+      })    
+    }
+
+    haveFilterData(): boolean{
+      return (this.queryParams.filter.barCode != '' || this.queryParams.filter.brand > 0 || this.queryParams.filter.category > 0 || this.queryParams.filter.code != '' || this.queryParams.filter.product != '' || this.queryParams.filter.supplier.length > 0);
+    }
+
+    clearQueryAndSearch():void {
+      let newFilter =  {
+        product:'',
+        brand: 0,
+        code: '',
+        barCode:'',
+        category: 0,
+        status: 0,
+        supplier:[]};
+
+      this.queryParams.filter = newFilter;
+      this.formSearch.controls['brand'].setValue(0);
+      this.formSearch.controls['category'].setValue(0);
+
+      this.getData(this.queryParams);
+    };
+
+    getAllSupplier(): void {
+      this.serviceEntity.getSuppliers(this.queryData).subscribe({
+        next: (r) => {
+          this.allSuppliers = r.data.map((entity: { id: any, name: any }) => { return { value: entity.id, label: entity.name } });
+          this.isLoading = false;
+        },
+        error: () => {
+          this.allSuppliers = []
+        }
+      })
+    };
+    /*
+  ** Evento de busqueda datos en el server
+  */
+  onSearch(value: string): void {
+    clearTimeout(this.timeout);
+    this.timeout = setTimeout(()=>{
+      
+      if (value.length > 0){
+        this.allSuppliers= [];
+        this.queryData.filter= value;
+        this.getAllSupplier();
+      }  }, 1000);    
+  };
+
+  supplierSelectedChange(id: any): void {
+    this.queryParams.filter.supplier=this.formSearch.controls['supplier'].value;
+  
+ }
 }

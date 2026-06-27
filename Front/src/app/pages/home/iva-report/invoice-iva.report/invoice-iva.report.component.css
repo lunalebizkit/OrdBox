@@ -1,0 +1,16 @@
+.tabla th {
+  font-size: 12px;
+}
+.tabla td {
+  font-size: 11px;
+}
+.table {
+  height: 85vh;
+  overflow-y: scroll;
+  scroll-behavior: smooth;
+  border-collapse: collapse;
+}
+.tabla {
+  width: 100%;
+  table-layout: fixed;
+}

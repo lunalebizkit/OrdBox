@@ -18,15 +18,34 @@ namespace Kiltex.SistemaGestion.Services.Common
     public class ProductFilter
     {
         public string? Product { get; set; }
+        public string? BarCode { get; set; }
+        public string? Code { get; set; }
         public long? Brand { get; set; }
         public long? Category { get; set; }
+        public long? Status { get; set; }
+        public string? Date { get; set; }
         public List<long> Supplier { get; set; }
     }
-    public class SupplierOrderFilter
+    public class SpecificFilter
     {
         public string? Supplier { get; set; }
         public string? Category { get; set; }
         public int? StatusId { get; set; }
+        public long? Number { get; set; }
+        public string? Cuit { get; set; }
+        public string? Date { get; set; }
+        public string? CustomerName { get; set; }
+
     }
-  
+    public class PeriodFilter
+    {
+        public DateTime Date { get; set; }
+    } 
+    public class StoredProcedureFilter
+    {
+        public Nullable<DateTime> DateFrom { get; set; }
+        public Nullable<DateTime> DateTo { get; set; }
+        public int? CategoryId { get; set; }
+    }
+
 }

@@ -1,57 +1,127 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+import { AuthGuard } from 'src/app/common/auth/permission/auth.guard';
 
 import { HomeComponent } from './home.component';
+import { PrintSettingsComponent } from './report/print-settings/print.settings.component';
 
 const routes: Routes = [
+  {
+    path: '',
+    component: HomeComponent,
+    children: [
+      {
+        canActivate: [AuthGuard],
+        path: 'users',
+        loadChildren: () =>
+          import('./users/users.module').then((m) => m.UsuariosModule),
+      },
 
-    {
-        path: '', component: HomeComponent,
-        children: [
-            {
-                path: 'users',
-                loadChildren: () => import('./users/users.module')
-                    .then(m => m.UsuariosModule)
-            },
+      {
+        canActivate: [AuthGuard],
+        path: 'products',
+        loadChildren: () =>
+          import('./products/products.module').then((m) => m.ProductsModule),
+      },
 
-            {
-                path: 'products',
-                loadChildren: () => import('./products/products.module')
-                    .then(m => m.ProductsModule)
-            },
+      {
+        canActivate: [AuthGuard],
+        path: 'brands',
+        loadChildren: () =>
+          import('./brands/brands.module').then((m) => m.BrandsModule),
+      },
 
-            {
-                path: 'brands',
-                loadChildren: () => import('./brands/brands.module')
-                    .then(m => m.BrandsModule)
-            },
+      {
+        canActivate: [AuthGuard],
+        path: 'categories',
+        loadChildren: () =>
+          import('./categories/categories.module').then(
+            (m) => m.CategoriesModule
+          ),
+      },
+      {
+        canActivate: [AuthGuard],
+        path: 'suppliers',
+        loadChildren: () =>
+          import('./suppliers/suppliers.module').then((m) => m.SuppliersModule),
+      },
+      {
+        canActivate: [AuthGuard],
+        path: 'customers',
+        loadChildren: () =>
+          import('./customers/customers.module').then((m) => m.CustomerModule),
+      },
+      {
+        canActivate: [AuthGuard],
+        path: 'invoices',
+        loadChildren: () =>
+          import('./invoices/invoices.module').then((m) => m.InvoicesModule),
+      },
+      {
+        canActivate: [AuthGuard],
+        path: 'orders',
+        loadChildren: () =>
+          import('./orders/orders.module').then((m) => m.OrdersModule),
+      },
+      {
+        canActivate: [AuthGuard],
+        path: 'periods',
+        loadChildren: () =>
+          import('./periods/periods.module').then((m) => m.PeriodsModule),
+      },
+      {
+        canActivate: [AuthGuard],
+        path: 'iva',
+        loadChildren: () =>
+          import('./iva-report/iva-report.module').then((m) => m.IvaReportModule),
+      },
+      {
+        canActivate: [AuthGuard],
+        path: 'notes',
+        loadChildren: () =>
+          import('./notes/notes.module').then((m) => m.NotesModule),
+      },
+      {
+        canActivate: [AuthGuard],
+        path: 'report',
+        loadChildren: () =>
+          import('./report/report.module').then((m) => m.ReportModule)
+      },
+      {
+        canActivate: [AuthGuard],
+        path: 'permission',
+        loadChildren: () =>
+          import('./permission-rol/permission-rol.module').then((m) => m.PermissionModule)
+      },
+      {
+        canActivate: [AuthGuard],
+        path: 'budgets',
+        loadChildren: () =>
+          import('./budgets/budgets.module').then((m) => m.BudgetModule)
+      },
+      {
+        canActivate: [AuthGuard],
+        path: 'deliveryNotes',
+        loadChildren: () =>
+          import('./deliveryNotes/deliveryNotes.module').then((m) => m.DeliveryNotesModule)
+      },
+      {
+        canActivate: [AuthGuard],
+        path: 'quittance',
+        loadChildren: () =>
+          import('./quittance/quittance.module').then((m) => m.QuittanceModule)
+      },
+      {
+        canActivate: [AuthGuard],
+        path: 'print/settings',
+        component: PrintSettingsComponent
+      }
 
-            {
-                path: 'categories',
-                loadChildren: () => import('./categories/categories.module')
-                    .then(m => m.CategoriasModule)
-            },
-            {
-                path: 'suppliers',
-                loadChildren: () => import('./suppliers/suppliers.module')
-                    .then(m => m.SuppliersModule)
-            },
-            {
-                path: 'customers',
-                loadChildren: () => import('./customers/customers.module')
-                    .then(m => m.CustomerModule)
-            }, 
-             {
-                path: 'invoices',
-                loadChildren: () => import('./invoices/invoices.module')
-                    .then(m => m.InvoicesModule)
-            }
-        ]
-    },
-
+    ],
+  },
 ];
 @NgModule({
-    imports: [RouterModule.forChild(routes)],
-    exports: [RouterModule]
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule],
 })
-export class HomeRoutingModule { };
+export class HomeRoutingModule { }

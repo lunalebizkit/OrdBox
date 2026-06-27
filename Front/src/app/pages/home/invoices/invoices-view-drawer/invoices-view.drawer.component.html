@@ -1,0 +1,166 @@
+<app-header-op-buttons
+  #header
+  (onCloseClick)="close()"
+  [btnReprintText]="'Reimprimir'"
+  [hideReprint]="false"
+  [hideFacturaPro]="false"
+  [hideClose]="true"
+  [hideUpdate]="true"
+  [hideSave]="true"
+  [hideCerrar]="true"
+  [hideFacturaPro]="true"
+  [hideBack]="true"
+  [disabled]="invoiceNumber == 0 ? true : false"
+  [title]="'Comprobantes de Venta'"
+  [iconReprint]="'file-excel'"
+  [iconBack]="'rollback'"
+  [iconTitle]="'container'"
+  (onReprintClick)="popupReimprimir.showConfirmation()"
+  [colors]="'#52c41a'"
+>
+</app-header-op-buttons>
+
+<nz-collapse class="{{ this.tipo }}">
+  <nz-collapse-panel nzHeader="Encabezado" [nzActive]="true">
+    <div style="display: flex; flex-direction: row; margin: 20px;">
+      <div style="flex: 1">
+         <b><label>* Tipo: </label></b>
+        <span>
+          <nz-page-header-tags>
+            <nz-tag [nzColor]="'blue'">{{ type | invoiceTypeFilter }}</nz-tag>
+          </nz-page-header-tags>
+        </span>
+        <br /> 
+        <b><label>* Fecha: </label></b>
+        <span>{{ dateTime ? (dateTime | date : "YYYY-MM-dd") : "N/A" }}</span>
+        <br /> 
+        <b><label>* Cliente: </label></b>
+        <span>{{ customerName }}</span>
+        
+      </div>
+      <div style="flex: 1">
+         <b><label>* Condic. Iva: </label></b>
+        <span>
+          <nz-page-header-tags>
+            <nz-tag [nzColor]="'blue'">{{ type | ivaConditionTypeFilter }}</nz-tag>
+          </nz-page-header-tags>
+        </span>
+        <br />
+        <b><label>* Número de Factura: </label></b>
+        <span>{{ this.invoiceNumber }}</span>
+        <br />
+        <b><label>* Cuit: </label></b>
+        <span>{{ customerCuit | cuit }}</span>
+      </div>
+      
+    </div>
+    <div style="flex-direction: row; margin: 20px;">
+      <b><label>* Dirección: </label></b>
+      <span>{{ customerAddress }}</span>
+    </div>
+    <div style="flex-direction: row; margin: 20px;">      
+        <b><label>* Observación: </label></b>
+        <span>{{ observation }}</span>
+    </div>
+  </nz-collapse-panel>
+
+  <nz-collapse>
+    <nz-collapse-panel
+      nzHeader="Detalle"
+      [nzActive]="true"
+      [nzShowArrow]="true"
+      class="{{ this.tipo }}"
+    >
+      <nz-content>
+        <nz-table [nzBordered]="true" nzTemplateMode [nzSize]="'small'">
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Código Interno</th>
+              <th>Producto</th>
+              <th [nzAlign]="'center'">Cantidad</th>
+              <th [nzAlign]="'center'">Precio Unidad</th>
+              <th [nzAlign]="'center'">SubTotal</th>
+              <th>Iva</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let data of invoiceDetail">
+              <td>{{ data.productCode }}</td>
+              <td> <span *ngIf="data.productId > 0; else isEditProduct">
+                {{ data.productId }}
+              </span>
+              <ng-template #isEditProduct>                
+              </ng-template></td>
+              <td>{{ data.productName }}</td>
+              <td [nzAlign]="'right'">{{ data.quantity }}</td>
+              <td [nzAlign]="'right'">{{ this.currencyFormat(data.price) }}</td>
+              <td [nzAlign]="'right'">
+                {{ this.currencyFormat(data.quantity * data.price) }}
+              </td>
+              <td>{{ data.iva }}</td>
+            </tr>
+          </tbody>
+        </nz-table>
+        <div class="contBoxGree">
+          <tfoot class="tfoot-container">
+            <tr>
+              <td></td>
+            </tr>
+            <tr *ngIf="type == 1; else elseBlock">
+              <td [colSpan]="2">
+                <div *ngIf="iva10 > 0">
+                  <b>Iva 10: {{ iva10.toFixed(2) }}</b
+                  ><br />
+                </div>
+                <div *ngIf="iva21 > 0">
+                  <b>Iva 21: {{ iva21.toFixed(2) }}</b
+                  ><br />
+                </div>
+                <div *ngIf="iva27 > 0">
+                  <b>Iva 27: {{ iva27.toFixed(2) }}</b
+                  ><br />
+                </div>
+
+                <b>Iva Total</b>
+                <span style="color: blue; font-size: 15px; font-weight: bold">
+                  {{ this.currencyFormat(ivaTotal) }}
+                </span>
+              </td>
+            </tr>
+            <tr *ngIf="type == 1; else elseBlock">
+              <td [colSpan]="2">
+                <b>SubTotal </b>
+                <span style="color: blue; font-size: 15px; font-weight: bold"
+                  >{{ this.currencyFormat(subTotal) }}
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <td [colSpan]="2">
+                <b>Total </b>
+                <span style="color: blue; font-size: 15px; font-weight: bold">
+                  {{ this.currencyFormat(total) }}
+                </span>
+              </td>
+            </tr>
+            <ng-template #elseBlock>
+              <tr>
+                <td [colSpan]="2"></td>
+              </tr>
+            </ng-template>
+          </tfoot>
+        </div>
+      </nz-content>
+    </nz-collapse-panel>
+  </nz-collapse>
+
+  <app-popup-confirmation
+    #popupReimprimir
+    [title]="'Confirmar Reimpresion'"
+    [header]="'¿Está seguro de que desea reimprimir esta factura?'"
+    (handleOk)="hideReprint()"
+    [disabled]="loading"
+  >
+  </app-popup-confirmation>
+</nz-collapse>

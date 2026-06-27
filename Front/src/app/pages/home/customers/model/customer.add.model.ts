@@ -5,8 +5,8 @@ export interface CustomerAddModel {
     cuit: string,
     name: string,
     address: string,
-    observation?: string,
-   phoneEntity: string[],
+    observation: string,
+    phoneEntity: string[],
     emailEntity: string[],
     
 }

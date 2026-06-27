@@ -5,23 +5,28 @@
   background: #fff;
   box-shadow: -1px 1px 5px 1px #a3a1a3;
   margin-bottom: 10px;
-  overflow: auto;
 }
-  th{
+  .tabla th{
     font-size: 13px;
+    position: sticky;
+    top: 0; 
+    padding: 6%;
+    z-index: 2;
+    background-color: rgb(240, 237, 237);
   }
-  td{
+  .tabla td{
     font-size: 11px;
+    padding: 6%;
   }
-windows{
-  scroll-behavior: smooth;
-}  
-.shadow{
+.table{
   overflow-y: scroll;
-  height: 500px
+  height: 60vh;
+  scroll-behavior: smooth;
+  position: relative;
+  border-collapse: collapse;
 }
-
-.jumbotron {
-  padding: 2rem 1rem;
+.tabla {
+  width: 100%;
+  table-layout: fixed;
 }
 

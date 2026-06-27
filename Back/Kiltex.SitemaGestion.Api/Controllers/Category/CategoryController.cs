@@ -1,9 +1,12 @@
-﻿using Kiltex.SistemaGestion.Services.Common;
-using Kiltex.SistemaGestion.Services.Models.Dtos;
+﻿using Kiltex.SistemaGestion.Api.Filter;
+using Kiltex.SistemaGestion.Domain.Enum;
+using Kiltex.SistemaGestion.Domain.Model;
+using Kiltex.SistemaGestion.Services.Common;
+using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
 using Kiltex.SistemaGestion.Services.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Kiltex.SitemaGestion.Api.Controllers.Category
+namespace Kiltex.SistemaGestion.Api.Controllers.Category
 {
     public class CategoryController : ApiBaseController
     {
@@ -12,30 +15,63 @@ namespace Kiltex.SitemaGestion.Api.Controllers.Category
         {
             _service = service;
         }
+        /// <summary>
+        /// Devuelve una Categoria, buscando en la BASE DE DATOS por ID. 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet]
-        //[AllowAccess(Rols = new string[] { ERol.Admin })]
+        [AllowAccess(Permission = new EPermission[] { EPermission.ViewCategory })]
         public async Task<IActionResult> Get([FromQuery] long id)
         {
             return Return(await _service.GetById(id).ConfigureAwait(false));
         }
+        /// <summary>
+        /// Agrega una Categoria a la BASE DE DATOS.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
-        public async Task<IActionResult> New([FromBody] DtoCategory model)
+        [AllowAccess(Permission = new EPermission[] { EPermission.CreateCategory })]
+        public async Task<IActionResult> New([FromBody] DtoResponseCategory model)
         {
             return Return(await _service.Add(model).ConfigureAwait(false));
         }
+        /// <summary>
+        /// Edita una Categoria ya creada y la guarda modifica en la BASE DE DATOS.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPut]
-        //[AllowAccess(Rols = new string[] { ERol.Admin })]
-        public async Task<IActionResult> Edit([FromBody] DtoCategory model)
+        [AllowAccess(Permission = new EPermission[] { EPermission.EditCategory })]
+        public async Task<IActionResult> Edit([FromBody] DtoResponseCategory model)
         {
             return Return(await _service.Update(model).ConfigureAwait(false));
         }
+        /// <summary>
+        /// Devuelve un listado de Categorias creadas, con paginado.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
         [HttpPost]
+        [AllowAccess(Permission = new EPermission[] { EPermission.ViewCategory })]
         [Route("[action]")]
-        //[AllowAccess(Rols = new string[] { ERol.Admin })]
         public async Task<IActionResult> List([FromBody] RequestPaginatedData<string> filter)
         {
             return Return(await _service.ListCategory(filter).ConfigureAwait(false));
         }
 
+        /// <summary>
+        /// Borra una Categoría buscandolos por el ID.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpDelete]
+        [Route("{id}")]
+        [AllowAccess(Permission = new EPermission[] { EPermission.DeleteBrand })]
+        public async Task<IActionResult> Delete(long id)
+        {
+            return Return(await _service.Delete(id).ConfigureAwait(false));
+        }
     }
 }

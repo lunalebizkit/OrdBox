@@ -1,21 +1,147 @@
 <!-- <div class="sticky"> -->
-  <nz-page-header class="sticky">
-    <nz-page-header-title><i nz-icon [nzType]="iconTitle" style="padding-right: 5px;"></i>{{title}}</nz-page-header-title>
-    <nz-page-header-extra>
-      <!-- <div class="buttons-save" style="padding-left: 25px;"> -->
-        <button *ngIf="!hideDelete" nz-button nzDanger [nzLoading]="showSpinner" (click)="onDeleteClick?.emit($event)"><i nz-icon
-            [nzType]="iconDelete"></i>{{btnDeleteText}}</button>
-      <!-- </div> -->
-      <!-- <div class="buttons-save"> -->
-        <button *ngIf="!hideBack" nz-button nzType="default" [disabled]="showSpinner" (click)="goBack()"><i nz-icon
-            [nzType]="iconBack"></i>{{btnCancelText}}</button>
-      <!-- </div> -->
-      <!-- <div class="buttons-save"> -->
-        <button nz-button nzType="primary" [nzLoading]="showSpinner" (click)="onSaveClick?.emit($event)"><i nz-icon
-            [nzType]="iconSave"></i>{{btnSaveText}}</button>
-      <!-- </div> -->
-    </nz-page-header-extra>
-  </nz-page-header>
+<nz-page-header class="sticky">
+  <nz-page-header-title
+    ><i nz-icon [nzType]="iconTitle" style="padding-right: 5px; color: 'none'"  ></i
+    >{{ title }} </nz-page-header-title
+  >
+  <nz-page-header-tags *ngIf="!hideTag">
+    <nz-tag [nzColor]="color">{{ tagText }}</nz-tag>
+  </nz-page-header-tags>
+  <nz-page-header-extra>
+    <button
+      style="margin: 2px"
+      *ngIf="!hideDelete"
+      nz-button
+      nzDanger
+      [nzLoading]="showSpinner"
+      (click)="onDeleteClick.emit($event)"
+    >
+      <i nz-icon [nzType]="iconDelete"></i>{{ btnDeleteText }}
+    </button>
+
+    <button
+      style="margin: 2px"
+      *ngIf="!hideBack"
+      nz-button
+      nzType="default"
+      [disabled]="showSpinner"
+      (click)="goBack()"
+    >
+      <i nz-icon [nzType]="iconBack"></i>{{ btnCancelText }}
+    </button>
+
+    <button
+      style="margin: 2px"
+      *ngIf="hideClose"
+      nz-button
+      nzType="default"
+      [disabled]="showSpinner"
+      (click)="onCloseClick.emit($event)"
+    >
+      <i nz-icon [nzType]="iconBack"></i>{{ btnCloseText }}
+    </button>
+    
+    <button
+      style="margin: 2px"
+      *ngIf="!hideSave"
+      nz-button
+      nzType="primary"
+      [nzLoading]="showSpinner"
+      [disabled]="disabled"
+      (click)="onSaveClick.emit($event)"
+    >
+      <i nz-icon [nzType]="iconSave"></i>{{ btnSaveText }}
+    </button>
+    <!-- </div> -->
+    <button
+      style="margin: 2px"
+      *ngIf="!hideSend"
+      nz-button
+      nzType="primary"
+      [nzLoading]="showSpinner"
+      (click)="onSendClick.emit($event)"
+    >
+      <i nz-icon [nzType]="iconSend"></i>{{ btnSendText }}
+    </button>
+    <button
+      style="margin: 2px"
+      *ngIf="!hideEmail"
+      nz-button
+      nzType="primary"
+      [nzLoading]="showSpinner"
+      [disabled]="disabled"
+      (click)="onSendEmailClick.emit($event)"
+    >
+      <i nz-icon [nzType]="iconSend"></i>{{ btnSendEmail }}
+    </button>
+    <button
+      style="margin: 2px"
+      *ngIf="!hideUpdate"
+      nz-button
+      class="btnGreen"
+      [nzLoading]="showSpinner"
+      (click)="onUpdateClick.emit($event)"
+    >
+      <i nz-icon [nzType]="iconUpdate"></i>{{ btnUpdateText }}
+    </button>
+
+    <!--Prueba-->
+    <button
+    style="margin: 2px"
+    *ngIf="!hideReprint"
+    nz-button
+    class="btnGreen"
+    [disabled]="disabled"
+    [nzLoading]="showSpinner"
+    (click)="onReprintClick.emit($event)"
+  >
+    <i nz-icon [nzType]="iconReprint"></i>{{ btnReprintText }}
+  </button>
+
+  <!--Factura Proforma-->
 
 
+<!--CERRAR-->
+  <button
+  style="margin: 2px"
+  *ngIf="!hideCerrar"
+  nz-button
+  [disabled]="disabled"
+  
+   (click)="onCerrarClick.emit($event)"
+  
+  >
+  <i nz-icon [nzType]="iconReprint"></i>{{ btnCerrarText }}
+  </button>
+  <!--Imprimir-->
+   <button
+   style="margin: 2px"
+   *ngIf="!hidePrint"
+   nz-button
+  class="btnGreen"
+   [disabled]="disabled"
+    [nzLoading]="showSpinner"
+    (click)="onReprintClick.emit($event)"
+   
+   >
+   <i nz-icon [nzType]="iconReprint"></i>{{ btnPrintText }}
+   </button>
+
+
+   <button
+   style="margin: 2px"
+   *ngIf="!hideFacturaPro"
+   nz-button
+   [disabled]="disabled"
+   
+   (click)="onFacturaProClick.emit($event)"
+   
+   >
+   <i nz-icon [nzType]="iconFacturaPro"></i>{{ btnFacturaProText }}
+   </button> 
+
+   
+
+  </nz-page-header-extra>
+</nz-page-header>
 <!-- </div> -->

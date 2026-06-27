@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Kiltex.SistemaGestion.Domain.Model;
-using Kiltex.SistemaGestion.Services.Models.Dtos;
+using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
 
 namespace Kiltex.SistemaGestion.Services.Mapper
 {
@@ -8,7 +8,16 @@ namespace Kiltex.SistemaGestion.Services.Mapper
     {
         public BrandMapperProfile()
         {
-            CreateMap<Brand, DtoBrand>().ReverseMap();
+            CreateMap<Brand, DtoResponseBrand>()
+                .AfterMap((o, d, c) =>
+                {
+                    d.Description = d.Description.ToUpper();
+                });
+            CreateMap<DtoResponseBrand, Brand>()
+                 .AfterMap((o, d, c) =>
+                 {
+                     d.Description = d.Description.ToUpper();
+                 });
         }
     }
 }

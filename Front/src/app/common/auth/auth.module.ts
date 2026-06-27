@@ -1,13 +1,10 @@
-import { NgModule } from "@angular/core";
-// import { AuthGuard } from "./interceptors/auth.guard";
-// import { AuthService } from "./interceptors/auth.service";
-import { NzMessageModule } from 'ng-zorro-antd/message';
-// import {AuthGuardChildren} from './interceptors/auth.children.guard';
+import { NgModule } from '@angular/core';;
+import { AuthGuard } from './permission/auth.guard';
+import { PermissionService } from './permission/permission-manager.service';
 
 @NgModule({
   declarations: [],
-  imports: [NzMessageModule],
-  // providers: [AuthService, AuthGuard, AuthGuardChildren]
+  imports: [],
+  providers: [AuthGuard, PermissionService],
 })
-
-export class AuthModule { }
+export class AuthModule {}

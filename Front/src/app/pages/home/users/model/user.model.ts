@@ -5,6 +5,7 @@ export interface UserModel {
   firstName: string;
   lastName: string;
   userName: string;
+  password: string | null;
   email: string;
-  roleId: RolModel;
+  roleId: number;
 }

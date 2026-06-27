@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Kiltex.SistemaGestion.Domain.Model
 {
     [Table("entity")]
-    public class Entity : BaseModel
+    public partial class Entity : BaseModel
     {
         [Column("dni")]
         public int? Dni { get; set; }
@@ -21,6 +21,9 @@ namespace Kiltex.SistemaGestion.Domain.Model
 
         [Column("address")]
         public string? Address { get; set; }
+
+        [Column("isInactive")]
+        public bool IsInactive { get; set; }
 
 
         public string EmailsStrings { 

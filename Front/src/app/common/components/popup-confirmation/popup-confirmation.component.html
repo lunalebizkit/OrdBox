@@ -2,7 +2,21 @@
 [(nzVisible)]="isDeleteConfirmationVisible"
 [nzTitle]="title"
 (nzOnCancel)="handleCancel()"
-(nzOnOk)="handleOk.emit($event)">
+(nzOnOk)="handleOk.emit($event)"
+[nzOkLoading]="okLoading">
+  <ng-container *nzModalContent>
+    <h3>{{header}}</h3>
+    <p>{{message}}</p>
+  </ng-container>
+</nz-modal>
+
+<nz-modal
+[(nzVisible)]="isConfirmationvisible"
+[nzTitle]="title"
+(nzOnCancel)="handleCance()"
+(nzOnOk)="handleOk.emit($event)"
+[nzOkDisabled]="disabled"
+[nzOkLoading]="okLoading">
   <ng-container *nzModalContent>
     <h3>{{header}}</h3>
     <p>{{message}}</p>

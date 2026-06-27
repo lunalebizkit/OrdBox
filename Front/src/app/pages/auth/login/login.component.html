@@ -3,19 +3,12 @@
     <div nz-row class="card">
       <div nz-col class="login-sidebar" nzLg="12"> <!-- nzXs="0" -->
         <div class="overlay">
-          <img src="../../../../assets/img/logoStock.png" alt="logo" />
-          <img src="../../../../assets/img/logoStock-1.png" alt="logo1" class="logo1"/>
-          <p class="copyright">
-            <a href="http://kiltex.com.ar" target="_blank" rel="noreferrer">
-                Gestion de Stock ©{{getYear()}} 
-            </a>
-          </p>
+          <img src="../../../../assets/img/OrdboXLogo.png" alt="logo" />
+          <img src="../../../../assets/img/OrdboXLogo.png"  alt="logo1" class="logo1"/> 
+          
         </div>
       </div>
-      <div nz-col class="login-container" nzXs="24" nzLg="12">
-        <!-- <div class="logo-container">
-            <nz-avatar [nzSize]="36" nzIcon="user"></nz-avatar>
-        </div> -->
+      <div nz-col class="login-container" nzXs="24" nzLg="12">       
         <div>
           <h1>Bienvenido</h1>
           <h3>Por favor, inicie sesión en su cuenta.</h3>
@@ -39,5 +32,12 @@
           </form>
         </div>
       </div>
+      <p class="copyright">
+        <a href="http://kiltex.com.ar" target="_blank" rel="noreferrer">
+            Gestion de Stock ©{{getYear() }} 
+        </a><span style="padding-left: 4px;">
+          - v{{ getVersion() }}
+        </span>
+      </p>
     </div>
   </div>

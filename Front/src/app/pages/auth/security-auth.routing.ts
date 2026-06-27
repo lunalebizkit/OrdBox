@@ -1,11 +1,9 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { LoginComponent } from './login/login.component';
-// import { ResetpasswordComponent } from './resetpassword/resetpassword.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
-//   { path: 'resetpassword/:token', component: ResetpasswordComponent },
 ];
 
 @NgModule({

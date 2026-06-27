@@ -12,7 +12,7 @@ namespace Kiltex.SistemaGestion.Domain.Model
         public string? Description { get; set; }
 
         [Column("code")]
-        public int? Code { get; set; }
+        public string? Code { get; set; }
 
         [Column("category_id")]
         public long CategoryId { get; set; }
@@ -33,7 +33,7 @@ namespace Kiltex.SistemaGestion.Domain.Model
         public int Quantity { get; set; } //cantidad
 
         [Column("purchase_price")]
-        public decimal PurchasePrice { get; set; } //precio de compra
+        public decimal PurchasePrice { get; set; } //precio de compra "Costo"
 
         [Column("sale_price")]
         public decimal SalePrice { get; set; } //precio de venta (lista)
@@ -58,6 +58,9 @@ namespace Kiltex.SistemaGestion.Domain.Model
 
         [Column("observation")]
         public string? Observation { get; set; } //Observaciones
+                                                 
+        [Column("bar_code")]
+        public string? BarCode { get; set; } //Observaciones
 
         [Column("supplier_id")]
         public long SupplierId { get; set; }
