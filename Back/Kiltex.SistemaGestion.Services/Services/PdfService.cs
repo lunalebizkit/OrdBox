@@ -1,6 +1,7 @@
 ﻿
 using iTextSharp.text;
 using iTextSharp.text.pdf;
+using Kiltex.SistemaGestion.Domain.Enum;
 using Kiltex.SistemaGestion.SDK.Error;
 using Kiltex.SistemaGestion.Services.Common;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
@@ -25,7 +26,7 @@ namespace Kiltex.SistemaGestion.Services.Services
         private bool mostrarIvaA;
         private bool mostrarIvaB;
         private BaseColor boldColor = BaseColor.Black;
-        private Font textFont = FontFactory.GetFont(FontFactory.HELVETICA, 9);
+        private Font textFont = FontFactory.GetFont(FontFactory.HELVETICA, 8);
         public PdfService(ErrorManager logger, IConfiguration configuration, IWebHostEnvironment env)
 
         {
@@ -34,13 +35,12 @@ namespace Kiltex.SistemaGestion.Services.Services
             _logger = logger;
         }
 
-        public async Task<OperationResponse<byte[]>> Imprimir(Paragraph paragraph, Paragraph tableTotals = null)
+        public async Task<OperationResponse<byte[]>> Imprimir(Paragraph paragraph, DtoRequestInvoice invoice = null)
         {
             using (MemoryStream stream = new MemoryStream())
             {
-                Document document = new Document();
+                Document document = new Document(PageSize.A4, 5f, 5f, 15f, 40f);
 
-                // Establecer el nombre y ubicación del archivo PDF resultante
                 string filePath = Path.Combine(_Env.ContentRootPath, "PDF_Factura");
                 string fileName = $"archivo_{DateTime.Now.ToString("yyyyMMdd")}.pdf";
                 string fullPath = Path.Combine(filePath, fileName);
@@ -51,17 +51,18 @@ namespace Kiltex.SistemaGestion.Services.Services
 
                 try
                 {
-                    // Crear el escritor PDF
                     PdfWriter writer = PdfWriter.GetInstance(document, stream);
 
+                    if (invoice != null && !string.IsNullOrEmpty(invoice.CAE))
+                    {
+                        writer.PageEvent = new FooterWithCAEEvent(invoice);
+                    }
                     document.Open();
                     document.Add(paragraph);
                     document.Close();
 
-                    // Obtener los bytes del MemoryStream después de cerrarlo
                     byte[] pdfBytes = stream.ToArray();
 
-                    // Guardar el contenido del MemoryStream en un archivo en el disco
                     File.WriteAllBytes(fullPath, pdfBytes);
 
                     return new OperationResponse<byte[]>(pdfBytes);
@@ -1345,9 +1346,457 @@ namespace Kiltex.SistemaGestion.Services.Services
                 table.AddCell(cell1);
                 paragraph.Add(table);
             }
-            
-            return paragraph;
 
+            return paragraph;
         }
+            
+        public Paragraph CabeceraArca(DtoRequestInvoice invoice)
+        {
+            BaseColor black = BaseColor.Black;
+            Font fontTitle = FontFactory.GetFont(FontFactory.HELVETICA, 12, Font.BOLD, black);
+            Font fontText = FontFactory.GetFont(FontFactory.HELVETICA, 8);
+            Font fontTextBold = FontFactory.GetFont(FontFactory.HELVETICA, 8, Font.BOLD, black);
+            Paragraph paragraph = new Paragraph();
+
+            string titulo = _configuration.GetSection("Pdf:Name").Value;
+            string dni = _configuration.GetSection("Pdf:Cuit").Value;
+            string direccion = _configuration.GetSection("Pdf:Direccion").Value;
+            string nombre_apellido = _configuration.GetSection("Pdf:Nombre").Value;
+            string email = _configuration.GetSection("Pdf:Email").Value;
+
+            string imagePath = Path.Combine(_Env.ContentRootPath, "Assets", "dantesLogo1.png");
+
+            #region PRIMERA-CABECERA-LOGO
+
+            PdfPTable tablaCabecera = new PdfPTable(3);
+
+            Phrase columnaUno = new();
+            columnaUno.Add(new Chunk(titulo, fontTitle));
+            PdfPCell celdaCabeceraIzquierda = new PdfPCell(columnaUno) { VerticalAlignment = Element.ALIGN_CENTER, Border = PdfPCell.NO_BORDER };
+
+            Phrase columnaDos = new();
+            columnaDos.Add(new Chunk(MapInvoiceType(invoice.Type), FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 16, BaseColor.Black)));
+            PdfPCell celdaCabeceraCentro = new PdfPCell(columnaDos) { VerticalAlignment = Element.ALIGN_CENTER, HorizontalAlignment = Element.ALIGN_CENTER, Border = PdfPCell.NO_BORDER };
+
+            tablaCabecera.AddCell(celdaCabeceraIzquierda);
+            tablaCabecera.AddCell(celdaCabeceraCentro);
+            iTextSharp.text.Image image2 = iTextSharp.text.Image.GetInstance(imagePath);
+            image2.ScaleToFit(40f, 40f);
+            PdfPCell celdaCabeceraDerecha = new PdfPCell(image2) { VerticalAlignment = Element.ALIGN_CENTER, HorizontalAlignment = Element.ALIGN_CENTER, Border = PdfPCell.NO_BORDER };
+
+            tablaCabecera.AddCell(celdaCabeceraDerecha);
+            float[] columnWidthsCabecera = { 4f, 1f, 4f };
+            tablaCabecera.SetWidths(columnWidthsCabecera);
+
+            #endregion
+
+            #region SEGUNDA-CABECERA
+
+            PdfPTable tablaEncabezado = new PdfPTable(2);
+
+            #region IZQUIERDA
+
+            Phrase phraseIzq = new Phrase(12f);
+
+            Chunk razonSocial = new(titulo, fontText);
+            phraseIzq.Add(new Chunk("Razón Social: ", fontTextBold));
+            phraseIzq.Add(new Chunk(razonSocial));
+            phraseIzq.Add(Chunk.Newline);
+            phraseIzq.Add(new Chunk("Domicilio Comercial: ", fontTextBold));
+            phraseIzq.Add(new Chunk(direccion, fontText));
+            phraseIzq.Add(Chunk.Newline);
+            phraseIzq.Add(new Chunk("Condición frente al IVA: ", fontTextBold));
+            phraseIzq.Add(new Chunk("IVA Responsable Inscripto", fontText));
+            phraseIzq.Add(Chunk.Newline);
+
+            PdfPCell celdaIzquierda = new PdfPCell(phraseIzq)
+            {
+                Border = PdfPCell.NO_BORDER,
+                PaddingTop = 10f,
+                VerticalAlignment = Element.ALIGN_LEFT,
+                PaddingBottom = 10f
+            };
+
+            tablaEncabezado.AddCell(celdaIzquierda);
+            #endregion
+
+            #region DERECHA
+
+            Phrase phraseDrh = new(5f);
+
+            phraseDrh.Add(new Chunk("Punto de Venta: ", fontTextBold));
+            phraseDrh.Add(new Chunk(CustomizationConstant.PuntoDeVenta.ToString().PadLeft(3, '0'), fontText));
+            phraseDrh.Add(Chunk.Newline);
+            phraseDrh.Add(new Chunk("Comp. N°: ", fontTextBold));
+            phraseDrh.Add(new Chunk(invoice.InvoiceNumber.ToString(), fontText));
+            phraseDrh.Add(Chunk.Newline);
+            phraseDrh.Add(new Chunk("Fecha de Emisión: ", fontTextBold));
+            phraseDrh.Add(new Chunk(invoice.DateTime.ToString("dd/MM/yyyy"), fontText));
+            phraseDrh.Add(Chunk.Newline);
+            phraseDrh.Add(new Chunk("CUIT: ", fontTextBold));
+            phraseDrh.Add(new Chunk(dni, fontText));
+            phraseDrh.Add(Chunk.Newline);
+
+            PdfPCell celdaDerecha = new PdfPCell(phraseDrh)
+            {
+                Border = PdfPCell.NO_BORDER,
+                PaddingTop = 10f,
+                VerticalAlignment = Element.ALIGN_LEFT,
+                PaddingBottom = 10f
+            };
+
+            tablaEncabezado.AddCell(celdaDerecha);
+            #endregion
+
+            float[] columnWidths = { 6f, 2f };
+            tablaEncabezado.SetWidths(columnWidths);
+
+            #endregion           
+
+            paragraph.Add(tablaCabecera);
+            paragraph.Add(tablaEncabezado);
+
+            #region CABECERA-CLIENTE
+
+            PdfPTable tablaCliente = new PdfPTable(2);
+
+
+            // Mover la declaración fuera del bucle
+            Phrase textoIzquierda = new()
+            {
+                new Chunk("Cliente: ", fontTextBold),
+                new Chunk(invoice.CustomerName.ToUpper().Trim(), fontText),
+                Chunk.Newline,
+                Chunk.Newline,
+                new Chunk("Dirección: ", fontTextBold),
+                new Chunk(invoice.CustomerAddress, fontText),
+                Chunk.Newline,
+            };
+
+            // Primera columna: paragraph
+            PdfPCell cell1 = new PdfPCell(textoIzquierda)
+            {
+                Border = PdfPCell.TOP_BORDER | PdfPCell.BOTTOM_BORDER,
+                HorizontalAlignment = Element.ALIGN_LEFT,
+                Padding = 10f
+            };
+
+            //Segunda Columna
+            Phrase textoDerecha = new();
+            if (string.IsNullOrEmpty(invoice.CustomerCuit))
+            {
+                textoDerecha = new() { new Chunk("CUITs: ", fontTextBold) };
+            }
+            else
+            {
+                textoDerecha = new()
+                {
+                new Chunk("CUIT: ", fontTextBold),
+                new Chunk(invoice.CustomerCuit, fontText),
+                Chunk.Newline,
+                Chunk.Newline,
+                new Chunk("Condicion: ", fontTextBold),
+                new Chunk(MapCondicion(invoice.Type), fontText)
+                };
+            }
+
+            PdfPCell cell2 = new PdfPCell(textoDerecha)
+            {
+                Border = PdfPCell.TOP_BORDER | PdfPCell.BOTTOM_BORDER,
+                HorizontalAlignment = Element.ALIGN_RIGHT,
+                Padding = 10f
+            };
+
+            tablaCliente.AddCell(cell1);
+            tablaCliente.AddCell(cell2);
+            paragraph.Add(tablaCliente);
+
+            #endregion
+
+            paragraph.Add(DetalleFacturaArca(invoice));
+
+            return paragraph;
+        }
+
+        public Paragraph DetalleFacturaArca(DtoRequestInvoice invoice)
+        {
+            Font textFont = FontFactory.GetFont(FontFactory.HELVETICA, 8);
+            Font fontTextBoldIvas = FontFactory.GetFont(FontFactory.HELVETICA, 9, Font.BOLD, BaseColor.Black);
+            Paragraph paragraph = new Paragraph();
+
+            PdfPCell emptyCell = new PdfPCell()
+            {
+                Border = PdfPCell.NO_BORDER
+            };
+
+            PdfPTable table = new PdfPTable(5);
+
+            // Establecer el ancho de las columnas
+            float[] columnWidths = { 2f, 6f, 3f, 1f, 2f }; // Ancho entre columnas
+            table.SetWidths(columnWidths);
+
+            //Le agrego color a la letra de la tabla y tamaño
+            BaseColor black = BaseColor.Black;
+            Font font = FontFactory.GetFont(FontFactory.HELVETICA, 7, Font.BOLD, black);
+
+            #region Detalle-Factura
+
+            table.AddCell(new PdfPCell(new Phrase("Cantidad", font))
+            {
+                Border = PdfPCell.BOTTOM_BORDER | PdfPCell.TOP_BORDER,
+                HorizontalAlignment = Element.ALIGN_CENTER,
+                PaddingBottom = 10f,
+                PaddingTop = 5f
+            });
+
+            PdfPCell productoCell = new PdfPCell(new Phrase("Producto", font))
+            {
+                Border = PdfPCell.BOTTOM_BORDER | PdfPCell.TOP_BORDER,
+                HorizontalAlignment = Element.ALIGN_CENTER,
+                PaddingBottom = 10f,
+                PaddingTop = 5f
+            };
+
+            table.AddCell(productoCell);
+            table.AddCell(new PdfPCell(new Phrase("Precio Unitario", font))
+            {
+                Border = PdfPCell.BOTTOM_BORDER | PdfPCell.TOP_BORDER,
+                HorizontalAlignment = Element.ALIGN_CENTER,
+                PaddingBottom = 10f,
+                PaddingTop = 5f
+            });
+
+
+            table.AddCell(new PdfPCell(new Phrase("Iva", font))
+            {
+                Border = PdfPCell.BOTTOM_BORDER | PdfPCell.TOP_BORDER,
+                HorizontalAlignment = Element.ALIGN_RIGHT,
+                PaddingBottom = 10f,
+                PaddingTop = 5f
+            });
+
+            table.AddCell(new PdfPCell(new Phrase("Importe", font))
+            {
+                Border = PdfPCell.BOTTOM_BORDER | PdfPCell.TOP_BORDER,
+                HorizontalAlignment = Element.ALIGN_RIGHT,
+                PaddingBottom = 10f,
+                PaddingTop = 5f
+            });
+
+            if (invoice.InvoiceDetails.Any())
+            {
+
+                foreach (var item in invoice.InvoiceDetails)
+                {
+
+                    table.AddCell(new PdfPCell(new Phrase(item.Quantity.ToString(), textFont))
+                    {
+                        HorizontalAlignment = Element.ALIGN_CENTER,
+                        Border = PdfPCell.NO_BORDER,
+                        PaddingTop = 10f
+                    });
+
+                    table.AddCell(new PdfPCell(new Phrase(item.ProductName, textFont))
+                    {
+                        Border = PdfPCell.NO_BORDER,
+                        PaddingTop = 10f
+                    });
+
+                    table.AddCell(new PdfPCell(new Phrase(string.Format("{0,7:##.00}", item.Price), textFont))
+                    {
+                        HorizontalAlignment = Element.ALIGN_RIGHT,
+                        Border = PdfPCell.NO_BORDER,
+                        PaddingTop = 10f
+                    });
+
+                    table.AddCell(new PdfPCell(new Phrase((item.Iva % 1 == 0) ? ((int)item.Iva).ToString() : item.Iva.ToString(CultureInfo.InvariantCulture), textFont))
+                    {
+                        HorizontalAlignment = Element.ALIGN_RIGHT,
+                        Border = PdfPCell.NO_BORDER,
+                        PaddingTop = 10f
+                    });
+
+                    table.AddCell(new PdfPCell(new Phrase(string.Format("{0,7:##.00}", (item.Price * item.Quantity)), textFont))
+                    {
+                        HorizontalAlignment = Element.ALIGN_RIGHT,
+                        Border = PdfPCell.NO_BORDER,
+                        PaddingTop = 10f
+                    });
+                }
+
+            }
+
+            paragraph.Add(table);
+
+            #endregion
+
+            #region Total con IVA
+
+            PdfPTable totalIva = new PdfPTable(4);
+            totalIva.SpacingBefore = 30f;
+
+            if ((ETypeReceipt)invoice.Type == ETypeReceipt.A)
+            {
+                if (invoice.Iva10 != 0)
+                {
+                    totalIva.AddCell(emptyCell);
+                    totalIva.AddCell(emptyCell);
+                    totalIva.AddCell(new PdfPCell(new Phrase("Iva 10: ", fontTextBoldIvas))
+                    {
+                        HorizontalAlignment = Element.ALIGN_RIGHT,
+                        Border = PdfCell.NO_BORDER
+                    });
+
+                    //table2.AddCell(emptyCell);
+                    totalIva.AddCell(new PdfPCell(new Phrase(string.Format("{0,7:##.00}", "$" + Math.Round(invoice.Iva10.Value, 2)), fontTextBoldIvas))
+                    {
+                        HorizontalAlignment = Element.ALIGN_RIGHT,
+                        Border = PdfCell.NO_BORDER
+                    });
+                }
+
+                if (invoice.Iva21 != 0)
+                {
+                    totalIva.AddCell(emptyCell);
+                    totalIva.AddCell(emptyCell);
+                    totalIva.AddCell(new PdfPCell(new Phrase("Iva 21: ", fontTextBoldIvas))
+                    {
+                        HorizontalAlignment = Element.ALIGN_RIGHT,
+                        Border = PdfCell.NO_BORDER
+                    });
+
+
+                    totalIva.AddCell(new PdfPCell(new Phrase(string.Format("{0,7:##.00}", "$" + Math.Round(invoice.Iva21.Value, 2)), fontTextBoldIvas))
+                    {
+                        HorizontalAlignment = Element.ALIGN_RIGHT,
+                        Border = PdfCell.NO_BORDER
+                    });
+
+                }
+
+                if (invoice.Iva27 != 0)
+                {
+
+                    totalIva.AddCell(emptyCell);
+                    totalIva.AddCell(emptyCell);
+
+                    totalIva.AddCell(new PdfPCell(new Phrase("Iva 27: ", fontTextBoldIvas))
+                    {
+                        HorizontalAlignment = Element.ALIGN_RIGHT,
+                        Border = PdfCell.NO_BORDER
+                    });
+
+                    totalIva.AddCell(new PdfPCell(new Phrase(string.Format("{0,7:##.00}", "$" + Math.Round(invoice.Iva27.Value, 2)), fontTextBoldIvas))
+                    {
+                        HorizontalAlignment = Element.ALIGN_RIGHT,
+                        Border = PdfCell.NO_BORDER
+                    });
+                }
+
+                totalIva.CompleteRow();
+
+                totalIva.AddCell(emptyCell);
+                totalIva.AddCell(emptyCell);
+                totalIva.AddCell(emptyCell);
+                totalIva.AddCell(emptyCell);
+
+                var subTotal = invoice.Total - invoice.IvaTotal;
+
+                totalIva.AddCell(emptyCell);
+                totalIva.AddCell(emptyCell);
+                totalIva.AddCell(new PdfPCell(new Phrase("IvaTotal: ", fontTextBoldIvas))
+                {
+                    HorizontalAlignment = Element.ALIGN_RIGHT,
+                    Border = PdfCell.NO_BORDER,
+                });
+
+                totalIva.AddCell(new PdfPCell(new Phrase(string.Format("{0,7:##.00}", "$" + invoice.IvaTotal.ToString()), fontTextBoldIvas))
+                {
+                    HorizontalAlignment = Element.ALIGN_RIGHT,
+                    Border = PdfCell.NO_BORDER,
+
+                });
+
+                totalIva.AddCell(emptyCell);
+                totalIva.AddCell(emptyCell);
+                totalIva.AddCell(new PdfPCell(new Phrase("SubTotal: ", fontTextBoldIvas))
+                {
+                    HorizontalAlignment = Element.ALIGN_RIGHT,
+                    Border = PdfCell.NO_BORDER,
+                });
+                totalIva.AddCell(new PdfPCell(new Phrase("$" + subTotal.ToString(), fontTextBoldIvas))
+                {
+                    HorizontalAlignment = Element.ALIGN_RIGHT,
+                    Border = PdfCell.NO_BORDER,
+                });
+
+                totalIva.AddCell(emptyCell);
+                totalIva.AddCell(emptyCell);
+
+                totalIva.AddCell(new PdfPCell(new Phrase("Total:", fontTextBoldIvas))
+                {
+                    HorizontalAlignment = Element.ALIGN_RIGHT,
+                    Border = PdfCell.NO_BORDER,
+                });
+                totalIva.AddCell(new PdfPCell(new Phrase(string.Format("{0,7:##.00}", "$" + invoice.Total.ToString()), fontTextBoldIvas))
+                {
+                    HorizontalAlignment = Element.ALIGN_RIGHT,
+                    Border = PdfCell.NO_BORDER,
+                });
+
+            }
+
+            #endregion
+
+            #region Total sin IVA
+
+            if ((ETypeReceipt)invoice.Type != ETypeReceipt.A)
+            {
+                totalIva.AddCell(emptyCell);
+                totalIva.AddCell(emptyCell);
+
+                totalIva.AddCell(new PdfPCell(new Phrase("Total:", fontTextBoldIvas))
+                {
+                    HorizontalAlignment = Element.ALIGN_RIGHT,
+                    Border = PdfCell.NO_BORDER,
+                });
+                totalIva.AddCell(new PdfPCell(new Phrase(string.Format("{0,7:##.00}", "$" + invoice.Total.ToString()), fontTextBoldIvas))
+                {
+                    HorizontalAlignment = Element.ALIGN_RIGHT,
+                    Border = PdfCell.NO_BORDER,
+                });
+            }
+
+            #endregion
+            paragraph.Add(totalIva);
+
+            return paragraph;
+        }
+
+        #region Private
+
+        private static string MapInvoiceType(int invoiceType)
+        {
+            return (ETypeReceipt)invoiceType switch
+            {
+                ETypeReceipt.A => "A",
+                ETypeReceipt.B => "B",
+                _ => "B"
+            };
+        }
+        
+        private static string MapCondicion(int invoiceType)
+        {
+            return (ETypeReceipt)invoiceType switch
+            {
+                ETypeReceipt.A => "Responsable Inscripto",
+                ETypeReceipt.B => "Consumidor final",
+                ETypeReceipt.EXENTO => "Excento",
+                _ => ""
+            };
+        }
+
+        #endregion
+
     }
 }

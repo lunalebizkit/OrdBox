@@ -15,7 +15,7 @@ import { InvoiceDetailList, InvoiceDetails, InvoiceModel, invoiceGridParser, inv
 import { PopupConfirmationComponent } from "src/app/common/components/popup-confirmation/popup-confirmation.component";
 import { InvoiceService } from "../invoices.service";
 import { ActivatedRoute, Router } from "@angular/router";
-import { ePayment, ePaymentType, paymentTypes } from "../model/invoice-payment.Enum";
+import { ePayment, paymentTypes } from "../model/invoice-payment.Enum";
 import { eInvoiceType, eIvaCondition, InvoiceType, IvaCondition } from "../model/invoice-type.Enum";
 import { formatCurrency, formatDate } from '@angular/common';
 import { Inject, LOCALE_ID } from '@angular/core';
@@ -25,6 +25,7 @@ import { PeriodsService } from "../../periods/periods.service";
 import { IvaType } from "../model/iva-type.Enum";
 import { isNil } from "ng-zorro-antd/core/util";
 import { forkJoin, map } from "rxjs";
+import { InvoiceVersion } from "src/app/common/auth/models/invoice-versions.enum";
 
 
 
@@ -509,6 +510,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
           customerId: this.customerId,
           userId: this.userId,
           invoiceNumber: this.totalItems,
+          cae: '',
           customerName: this.formInvoice.controls['customerName'].value,
           customerCuit: this.selectedDni ? this.formInvoice.controls['customerDni'].value : this.formInvoice.controls['customerCuit'].value,
           customerAddress: this.formInvoice.controls['address'].value,
@@ -520,9 +522,11 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
           total: this.total,
           ivaTotal: this.ivaTotal,
           ivaSelected: this.ivaSelected,
-
+          caeExpirationTime: null,
+          integrationSuccess: false,
           type: (this.formInvoice.controls['type'].value == eInvoiceType.B) ?(this.formInvoice.controls['ivaCondition'].value == eIvaCondition.Exento ? eInvoiceType.EXENTO : eInvoiceType.B) : eInvoiceType.A,
           invoiceDetails: this.invoiceDetails,
+          version: InvoiceVersion.Arca
         };
         this.isSaving = true;
         this.serviceInvoice.saveInvoice(model)

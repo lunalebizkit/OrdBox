@@ -2,7 +2,7 @@
 
 namespace Kiltex.SistemaGestion.Domain.Enum
 {
- public enum ePriceProduct
+ public enum EPriceProduct
     {
         PurchasePrice = 1, //Se suma solo al costo y se calcula todo
         Percentage = 2, // Se suma el porcentaje al costo y se calcula todo

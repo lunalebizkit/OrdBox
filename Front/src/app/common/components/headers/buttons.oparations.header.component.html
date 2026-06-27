@@ -52,7 +52,7 @@
     >
       <i nz-icon [nzType]="iconSave"></i>{{ btnSaveText }}
     </button>
-    <!-- </div> -->
+    
     <button
       style="margin: 2px"
       *ngIf="!hideSend"
@@ -85,7 +85,7 @@
       <i nz-icon [nzType]="iconUpdate"></i>{{ btnUpdateText }}
     </button>
 
-    <!--Prueba-->
+    <!--Reimpresion-->
     <button
     style="margin: 2px"
     *ngIf="!hideReprint"
@@ -138,7 +138,18 @@
    
    >
    <i nz-icon [nzType]="iconFacturaPro"></i>{{ btnFacturaProText }}
-   </button> 
+   </button>
+  
+   <!-- CREAR FACTURA ARCA -->
+  <button
+   style="margin: 2px"
+   [hidden]="hideARCA"
+   nz-button
+   [disabled]="disabledARCA"   
+   (click)="onFacturaARCAClick.emit($event)"   
+   >
+   <i nz-icon [nzType]="iconFacturaARCA"></i>{{ btnFacturaARCAText }}
+   </button>
 
    
 

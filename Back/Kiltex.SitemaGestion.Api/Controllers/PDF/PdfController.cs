@@ -266,5 +266,25 @@ namespace Kiltex.SistemaGestion.Api.Controllers.PDF
             var contenido = await _service.Imprimir(paragraph);
             return File(contenido.Data, "application/pdf", $"Recibo_{DateTime.Now:dd-MM-yyyy}.pdf");
         }
+
+        [HttpGet]
+        [Route("pdfcomprobanteventaarca")]
+        [AllowAnonymous]
+        public async Task<IActionResult> PdfComprobanteARCA(long id, [FromServices] InvoiceService invoiceService)
+        {
+            var factura = await invoiceService.GetById(id);
+
+            if (factura.Data == null)
+            {
+                return BadRequest(id);
+            }
+
+            Paragraph paragraph = new Paragraph();
+
+            paragraph.Add(_service.CabeceraArca(factura.Data));
+            var contenido = await _service.Imprimir(paragraph, factura.Data);
+
+            return File(contenido.Data, "application/pdf", $"Factura_{DateTime.Now:dd-MM-yyyy}.pdf");
+        }
     }
 }

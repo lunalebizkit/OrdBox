@@ -1,8 +1,11 @@
+import { InvoiceVersion } from "src/app/common/auth/models/invoice-versions.enum";
+
 export interface InvoiceListModel {
     id: number;
     customerId: number;
     createdBy: string;
     invoiceNumber: number;
+    cae: string;
     customerName: string;
     customerCuit: string;
     customerAddress: string;
@@ -11,6 +14,9 @@ export interface InvoiceListModel {
     ivaTotal: number;
     type: number;
     ivaSelected: number;
+    caeExpirationTime: Date | null,
+    integrationSuccess: boolean | null,
+    version: InvoiceVersion
 }
 
 export interface InvoiceModel {
@@ -18,6 +24,7 @@ export interface InvoiceModel {
     customerId: number;
     userId: number;
     invoiceNumber: number;
+    cae: string;
     customerName: string;
     customerCuit: string;
     customerAddress: string;
@@ -30,6 +37,9 @@ export interface InvoiceModel {
     ivaTotal: number;
     type: number;
     ivaSelected: number;
+    caeExpirationTime: Date | null;
+    integrationSuccess: boolean | null;
+    version: InvoiceVersion;
     invoiceDetails: InvoiceDetails[]
 }
 export interface InvoiceDetails {

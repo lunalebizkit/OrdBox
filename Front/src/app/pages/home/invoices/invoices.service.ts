@@ -3,7 +3,6 @@ import { ApiService } from '../../../common/services/api.base.service';
 import { Observable } from 'rxjs';
 import { InvoiceModel } from './model/invoice.model';
 import { receiptModel } from './model/receipt.model';
-import { Type } from '@angular/compiler';
 
 @Injectable({
   providedIn: 'root',
@@ -92,14 +91,27 @@ export class InvoiceService {
     return this.api.get(`Pdf/PdfComprobanteCompra?id=${id}`, false, {responseType:'blob' as 'json'})
 
   }
-
+  
   /**
-     * Elimina un presupuesto por Id
-     * @param id
-     * @returns
-     */
-    public delete(id: number): Observable<any> {
-      return this.api.delete(`receipt/Delete?id=${id}`, false)
-    }
+   * Elimina un presupuesto por Id
+   * @param id
+   * @returns
+  */
+ public delete(id: number): Observable<any> {
+   return this.api.delete(`receipt/Delete?id=${id}`, false)
+  }
+  
+  public getIntegrationLogById(id: number): Observable<any> {
+    return this.api.get(`invoice/GetIntegrationLogById?id=${id}`, false)
+
+  }
+
+  public printInvoiceARCA(id: number): Observable<any> {
+    return this.api.get(`Pdf/pdfcomprobanteventaarca?id=${id}`, false, {responseType:'blob' as 'json'}) ;
+  }
+  
+  public createInvoiceARCA(id: number, observacion: string | null): Observable<any> {
+    return this.api.get(`invoice/getcaeinvoice?id=${id}&observacion=${observacion ?? ''}`, false) ;
+  }
 }
 

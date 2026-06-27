@@ -365,13 +365,13 @@ namespace Kiltex.SistemaGestion.Services.Services
                 {
                     switch (model.IdPrice)
                     {
-                        case (int)ePriceProduct.PurchasePrice:
-                        case (int)ePriceProduct.Percentage:
-                            item.UpdateSalePrice(model.Value, model.IdPrice == (int)ePriceProduct.Percentage);
+                        case (int)EPriceProduct.PurchasePrice:
+                        case (int)EPriceProduct.Percentage:
+                            item.UpdateSalePrice(model.Value, model.IdPrice == (int)EPriceProduct.Percentage);
                             break;
-                        case (int)ePriceProduct.CardSalePercentage:
-                        case (int)ePriceProduct.CashSalePercentage:
-                        case (int)ePriceProduct.SalePercentage:
+                        case (int)EPriceProduct.CardSalePercentage:
+                        case (int)EPriceProduct.CashSalePercentage:
+                        case (int)EPriceProduct.SalePercentage:
                             item.UpdatePrecentage(model.Value, model.IdPrice);
                             break;
                     }

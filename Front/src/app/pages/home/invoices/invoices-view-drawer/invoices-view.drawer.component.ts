@@ -1,6 +1,6 @@
 import { formatCurrency } from "@angular/common";
 import { Component, ElementRef, Inject, Input, LOCALE_ID, OnInit, ViewChild } from "@angular/core";
-import { FormGroup } from "@angular/forms";
+import { FormBuilder, FormGroup } from "@angular/forms";
 import { NzDrawerRef } from "ng-zorro-antd/drawer";
 import { NzMessageService } from "ng-zorro-antd/message";
 import { NzNotificationService } from "ng-zorro-antd/notification";
@@ -10,7 +10,10 @@ import { PopupConfirmationComponent } from "src/app/common/components/popup-conf
 import { InvoiceService } from "../invoices.service";
 import { eInvoiceType } from "../model/invoice-type.Enum";
 import { InvoiceDetails, InvoiceModel } from "../model/invoice.model";
-
+import { InvoiceLog } from "../model/invoice-log-integration";
+import { XMLParser } from "fast-xml-parser";
+import { Router } from "@angular/router";
+import { InvoiceVersion } from "src/app/common/auth/models/invoice-versions.enum";
 
 
 @Component({
@@ -19,29 +22,31 @@ import { InvoiceDetails, InvoiceModel } from "../model/invoice.model";
   styleUrls: ['./invoices-view.drawer.component.css'],
 })
 export class InvoicesViewDrawerComponent extends BaseComponent implements OnInit {
-  router: any;
-  @Input() set filter(value: number) {
-    this.id = value;
-}
+  @Input() set filter(value: number) { this.id = value; }
 
-
-@ViewChild('header') headerComponent!: HeaderOperationsButtonsComponent;
-@ViewChild('popupReimprimir') popupComponent!: PopupConfirmationComponent;
-@Input('btnReprintText') btnReprintText: string = 'Reimprimir';
+  @ViewChild('header') headerComponent!: HeaderOperationsButtonsComponent;
+  @ViewChild('popupReimprimir') popupComponent!: PopupConfirmationComponent;
+  @Input('btnReprintText') btnReprintText: string = 'Reimprimir';
+  @ViewChild('popupFacturaARCA') popupARCAComponent!: PopupConfirmationComponent;
 
   // variables Generales
-  isLoading=true;
+  isLoading = true;
   loading!: boolean;
+  logLoading!: boolean;
   isSaving!: boolean;
   id!: number;
   tipo!: string;
 
   //Variables del comprobante
+  invoice!: InvoiceModel;
+  invoiceVersion= InvoiceVersion;
+
   type!: eInvoiceType;
-  invoiceDetail: InvoiceDetails []= [];
+  invoiceDetail: InvoiceDetails[] = [];
   customerAddress!: string;
   customerCuit!: string;
   invoiceNumber!: number;
+  cae!: string;
   ivaTotal!: number;
   ivaSelected!: number;
   iva21!: number;
@@ -53,12 +58,11 @@ export class InvoicesViewDrawerComponent extends BaseComponent implements OnInit
   userId!: number;
   dateTime!: Date;
   subTotal!: number;
-  form!: FormGroup;
   percIngBrutos!: number;
   percIva!: number;
   concNoGravado!: number;
-
-   
+  invoiceLog: InvoiceLog[] = [];
+  formObservacion!: FormGroup;
 
   constructor(
     notificacionService: NzNotificationService,
@@ -66,101 +70,196 @@ export class InvoicesViewDrawerComponent extends BaseComponent implements OnInit
     el: ElementRef,
     message: NzMessageService,
     private drawerRef: NzDrawerRef<string>,
-    @Inject(LOCALE_ID) public locale: string
-     ) {
+    @Inject(LOCALE_ID) public locale: string,
+    private router: Router,
+    private fb: FormBuilder,
+  ) {
     super(notificacionService, el, message);
+    this.formObservacion = this.fb.group({
+      observation: ['']
+    });
   }
 
   ngOnInit(): void {
-    if (this.id != null || this.id != undefined || this.id != 0) {
-      this.getInvoice(this.id)
-  }
+    
+    if (this.id != null || this.id != undefined || this.id != 0)
+      { this.getInvoice(this.id)}
 
   }
+
   getInvoice(id: number): void {
     this.isLoading = true;
     if (id != 0)
-    this.service.getInvoiceById(id).subscribe({
+      this.service.getInvoiceById(id).subscribe({
         next: (r: InvoiceModel) => {
-       
+          this.invoice = r;
           this.type = r.type,
-          this.customerAddress = r.customerAddress,
-          this.customerCuit = r.customerCuit,
-          this.customerName = r.customerName,
-          this.observation = r.observation,
-          this.invoiceNumber= r.invoiceNumber,
-          this.ivaTotal= r.ivaTotal,
-          this.ivaSelected= r.ivaSelected,
-          this.iva21= r.iva21,
-          this.iva27= r.iva27,
-          this.iva10=r.iva10,
-          this.total = r.total,
-          this.userId = r.userId,
-          this.dateTime = r.dateTime,
-          this.invoiceDetail= r.invoiceDetails
-          this.subTotal= r.total - r.ivaTotal;          
-          this.isLoading = false;          
+            this.customerAddress = r.customerAddress,
+            this.customerCuit = r.customerCuit,
+            this.customerName = r.customerName,
+            this.observation = r.observation,
+            this.invoiceNumber = r.invoiceNumber,
+            this.cae = r.cae,
+            this.ivaTotal = r.ivaTotal,
+            this.ivaSelected = r.ivaSelected,
+            this.iva21 = r.iva21,
+            this.iva27 = r.iva27,
+            this.iva10 = r.iva10,
+            this.total = r.total,
+            this.userId = r.userId,
+            this.dateTime = r.dateTime,
+            this.invoiceDetail = r.invoiceDetails
+          this.subTotal = r.total - r.ivaTotal;
+          this.isLoading = false;
         },
         error: () => { this.isLoading = false; }
-    })
+      });
+      this.getIntegrationLog(id);
   }
 
-  getTipo(tipo : number):any {
-    switch (tipo){
-      case  eInvoiceType.A :
+  getTipo(tipo: number): any {
+    switch (tipo) {
+      case eInvoiceType.A:
         return this.tipo = 'factA'
-      case  eInvoiceType.B :
-       return this.tipo = 'factB'
+      case eInvoiceType.B:
+        return this.tipo = 'factB'
     }
   }
 
-  invoiceType(id: any):string{
+  invoiceType(id: any): string {
     return eInvoiceType[id]
   }
 
-   currencyFormat(data: any):string  { 
-    if(!this.locale) return '';
+  currencyFormat(data: any): string {
+    if (!this.locale) return '';
     return formatCurrency(data, this.locale!, '$', 'ARS', '1.1-2')
   }
-  close(): void {
-    this.drawerRef.close();
+  close(data?: boolean): void {
+    this.drawerRef.close(data);
   };
 
+
+  /*Evento Reimprimir una factura */
+  reimprimir(): void {
+    this.loading = true;
+    this.service.Reprint(this.type, this.invoiceNumber).subscribe({
+      next: (r: any) => {
+        this.showMessageSuccess('Reimpresion de la factura satisfactoria');
+        this.popupComponent.isConfirmationvisible = false;
+        this.loading = false;
+      },
+      error: (e) => {
+        this.showMessageError(e.error.descripcion);
+        this.loading = false;
+      }
+    });
+  }
+
+  hideReprint() {
+    if (this.invoiceNumber == 0) {
+      this.showMessageError('El numero de factura no puede estar en 0');
+      this.popupComponent.isConfirmationvisible = false;
+
+    } else {
+
+      try {
+        if (this.invoice?.integrationSuccess == true && this.invoice.cae != null) {
+          this.imprimirInvoiceArca(this.invoice.id)
+        } else{
+          this.reimprimir();
+        }
+      } catch (error) {
+
+        console.log(error);
+        this.popupComponent.isConfirmationvisible = false;
+      }
+    }
+  }
+
+  getIntegrationLog(id: number):Array<InvoiceLog> | any {
+    this.logLoading = true;
+    this.service.getIntegrationLogById(id).subscribe({
+      next:(r: Array<InvoiceLog>) =>{
+        this.invoiceLog = r;
+        this.logLoading = false;
+      },
+      error:(e) =>{
+        this.logLoading = false;
+      }
+    })
+  }
+
+  parserXML(data: string){    
+    const xmlParser = new XMLParser();
+    if (data == null) {return '';}
+    let parsed = xmlParser.parse(data);
+    return JSON.stringify(parsed, null, 2)
+  }
+
+  imprimirInvoiceArca(id: number): void {
+    let fecha: Date = new Date();
+    let año: string = fecha.getFullYear().toString();
+    let mes = (fecha.getMonth() + 1).toString().padStart(2, '0');
+    let dia = fecha.getDate().toString().padStart(2, '0');
+    let hora: string = fecha.getHours().toString().padStart(2, '0');
+    let minutos: string = fecha.getMinutes().toString().padStart(2, '0');
+    let segundos: string = fecha.getSeconds().toString().padStart(2, '0');
+    const fileName = `Factura_${año}${mes}${dia}${hora}${minutos}${segundos}`;
+    this.service.printInvoiceARCA(id).subscribe({
+      next: (r) => { this.downloadFile(r, fileName); }
+
+    }).add(()=>{
+      this.popupComponent.isConfirmationvisible = false;
+    });
+  }
+
+  downloadFile(response: any, fileName: string) {
+    const dataType = response.type;
+    const binaryData = [];
+
+    binaryData.push(response);
+
+    const filtePath = window.URL.createObjectURL(new Blob(binaryData, { type: dataType }))
+    const downloadLink = document.createElement('a');
+    downloadLink.href = filtePath;
+    downloadLink.setAttribute('download', fileName);
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+  }
+
+  createArca(id: number | any):void{
+    
+    let observacion = this.formObservacion.controls['observation'].value;
+    this.loading = true;
+    try{
+      if (id != null) {
+        this.service.createInvoiceARCA(id, observacion).subscribe({
+          next: (r)=>{ this.router.navigate(['/home/invoices/invoices-sale']);},
+          error: (e)=>{
+            console.log(e);
+            
+          }
+        });
+      }
+    }
+    catch (error){
+      console.log(error);
+      this.popupARCAComponent.isConfirmationvisible = false;
+    }
+    finally{
+      this.popupARCAComponent.isConfirmationvisible = false;
+      this.loading = false;
+      this.close(true);
+    }
+  }
+
+  isFacturaArcaDisabled(): boolean {
+    return (this.invoice?.integrationSuccess === true || this.invoice?.cae != null);
+  }
   
-/*Evento Reimprimir una factura */ 
-reimprimir(): void{
-  this.loading = true;
- this.service.Reprint(this.type, this.invoiceNumber).subscribe({
-  next: (r:any)=>
-  {
-    this.showMessageSuccess('Reimpresion de la factura satisfactoria');
-    this.popupComponent.isConfirmationvisible = false;
-    this.loading = false;
-  }, 
-  error: (e) =>{
-    this.showMessageError(e.error.descripcion);
-    this.loading = false;
+  showObservationForm(): boolean {
+    return (this.invoice?.integrationSuccess == false || (this.invoice?.cae == null && this.invoice?.caeExpirationTime == null));
   }
- });
-}
-
-hideReprint() {
-  if(this.invoiceNumber == 0){
-    this.showMessageError('El numero de factura no puede estar en 0');
-    this.popupComponent.isConfirmationvisible = false;
-
-  }else{
-  
-  try{
-    this.reimprimir();
-  }catch(error){
-
-  console.log(error);
-  this.popupComponent.isConfirmationvisible = false;
-  }
-  }
-
-}
 
 }
 

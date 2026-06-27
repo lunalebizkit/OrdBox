@@ -1,6 +1,6 @@
 ﻿using Kiltex.SistemaGestion.Api.Filter;
 using Kiltex.SistemaGestion.Domain.Enum;
-using Kiltex.SistemaGestion.Domain.Model;
+using Kiltex.SistemaGestion.Services.ARCA.Interface;
 using Kiltex.SistemaGestion.Services.Common;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
 using Kiltex.SistemaGestion.Services.Services;
@@ -12,10 +12,12 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Invoice
     public class InvoiceController : ApiBaseController
     {
         private readonly InvoiceService _service;
+        private readonly IArcaIntegracion _arcaIntegracionService;
 
-        public InvoiceController(InvoiceService service)
+        public InvoiceController(InvoiceService service, IArcaIntegracion arcaIntegracionService)
         {
             _service = service;
+            _arcaIntegracionService = arcaIntegracionService;
         }
 
         /// <summary>
@@ -96,7 +98,7 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Invoice
 
         [HttpGet]
         [Route("[action]")]
-        [AllowAccess(Permission = new EPermission[] {EPermission.GetInvoice})]
+        [AllowAccess(Permission = new EPermission[] { EPermission.GetInvoice })]
         public async Task<IActionResult> AlicuotaIvaTxt([FromQuery] DateTime from, DateTime to)
         {
             var invoices = _service.GetInvoiceByDate(from, to);
@@ -123,10 +125,18 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Invoice
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
+        [Route("")]
         [AllowAccess(Permission = new EPermission[] { EPermission.CreateInvoice })]
         public async Task<IActionResult> New([FromBody] DtoRequestInvoice model)
         {
-            return Return(await _service.NewInvoice(model).ConfigureAwait(false));
+            var invoiceId = await _service.NewInvoice(model).ConfigureAwait(false);
+
+            if (invoiceId.Success && invoiceId.Data != null)
+            {
+               await GetCAEInvoiceAsync(invoiceId.Data.Id);
+            }
+
+            return Return(invoiceId);
         }
 
         /// <summary>
@@ -141,5 +151,55 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Invoice
         {
             return Return(await _service.InvoiceReport(filter).ConfigureAwait(false));
         }
+
+        /// <summary>
+        /// Retorna el log de integración con ARCA de una factura específica, buscando por ID de la factura. Esto incluye detalles de la comunicación, errores y respuestas recibidas durante el proceso de integración.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("[action]")]
+        [AllowAccess(Permission = new EPermission[] { EPermission.GetInvoice })]
+        public async Task<IActionResult> GetIntegrationLogById(long id)
+        {
+            return Return(await _service.GetIntegrationLogById(id).ConfigureAwait(false));
+        }
+        
+        /// <summary>
+        /// Invoca un llamado a ARCA integracion y agrga observacion
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("getcaeinvoice")]
+        [AllowAccess(Permission = new EPermission[] { EPermission.GetInvoice })]
+        public async Task<IActionResult> GetCAEInvoice(long id, string? observacion)
+        {
+           return await GetCAEInvoiceAsync(id, DateTime.Now, observacion);
+        }
+
+        #region PRIVATE
+
+        private async Task<IActionResult> GetCAEInvoiceAsync(long invoiceId, DateTime? dateTime = null, string? observacion = null)
+        {
+            var invoice = await _service.GetById(invoiceId).ConfigureAwait(false);
+
+            if (invoice.Success && invoice.Data != null)
+            {
+                invoice.Data.DateTime = dateTime == null ? invoice.Data.DateTime : DateTime.Now;
+
+                if (!string.IsNullOrEmpty(observacion)) { invoice.Data.Observation = observacion; }
+
+                var responseCAE = await _arcaIntegracionService.CrearComprobanteAsync(invoice.Data).ConfigureAwait(false);
+
+                if (!string.IsNullOrEmpty(responseCAE.Cae) || responseCAE.InvoiceNumber > 0)
+                {
+                  return Return(await _service.Update(invoice.Data, responseCAE).ConfigureAwait(false));
+                }
+            }
+            return BadRequest("No se encontro número de factura");
+        }
+
+        #endregion
     }
 }

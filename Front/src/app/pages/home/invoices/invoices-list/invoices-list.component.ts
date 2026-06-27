@@ -7,6 +7,7 @@ import { InvoicesViewDrawerComponent } from '../invoices-view-drawer/invoices-vi
 import { Permission } from 'src/app/common/auth/models/permissions.enum';
 import { SearchCustomFilterModel, parseFilterCustomSeachData, resetQuerySearchFilter } from 'src/app/common/components/model/search.custom.filter.model';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { InvoiceVersion } from 'src/app/common/auth/models/invoice-versions.enum';
 
 @Component({
   selector: 'app-invoices-list',
@@ -22,6 +23,7 @@ export class InvoicesListComponent implements OnInit {
   index!: number;
   id!: number;
   dato!: any
+  invoiceVersion= InvoiceVersion;
   /*
    ** Catidad total de entidades
    */
@@ -99,7 +101,7 @@ export class InvoicesListComponent implements OnInit {
   }
   
   formaterDate(date: string | number | Date): string {
-    return formatDate(date, 'YYYY-MM-dd', this.locale);
+    return formatDate(date, 'YYYY-MM-dd hh:mm', this.locale);
   }
 
   currencyFormat(data: any): string {
@@ -192,8 +194,8 @@ export class InvoicesListComponent implements OnInit {
   openComponentInvoicesView(): void {
     const drawerRefCustomer = this.drawerService.create<
       InvoicesViewDrawerComponent,
-      { filter: number },
-      number
+      { filter: number }
+      
     >({
       nzContent: InvoicesViewDrawerComponent,
       nzSize: 'large',
@@ -203,6 +205,15 @@ export class InvoicesListComponent implements OnInit {
       },
       nzClosable: false,
     });
+
+    drawerRefCustomer.afterClose.subscribe({
+      next: (isRefresh : [boolean]) =>{
+        if (isRefresh){
+          this.queryParams = resetQuerySearchFilter();
+        this.search();}
+      },
+      error: ()=>{}
+    })
   }
 
   reimprimirInvoice(id: number, invoiceNumber: number): void {
@@ -232,6 +243,21 @@ export class InvoicesListComponent implements OnInit {
     downloadLink.setAttribute('download', fileName);
     document.body.appendChild(downloadLink);
     downloadLink.click();
-  } 
+  }
+
+  imprimirInvoiceArca(id: number, invoiceNumber: number): void {
+    let fecha: Date = new Date();
+    let año: string = fecha.getFullYear().toString();
+    let mes = (fecha.getMonth() + 1).toString().padStart(2, '0');
+    let dia = fecha.getDate().toString().padStart(2, '0');
+    let hora: string = fecha.getHours().toString().padStart(2, '0');
+    let minutos: string = fecha.getMinutes().toString().padStart(2, '0');
+    let segundos: string = fecha.getSeconds().toString().padStart(2, '0');
+    const fileName = `Factura_${año}${mes}${dia}${hora}${minutos}${segundos}`;
+    this.service.printInvoiceARCA(id).subscribe({
+      next: (r) => { this.downloadFile(r, fileName); }
+
+    });
+  }
 
 }

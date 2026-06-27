@@ -4,6 +4,7 @@ using Kiltex.SistemaGestion.Domain;
 using Kiltex.SistemaGestion.Domain.Enum;
 using Kiltex.SistemaGestion.Domain.Model;
 using Kiltex.SistemaGestion.SDK.Error;
+using Kiltex.SistemaGestion.Services.ARCA.Dto.Response;
 using Kiltex.SistemaGestion.Services.Common;
 using Kiltex.SistemaGestion.Services.ImpresoraFiscal;
 using Kiltex.SistemaGestion.Services.ImpresoraFiscal.Printer250F;
@@ -25,6 +26,7 @@ namespace Kiltex.SistemaGestion.Services.Services
     {
         private readonly PrinterStatus _config;
         private readonly IPrinter _printer;
+
         public InvoiceService(ErrorManager logger, DBContext context, IMapper maper, IPrinter printer, PrinterStatus config, IConfiguration configuration) :
             base(logger, context, maper, configuration)
         {
@@ -126,18 +128,47 @@ namespace Kiltex.SistemaGestion.Services.Services
         {
             var transaction = _contextSql.Database.BeginTransaction();
             var invoiceModel = _mapper.Map<Invoice>(model);
+            invoiceModel.DateTime = DateTime.Now;
+
             var newProduct = new Product();
             try
             {
                 if (invoiceModel.Id == 0)
                 {
+                    var regex = new Regex(@"^-?[0-9][0-9,\.]+$");
+
+                    #region VERIFICACIONES
+                    //Verifico que el DNI O CUIT no tenga letras
+                    if (!regex.IsMatch(model.CustomerCuit))
+                    {
+                        _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
+                        return Error<IdResponse<long>>(new OperationExceptions("000", "Error al cargar cliente, El CUIT/DNI tiene que ser numerico"));
+                    }
+                    //Verifico que el CUIT O DNI no se pasen de los parametros
+                    if (model.CustomerCuit.Length > 11 || model.CustomerCuit.Length < 7)
+                    {
+                        _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
+                        return Error<IdResponse<long>>(new OperationExceptions("000", "Error al cargar cliente, verifique cantidad de digitos"));
+                    }
+
+                    //Verfico que la factura A no pueda realizarse al colocar un DNI
+                    if (model.Type == (int)ETypeReceipt.A && model.CustomerCuit.Length != 11)
+                    {
+                        _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
+                        return Error<IdResponse<long>>(new OperationExceptions("000", "Error al cargar cliente, no puede cargar un DNI con Factura tipo A"));
+                    }
+                    //Verifico que el DNI tenga mayor a 7 caracteres y menor a 9
+                    if (model.Type == (int)ETypeReceipt.B && model.CustomerCuit.Length < 7 || model.CustomerCuit.Length > 9 && model.CustomerCuit.Length != 11)
+                    {
+                        _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
+                        return Error<IdResponse<long>>(new OperationExceptions("000", "Error al cargar cliente, verifique DNI"));
+                    }
+                    #endregion
+
                     if (invoiceModel.CustomerId == 0)
                     {
                         invoiceModel.CustomerId = GetUserAdminId();
                     }
-
-                    var regex = new Regex(@"^-?[0-9][0-9,\.]+$");
-
 
                     foreach (var detail in invoiceModel.InvoiceDetails)
                     {
@@ -157,34 +188,6 @@ namespace Kiltex.SistemaGestion.Services.Services
 
                     if (_config.Status)
                     {
-                        #region VERIFICACIONES
-                        //Verifico que el DNI O CUIT no tenga letras
-                        if (!regex.IsMatch(model.CustomerCuit))
-                        {
-                            _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
-                            return Error<IdResponse<long>>(new OperationExceptions("000", "Error al cargar cliente, El CUIT/DNI tiene que ser numerico"));
-                        }
-                        //Verifico que el CUIT O DNI no se pasen de los parametros
-                        if (model.CustomerCuit.Length > 11 || model.CustomerCuit.Length < 7)
-                        {
-                            _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
-                            return Error<IdResponse<long>>(new OperationExceptions("000", "Error al cargar cliente, verifique cantidad de digitos"));
-                        }
-
-                        //Verfico que la factura A no pueda realizarse al colocar un DNI
-                        if (model.Type == 1 && model.CustomerCuit.Length != 11)
-                        {
-                            _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
-                            return Error<IdResponse<long>>(new OperationExceptions("000", "Error al cargar cliente, no puede cargar un DNI con Factura tipo A"));
-                        }
-                        //Verifico que el DNI tenga mayor a 7 caracteres y menor a 9
-                        if (model.Type == 2 && model.CustomerCuit.Length < 7 || model.CustomerCuit.Length > 9 && model.CustomerCuit.Length != 11)
-                        {
-                            _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
-                            return Error<IdResponse<long>>(new OperationExceptions("000", "Error al cargar cliente, verifique DNI"));
-                        }
-                        #endregion
-
                         var error = await PrintInvoice(invoiceModel, ct);
 
                         #region ERRORES
@@ -213,13 +216,48 @@ namespace Kiltex.SistemaGestion.Services.Services
                             return Error<IdResponse<long>>(new OperationExceptions("000", "Error al cerrar documento, intente con un cierre Z"));
                         }
 
-
                         #endregion
 
                         invoiceModel.InvoiceNumber = long.Parse(error);
                     }
 
                     await _contextSql.Invoices.AddAsync(invoiceModel, ct).ConfigureAwait(false);
+                }
+
+                await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
+                transaction.Commit();
+                return Ok(new IdResponse<long>(invoiceModel.Id));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
+                return Error<IdResponse<long>>(new OperationExceptions(ErrorsCodes.C_999_ERROR_GENERICO, ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO)));
+            }
+        }
+
+        public async Task<OperationResponse<IdResponse<long>>> Update(DtoRequestInvoice model, DtoResponseARCAInvoice responseARCAInvoice,CancellationToken ct = default)
+        {
+            var transaction = _contextSql.Database.BeginTransaction();
+            var invoiceModel = _mapper.Map<Invoice>(model);
+            var newProduct = new Product();
+            try
+            {
+                if (invoiceModel.Id != 0)
+                {  
+                    if (invoiceModel.CustomerId == 0)
+                    {
+                        invoiceModel.CustomerId = GetUserAdminId();
+                    }      
+                    
+                    Invoice invoice = await _contextSql.Invoices.FirstAsync(p => p.Id == invoiceModel.Id).ConfigureAwait(false);
+
+                    invoiceModel.CAE = string.IsNullOrEmpty(responseARCAInvoice.Cae) ? null : responseARCAInvoice.Cae;
+                    invoiceModel.CAEExpirationDate = responseARCAInvoice.FechaVencimientoCae.HasValue ? responseARCAInvoice.FechaVencimientoCae.Value : null;
+                    invoiceModel.IntegrationSuccess = !string.IsNullOrEmpty(responseARCAInvoice.Cae);
+                    invoiceModel.InvoiceNumber = responseARCAInvoice.InvoiceNumber;
+
+                    _contextSql.Entry(invoice).State = EntityState.Detached;
+                    _contextSql.Invoices.Update(invoiceModel);
                 }
 
                 await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
@@ -312,6 +350,26 @@ namespace Kiltex.SistemaGestion.Services.Services
             }
         }
 
+        public async Task<OperationResponse<IEnumerable<DtoResponseIntegrationLogInvoice>>> GetIntegrationLogById(long invoiceId, CancellationToken ct = default)
+        {
+            try
+            {
+                IEnumerable<DtoResponseIntegrationLogInvoice> logs = new List<DtoResponseIntegrationLogInvoice>();
+                string invoicesScript = SqlScripts.GetIntegrationLogInvoiceByInvoiceId;
+                using (var connection = new SqlConnection(ConnectionString))
+                {
+                    logs = await connection.QueryAsync<DtoResponseIntegrationLogInvoice>
+                        (invoicesScript, param: new { @invoiceid = invoiceId });
+                }
+                return new OperationResponse<IEnumerable<DtoResponseIntegrationLogInvoice>>(logs);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ErrorsCodes.C_010_ERROR_EXCEPTION, ErrorsMessages.GetMessage(ErrorsCodes.C_010_ERROR_EXCEPTION), ex: ex);
+                throw;
+            }
+        }
+
         #region Private Method
         private byte GetUserAdminId()
         {
@@ -363,11 +421,8 @@ namespace Kiltex.SistemaGestion.Services.Services
                     decimal totalBaseIva27 = 0;
 
                     // Variables para facturas B con iva incluido
-                    decimal totalIva10B = 0;
                     decimal totalBaseIva10B = 0;
-                    decimal totalIva21B = 0;
-                    decimal totalBaseIva21B = 0;
-                    decimal totalIva27B = 0;                    
+                    decimal totalBaseIva21B = 0;             
                     decimal totalBaseIva27B = 0;                    
 
                     foreach (InvoiceDetail invoiceDetail in item.InvoiceDetails)
@@ -742,8 +797,7 @@ namespace Kiltex.SistemaGestion.Services.Services
         #endregion
 
         #region Private
-
-
+               
         #endregion
     }
 }
