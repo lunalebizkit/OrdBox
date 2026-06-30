@@ -14,7 +14,7 @@ namespace Kiltex.SistemaGestion.Services.Mapper
                 .ForMember(destination => destination.Version, option => option.MapFrom(source => CustomizationConstant.CurrentVersion))
                 .AfterMap((o, d, c) =>
                 {
-                    d.IvaTotal = o.InvoiceDetails.Sum(e => (e.Quantity * e.Price) - ((e.Quantity * e.Price) / (1 + e.Iva / 100.00m)));
+                    d.IvaTotal = o.InvoiceDetails.Sum(e => (e.Quantity * e.Price) - ((e.Quantity * e.Price) / (1 + (e.Iva / 100.00m)) ));
                 });
 
             CreateMap<Invoice, DtoRequestInvoice>();

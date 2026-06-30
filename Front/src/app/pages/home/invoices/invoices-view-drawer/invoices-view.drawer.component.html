@@ -146,8 +146,8 @@
     </nz-collapse-panel>
   </nz-collapse>
 
-  <nz-collapse *ngIf="this.invoice?.version == invoiceVersion.Arca">
-    <nz-collapse-panel nzHeader="Log ARCA" [nzActive]="true" [nzShowArrow]="true" class="{{ this.tipo }}">
+  <nz-collapse *ngIf="this.invoice?.version == invoiceVersion.Arca" >
+    <nz-collapse-panel nzHeader="Log ARCA" [nzActive]="false" [nzShowArrow]="true" class="{{ this.tipo }}">
       <nz-content>
         <nz-table [nzBordered]="true" nzTemplateMode [nzSize]="'small'">
           <thead>

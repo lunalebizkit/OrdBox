@@ -1770,6 +1770,47 @@ namespace Kiltex.SistemaGestion.Services.Services
             #endregion
             paragraph.Add(totalIva);
 
+            #region Transparencia Fiscal
+            PdfPTable transparenciafiscalTable = new PdfPTable(2);
+            transparenciafiscalTable.SpacingBefore = 30f;
+            float[] columnWidthsTransparenciaFiscal = { 6f, 4f };
+            transparenciafiscalTable.SetWidths(columnWidthsTransparenciaFiscal);
+
+            // Primera columna: texto
+            Phrase leyendaTF = new();
+            leyendaTF.Add(new Chunk("Régimen de Transparencia Fiscal al Consumidor Ley 27.743", fontTextBoldIvas));
+            PdfPCell textCell = new PdfPCell(leyendaTF)
+            {
+                Border = PdfPCell.NO_BORDER,
+                PaddingTop = 10f,
+                VerticalAlignment = Element.ALIGN_CENTER,
+                HorizontalAlignment = Element.ALIGN_JUSTIFIED,
+                PaddingBottom = 10f,
+                BackgroundColor = BaseColor.LightGray
+            };
+            textCell.Phrase.Font.Size = 8;
+            transparenciafiscalTable.AddCell(textCell);
+
+            Phrase valorresIvaTF = new();
+            valorresIvaTF.Add(new Chunk($"IVA contenido {invoice.IvaTotal}", fontTextBoldIvas));
+            valorresIvaTF.Add(Chunk.Newline);
+            valorresIvaTF.Add(new Chunk(""));
+            valorresIvaTF.Add(new Chunk("Otros impuestos nacionales indirectos: 0", fontTextBoldIvas));
+
+            PdfPCell ivaTFcell = new PdfPCell(valorresIvaTF)
+            {
+                Border = PdfPCell.NO_BORDER,
+                PaddingTop = 10f,
+                PaddingBottom = 10f,
+                HorizontalAlignment = Element.ALIGN_RIGHT,
+                BackgroundColor = BaseColor.LightGray
+
+            };
+
+            #endregion
+            ivaTFcell.Phrase.Font.Size = 8;
+            transparenciafiscalTable.AddCell(ivaTFcell);
+            paragraph.Add(transparenciafiscalTable);
             return paragraph;
         }
 
