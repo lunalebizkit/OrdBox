@@ -11,11 +11,13 @@ namespace Kiltex.SistemaGestion.Api.Controllers.PDF
     public class PdfController : ApiBaseController
     {
         private readonly PdfService _service;
+        private readonly EmailService _emailservice;
 
 
-        public PdfController(PdfService service)
+        public PdfController(PdfService service, EmailService emailservice)
         {
             _service = service;
+            _emailservice = emailservice;
         }
 
         //COmprobante de Compra
@@ -271,20 +273,42 @@ namespace Kiltex.SistemaGestion.Api.Controllers.PDF
         [Route("pdfcomprobanteventaarca")]
         [AllowAnonymous]
         public async Task<IActionResult> PdfComprobanteARCA(long id, [FromServices] InvoiceService invoiceService)
-        {
-            var factura = await invoiceService.GetById(id);
+        { 
+            return File(await GenerarPdfFactura(id, invoiceService), "application/pdf", $"Factura_{DateTime.Now:dd-MM-yyyy}.pdf");
+        }
 
-            if (factura.Data == null)
+        /// <summary>
+        /// Send Invoice Attachment to client and generate PDF for the invoice.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="invoiceService"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("enviarpdfcomprobanteventa")]
+        [AllowAnonymous]
+        public async Task<IActionResult> EnviarPdfComprobanteARCA(long id, string emailTo, [FromServices] InvoiceService invoiceService)
+        { 
+            if (string.IsNullOrEmpty(emailTo))
             {
-                return BadRequest(id);
+                return BadRequest("Email address is required.");
             }
 
-            Paragraph paragraph = new Paragraph();
+            return Return(await _emailservice.SendEmailInvoice(emailTo, await GenerarPdfFactura(id, invoiceService)));
+        }
 
+        #region Private Method
+        private async Task<byte[]> GenerarPdfFactura(long id, InvoiceService invoiceService)
+        {
+            var factura = await invoiceService.GetById(id);
+            if (factura.Data == null) return null;
+
+            Paragraph paragraph = new Paragraph();
             paragraph.Add(_service.CabeceraArca(factura.Data));
             var contenido = await _service.Imprimir(paragraph, factura.Data);
 
-            return File(contenido.Data, "application/pdf", $"Factura_{DateTime.Now:dd-MM-yyyy}.pdf");
+            return contenido.Data;
         }
+
+        #endregion
     }
 }
