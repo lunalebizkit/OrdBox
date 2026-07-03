@@ -6,7 +6,7 @@
   [colors]="'#52c41a'" [btnFacturaARCAText]="'Factura ARCA'" [disabledARCA]="this.isFacturaArcaDisabled()"
   [hideARCA]="this.invoice?.version == invoiceVersion.Default" (onFacturaARCAClick)="popupARCAComponent.showConfirmation()"
   
-  [iconEnviarFacturaARCA]="'mail'" [disabledEnviarARCA]="!this.isSendFacturaArcaDisabled()" (onEnviarEmailFacturaARCAClick)="this.popupEnviarFacturaARCA.showSendEmailConfirmation()" >
+  [disabledEnviarARCA]="!this.isSendFacturaArcaDisabled()" (onEnviarEmailFacturaARCAClick)="this.popupEnviarFacturaARCA.showSendEmailConfirmation()" >
 </app-header-op-buttons>
 
 <nz-collapse class="{{ this.tipo }}">

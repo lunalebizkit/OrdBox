@@ -159,7 +159,9 @@
    [disabled]="disabledEnviarARCA"   
    (click)="onEnviarEmailFacturaARCAClick.emit($event)"   
    >
-   <i nz-icon [nzType]="iconEnviarFacturaARCA"></i>{{ btnEnviarFacturaARCAText }}
+   <i nz-icon nzType="mail" nzTheme="twotone" nzTwotoneColor="#fc413d" >     
+  </i>
+     {{ btnEnviarFacturaARCAText }}
    </button>
 
    
