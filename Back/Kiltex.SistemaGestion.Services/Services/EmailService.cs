@@ -119,7 +119,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                 string emailFrom = _config.GetSection("EmailUsername").Value;
                 string pass = _config.GetSection("EmailPassword").Value;
 
-                email.From.Add(new MailboxAddress("DANTE REFRIGERACION", emailFrom));
+                email.From.Add(new MailboxAddress("REFRIGERACION DANTE", emailFrom));
                 string templateEail = Path.Combine(_Env.ContentRootPath, "Assets", "body.cshtml");
                 string template = File.ReadAllText(templateEail);
                 string remplazar = template.Replace("@Model.Year", DateTimeOffset.Now.Year.ToString());
