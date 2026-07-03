@@ -28,6 +28,7 @@ export class InvoicesViewDrawerComponent extends BaseComponent implements OnInit
   @ViewChild('popupReimprimir') popupComponent!: PopupConfirmationComponent;
   @Input('btnReprintText') btnReprintText: string = 'Reimprimir';
   @ViewChild('popupFacturaARCA') popupARCAComponent!: PopupConfirmationComponent;
+  @ViewChild('popupEnviarFacturaARCA') popupEnviarFacturaARCA!: PopupConfirmationComponent;
 
   // variables Generales
   isLoading = true;
@@ -257,10 +258,20 @@ export class InvoicesViewDrawerComponent extends BaseComponent implements OnInit
     return (this.invoice?.integrationSuccess === true || this.invoice?.cae != null);
   }
   
+  isSendFacturaArcaDisabled(): boolean {
+    return ((this.invoice?.integrationSuccess === true || this.invoice?.cae != null) && this.invoice.version == InvoiceVersion.Arca);
+  }
+  
   showObservationForm(): boolean {
     return (this.invoice?.integrationSuccess == false || (this.invoice?.cae == null && this.invoice?.caeExpirationTime == null));
   }
 
+  sendEmail(email: string, id: number | any,) {
+  this.service.sendInvoiceARCA(id, email).subscribe({
+    next: ()=>{ this.popupEnviarFacturaARCA.handleEmailCancel()},
+    error: ()=>{this.popupEnviarFacturaARCA.handleEmailCancel()}
+  });
+  }
 }
 
 

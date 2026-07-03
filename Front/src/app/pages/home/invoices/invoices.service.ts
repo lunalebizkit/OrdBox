@@ -113,5 +113,10 @@ export class InvoiceService {
   public createInvoiceARCA(id: number, observacion: string | null): Observable<any> {
     return this.api.get(`invoice/getcaeinvoice?id=${id}&observacion=${observacion ?? ''}`, false) ;
   }
+  
+  public sendInvoiceARCA(id: number, emailTo: string): Observable<any> {
+    return this.api.get(`Pdf/enviarpdfcomprobanteventa?id=${id}&emailTo=${emailTo}`, false) ;
+  }
+  
 }
 
