@@ -4,7 +4,9 @@
   [disabled]="(invoiceNumber == 0) ? true : false" [title]="'Comprobantes de Venta'" [iconReprint]="'file-excel'"
   [iconBack]="'rollback'" [iconTitle]="'container'" (onReprintClick)="popupReimprimir.showConfirmation()"
   [colors]="'#52c41a'" [btnFacturaARCAText]="'Factura ARCA'" [disabledARCA]="this.isFacturaArcaDisabled()"
-  [hideARCA]="this.invoice?.version == invoiceVersion.Default" (onFacturaARCAClick)="popupARCAComponent.showConfirmation()">
+  [hideARCA]="this.invoice?.version == invoiceVersion.Default" (onFacturaARCAClick)="popupARCAComponent.showConfirmation()"
+  
+  [disabledEnviarARCA]="!this.isSendFacturaArcaDisabled()" (onEnviarEmailFacturaARCAClick)="this.popupEnviarFacturaARCA.showSendEmailConfirmation()" >
 </app-header-op-buttons>
 
 <nz-collapse class="{{ this.tipo }}">
@@ -195,5 +197,9 @@
   <app-popup-confirmation #popupFacturaARCA [title]="'Confirmar enviar factura a ARCA'"
     [header]="'¿Está seguro de que desea crear esta factura?'" (handleOk)="createArca(this.invoice?.id)"
     [disabled]="loading">
+  </app-popup-confirmation>
+
+  <app-popup-confirmation #popupEnviarFacturaARCA [title]="'Enviar Factura por E-mail'"
+    (handleSend)="sendEmail($event, this.invoice?.id)">
   </app-popup-confirmation>
 </nz-collapse>
