@@ -198,6 +198,7 @@ export class InvoicesViewDrawerComponent extends BaseComponent implements OnInit
   }
 
   imprimirInvoiceArca(id: number): void {
+    this.loading = true;
     let fecha: Date = new Date();
     let año: string = fecha.getFullYear().toString();
     let mes = (fecha.getMonth() + 1).toString().padStart(2, '0');
@@ -207,10 +208,11 @@ export class InvoicesViewDrawerComponent extends BaseComponent implements OnInit
     let segundos: string = fecha.getSeconds().toString().padStart(2, '0');
     const fileName = `Factura_${año}${mes}${dia}${hora}${minutos}${segundos}`;
     this.service.printInvoiceARCA(id).subscribe({
-      next: (r) => { this.downloadFile(r, fileName); }
+      next: (r) => { this.downloadFile(r, fileName); this.loading = false}
 
     }).add(()=>{
       this.popupComponent.isConfirmationvisible = false;
+      this.loading = false
     });
   }
 

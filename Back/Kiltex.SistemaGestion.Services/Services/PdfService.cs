@@ -41,84 +41,57 @@ namespace Kiltex.SistemaGestion.Services.Services
             _logger = logger;
         }
 
-        public async Task<OperationResponse<byte[]>> PrintInvoiceARCA(DtoRequestInvoice invoice)
+        public Task<OperationResponse<byte[]>> PrintInvoiceARCA(DtoRequestInvoice invoice)
         {
+            using (var stream = new MemoryStream())
             using (Document document = new Document(PageSize.A4, 5f, 5f, 15f, 80f))
             {
-                string filePath = Path.Combine(_Env.ContentRootPath, "PDF_Factura");
-                string fileName = $"archivo_{DateTime.Now.ToString("yyyyMMdd")}.pdf";
-                string fullPath = Path.Combine(filePath, fileName);
-                if (!Directory.Exists(filePath))
-                {
-                    Directory.CreateDirectory(filePath);
-                }
-
                 try
                 {
-                    using (var stream = new MemoryStream())
+                    PdfWriter writer = PdfWriter.GetInstance(document, stream);
+                    writer.PageEvent = new FooterWithCAEEvent(invoice, _configuration.GetSection("Pdf:Cuit").Value.ToString());
+
+                    document.Open();
+
+                    document.Add(this.CabeceraArca(invoice));
+
+                    int itemsPerPage = 25;
+                    int itemCount = 0;
+
+                    PdfPTable table = CrearTablaDetalle();
+
+                    foreach (var item in invoice.InvoiceDetails)
                     {
-                        PdfWriter writer = PdfWriter.GetInstance(document, stream);
+                        AgregarFilaDetalle(table, item);
 
-                        writer.PageEvent = new FooterWithCAEEvent(invoice, _configuration.GetSection("Pdf:Cuit").Value.ToString());
+                        itemCount++;
 
-                        document.Open();
-
-                        // Encabezado
-                        var headerFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12);
-                        document.Add(this.CabeceraArca(invoice));
-
-                        // Tabla de detalle con paginación
-                        int itemsPerPage = 25;
-                        int itemCount = 0;
-
-                        PdfPTable table = CrearTablaDetalle();
-
-                        foreach (var item in invoice.InvoiceDetails)
-                        {
-                            AgregarFilaDetalle(table, item);
-
-                            itemCount++;
-
-                            if (itemCount == itemsPerPage)
-                            {
-                                document.Add(table);
-                                document.NewPage();
-
-                                // Reiniciar tabla y contador
-                                table = CrearTablaDetalle();
-                                itemCount = 0;
-                            }
-                        }
-
-                        if (itemCount > 0)
+                        if (itemCount == itemsPerPage)
                         {
                             document.Add(table);
+                            document.NewPage();
+                            table = CrearTablaDetalle();
+                            itemCount = 0;
                         }
-
-                        PdfPTable totalIva = CrearTablaTotales(invoice);
-                        document.Add(totalIva);
-
-                        document.Close();
-
-                        byte[] pdfBytes = stream.ToArray();
-
-                        File.WriteAllBytes(fullPath, pdfBytes);
-
-                        return new OperationResponse<byte[]>(pdfBytes);
                     }
+
+                    if (itemCount > 0)
+                    {
+                        document.Add(table);
+                    }
+
+                    PdfPTable totalIva = CrearTablaTotales(invoice);
+                    document.Add(totalIva);
+
+                    document.Close();
+                    byte[] pdfBytes = stream.ToArray();
+                    return Task.FromResult(new OperationResponse<byte[]>(pdfBytes));
+
                 }
                 catch (Exception ex)
                 {
                     _logger.LogError(ErrorsCodes.C_010_ERROR_EXCEPTION, ex: ex);
                     throw;
-                }
-                finally
-                {
-                    document.Dispose();
-                    if (File.Exists(fullPath))
-                    {
-                        File.Delete(fullPath);
-                    }
                 }
             }
         }
@@ -373,7 +346,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                 PaddingBottom = 10f,
                 PaddingTop = 5f
             });
-            
+
             table.AddCell(new PdfPCell(new Phrase("Importe", font))
             {
                 Border = PdfPCell.BOTTOM_BORDER | PdfPCell.TOP_BORDER,
@@ -413,7 +386,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                         PaddingTop = 10f
                     });
 
-                    table.AddCell(new PdfPCell(new Phrase((item.Iva % 1== 0) ? ((int)item.Iva).ToString() : item.Iva.ToString(CultureInfo.InvariantCulture), textFont))
+                    table.AddCell(new PdfPCell(new Phrase((item.Iva % 1 == 0) ? ((int)item.Iva).ToString() : item.Iva.ToString(CultureInfo.InvariantCulture), textFont))
                     {
                         HorizontalAlignment = Element.ALIGN_RIGHT,
                         Border = PdfPCell.NO_BORDER,
@@ -457,7 +430,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                         Border = PdfPCell.NO_BORDER,
                         PaddingTop = 10f
                     });
-                    
+
                     table.AddCell(new PdfPCell(new Phrase(" ", textFont))
                     {
                         HorizontalAlignment = Element.ALIGN_RIGHT,
@@ -640,7 +613,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                 table2.AddCell(new PdfPCell(new Phrase("Total:", textFont))
                 {
                     HorizontalAlignment = Element.ALIGN_RIGHT,
-                    Border= PdfCell.NO_BORDER,
+                    Border = PdfCell.NO_BORDER,
                 });
                 table2.AddCell(new PdfPCell(new Phrase(string.Format("{0,7:##.00}", "$" + resumen.Total.ToString()), textFont))
                 {
@@ -891,10 +864,11 @@ namespace Kiltex.SistemaGestion.Services.Services
 
                 paragraphTotal.Add(tableTotal);
 
-                if (!string.IsNullOrEmpty(model.Concept)) {
+                if (!string.IsNullOrEmpty(model.Concept))
+                {
 
                     PdfPTable tableConcept = new PdfPTable(2);
-                    float[] columnWidthsConcepts = { 2f, 6f}; // Ancho relativo de cada columna
+                    float[] columnWidthsConcepts = { 2f, 6f }; // Ancho relativo de cada columna
                     tableConcept.SetWidths(columnWidthsConcepts);
 
                     tableConcept.SpacingAfter = 25f;
@@ -917,7 +891,7 @@ namespace Kiltex.SistemaGestion.Services.Services
 
                     paragraphTotal.Add(tableConcept);
                 }
-                
+
                 paragraph.Add(paragraphTotal);
 
             }
@@ -976,7 +950,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                 PaddingBottom = 10f,
                 PaddingTop = 5f
             });
-            
+
             table.AddCell(new PdfPCell(new Phrase("Importe", font))
             {
                 Border = PdfPCell.BOTTOM_BORDER | PdfPCell.TOP_BORDER,
@@ -1016,7 +990,7 @@ namespace Kiltex.SistemaGestion.Services.Services
 
                     if (item.Iva != null)
                     {
-                        table.AddCell(new PdfPCell(new Phrase((item.Iva % 1== 0) ? ((int)item.Iva).ToString() : item.Iva.ToString(CultureInfo.InvariantCulture), textFont))
+                        table.AddCell(new PdfPCell(new Phrase((item.Iva % 1 == 0) ? ((int)item.Iva).ToString() : item.Iva.ToString(CultureInfo.InvariantCulture), textFont))
                         {
                             HorizontalAlignment = Element.ALIGN_RIGHT,
                             Border = PdfPCell.NO_BORDER,
@@ -1125,7 +1099,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                 {
                     HorizontalAlignment = Element.ALIGN_LEFT,
                     Border = PdfCell.NO_BORDER,
-                    
+
                 });
                 table2.AddCell(new PdfPCell(new Phrase("$" + resumen.IvaTotal.ToString(), textFont))
                 {
@@ -1437,7 +1411,7 @@ namespace Kiltex.SistemaGestion.Services.Services
 
             return paragraph;
         }
-            
+
         public Paragraph CabeceraArca(DtoRequestInvoice invoice)
         {
             BaseColor black = BaseColor.Black;
@@ -1600,12 +1574,12 @@ namespace Kiltex.SistemaGestion.Services.Services
             paragraph.Add(tablaCliente);
 
             #endregion
-                    
+
 
             return paragraph;
         }
 
-        
+
         #region Private
 
         private static string MapInvoiceType(int invoiceType)
@@ -1617,7 +1591,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                 _ => "B"
             };
         }
-        
+
         private static string MapCondicion(int invoiceType)
         {
             return (ETypeReceipt)invoiceType switch
@@ -1634,13 +1608,13 @@ namespace Kiltex.SistemaGestion.Services.Services
             PdfPTable table = new PdfPTable(5);
             table.SetWidths(new float[] { 2f, 6f, 3f, 1f, 2f });
 
-            var font = FontFactory.GetFont(FontFactory.HELVETICA, 8, Font.BOLD, BaseColor.Black);           
+            var font = FontFactory.GetFont(FontFactory.HELVETICA, 8, Font.BOLD, BaseColor.Black);
 
             table.AddCell(new PdfPCell(new Phrase("Cantidad", font)) { HorizontalAlignment = Element.ALIGN_CENTER, Border = PdfPCell.BOTTOM_BORDER | PdfPCell.TOP_BORDER, PaddingBottom = 10f, PaddingTop = 5f });
             table.AddCell(new PdfPCell(new Phrase("Producto", font)) { HorizontalAlignment = Element.ALIGN_CENTER, Border = PdfPCell.BOTTOM_BORDER | PdfPCell.TOP_BORDER, PaddingBottom = 10f, PaddingTop = 5f });
             table.AddCell(new PdfPCell(new Phrase("Precio Unitario", font)) { HorizontalAlignment = Element.ALIGN_CENTER, Border = PdfPCell.BOTTOM_BORDER | PdfPCell.TOP_BORDER, PaddingBottom = 10f, PaddingTop = 5f });
             table.AddCell(new PdfPCell(new Phrase("IVA", font)) { HorizontalAlignment = Element.ALIGN_RIGHT, Border = PdfPCell.BOTTOM_BORDER | PdfPCell.TOP_BORDER, PaddingBottom = 10f, PaddingTop = 5f });
-            table.AddCell(new PdfPCell(new Phrase("Importe", font)) {HorizontalAlignment = Element.ALIGN_RIGHT, Border = PdfPCell.BOTTOM_BORDER | PdfPCell.TOP_BORDER, PaddingBottom = 10f, PaddingTop = 5f });
+            table.AddCell(new PdfPCell(new Phrase("Importe", font)) { HorizontalAlignment = Element.ALIGN_RIGHT, Border = PdfPCell.BOTTOM_BORDER | PdfPCell.TOP_BORDER, PaddingBottom = 10f, PaddingTop = 5f });
 
             return table;
         }
@@ -1808,7 +1782,7 @@ namespace Kiltex.SistemaGestion.Services.Services
         {
             return (decimal)iva switch
             {
-               10.5m => "10.5",
+                10.5m => "10.5",
                 21 => "21",
                 27 => "27",
                 _ => ""
