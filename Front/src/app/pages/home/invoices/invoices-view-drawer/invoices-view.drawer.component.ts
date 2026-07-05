@@ -47,7 +47,7 @@ export class InvoicesViewDrawerComponent extends BaseComponent implements OnInit
   customerAddress!: string;
   customerCuit!: string;
   invoiceNumber!: number;
-  cae!: string;
+  cae!: string | null;
   ivaTotal!: number;
   ivaSelected!: number;
   iva21!: number;

@@ -302,9 +302,7 @@ namespace Kiltex.SistemaGestion.Api.Controllers.PDF
             var factura = await invoiceService.GetById(id);
             if (factura.Data == null) return null;
 
-            Paragraph paragraph = new Paragraph();
-            paragraph.Add(_service.CabeceraArca(factura.Data));
-            var contenido = await _service.Imprimir(paragraph, factura.Data);
+            var contenido = await _service.PrintInvoiceARCA(factura.Data);
 
             return contenido.Data;
         }

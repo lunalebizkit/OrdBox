@@ -24,7 +24,7 @@ export interface InvoiceModel {
     customerId: number;
     userId: number;
     invoiceNumber: number;
-    cae: string;
+    cae: string | null;
     customerName: string;
     customerCuit: string;
     customerAddress: string;

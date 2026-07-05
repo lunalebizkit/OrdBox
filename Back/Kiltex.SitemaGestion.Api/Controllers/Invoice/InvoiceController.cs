@@ -133,7 +133,14 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Invoice
 
             if (invoiceId.Success && invoiceId.Data != null)
             {
-               await GetCAEInvoiceAsync(invoiceId.Data.Id);
+                try
+                {
+                    await GetCAEInvoiceAsync(invoiceId.Data.Id);
+                }
+                catch (Exception ex)
+                {
+                    return Return(invoiceId);
+                }
             }
 
             return Return(invoiceId);
