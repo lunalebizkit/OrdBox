@@ -42,7 +42,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             #region QR Code
             var table = new PdfPTable(3) { TotalWidth = document.PageSize.Width - document.LeftMargin - document.RightMargin };
             table.SetWidths(new float[] { 1f, 3f, 3f });
-            table.AddCell(GenerateQRCell(_invoice, _cuit));
+            //table.AddCell(GenerateQRCell(_invoice, _cuit));
             table.AddCell(GenerateARCALeyend());
             table.AddCell(GenerateCAECell(_invoice));
             #endregion
