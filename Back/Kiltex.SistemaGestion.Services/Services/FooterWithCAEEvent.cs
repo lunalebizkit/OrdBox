@@ -42,7 +42,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             #region QR Code
             var table = new PdfPTable(3) { TotalWidth = document.PageSize.Width - document.LeftMargin - document.RightMargin };
             table.SetWidths(new float[] { 1f, 3f, 3f });
-            //table.AddCell(GenerateQRCell(_invoice, _cuit));
+            table.AddCell(GenerateQRCell(_invoice, _cuit));
             table.AddCell(GenerateARCALeyend());
             table.AddCell(GenerateCAECell(_invoice));
             #endregion
@@ -192,20 +192,15 @@ namespace Kiltex.SistemaGestion.Services.Services
             return $"https://www.afip.gob.ar/fe/qr/?p={base64Json}";
         }
 
-        private static byte[] GenerateImageQR(string qrCode)
+        private static byte[] GenerateImageQR(string data)
         {
             QRCodeGenerator qrCodeGenerator = new QRCodeGenerator();
 
-            QRCodeData qrCodeData = qrCodeGenerator.CreateQrCode(qrCode, QRCodeGenerator.ECCLevel.Q);
+            QRCodeData qrCodeData = qrCodeGenerator.CreateQrCode(data, QRCodeGenerator.ECCLevel.Q);
             QRCode qrCodeImage = new QRCode(qrCodeData);
-            using (var bitmap = qrCodeImage.GetGraphic(10))
-            {
-                using (var stream = new MemoryStream())
-                {
-                    bitmap.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
-                    return stream.ToArray();
-                }
-            }
+
+            var qrCode = new BitmapByteQRCode(qrCodeData);
+            return qrCode.GetGraphic(20);            
         }
 
         private static int MapDocumentType(int invoiceType)
