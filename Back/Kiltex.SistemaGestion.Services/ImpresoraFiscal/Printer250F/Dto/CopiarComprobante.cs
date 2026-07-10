@@ -11,7 +11,7 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.Printer250F.Dto
     public class CopiarComprobanteBody
     {
         [JsonProperty("CodigoComprobante")]
-        public ETypeReceipt? CodigoComprobante { get; set; }
+        public int? CodigoComprobante { get; set; }
 
         [JsonProperty("NumeroComprobante")]
         public string? NumeroComprobante { get; set; }

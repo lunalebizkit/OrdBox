@@ -34,7 +34,7 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal
 
         Task<string> CargarDatosCliente(string customerName, string customerCuit, string customerAddress, ETypeReceipt tipoDocumento );
 
-        Task<string> ReimprimirDocumento( ETypeReceipt tipoDocumento,string numeroComprobante );
+        Task<string> ReimprimirDocumento( int tipoDocumento,string numeroComprobante );
 
         Task<DtoResponseConsultarVersion> ConsultarVersionImpresora(ConsultarVersion consultarVersion);
 

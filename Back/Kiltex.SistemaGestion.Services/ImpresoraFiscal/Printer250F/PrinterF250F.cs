@@ -393,7 +393,7 @@ namespace Kiltex.SistemaGestion.Services.ImpresoraFiscal.PrinterF250F
 
         }
 
-        public async Task<string> ReimprimirDocumento(ETypeReceipt tipoDocumento, string numeroComprobante)
+        public async Task<string> ReimprimirDocumento(int tipoDocumento, string numeroComprobante)
         {
             var result = await RunCommand<DtoResponseReimprimirDoc>(new CopiarComprobante
             {
