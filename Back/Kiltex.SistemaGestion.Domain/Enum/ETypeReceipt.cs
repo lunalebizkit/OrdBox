@@ -8,8 +8,7 @@ namespace Kiltex.SistemaGestion.Domain.Enum
         B = 2,
         C = 3,
         EXENTO = 4,
-        BImpresion = 6,
-        CImpresion = 11,
+        ResponsableMonotrinuto = 6,
     }
 
 }

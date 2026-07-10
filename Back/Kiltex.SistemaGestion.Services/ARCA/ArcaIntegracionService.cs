@@ -23,6 +23,7 @@ namespace Kiltex.SistemaGestion.Services.ARCA
 {
     public class ArcaIntegracionService : BaseService, IArcaIntegracion
     {
+        #region Config
         private readonly HttpClient _httpClient;
         private readonly ArcaConfig _arcaConfig;
         private readonly IConfiguration _configuration;
@@ -37,7 +38,7 @@ namespace Kiltex.SistemaGestion.Services.ARCA
             _configuration = configuration;
             _Env = env;
         }
-
+        #endregion
         public async Task<FEParamGetTiposDocResponseDto> ObtenerTiposDocumentoAsync(CancellationToken ct = default)
         {
             try
@@ -830,7 +831,7 @@ namespace Kiltex.SistemaGestion.Services.ARCA
         {
             return (ETypeReceipt)invoiceType switch
             {
-                ETypeReceipt.A => (int)EInvoiceType.FacturaA,
+                ETypeReceipt.A or ETypeReceipt.ResponsableMonotrinuto => (int)EInvoiceType.FacturaA,
                 ETypeReceipt.EXENTO or ETypeReceipt.B => (int)EInvoiceType.FacturaB,
                 _ => invoiceType,
             };
@@ -856,9 +857,10 @@ namespace Kiltex.SistemaGestion.Services.ARCA
         {
             return (ETypeReceipt)invoiceType switch
             {
-                ETypeReceipt.A => (int)EInvoiceType.FacturaA,
-                ETypeReceipt.EXENTO => (int)4,
-                ETypeReceipt.B => (int)5,
+                ETypeReceipt.A => (int)ECondFrenteIvaReceptor.ResponsableInscripto,
+                ETypeReceipt.EXENTO => (int)ECondFrenteIvaReceptor.IvaSujetoExento,
+                ETypeReceipt.B => (int)ECondFrenteIvaReceptor.ConsumidorFinal,
+                ETypeReceipt.ResponsableMonotrinuto => (int)ECondFrenteIvaReceptor.ResponsableMonotributo,
                 _ => invoiceType,
             };
         }
