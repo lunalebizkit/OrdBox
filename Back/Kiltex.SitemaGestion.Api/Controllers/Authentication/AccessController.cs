@@ -1,23 +1,27 @@
 ﻿
-using Kiltex.SistemaGestion.Services.Services;
+using Kiltex.SistemaGestion.Api.Extension;
 using Kiltex.SistemaGestion.Api.Model;
+using Kiltex.SistemaGestion.SDK.Jwt;
+using Kiltex.SistemaGestion.Services.Common;
+using Kiltex.SistemaGestion.Services.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using Newtonsoft.Json;
-using Kiltex.SistemaGestion.SDK.Jwt;
-using Kiltex.SistemaGestion.Api.Extension;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using Kiltex.SistemaGestion.Domain.Model;
 using Usuario = Kiltex.SistemaGestion.Domain.Model.User;
-using Kiltex.SistemaGestion.Services.Common;
 
 namespace Kiltex.SistemaGestion.Api.Controllers.Authentication
 {
     public class AccessController : ApiBaseController
     {
+        private readonly PeriodService _periodService;
+
+        public AccessController(PeriodService periodService)
+        {
+            _periodService = periodService;
+        }
+
         [HttpPost]
         [Route("[action]")]
         [AllowAnonymous]
@@ -40,6 +44,11 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Authentication
                 360,
                 configuration["Jwt:SecretKey"],
                 GenerateClaims(usuario));
+
+            await Task.Run(async() =>
+            {
+                await _periodService.CreateOrReplaceMonthlyPeriod();
+            }).ConfigureAwait(false);
 
             return Ok(new
             {

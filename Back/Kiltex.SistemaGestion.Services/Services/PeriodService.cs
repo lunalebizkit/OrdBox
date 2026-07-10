@@ -139,7 +139,7 @@ namespace Kiltex.SistemaGestion.Services.Services
 
                 var count = await query.CountAsync().ConfigureAwait(false);
 
-                var list = await query.OrderByDescending(p => p.InitPeriod)
+                var list = await query.OrderByDescending(p => p.Id)
                                       .Skip(request.Page * request.PageSize)
                                       .Take(request.PageSize)
                                       .ToListAsync()
@@ -178,7 +178,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                 else
                 {
                     _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_009_ERROR_DUPLICATE));
-                    return Error<IdResponse<long>>(new OperationExceptions("009", "No existe period"));
+                    return Error<IdResponse<long>>(new OperationExceptions("009", "No existe periodo"));
                 }
 
                 return Ok(new IdResponse<long>(id));
@@ -198,8 +198,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                 var periodActive = _contextSql
                                  .Periods
                                  .AsNoTracking()
-                                 .FirstOrDefault(p => (p.Status == true) && (p.InitPeriod.Date <= date.Date) && (p.EndPeriod.Date >= date.Date))
-                                 ;
+                                 .FirstOrDefault(p => (p.Status == true) && (p.InitPeriod.Date <= date.Date) && (p.EndPeriod.Date >= date.Date));
 
 
                 if (periodActive == null)
@@ -248,6 +247,47 @@ namespace Kiltex.SistemaGestion.Services.Services
             catch (Exception ex)
             {
                 _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
+                throw;
+            }
+        }
+
+        public async Task CreateOrReplaceMonthlyPeriod(CancellationToken ct = default)
+        {
+            try
+            {
+                var today = DateTime.Today;
+                var initPeriod = new DateTime(today.Year, today.Month, 1);
+                var endPeriod = initPeriod.AddMonths(1).AddDays(-1);
+
+                var activePeriod = await _contextSql.Periods
+                    .FirstOrDefaultAsync(p => p.Status == true, ct)
+                    .ConfigureAwait(false);
+
+                if (activePeriod == null || activePeriod.EndPeriod < today)
+                {
+                    // Si hay activo y ya venció, lo cerramos
+                    if (activePeriod != null)
+                    {
+                        activePeriod.Status = false;
+                        _contextSql.Periods.Update(activePeriod);
+                    }
+
+                    Period newPeriod = new()
+                    {
+                        InitPeriod = initPeriod,
+                        EndPeriod = endPeriod,
+                        Status = true
+                    };
+
+                    await _contextSql.Periods.AddAsync(newPeriod, ct);
+                    await _contextSql.SaveChangesAsync(ct);
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error al crear o reemplazar periodo mensual", ex);
                 throw;
             }
         }

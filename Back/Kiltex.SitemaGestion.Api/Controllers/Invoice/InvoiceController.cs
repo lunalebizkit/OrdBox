@@ -2,6 +2,7 @@
 using Kiltex.SistemaGestion.Domain.Enum;
 using Kiltex.SistemaGestion.Services.ARCA.Interface;
 using Kiltex.SistemaGestion.Services.Common;
+using Kiltex.SistemaGestion.Services.ImpresoraFiscal.Printer250F;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
 using Kiltex.SistemaGestion.Services.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -13,11 +14,13 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Invoice
     {
         private readonly InvoiceService _service;
         private readonly IArcaIntegracion _arcaIntegracionService;
+        private readonly PrinterStatus _printerStatus;
 
-        public InvoiceController(InvoiceService service, IArcaIntegracion arcaIntegracionService)
+        public InvoiceController(InvoiceService service, IArcaIntegracion arcaIntegracionService, PrinterStatus printerStatus)
         {
             _service = service;
             _arcaIntegracionService = arcaIntegracionService;
+            _printerStatus = printerStatus;
         }
 
         /// <summary>
@@ -189,6 +192,11 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Invoice
 
         private async Task<IActionResult> GetCAEInvoiceAsync(long invoiceId, DateTime? dateTime = null, string? observacion = null)
         {
+            if (_printerStatus.InvoiceStatus)
+            {
+                return BadRequest("La impresora esta activada, desactive para realizar el llamado a ARCA");
+            }
+
             var invoice = await _service.GetById(invoiceId).ConfigureAwait(false);
 
             if (invoice.Success && invoice.Data != null)
