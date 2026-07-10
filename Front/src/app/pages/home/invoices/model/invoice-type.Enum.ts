@@ -6,12 +6,17 @@ export enum eInvoiceType {
   B = 2,
   C = 3,
   EXENTO = 4,
+  RespMonotributo = 6
 }
 
-export const IvaCondition = [{value: 1, label: 'Resp. Inscripto', disabled: true}, {value: 2, label: 'Consumidor final'}, {value: 3, label: 'Exento'}];
+export const IvaCondition = [{value: 1, label: 'Resp. Inscripto', disabled: false},
+   {value: 2, label: 'Resp. Monotributo', disabled: false},
+   {value: 3, label: 'Consumidor final', disabled: true},
+    {value: 4, label: 'Exento', disabled: true}];
 
 export enum eIvaCondition {
   RespInscrip = 1,
-  ConsFinal = 2,
-  Exento = 3,
+  RespMonotributo = 2,
+  ConsFinal = 3,
+  Exento = 4,
 }

@@ -7,6 +7,7 @@ export class InvoiceTypePipe implements PipeTransform{
         if (!value) return '';
 
         if (value == eInvoiceType.EXENTO) return 'B';
+        if (value == eInvoiceType.RespMonotributo) return 'A';
     
     return eInvoiceType[value];
     }

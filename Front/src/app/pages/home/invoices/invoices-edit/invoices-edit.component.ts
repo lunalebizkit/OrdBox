@@ -103,7 +103,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
   value1!: string;
   value2!: string;
   value3!: string;
-  isConditionDisabled: boolean = true;
+  isConditionDisabled: boolean = false;
 
   /*
 ** Parametros de busqueda
@@ -180,10 +180,14 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
     this.typeSelectedId = id;
 
     this.invoiceA = (id == eInvoiceType.A);
-    this.isConditionDisabled = (id == eInvoiceType.A);
 
     if (this.invoiceA){
-      this.formInvoice.controls['ivaCondition'].setValue(eIvaCondition.RespInscrip);
+      this.ivaCondition = this.ivaCondition.map(opt => ({
+      ...opt,
+      disabled: (opt.value === 3 || opt.value === 4)
+    }));
+
+      this.formInvoice.controls['ivaCondition'].setValue(null);
       if (!this.selectedDni){
         this.formInvoice.controls['customerDni'].setValue('');
         this.formInvoice.controls['customerDni'].setValidators([]);
@@ -197,6 +201,10 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
       this.formInvoice.get('customerCuit')?.updateValueAndValidity();
     }
     else{
+      this.ivaCondition = this.ivaCondition.map(opt => ({
+      ...opt,
+      disabled: (opt.value === 1 || opt.value === 2)
+    }));
       this.formInvoice.controls['ivaCondition'].setValue(null);
       // validacion para CUIT
       this.formInvoice.get('customerCuit')?.reset();
@@ -505,6 +513,9 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
         this.showMessageError('No hay Productos Seleccionados');
 
       } else {
+        const typeCtrl = this.formInvoice.controls['type'].value;
+        const ivaCtrl = this.formInvoice.controls['ivaCondition'].value;
+
         const model: InvoiceModel = {
           id: 0,
           customerId: this.customerId,
@@ -524,7 +535,13 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
           ivaSelected: this.ivaSelected,
           caeExpirationTime: null,
           integrationSuccess: false,
-          type: (this.formInvoice.controls['type'].value == eInvoiceType.B) ?(this.formInvoice.controls['ivaCondition'].value == eIvaCondition.Exento ? eInvoiceType.EXENTO : eInvoiceType.B) : eInvoiceType.A,
+          type: (typeCtrl === eInvoiceType.A)
+          ? (ivaCtrl === eIvaCondition.RespMonotributo 
+              ? eInvoiceType.RespMonotributo
+              : eInvoiceType.A)
+          : (ivaCtrl === eIvaCondition.Exento 
+              ? eInvoiceType.EXENTO 
+              : eInvoiceType.B),
           invoiceDetails: this.invoiceDetails,
           version: InvoiceVersion.Arca
         };

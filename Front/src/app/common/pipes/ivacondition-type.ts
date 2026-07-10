@@ -7,6 +7,8 @@ export class IvaConditionTypePipe implements PipeTransform{
         switch(value){
             case eInvoiceType.A:
                 return 'Resp. Inscripto';
+            case eInvoiceType.RespMonotributo:
+                return 'Resp. Monotributo';
             case eInvoiceType.B:
                 return 'Consumidor final';
             case eInvoiceType.EXENTO:
