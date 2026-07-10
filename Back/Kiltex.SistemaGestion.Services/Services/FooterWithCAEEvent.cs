@@ -207,7 +207,7 @@ namespace Kiltex.SistemaGestion.Services.Services
         {
             return (ETypeReceipt)invoiceType switch
             {
-                ETypeReceipt.A => (int)EInvoiceType.FacturaA,
+                ETypeReceipt.A or ETypeReceipt.ResponsableMonotrinuto => (int)EInvoiceType.FacturaA,
                 ETypeReceipt.EXENTO or ETypeReceipt.B => (int)EInvoiceType.FacturaB,
                 _ => invoiceType,
             };

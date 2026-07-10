@@ -152,7 +152,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                     }
 
                     //Verfico que la factura A no pueda realizarse al colocar un DNI
-                    if (model.Type == (int)ETypeReceipt.A && model.CustomerCuit.Length != 11)
+                    if ((model.Type == (int)ETypeReceipt.A || model.Type == (int)ETypeReceipt.ResponsableMonotrinuto) && model.CustomerCuit.Length != 11)
                     {
                         _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
                         return Error<IdResponse<long>>(new OperationExceptions("000", "Error al cargar cliente, no puede cargar un DNI con Factura tipo A"));
@@ -186,7 +186,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                         }
                     }
 
-                    if (_config.Status)
+                    if (_config.InvoiceStatus)
                     {
                         var error = await PrintInvoice(invoiceModel, ct);
 
@@ -427,7 +427,7 @@ namespace Kiltex.SistemaGestion.Services.Services
 
                     foreach (InvoiceDetail invoiceDetail in item.InvoiceDetails)
                     {
-                        if (item.Type == (int)ETypeReceipt.A)
+                        if (item.Type == (int)ETypeReceipt.A || item.Type == (int)ETypeReceipt.ResponsableMonotrinuto)
                         {
                             #region Importe Liquidado (total de iva)
                             totalIva10 += ((decimal)invoiceDetail.Iva == (decimal)10.5) ? (invoiceDetail.Quantity * invoiceDetail.Price) - (invoiceDetail.Quantity * invoiceDetail.Price) / 1.105m : 0;
@@ -473,7 +473,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                             #endregion
                         }
 
-                        if (item.Type == (int)ETypeReceipt.A)
+                        if (item.Type == (int)ETypeReceipt.A || item.Type == (int)ETypeReceipt.ResponsableMonotrinuto)
                         {
                             alicuotaIva.TipoDecComprobante = CustomizationConstant.FacturaA;
 
@@ -525,7 +525,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                             #endregion
                         }
 
-                        if (item.Type == (int)ETypeReceipt.A)
+                        if (item.Type == (int)ETypeReceipt.A || item.Type == (int)ETypeReceipt.ResponsableMonotrinuto)
                         {
                             alicuotaIva.TipoDecComprobante = CustomizationConstant.FacturaA;
 
@@ -576,7 +576,7 @@ namespace Kiltex.SistemaGestion.Services.Services
 
                         }
 
-                        if (item.Type == (int)ETypeReceipt.A)
+                        if (item.Type == (int)ETypeReceipt.A || item.Type == (int)ETypeReceipt.ResponsableMonotrinuto)
                         {
                             alicuotaIva.TipoDecComprobante = CustomizationConstant.FacturaA;
 
@@ -672,7 +672,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                             archivoTxtDto.TipoDeComprobante = CustomizationConstant.FacturaB;
                         }
 
-                        if (invoice.Type == (int)ETypeReceipt.A)
+                        if (invoice.Type == (int)ETypeReceipt.A || invoice.Type == (int)ETypeReceipt.ResponsableMonotrinuto)
                         {
                             archivoTxtDto.TipoDeComprobante = CustomizationConstant.FacturaA;
                         }

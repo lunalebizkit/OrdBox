@@ -1586,7 +1586,7 @@ namespace Kiltex.SistemaGestion.Services.Services
         {
             return (ETypeReceipt)invoiceType switch
             {
-                ETypeReceipt.A => "A",
+                ETypeReceipt.A or ETypeReceipt.ResponsableMonotrinuto => "A",
                 ETypeReceipt.B => "B",
                 _ => "B"
             };
@@ -1597,6 +1597,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             return (ETypeReceipt)invoiceType switch
             {
                 ETypeReceipt.A => "Responsable Inscripto",
+                ETypeReceipt.ResponsableMonotrinuto => "Responsable Monotributo",
                 ETypeReceipt.B => "Consumidor final",
                 ETypeReceipt.EXENTO => "Excento",
                 _ => ""
@@ -1642,7 +1643,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                 Border = PdfPCell.NO_BORDER
             };
 
-            if ((ETypeReceipt)invoice.Type == ETypeReceipt.A)
+            if ((ETypeReceipt)invoice.Type == ETypeReceipt.A || (ETypeReceipt)invoice.Type == ETypeReceipt.ResponsableMonotrinuto)
             {
                 if (invoice.Iva10 != 0)
                 {
@@ -1757,7 +1758,7 @@ namespace Kiltex.SistemaGestion.Services.Services
 
             #region Total sin IVA
 
-            if ((ETypeReceipt)invoice.Type != ETypeReceipt.A)
+            if ((ETypeReceipt)invoice.Type == ETypeReceipt.B || (ETypeReceipt)invoice.Type == ETypeReceipt.EXENTO)
             {
                 totalIva.AddCell(emptyCell);
                 totalIva.AddCell(emptyCell);

@@ -26,15 +26,16 @@ namespace Kiltex.SistemaGestion.Services.Services
         {
             try
             {
+                int tipoDoc=0;
 
                 if (tipoDocumento == ETypeReceipt.B || tipoDocumento == ETypeReceipt.EXENTO)
                 {
-                    tipoDocumento = ETypeReceipt.BImpresion;
+                    tipoDoc = (int)ETypePrint.BImpresion;
                 }
 
                 if (tipoDocumento == ETypeReceipt.C)
                 {
-                    tipoDocumento = ETypeReceipt.CImpresion;
+                    tipoDoc = (int)ETypePrint.CImpresion;
                 }
 
                 if (numeroComprobante == "0")
@@ -51,7 +52,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                         "La impresora esta desactivada, reactive para realizar el Reimpresion"));
                 }
 
-                var reimpirmirDoc = await _printer.ReimprimirDocumento(tipoDocumento, numeroComprobante);
+                var reimpirmirDoc = await _printer.ReimprimirDocumento(tipoDoc, numeroComprobante);
 
                 if (reimpirmirDoc == null)
                 {
