@@ -7,10 +7,9 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PeriodsService } from '../periods.service';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { NzDrawerRef } from 'ng-zorro-antd/drawer';
-import { DatePipe, formatDate } from '@angular/common';
-import { DisabledTimeFn, DisabledTimePartial } from 'ng-zorro-antd/date-picker';
+import { formatDate } from '@angular/common';
 
 
 
@@ -64,8 +63,9 @@ export class periodsDrawerComponent  extends BaseComponent implements OnInit {
   if (this.id != null || this.id != undefined || this.id != 0) {
     this.getPeriod(this.id);
   }
-  this.getData(this.queryData)
-  
+  if(this.id === 0){
+   this.getData(this.queryData) 
+  }
  } 
  getPeriod(id: number): void {
   if (id != 0) {
@@ -98,9 +98,9 @@ getData(params: any): void {
 sumarDias(fecha:any, dias: any){
   fecha.setDate(fecha.getDate ()+ dias);
   if(this.periodList.length == 0){
-    this.period = new Date(this.startDate)
+    this.form.controls['initPeriod'].setValue(this.formaterDate(this.startDate));
   }else{
-    this.period = fecha
+    this.form.controls['initPeriod'].setValue(this.formaterDate(fecha));
   }
   
   return fecha;
@@ -115,7 +115,7 @@ save(): void {
   if (this.isValidForm(this.form)) {
     const model: PeriodsModel = {
       id: this.id !== undefined ? this.id : 0,
-      initPeriod: this.form.controls['initPeriod'].value,
+      initPeriod: new Date (this.form.controls['initPeriod'].value),
       endPeriod: this.form.controls['endPeriod'].value,
       status: true
     };
