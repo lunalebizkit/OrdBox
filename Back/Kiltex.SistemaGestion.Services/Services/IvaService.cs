@@ -302,7 +302,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                     currentRow++;
                     worksheet.Cell(currentRow, 1).SetValue(item.DateTime.ToString("MM/dd/yyyy")).Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Left);
                     worksheet.Cell(currentRow, 2).SetValue(item.InvoiceNumber).Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Left);
-                    worksheet.Cell(currentRow, 3).SetValue((ETypeReceipt)item.Type).Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Center);
+                    worksheet.Cell(currentRow, 3).SetValue(MapDocumentType(item.Type)).Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Center);
                     worksheet.Cell(currentRow, 4).SetValue(item.CustomerName).Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Left);
                     worksheet.Cell(currentRow, 5).SetValue(item.CustomerCuit).Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Left);
                     worksheet.Cell(currentRow, 6).SetValue(item.ImporteNeto).Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Right);
@@ -342,6 +342,16 @@ namespace Kiltex.SistemaGestion.Services.Services
                 }
             }
 
+        }
+
+        private static ETypeReceipt MapDocumentType(int invoiceType)
+        {
+            return (ETypeReceipt)invoiceType switch
+            {
+                ETypeReceipt.A or ETypeReceipt.ResponsableMonotrinuto => ETypeReceipt.A,
+                ETypeReceipt.EXENTO or ETypeReceipt.B => ETypeReceipt.B,
+                _ => (ETypeReceipt)invoiceType,
+            };
         }
     }
 }
