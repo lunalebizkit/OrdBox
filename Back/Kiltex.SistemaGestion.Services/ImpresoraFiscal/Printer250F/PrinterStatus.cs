@@ -3,7 +3,5 @@
     public class PrinterStatus
     {
         public bool Status { get; set; }
-        public bool InvoiceStatus { get; set; }
-
     }
 }
