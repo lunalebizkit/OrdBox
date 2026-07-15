@@ -24,14 +24,14 @@ namespace Kiltex.SistemaGestion.Services.Services
 {
     public class InvoiceService : BaseService
     {
-        private readonly PrinterStatus _config;
         private readonly IPrinter _printer;
+        private readonly IConfiguration _settingConfiguration;
 
         public InvoiceService(ErrorManager logger, DBContext context, IMapper maper, IPrinter printer, PrinterStatus config, IConfiguration configuration) :
             base(logger, context, maper, configuration)
         {
-            _config = config;
             _printer = printer;
+            _settingConfiguration = configuration;
         }
         public async Task<OperationResponse<DtoRequestInvoice>> GetById(long id)
         {
@@ -186,7 +186,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                         }
                     }
 
-                    if (_config.InvoiceStatus)
+                    if (!bool.Parse(_settingConfiguration.GetSection("ArcaStatus:Status").Value))
                     {
                         var error = await PrintInvoice(invoiceModel, ct);
 
