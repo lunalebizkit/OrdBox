@@ -163,15 +163,12 @@ namespace Kiltex.SistemaGestion.Services.Scripts {
         ///      ,[i].[total]
         ///      ,[i].[iva_total] AS [IvaTotal]
         ///      ,[i].[type]
+        ///      ,[i].[cae]
+        ///      ,[i].[cae_expiration_date] AS [CaeExpirationDate]
+        ///      ,[i].[integration_success] AS [IntegrationSuccess]
         ///	  ,[id].[id]
         ///	  ,[id].[invoice_id] AS [InvocieId]
-        ///      ,[id].[product_id] AS [ProductId]
-        ///      ,[id].[product_code]
-        ///      ,[id].[quantity]
-        ///      ,[id].[price]
-        ///      ,[id].[iva]
-        ///      ,[id].[cae]
-        ///  [resto de la cadena truncado]&quot;;.
+        ///      ,[id].[product [resto de la cadena truncado]&quot;;.
         /// </summary>
         internal static string GetInvoiceByDate {
             get {
