@@ -17,6 +17,9 @@ import { HeaderOperationsButtonsComponent } from 'src/app/common/components/head
 import { eInvoiceType } from '../../invoices/model/invoice-type.Enum';
 import { CreditMemoDetails } from '../model/creditMemo.model';
 import { NoteService } from '../notes.service';
+import { XMLParser } from 'fast-xml-parser';
+import { InvoiceLog } from '../../invoices/model/invoice-log-integration';
+import { InvoiceVersion } from 'src/app/common/auth/models/invoice-versions.enum';
 
 @Component({
   selector: 'app-creditMemo-view-drawer',
@@ -55,7 +58,10 @@ export class CreditMemoViewDrawerComponent
   type: any;
   invoiceNumber!: number;
   creditMemoNumber!:number
-  edit:boolean= false
+  edit:boolean= false;
+  version!: number;
+  invoiceLog: InvoiceLog[] = [];
+  invoiceVersion= InvoiceVersion;
 
  creditMemoDetail: CreditMemoDetails[]=[]
 
@@ -73,7 +79,8 @@ export class CreditMemoViewDrawerComponent
 
   ngOnInit(): void { 
     if (this.id != null || this.id != undefined || this.id != 0) {
-      this.getCreditMemo(this.id); 
+      this.getCreditMemo(this.id);      
+      this.getIntegrationLog(this.id);
       this.edit=true
     }else{
       this.edit=false
@@ -94,7 +101,9 @@ export class CreditMemoViewDrawerComponent
             this.userId = r.userId,
             this.dateTime = r.dateTime,
             this.observation = r.observation,
-            this.creditMemoDetail= r.creditMemoDetail
+            this.creditMemoDetail= r.creditMemoDetail,
+            this.getTipo(r.type);
+            this.version = r.version;
           this.isLoading = false;
         },
         error: () => {
@@ -102,8 +111,7 @@ export class CreditMemoViewDrawerComponent
         },
       });
   }
-  
-  
+    
   creditMemoType(id: any):string{
     return eInvoiceType[id]
   }
@@ -112,7 +120,39 @@ export class CreditMemoViewDrawerComponent
     if (!this.locale) return '';
     return formatCurrency(data, this.locale!, '$', 'ARS', '1.1-2');
   }
+
   close(): void {
     this.drawerRef.close();
+  }
+  
+  parserXML(data: string){    
+    const xmlParser = new XMLParser();
+    if (data == null) {return '';}
+    let parsed = xmlParser.parse(data);
+    return JSON.stringify(parsed, null, 2)
+  }
+
+  getTipo(tipo : number):any {
+    switch (tipo){
+      case  eInvoiceType.A :
+      case  eInvoiceType.RespMonotributo :
+        return this.tipo = 'factA'
+      case  eInvoiceType.B :
+      case  eInvoiceType.EXENTO :
+       return this.tipo = 'factB'
+    }
+  }
+
+  getIntegrationLog(id: number):Array<InvoiceLog> | any {
+      this.loading = true;
+      this.service.getIntegrationCreditLogById(id).subscribe({
+        next:(r: Array<InvoiceLog>) =>{
+          this.invoiceLog = r;
+          this.loading = false;
+        },
+        error:(e) =>{
+          this.loading = false;
+        }
+      })
   }
 }

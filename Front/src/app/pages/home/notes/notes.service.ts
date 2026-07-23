@@ -33,6 +33,10 @@ export class NoteService {
       return this.api.post(`CreditMemo`, model, false);
   }
 
+  public getIntegrationCreditLogById(id: number): Observable<any> {
+    return this.api.get(`CreditMemo/GetIntegrationLogById?id=${id}`, false)
+
+  }
 /*   servicio notas de debito */
 
   public getDebitMemoById(id: number): Observable<any> {
@@ -47,4 +51,9 @@ export class NoteService {
       return this.api.post(`DebitMemo`, model, false);
   }
 
+  public getIntegrationDebitLogById(id: number): Observable<any> {
+    return this.api.get(`DebitMemo/GetIntegrationLogById?id=${id}`, false)
+
+  }
+  
 }

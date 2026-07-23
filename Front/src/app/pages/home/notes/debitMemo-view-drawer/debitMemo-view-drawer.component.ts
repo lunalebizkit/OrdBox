@@ -17,6 +17,9 @@ import { HeaderOperationsButtonsComponent } from 'src/app/common/components/head
 import { eInvoiceType } from '../../invoices/model/invoice-type.Enum';
 import { DebitMemoDetails } from '../model/debitMemo.model';
 import { NoteService } from '../notes.service';
+import { InvoiceLog } from '../../invoices/model/invoice-log-integration';
+import { InvoiceVersion } from 'src/app/common/auth/models/invoice-versions.enum';
+import { XMLParser } from 'fast-xml-parser';
 
 @Component({
   selector: 'app-debitMemo-view-drawer',
@@ -53,8 +56,10 @@ export class DebitMemoViewDrawerComponent
   subTotal!: number;
   total!: number;
   ivaTotal!: number;
-  type: any
-  
+  type: any;
+  version!: number;
+  invoiceLog: InvoiceLog[] = [];
+  invoiceVersion= InvoiceVersion;  
  debitMemoDetail: DebitMemoDetails[]=[]
 
   form!: FormGroup;
@@ -91,6 +96,7 @@ export class DebitMemoViewDrawerComponent
             this.observation = r.observation,
             this.debitMemoDetail= r.debitMemoDetails
             this.isLoading = false;
+            this.version = r.version,
             this.getTipo(r.type); 
           
         },
@@ -98,16 +104,19 @@ export class DebitMemoViewDrawerComponent
           this.isLoading = false;
         },
       });
+      this.getIntegrationLog(id);
   }
+
   getTipo(tipo : number):any {
     switch (tipo){
       case  eInvoiceType.A :
+      case  eInvoiceType.RespMonotributo :
         return this.tipo = 'factA'
       case  eInvoiceType.B :
+      case  eInvoiceType.EXENTO :
        return this.tipo = 'factB'
     }
-  }
-    
+  }    
 
   currencyFormat(data: any): string {
     if (!this.locale) return '';
@@ -116,4 +125,25 @@ export class DebitMemoViewDrawerComponent
   close(): void {
     this.drawerRef.close();
   }
+
+  getIntegrationLog(id: number):Array<InvoiceLog> | any {
+    this.loading = true;
+    this.service.getIntegrationDebitLogById(id).subscribe({
+      next:(r: Array<InvoiceLog>) =>{
+        this.invoiceLog = r;
+        this.loading = false;
+      },
+      error:(e) =>{
+        this.loading = false;
+      }
+    })
+  }
+
+  parserXML(data: string){    
+      const xmlParser = new XMLParser();
+      if (data == null) {return '';}
+      let parsed = xmlParser.parse(data);
+      return JSON.stringify(parsed, null, 2)
+    }
+  
 }

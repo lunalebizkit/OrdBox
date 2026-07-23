@@ -22,6 +22,7 @@ import { ProductService } from '../../products/product.service';
 import { creditMemoDetailFromInvoiceParser, CreditMemoDetailList, creditMemoDetailParser, CreditMemoDetails, creditMemoGridFromInvoiceParser, creditMemoGridParser, CreditMemoModel } from '../model/creditMemo.model';
 import { NoteService } from '../notes.service';
 import { isNil } from 'ng-zorro-antd/core/util';
+import { InvoiceVersion } from 'src/app/common/auth/models/invoice-versions.enum';
 
 
 @Component({
@@ -206,7 +207,11 @@ export class CreditMemoComponent extends BaseComponent implements OnInit {
           type: this.formCreditMemo.controls['type'].value,
           total: this.total,
           creditMemoNumber: this.creditMemoNumber,
-          ivaTotal: this.ivaTotal,
+          ivaTotal: this.ivaTotal,          
+          caeExpirationTime: null,
+          cae: null,
+          version : InvoiceVersion.Arca,
+          integrationSuccess: false,
           creditMemoDetail: this.creditMemoDetails
         };
         this.isSaving = true;

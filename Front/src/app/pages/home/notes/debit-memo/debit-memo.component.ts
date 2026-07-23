@@ -22,6 +22,7 @@ import { ProductService } from '../../products/product.service';
 import { debitMemoDetailFromInvoiceParser, DebitMemoDetailList, debitMemoDetailParser, DebitMemoDetails, debitMemoGridFromInvoiceParser, debitMemoGridParser, DebitMemoModel } from '../model/debitMemo.model';
 import { NoteService } from '../notes.service';
 import { isNil } from 'ng-zorro-antd/core/util';
+import { InvoiceVersion } from 'src/app/common/auth/models/invoice-versions.enum';
 
 @Component({
   selector: 'app-debit-memo',
@@ -209,6 +210,10 @@ export class debitMemoComponent extends BaseComponent implements OnInit {
           ivaTotal: this.ivaTotal,
           debitMemoNumber: 0,
           debitMemoDetails: this.debitMemoDetails,
+          caeExpirationTime: null,
+          cae: null,
+          version : InvoiceVersion.Arca,
+          integrationSuccess: false
         };
         this.isSaving = true;
         this.service.saveDebitMemo(model)
