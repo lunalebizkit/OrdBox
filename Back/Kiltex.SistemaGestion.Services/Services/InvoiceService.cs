@@ -239,7 +239,6 @@ namespace Kiltex.SistemaGestion.Services.Services
         {
             var transaction = _contextSql.Database.BeginTransaction();
             var invoiceModel = _mapper.Map<Invoice>(model);
-            var newProduct = new Product();
             try
             {
                 if (invoiceModel.Id != 0)

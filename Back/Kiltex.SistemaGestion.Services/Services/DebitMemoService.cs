@@ -1,12 +1,15 @@
 ﻿using AutoMapper;
+using Dapper;
 using Kiltex.SistemaGestion.Domain;
 using Kiltex.SistemaGestion.Domain.Enum;
 using Kiltex.SistemaGestion.Domain.Model;
 using Kiltex.SistemaGestion.SDK.Error;
+using Kiltex.SistemaGestion.Services.ARCA.Dto.Response;
 using Kiltex.SistemaGestion.Services.Common;
-using Kiltex.SistemaGestion.Services.ImpresoraFiscal;
-using Kiltex.SistemaGestion.Services.ImpresoraFiscal.Printer250F;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
+using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
+using Kiltex.SistemaGestion.Services.Scripts;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System.Text.RegularExpressions;
@@ -15,13 +18,11 @@ namespace Kiltex.SistemaGestion.Services.Services
 {
     public class DebitMemoService : BaseService
     {
-        private readonly IPrinter _printer;
-        private readonly PrinterStatus _config;
-        public DebitMemoService(ErrorManager logger, DBContext context, IMapper maper, IConfiguration configuration, IPrinter printer, PrinterStatus config) :
+        private readonly IConfiguration _settingConfiguration;
+        public DebitMemoService(ErrorManager logger, DBContext context, IMapper maper, IConfiguration configuration) :
             base(logger, context, maper, configuration)
         {
-            _config = config;
-            _printer = printer;
+            _settingConfiguration = configuration;
         }
         public async Task<OperationResponse<DtoRequestDebitMemo>> GetById(long id)
         {
@@ -57,6 +58,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             model.Id = 0;
             return await AddOrUpdate(model, ct).ConfigureAwait(false);
         }
+
         public async Task<OperationResponse<IdResponse<long>>> AddOrUpdate(DtoRequestDebitMemo model, CancellationToken ct = default)
         {
             var transaction = _contextSql.Database.BeginTransaction();
@@ -81,7 +83,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                     }
 
                     //Verifico que el DNI tenga mayor a 7 caracteres y menor a 9
-                    if (model.Type == 2 && model.CustomerCuit.Length < 7 || model.CustomerCuit.Length > 9 && model.CustomerCuit.Length != 11)
+                    if (model.Type == (int)ETypeReceipt.B && model.CustomerCuit.Length < 7 || model.CustomerCuit.Length > 9 && model.CustomerCuit.Length != 11)
                     {
                         _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
                         return Error<IdResponse<long>>(new OperationExceptions("000", "Error al cargar cliente, verifique DNI"));
@@ -95,7 +97,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                     }
 
                     //Verfico que la factura A no pueda realizarse al colocar un DNI
-                    if (model.Type == 1 && model.CustomerCuit.Length != 11)
+                    if ((model.Type == (int)ETypeReceipt.A || model.Type == (int)ETypeReceipt.ResponsableMonotrinuto) && model.CustomerCuit.Length != 11)
                     {
                         _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
                         return Error<IdResponse<long>>(new OperationExceptions("000", "Error al cargar cliente, no puede cargar un DNI con Factura tipo A"));
@@ -107,7 +109,8 @@ namespace Kiltex.SistemaGestion.Services.Services
                         _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
                         return Error<IdResponse<long>>(new OperationExceptions("000", "Error al cargar cliente, no puede cargar un DNI con Factura tipo C"));
                     }
-                    if (_config.Status) 
+
+                    if (!bool.Parse(_settingConfiguration.GetSection("ArcaStatus:Status").Value))
                     {
                         var error = await PrintDebitMemo(model, ct);
 
@@ -215,43 +218,118 @@ namespace Kiltex.SistemaGestion.Services.Services
         {
 
             //MANEJO DE ERRORES
-            var cargarCliente = await _printer.CargarDatosCliente(model.CustomerName, model.CustomerCuit, model.CustomerAddress, (ETypeReceipt)model.Type).ConfigureAwait(false);
+            //var cargarCliente = await _printer.CargarDatosCliente(model.CustomerName, model.CustomerCuit, model.CustomerAddress, (ETypeReceipt)model.Type).ConfigureAwait(false);
 
-            if (cargarCliente == null)
+            //if (cargarCliente == null)
+            //{
+            //    await _printer.CerrarJornadaFiscal();
+            //    return "ErrorCliente";
+            //}
+
+            //var openDoc = await _printer.OpenND((ETypeReceipt)model.Type, model.CustomerName, eTypeDocumentClient.Cuil, model.CustomerAddress).ConfigureAwait(false);
+
+            //if (openDoc == null)
+            //{
+            //    await _printer.CloseFactura(1, "").ConfigureAwait(false);
+            //    return "ErrorAbrir";
+            //}
+            ////TODO por cada item mandar a imprimir
+            //foreach (var item in model.DebitMemoDetails)
+            //{
+            //    var imprimir = await _printer.PrintItem(item.ProductName, item.Quantity, item.Price, item.Iva, item.ProductCode.ToString()).ConfigureAwait(false);
+
+            //    if (imprimir == null)
+            //    {
+            //        await _printer.CloseFactura(1, "").ConfigureAwait(false);
+            //        return "ErrorImprimir";
+            //    }
+            //}
+
+            //var closeFactura = await _printer.CloseFactura(1, "").ConfigureAwait(false);
+
+            //if (closeFactura == null)
+            //{
+            //    await _printer.CerrarJornadaFiscal();
+            //    return "ErrorCerrar";
+            //}
+
+            //return closeFactura;
+            return "";
+        }
+
+        public async Task<OperationResponse<IdResponse<long>>> Update(DtoRequestDebitMemo model, DtoResponseARCAInvoice responseARCAInvoice, CancellationToken ct = default)
+        {
+            var transaction = _contextSql.Database.BeginTransaction();
+            var debitModel = _mapper.Map<DebitMemo>(model);
+            var newProduct = new Product();
+            try
             {
-                await _printer.CerrarJornadaFiscal();
-                return "ErrorCliente";
-            }
-
-            var openDoc = await _printer.OpenND((ETypeReceipt)model.Type, model.CustomerName, eTypeDocumentClient.Cuil, model.CustomerAddress).ConfigureAwait(false);
-
-            if (openDoc == null)
-            {
-                await _printer.CloseFactura(1, "").ConfigureAwait(false);
-                return "ErrorAbrir";
-            }
-            //TODO por cada item mandar a imprimir
-            foreach (var item in model.DebitMemoDetails)
-            {
-                var imprimir = await _printer.PrintItem(item.ProductName, item.Quantity, item.Price, item.Iva, item.ProductCode.ToString()).ConfigureAwait(false);
-
-                if (imprimir == null)
+                if (debitModel.Id != 0)
                 {
-                    await _printer.CloseFactura(1, "").ConfigureAwait(false);
-                    return "ErrorImprimir";
+                    if (debitModel.CustomerId == 0)
+                    {
+                        debitModel.CustomerId = GetUserAdminId();
+                    }
+
+                    DebitMemo debitMemo = await _contextSql.DebitMemos.FirstAsync(p => p.Id == debitModel.Id).ConfigureAwait(false);
+
+                    debitModel.CAE = string.IsNullOrEmpty(responseARCAInvoice.Cae) ? null : responseARCAInvoice.Cae;
+                    debitModel.CAEExpirationDate = responseARCAInvoice.FechaVencimientoCae.HasValue ? responseARCAInvoice.FechaVencimientoCae.Value : null;
+                    debitModel.IntegrationSuccess = !string.IsNullOrEmpty(responseARCAInvoice.Cae);
+                    debitModel.DebitMemoNumber = responseARCAInvoice.InvoiceNumber;
+
+                    _contextSql.Entry(debitMemo).State = EntityState.Detached;
+                    _contextSql.DebitMemos.Update(debitModel);
+                }
+
+                await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
+                transaction.Commit();
+                return Ok(new IdResponse<long>(debitModel.Id));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
+                return Error<IdResponse<long>>(new OperationExceptions(ErrorsCodes.C_999_ERROR_GENERICO, ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO)));
+            }
+        }
+
+        public async Task<OperationResponse<IEnumerable<DtoResponseIntegrationLogDebit>>> GetIntegrationLogById(long Id, CancellationToken ct = default)
+        {
+            try
+            {
+                IEnumerable<DtoResponseIntegrationLogDebit> logs = new List<DtoResponseIntegrationLogDebit>();
+                string invoicesScript = SqlScripts.GetIntegrationLogDebititById;
+                using (var connection = new SqlConnection(ConnectionString))
+                {
+                    logs = await connection.QueryAsync<DtoResponseIntegrationLogDebit>
+                        (invoicesScript, param: new { @id = Id });
+                }
+                return new OperationResponse<IEnumerable<DtoResponseIntegrationLogDebit>>(logs);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ErrorsCodes.C_010_ERROR_EXCEPTION, ErrorsMessages.GetMessage(ErrorsCodes.C_010_ERROR_EXCEPTION), ex: ex);
+                throw;
+            }
+        }
+
+        #region Private Methods
+        private byte GetUserAdminId()
+        {
+            try
+            {
+                using (var connection = new SqlConnection(ConnectionString))
+                {
+                    return connection.Query<byte>(SqlScripts.GetUserAdminId).First();
+
                 }
             }
-
-            var closeFactura = await _printer.CloseFactura(1, "").ConfigureAwait(false);
-
-            if (closeFactura == null)
+            catch (Exception ex)
             {
-                await _printer.CerrarJornadaFiscal();
-                return "ErrorCerrar";
+                _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
+                throw;
             }
-
-            return closeFactura;
-
         }
+        #endregion
     }
 }

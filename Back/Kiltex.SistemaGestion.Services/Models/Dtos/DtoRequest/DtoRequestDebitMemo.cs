@@ -1,10 +1,5 @@
 ﻿using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest
 {
@@ -22,8 +17,8 @@ namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest
         public long UserId { get; set; }
 
         public long DebitMemoNumber { get; set; }
-
-        public string CustomerName { get; set; }
+        [Required]
+        public string? CustomerName { get; set; }
 
         public string? CustomerCuit { get; set; }
 
@@ -38,6 +33,14 @@ namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest
         public decimal IvaTotal { get; set; }
 
         public int Type { get; set; }
+
+        public string? CAE { get; set; }
+
+        public DateTime? CAEExpirationDate { get; set; }
+
+        public bool IntegrationSuccess { get; set; }
+
+        public byte Version { get; set; }
 
         public List<DtoResponseDebitMemoDetails> DebitMemoDetails { get; set; }
     }

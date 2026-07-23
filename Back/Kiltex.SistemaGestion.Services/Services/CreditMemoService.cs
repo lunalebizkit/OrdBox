@@ -1,12 +1,17 @@
 ﻿using AutoMapper;
+using Dapper;
 using Kiltex.SistemaGestion.Domain;
 using Kiltex.SistemaGestion.Domain.Enum;
 using Kiltex.SistemaGestion.Domain.Model;
 using Kiltex.SistemaGestion.SDK.Error;
+using Kiltex.SistemaGestion.Services.ARCA.Dto.Response;
 using Kiltex.SistemaGestion.Services.Common;
 using Kiltex.SistemaGestion.Services.ImpresoraFiscal;
 using Kiltex.SistemaGestion.Services.ImpresoraFiscal.Printer250F;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
+using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
+using Kiltex.SistemaGestion.Services.Scripts;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System.Text.RegularExpressions;
@@ -17,11 +22,13 @@ namespace Kiltex.SistemaGestion.Services.Services
     {
         private readonly PrinterStatus _config;
         private readonly IPrinter _printer;
+        private readonly IConfiguration _settingConfiguration;
         public CreditMemoService(ErrorManager logger, DBContext context, IMapper mapper, IPrinter printer, PrinterStatus config, IConfiguration configuration) :
           base(logger, context, mapper, configuration)
         {
             _config = config;
             _printer = printer;
+            _settingConfiguration = configuration;
         }
 
         //Metodo Get By Id
@@ -145,7 +152,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                         return Error<IdResponse<long>>(new OperationExceptions("000", "Error al cargar cliente, verifique cantidad de digitos"));
                     }
                     //Verfico que la factura A no pueda realizarse al colocar un DNI
-                    if (model.Type == 1 && model.CustomerCuit.Length != 11)
+                    if ((model.Type == (int)ETypeReceipt.A || model.Type == (int)ETypeReceipt.ResponsableMonotrinuto) && model.CustomerCuit.Length != 11)
                     {
                         _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
                         return Error<IdResponse<long>>(new OperationExceptions("000", "Error al cargar cliente, no puede cargar un DNI con Factura tipo A"));
@@ -159,13 +166,13 @@ namespace Kiltex.SistemaGestion.Services.Services
                     }
 
                     //Verifico que el DNI tenga mayor a 7 caracteres y menor a 9
-                    if (model.Type == 2 && model.CustomerCuit.Length < 7 || model.CustomerCuit.Length > 8 && model.CustomerCuit.Length != 11)
+                    if (model.Type == (int)ETypeReceipt.B && model.CustomerCuit.Length < 7 || model.CustomerCuit.Length > 8 && model.CustomerCuit.Length != 11)
                     {
                         _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
                         return Error<IdResponse<long>>(new OperationExceptions("000", "Error al cargar cliente, verifique DNI"));
                     }
 
-                    if (_config.Status)
+                    if (!bool.Parse(_settingConfiguration.GetSection("ArcaStatus:Status").Value))
                     {
                         var error = await PrintCreditMemo(model, ct);
 
@@ -271,5 +278,87 @@ namespace Kiltex.SistemaGestion.Services.Services
             return closeFactura;
 
         }
+
+        public async Task<OperationResponse<IdResponse<long>>> Update(DtoRequestCreditMemo model, DtoResponseARCAInvoice responseARCAInvoice, CancellationToken ct = default)
+        {
+            var creditMemo = _mapper.Map<CreditMemo>(model);
+            try
+            {
+                if (creditMemo.Id != 0)
+                {
+                   await UpdateCreditMemoAsync(creditMemo, responseARCAInvoice).ConfigureAwait(false);
+                }
+
+                return Ok(new IdResponse<long>(creditMemo.Id));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
+                return Error<IdResponse<long>>(new OperationExceptions(ErrorsCodes.C_999_ERROR_GENERICO, ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO)));
+            }
+        }
+
+        public async Task<OperationResponse<IEnumerable<DtoResponseIntegrationLogCredit>>> GetIntegrationLogById(long Id, CancellationToken ct = default)
+        {
+            try
+            {
+                IEnumerable<DtoResponseIntegrationLogCredit> logs = new List<DtoResponseIntegrationLogCredit>();
+                string invoicesScript = SqlScripts.GetIntegrationLogCreditById;
+                using (var connection = new SqlConnection(ConnectionString))
+                {
+                    logs = await connection.QueryAsync<DtoResponseIntegrationLogCredit>
+                        (invoicesScript, param: new { @id = Id });
+                }
+                return new OperationResponse<IEnumerable<DtoResponseIntegrationLogCredit>>(logs);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ErrorsCodes.C_010_ERROR_EXCEPTION, ErrorsMessages.GetMessage(ErrorsCodes.C_010_ERROR_EXCEPTION), ex: ex);
+                throw;
+            }
+        }
+
+        #region Private Methods
+        private byte GetUserAdminId()
+        {
+            try
+            {
+                using (var connection = new SqlConnection(ConnectionString))
+                {
+                    return connection.Query<byte>(SqlScripts.GetUserAdminId).First();
+
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
+                throw;
+            }
+        }
+
+        private async Task UpdateCreditMemoAsync(CreditMemo creditMemo, DtoResponseARCAInvoice responseARCAInvoice)
+        {
+            try
+            {
+                using (var connection = new SqlConnection(ConnectionString))
+                {
+                    await connection.OpenAsync();
+                    connection.Execute(SqlScripts.UpdateCreditNoteCAE, new
+                    {
+                        id = creditMemo.Id,
+                        cae = string.IsNullOrEmpty(responseARCAInvoice.Cae) ? null : responseARCAInvoice.Cae,
+                        caexpirationdate = responseARCAInvoice.FechaVencimientoCae.HasValue ? responseARCAInvoice.FechaVencimientoCae.Value : (DateTime?)null,
+                        integrationsuccess = !string.IsNullOrEmpty(responseARCAInvoice.Cae),
+                        creditmemonumber = responseARCAInvoice.InvoiceNumber
+                    });
+                }
+            } catch (Exception ex)
+            {
+                _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
+            }
+
+        }
+
+        #endregion
     }
 }

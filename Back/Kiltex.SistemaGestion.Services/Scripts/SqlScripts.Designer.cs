@@ -137,6 +137,40 @@ namespace Kiltex.SistemaGestion.Services.Scripts {
         
         /// <summary>
         ///   Busca una cadena traducida similar a SELECT [id]
+        ///      ,[credit_id] AS [CreditId]
+        ///      ,[request]
+        ///      ,[response]
+        ///      ,[endpoint]
+        ///      ,[success]
+        ///      ,[created_on] AS [createdOn]
+        ///  FROM [integration_log_credit]
+        ///  WHERE [credit_id] = @id.
+        /// </summary>
+        internal static string GetIntegrationLogCreditById {
+            get {
+                return ResourceManager.GetString("GetIntegrationLogCreditById", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a SELECT [id]
+        ///      ,[debit_id] AS [DebitId]
+        ///      ,[request]
+        ///      ,[response]
+        ///      ,[endpoint]
+        ///      ,[success]
+        ///      ,[created_on] AS [createdOn]
+        ///  FROM [integration_log_debit]
+        ///  WHERE [debit_id] = @id.
+        /// </summary>
+        internal static string GetIntegrationLogDebititById {
+            get {
+                return ResourceManager.GetString("GetIntegrationLogDebititById", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a SELECT [id]
         ///      ,[invoice_id] AS [invoiceId]
         ///      ,[request]
         ///      ,[response]
@@ -231,6 +265,20 @@ namespace Kiltex.SistemaGestion.Services.Scripts {
         internal static string GetUserAdminId {
             get {
                 return ResourceManager.GetString("GetUserAdminId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a UPDATE [credit_memo]
+        ///        SET [cae] = @CAE,
+        ///            [cae_expiration_date] = @caexpirationdate,
+        ///            [integration_success] = @integrationsuccess,
+        ///            [creditMemo_number] = @creditmemonumber
+        ///        WHERE Id = @id;.
+        /// </summary>
+        internal static string UpdateCreditNoteCAE {
+            get {
+                return ResourceManager.GetString("UpdateCreditNoteCAE", resourceCulture);
             }
         }
         

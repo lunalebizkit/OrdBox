@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kiltex.SistemaGestion.Domain.Model
 {
@@ -59,6 +54,18 @@ namespace Kiltex.SistemaGestion.Domain.Model
 
         [Column("type")]
         public int Type { get; set; }
+
+        [Column("cae")]
+        public string? CAE { get; set; }
+
+        [Column("cae_expiration_date")]
+        public DateTime? CAEExpirationDate { get; set; }
+
+        [Column("integration_success")]
+        public bool? IntegrationSuccess { get; set; }
+
+        [Column("version")]
+        public byte Version { get; set; }
         public ICollection<DebitMemoDetails> DebitMemoDetails { get; set; } = new HashSet<DebitMemoDetails>();
     }
    
