@@ -5,6 +5,7 @@
         public string Nombre { get; set; }
 
         public long Number { get; set; }
+        public long RelatedNumber { get; set; }
 
         public string Direccion { get; set; }
 

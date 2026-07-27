@@ -13,6 +13,7 @@ namespace Kiltex.SistemaGestion.Services.Mapper
             CreateMap<Invoice, DtoRequestCabeceraPrintPDF>()
                 .ForMember(dest => dest.Nombre, opt => opt.MapFrom(src => src.CustomerName))
                 .ForMember(dest => dest.Number, opt => opt.MapFrom(src => src.InvoiceNumber))
+                .ForMember(dest => dest.RelatedNumber, opt => opt.Ignore())
                 .ForMember(dest => dest.Direccion, opt => opt.MapFrom(src => src.CustomerAddress))
                 .ForMember(dest => dest.CustomerCuit, opt => opt.MapFrom(src => src.CustomerCuit))
                 .ForMember(dest => dest.Observacion, opt => opt.MapFrom(src => src.Observation))
@@ -28,7 +29,8 @@ namespace Kiltex.SistemaGestion.Services.Mapper
 
             CreateMap<CreditMemo, DtoRequestCabeceraPrintPDF>()
                 .ForMember(dest => dest.Nombre, opt => opt.MapFrom(src => src.CustomerName))
-                .ForMember(dest => dest.Number, opt => opt.MapFrom(src => src.InvoiceNumber))
+                .ForMember(dest => dest.Number, opt => opt.MapFrom(src => src.CreditMemoNumber))
+                .ForMember(dest => dest.RelatedNumber, opt => opt.MapFrom(src => src.InvoiceNumber))
                 .ForMember(dest => dest.Direccion, opt => opt.MapFrom(src => src.CustomerAddress))
                 .ForMember(dest => dest.CustomerCuit, opt => opt.MapFrom(src => src.CustomerCuit))
                 .ForMember(dest => dest.Observacion, opt => opt.MapFrom(src => src.Observation))
@@ -44,7 +46,8 @@ namespace Kiltex.SistemaGestion.Services.Mapper
 
             CreateMap<DebitMemo, DtoRequestCabeceraPrintPDF>()
                 .ForMember(dest => dest.Nombre, opt => opt.MapFrom(src => src.CustomerName))
-                .ForMember(dest => dest.Number, opt => opt.MapFrom(src => src.InvoiceNumber))
+                .ForMember(dest => dest.Number, opt => opt.MapFrom(src => src.DebitMemoNumber))
+                .ForMember(dest => dest.RelatedNumber, opt => opt.MapFrom(src => src.InvoiceNumber))
                 .ForMember(dest => dest.Direccion, opt => opt.MapFrom(src => src.CustomerAddress))
                 .ForMember(dest => dest.CustomerCuit, opt => opt.MapFrom(src => src.CustomerCuit))
                 .ForMember(dest => dest.Observacion, opt => opt.MapFrom(src => src.Observation))

@@ -3,6 +3,7 @@ using iTextSharp.text;
 using iTextSharp.text.pdf;
 using Kiltex.SistemaGestion.Domain.Enum;
 using Kiltex.SistemaGestion.SDK.Error;
+using Kiltex.SistemaGestion.Services.ARCA.Enum;
 using Kiltex.SistemaGestion.Services.Common;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest.PDF;
@@ -1535,25 +1536,34 @@ namespace Kiltex.SistemaGestion.Services.Services
             };
 
             //Segunda Columna
-            Phrase textoDerecha = new();
-            if (string.IsNullOrEmpty(invoice.CustomerCuit))
+            Phrase phraseDerecha = new Phrase();
+            var textoDerecha = new List<Chunk>
             {
-                textoDerecha = new() { new Chunk("CUITs: ", fontTextBold) };
-            }
-            else
-            {
-                textoDerecha = new()
-                {
                 new Chunk("CUIT: ", fontTextBold),
-                new Chunk(invoice.CustomerCuit, fontText),
+                new Chunk(invoice.CustomerCuit ?? string.Empty, fontText),
                 Chunk.Newline,
                 Chunk.Newline,
                 new Chunk("Condicion: ", fontTextBold),
                 new Chunk(MapCondicion(invoice.Type), fontText)
-                };
+            };
+
+            if (invoice.ArcaType == (int)EInvoiceType.NotaDebitoA
+                || invoice.ArcaType == (int)EInvoiceType.NotaDebitoB
+                || invoice.ArcaType == (int)EInvoiceType.NotaCreditoB
+                || invoice.ArcaType == (int)EInvoiceType.NotaCreditoA)
+            {
+                textoDerecha.Add(Chunk.Newline);
+                textoDerecha.Add(Chunk.Newline);
+                textoDerecha.Add(new Chunk("Factura N°: ", fontTextBold));
+                textoDerecha.Add(new Chunk(invoice.RelatedNumber.ToString(), fontText));
             }
 
-            PdfPCell cell2 = new PdfPCell(textoDerecha)
+            foreach (var chunk in textoDerecha)
+            {
+                phraseDerecha.Add(chunk);
+            }
+
+            PdfPCell cell2 = new PdfPCell(phraseDerecha)
             {
                 Border = PdfPCell.TOP_BORDER | PdfPCell.BOTTOM_BORDER,
                 HorizontalAlignment = Element.ALIGN_RIGHT,
