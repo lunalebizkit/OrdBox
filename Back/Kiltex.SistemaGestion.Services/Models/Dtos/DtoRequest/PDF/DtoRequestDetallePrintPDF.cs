@@ -1,7 +1,7 @@
-﻿namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse
+﻿namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest.PDF
 {
-    public class DtoResponseDetallePDF
-    {      
+    public class DtoRequestDetallePrintPDF
+    {
         public string? ProductName { get; set; }
 
         public int Quantity { get; set; }

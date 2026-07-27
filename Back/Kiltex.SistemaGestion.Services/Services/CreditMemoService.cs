@@ -9,6 +9,7 @@ using Kiltex.SistemaGestion.Services.Common;
 using Kiltex.SistemaGestion.Services.ImpresoraFiscal;
 using Kiltex.SistemaGestion.Services.ImpresoraFiscal.Printer250F;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest;
+using Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest.PDF;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
 using Kiltex.SistemaGestion.Services.Scripts;
 using Microsoft.Data.SqlClient;
@@ -314,6 +315,44 @@ namespace Kiltex.SistemaGestion.Services.Services
             catch (Exception ex)
             {
                 _logger.LogError(ErrorsCodes.C_010_ERROR_EXCEPTION, ErrorsMessages.GetMessage(ErrorsCodes.C_010_ERROR_EXCEPTION), ex: ex);
+                throw;
+            }
+        }
+
+        public async Task<OperationResponse<DtoRequestCabeceraPrintPDF>> GetDocumentById(long id)
+        {
+            try
+            {
+                var factura = await _contextSql
+                                    .CreditMemo
+                                    .Include(x => x.CreditMemoDetail)
+                                    .AsNoTracking()
+                                    .FirstOrDefaultAsync(c => c.Id == id)
+                                    .ConfigureAwait(false);
+                if (factura == null)
+                {
+                    _logger.LogWarning(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO));
+                    return Error<DtoRequestCabeceraPrintPDF>(new OperationExceptions("000", $"Factura no encontrada {id}"));
+                }
+
+                var result = _mapper.Map<DtoRequestCabeceraPrintPDF>(factura);
+
+                result.Iva10 = 0;
+                result.Iva21 = 0;
+                result.Iva27 = 0;
+                foreach (var item in result.Details)
+                {
+                    result.Iva10 += ((decimal)item.Iva == (decimal)10.5) ? (item.Quantity * item.Price) - (item.Quantity * item.Price) / 1.105m : 0;
+                    result.Iva21 += ((decimal)item.Iva == (decimal)21) ? (item.Quantity * item.Price) - (item.Quantity * item.Price) / 1.21m : 0;
+                    result.Iva27 += ((decimal)item.Iva == (decimal)27) ? (item.Quantity * item.Price) - (item.Quantity * item.Price) / 1.27m : 0;
+                }
+
+
+                return new OperationResponse<DtoRequestCabeceraPrintPDF>(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
                 throw;
             }
         }
