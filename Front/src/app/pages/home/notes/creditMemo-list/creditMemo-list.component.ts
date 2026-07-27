@@ -7,6 +7,7 @@ import { CreditMemoModel } from '../model/creditMemo.model';
 import { NoteService } from '../notes.service';
 import { initialSearchFilter, parseFilterCustomSeachData, resetQuerySearchFilter, SearchCustomFilterModel } from 'src/app/common/components/model/search.custom.filter.model';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { InvoiceVersion } from 'src/app/common/auth/models/invoice-versions.enum';
 
 @Component({
   selector: 'app-creditMemo-list',
@@ -26,7 +27,8 @@ export class creditMemoListComponent implements OnInit {
   selectedIndex!: number;
   selectedCreditMemo: any;
   permissions = Permission;
-  dia:any;  
+  dia:any;
+  invoiceVersion= InvoiceVersion;
   
   index!: number;
   constructor(
@@ -172,5 +174,34 @@ export class creditMemoListComponent implements OnInit {
         this.queryParams.page = page;
       }
     }
+  }
+
+  imprimirInvoiceArca(id: number): void {
+    let fecha: Date = new Date();
+    let año: string = fecha.getFullYear().toString();
+    let mes = (fecha.getMonth() + 1).toString().padStart(2, '0');
+    let dia = fecha.getDate().toString().padStart(2, '0');
+    let hora: string = fecha.getHours().toString().padStart(2, '0');
+    let minutos: string = fecha.getMinutes().toString().padStart(2, '0');
+    let segundos: string = fecha.getSeconds().toString().padStart(2, '0');
+    const fileName = `NotaCredito_${año}${mes}${dia}${hora}${minutos}${segundos}`;
+    this.service.printCreditARCA(id).subscribe({
+      next: (r) => { this.downloadFile(r, fileName); }
+
+    });
+  }
+
+  downloadFile(response: any, fileName: string) {
+    const dataType = response.type;
+    const binaryData = [];
+
+    binaryData.push(response);
+
+    const filtePath = window.URL.createObjectURL(new Blob(binaryData, { type: dataType }))
+    const downloadLink = document.createElement('a');
+    downloadLink.href = filtePath;
+    downloadLink.setAttribute('download', fileName);
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
   }
 }

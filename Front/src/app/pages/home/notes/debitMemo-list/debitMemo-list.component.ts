@@ -8,6 +8,7 @@ import { DebitMemoModel } from '../model/debitMemo.model';
 import { NoteService } from '../notes.service';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { parseFilterCustomSeachData, resetQuerySearchFilter, SearchCustomFilterModel } from 'src/app/common/components/model/search.custom.filter.model';
+import { InvoiceVersion } from 'src/app/common/auth/models/invoice-versions.enum';
 
 @Component({
   selector: 'app-debitMemo-list',
@@ -27,6 +28,7 @@ export class debitMemoListComponent implements OnInit {
   selectedDebitMemo: any;
   dia:any;
   permissions = Permission;
+  invoiceVersion= InvoiceVersion;
 
   queryParams: SearchCustomFilterModel = resetQuerySearchFilter();
   
@@ -172,5 +174,33 @@ export class debitMemoListComponent implements OnInit {
         this.queryParams.page = page;
       }
     }
+  }
+
+  imprimirInvoiceArca(id: number): void {
+    let fecha: Date = new Date();
+    let año: string = fecha.getFullYear().toString();
+    let mes = (fecha.getMonth() + 1).toString().padStart(2, '0');
+    let dia = fecha.getDate().toString().padStart(2, '0');
+    let hora: string = fecha.getHours().toString().padStart(2, '0');
+    let minutos: string = fecha.getMinutes().toString().padStart(2, '0');
+    let segundos: string = fecha.getSeconds().toString().padStart(2, '0');
+    const fileName = `NotaDebito_${año}${mes}${dia}${hora}${minutos}${segundos}`;
+    this.service.printDebitARCA(id).subscribe({
+      next: (r) => { this.downloadFile(r, fileName); }
+
+    });
+  }
+
+  downloadFile(response: any, fileName: string) {
+    const dataType = response.type;
+    const binaryData = [];
+    binaryData.push(response);
+
+    const filtePath = window.URL.createObjectURL(new Blob(binaryData, { type: dataType }))
+    const downloadLink = document.createElement('a');
+    downloadLink.href = filtePath;
+    downloadLink.setAttribute('download', fileName);
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
   }
 }

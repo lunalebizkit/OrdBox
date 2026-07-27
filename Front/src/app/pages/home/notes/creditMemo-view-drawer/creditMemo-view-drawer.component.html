@@ -12,6 +12,12 @@
   [hideCerrar]="true"
   [hideFacturaPro]="true"
   [colors]="'#1890ff'"
+  [hideReprint]="this.version == invoiceVersion.Default"
+  [disabled]="this.integrationSuccess == false"
+  [hideARCA]="this.version == invoiceVersion.Default"
+  (onReprintClick)="popupReimprimir.showConfirmation()"
+  [disabledEnviarARCA]="!this.isSendFacturaArcaDisabled()"
+  (onEnviarEmailFacturaARCAClick)="this.popupEnviarFacturaARCA.showSendEmailConfirmation()"
 >
 </app-header-op-buttons>
 
@@ -159,4 +165,11 @@
       </nz-content>
     </nz-collapse-panel>
   </nz-collapse>
+  <app-popup-confirmation #popupReimprimir [title]="'Confirmar Reimpresion'"
+    [header]="'¿Está seguro de que desea reimprimir este comprobante?'" (handleOk)="hideReprint()" [disabled]="loading">
+  </app-popup-confirmation>
+
+  <app-popup-confirmation #popupEnviarFacturaARCA [title]="'Enviar Factura por E-mail'"
+    (handleSend)="sendEmail($event, this?.id)">
+  </app-popup-confirmation>
  

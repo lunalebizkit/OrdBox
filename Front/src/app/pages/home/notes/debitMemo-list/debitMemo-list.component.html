@@ -38,8 +38,19 @@
           <td [nzAlign]="'center'" style="font-weight: bold;">{{ this.currencyFormat( data.total)}}</td>
           <td style="text-align: center">
             <a>
-              <i nz-icon nzType="eye" nzTheme="outline" style="font-size: 16px" (click)="onDoubleClicked(data)"></i>
+              <i nz-icon nzType="eye" nzTheme="outline" style="font-size: 17px; margin-right: 20px" (click)="onDoubleClicked(data)"></i>
             </a>
+            <a (click)="imprimirInvoiceArca(data.id)" *ngIf="data.integrationSuccess == true && data.version == invoiceVersion.Arca">
+                <i
+                  nz-icon
+                  nz-tooltip
+                  nzTooltipTitle="Descargar pdf"
+                  nzType="file-pdf"
+                  nzTheme="twotone"
+                  [nzTwotoneColor]="'#24acf2'"
+                  style="font-size: 16px; margin-right: 2px"
+                ></i>
+              </a>
           </td>
         </tr>
       </tbody>
