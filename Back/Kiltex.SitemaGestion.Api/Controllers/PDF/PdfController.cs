@@ -269,6 +269,40 @@ namespace Kiltex.SistemaGestion.Api.Controllers.PDF
             return File(contenido.Data, "application/pdf", $"Recibo_{DateTime.Now:dd-MM-yyyy}.pdf");
         }
 
+        /// <summary>
+        /// Create PDF for Credit Memo ARCA.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="service"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("pdfcreditoarca")]
+        [AllowAnonymous]
+        public async Task<IActionResult> PdfCreditoARCA(long id, [FromServices] CreditMemoService service)
+        {
+            return File(await GenerarPdfCredito(id, service), "application/pdf", $"NotaCredito_{DateTime.Now:dd-MM-yyyy}.pdf");
+        }
+
+        /// <summary>
+        /// Create PDF for Debit Memo ARCA.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="service"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("pdfdebitoarca")]
+        [AllowAnonymous]
+        public async Task<IActionResult> PdfDebitoARCA(long id, [FromServices] DebitMemoService service)
+        {
+            return File(await GenerarPdfDebito(id, service), "application/pdf", $"NotaDebito_{DateTime.Now:dd-MM-yyyy}.pdf");
+        }
+
+        /// <summary>
+        /// Generate PDF for the invoice.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="invoiceService"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("pdfcomprobanteventaarca")]
         [AllowAnonymous]
@@ -296,13 +330,73 @@ namespace Kiltex.SistemaGestion.Api.Controllers.PDF
             return Return(await _emailservice.SendEmailInvoice(emailTo, await GenerarPdfFactura(id, invoiceService)));
         }
 
+        /// <summary>
+        /// Send Credit Memo Attachment to client and generate PDF for the credit memo.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="emailTo"></param>
+        /// <param name="service"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("enviarpdfcomprobantecredit")]
+        [AllowAnonymous]
+        public async Task<IActionResult> EnviarPdCreditARCA(long id, string emailTo, [FromServices] CreditMemoService service)
+        { 
+            if (string.IsNullOrEmpty(emailTo))
+            {
+                return BadRequest("Email address is required.");
+            }
+
+            return Return(await _emailservice.SendEmailInvoice(emailTo, await GenerarPdfCredito(id, service)));
+        }
+
+        /// <summary>
+        /// Send Debit Memo Attachment to client and generate PDF for the debit memo.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="emailTo"></param>
+        /// <param name="invoiceService"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("enviarpdfcomprobantedebit")]
+        [AllowAnonymous]
+        public async Task<IActionResult> EnviarPdfDebitARCA(long id, string emailTo, [FromServices] DebitMemoService service)
+        { 
+            if (string.IsNullOrEmpty(emailTo))
+            {
+                return BadRequest("Email address is required.");
+            }
+
+            return Return(await _emailservice.SendEmailInvoice(emailTo, await GenerarPdfDebito(id, service)));
+        }
+
         #region Private Method
         private async Task<byte[]> GenerarPdfFactura(long id, InvoiceService invoiceService)
         {
-            var factura = await invoiceService.GetById(id);
-            if (factura.Data == null) return null;
+            var doc = await invoiceService.GetDocumentById(id);
+            if (doc.Data == null) return null;
 
-            var contenido = await _service.PrintInvoiceARCA(factura.Data);
+            var contenido = await _service.PrintInvoiceARCA(doc.Data);
+
+            return contenido.Data;
+        }
+        
+        private async Task<byte[]> GenerarPdfCredito(long id, CreditMemoService service)
+        {
+            var model = await service.GetDocumentById(id);
+            if (model.Data == null) return null;
+
+            var contenido = await _service.PrintInvoiceARCA(model.Data);
+
+            return contenido.Data;
+        }
+        
+        private async Task<byte[]> GenerarPdfDebito(long id, DebitMemoService service)
+        {
+            var model = await service.GetDocumentById(id);
+            if (model.Data == null) return null;
+
+            var contenido = await _service.PrintInvoiceARCA(model.Data);
 
             return contenido.Data;
         }

@@ -33,6 +33,13 @@ export class NoteService {
       return this.api.post(`CreditMemo`, model, false);
   }
 
+  public getIntegrationCreditLogById(id: number): Observable<any> {
+    return this.api.get(`CreditMemo/GetIntegrationLogById?id=${id}`, false)
+  }
+
+  public sendCreditARCA(id: number, emailTo: string): Observable<any> {
+    return this.api.get(`Pdf/enviarpdfcomprobantecredit?id=${id}&emailTo=${emailTo}`, false);
+  }
 /*   servicio notas de debito */
 
   public getDebitMemoById(id: number): Observable<any> {
@@ -47,4 +54,20 @@ export class NoteService {
       return this.api.post(`DebitMemo`, model, false);
   }
 
+  public getIntegrationDebitLogById(id: number): Observable<any> {
+    return this.api.get(`DebitMemo/GetIntegrationLogById?id=${id}`, false)
+
+  }
+  
+  public printCreditARCA(id: number): Observable<any> {
+    return this.api.get(`Pdf/pdfcreditoarca?id=${id}`, false, {responseType:'blob' as 'json'}) ;
+  }
+  
+  public printDebitARCA(id: number): Observable<any> {
+    return this.api.get(`Pdf/pdfdebitoarca?id=${id}`, false, {responseType:'blob' as 'json'}) ;
+  }
+
+  public sendDebitARCA(id: number, emailTo: string): Observable<any> {
+    return this.api.get(`Pdf/enviarpdfcomprobantedebit?id=${id}&emailTo=${emailTo}`, false);
+  }
 }

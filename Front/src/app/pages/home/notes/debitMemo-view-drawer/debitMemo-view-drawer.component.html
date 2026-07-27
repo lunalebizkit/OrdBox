@@ -11,6 +11,12 @@
   [hideCerrar]="true"
   [hideFacturaPro]="true"
   [colors]="'#1890ff'"
+  [hideReprint]="this.version == invoiceVersion.Default"
+  [disabled]="this.integrationSuccess == false"
+  [hideARCA]="this.version == invoiceVersion.Default"
+  (onReprintClick)="popupReimprimir.showConfirmation()"
+  [disabledEnviarARCA]="!this.isSendFacturaArcaDisabled()"
+  (onEnviarEmailFacturaARCAClick)="this.popupEnviarFacturaARCA.showSendEmailConfirmation()"
 >
 </app-header-op-buttons>
 <nz-collapse class="{{ this.tipo }}">
@@ -107,4 +113,55 @@
         </nz-content>
       </nz-collapse-panel>
     </nz-collapse>
- 
+
+    <nz-collapse *ngIf="this.version == invoiceVersion.Arca" >
+    <nz-collapse-panel nzHeader="Log ARCA" [nzActive]="false" [nzShowArrow]="true" class="{{ this.tipo }}">
+      <nz-content>
+        <nz-table [nzBordered]="true" nzTemplateMode [nzSize]="'small'">
+          <thead>
+            <tr>
+              <th>Envio</th>
+              <th>Respuesta</th>
+              <th>Correcto</th>
+              <th>Fecha</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of this.invoiceLog">
+              <td>
+                <nz-collapse>
+                  <nz-collapse-panel nzHeader="XML Original">
+                    <pre style="max-width:300px; overflow-x:auto;">{{parserXML(item.request)}}</pre>
+                  </nz-collapse-panel>
+                </nz-collapse>
+              </td>
+              <td>
+                <nz-collapse>
+                  <nz-collapse-panel nzHeader="XML Original">
+                    <pre style="max-width:300px; overflow-x:auto;">{{parserXML(item.response)}}</pre>
+                  </nz-collapse-panel>
+                </nz-collapse>
+              </td>
+              <td style="text-align: center;">
+                <ng-container *ngIf="item.success; else errorIcon">
+                  <i nz-icon nzType="check-circle" nzTheme="outline" style="color: green;"></i>
+                </ng-container>
+                <ng-template #errorIcon>
+                  <i nz-icon nzType="close-circle" nzTheme="outline" style="color: red;"></i>
+                </ng-template>
+              </td>
+              <td>{{item.createdOn | date : "YYYY-MM-dd hh:mm"}}</td>
+            </tr>
+          </tbody>
+        </nz-table>
+      </nz-content>
+    </nz-collapse-panel>
+  </nz-collapse>
+
+ <app-popup-confirmation #popupReimprimir [title]="'Confirmar Reimpresion'"
+    [header]="'¿Está seguro de que desea reimprimir este comprobante?'" (handleOk)="hideReprint()" [disabled]="loading">
+  </app-popup-confirmation>
+
+  <app-popup-confirmation #popupEnviarFacturaARCA [title]="'Enviar Factura por E-mail'"
+    (handleSend)="sendEmail($event, this?.id)">
+  </app-popup-confirmation>

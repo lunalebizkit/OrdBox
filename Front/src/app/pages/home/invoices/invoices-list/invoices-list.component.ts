@@ -22,7 +22,7 @@ export class InvoicesListComponent implements OnInit {
   dia: any;
   index!: number;
   id!: number;
-  dato!: any
+  dato!: any;
   invoiceVersion= InvoiceVersion;
   /*
    ** Catidad total de entidades

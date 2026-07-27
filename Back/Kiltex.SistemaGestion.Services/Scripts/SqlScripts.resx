@@ -133,6 +133,12 @@
   <data name="GetCompleteProductById" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>GetCompleteProductById.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
+  <data name="GetIntegrationLogCreditById" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>GetIntegrationLogCreditById.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="GetIntegrationLogDebititById" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>GetIntegrationLogDebititById.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
   <data name="GetIntegrationLogInvoiceByInvoiceId" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>GetIntegrationLogInvoiceByInvoiceId.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
@@ -150,6 +156,9 @@
   </data>
   <data name="GetUserAdminId" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>GetUserAdminId.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="UpdateCreditNoteCAE" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>UpdateCreditNoteCAE.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
   <data name="UpdateProductStockById" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>UpdateProductStockById.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
