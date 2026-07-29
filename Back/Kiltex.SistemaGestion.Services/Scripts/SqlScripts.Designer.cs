@@ -136,6 +136,24 @@ namespace Kiltex.SistemaGestion.Services.Scripts {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a SELECT TOP (10) [e].[id]
+        ///      ,[e].[dni]
+        ///      ,[e].[cuit]
+        ///      ,[e].[name]
+        ///      ,[e].[address]
+        ///      ,[e].[isInactive]
+        ///  FROM [entity] [e]
+        ///  INNER JOIN [customer] [c] ON [c].[id] = [e].[id]
+        ///  WHERE [e].[isInactive] = 0
+        ///  AND [e].[cuit] like @cuit + &apos;%&apos;;.
+        /// </summary>
+        internal static string GetCustomerByCUIT {
+            get {
+                return ResourceManager.GetString("GetCustomerByCUIT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a SELECT [id]
         ///      ,[credit_id] AS [CreditId]
         ///      ,[request]

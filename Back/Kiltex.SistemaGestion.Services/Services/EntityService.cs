@@ -1,9 +1,13 @@
 ﻿using AutoMapper;
+using Dapper;
+using DocumentFormat.OpenXml.Office2010.Excel;
 using Kiltex.SistemaGestion.Domain;
 using Kiltex.SistemaGestion.Domain.Model;
 using Kiltex.SistemaGestion.SDK.Error;
 using Kiltex.SistemaGestion.Services.Common;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
+using Kiltex.SistemaGestion.Services.Scripts;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
@@ -574,6 +578,45 @@ namespace Kiltex.SistemaGestion.Services.Services
                 throw;
             }
         }
+
+        public async Task<OperationResponse<List<DtoEntity>>> GetCustomersByCuit(string Cuit)
+        {
+            try
+            {
+                using (var connection = new SqlConnection(ConnectionString))
+                {
+                  var customers =await connection.QueryAsync<DtoEntity>(SqlScripts.GetCustomerByCUIT, new { @cuit = NormalizeCuit(Cuit) });                        
+                    
+                    return new OperationResponse<List<DtoEntity>>(customers.ToList());
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
+                throw;
+            }
+        }
+
+        #region Private Methods
+        private string NormalizeCuit(string cuit)
+        {
+            var limpio = cuit.Replace("-", "");
+
+            if (string.IsNullOrEmpty(limpio))
+                return string.Empty;
+
+            // Hasta 2 dígitos → tal cual
+            if (limpio.Length <= 2)
+                return limpio;
+
+            // Entre 3 y 10 dígitos → insertar guion después de los primeros 2
+            if (limpio.Length <= 10)
+                return $"{limpio.Substring(0, 2)}-{limpio.Substring(2)}";
+
+            // 11 dígitos → formato completo XX-XXXXXXXX-X
+            return $"{limpio.Substring(0, 2)}-{limpio.Substring(2, 8)}-{limpio.Substring(10, 1)}";
+        }
+        #endregion
 
     }
 }
