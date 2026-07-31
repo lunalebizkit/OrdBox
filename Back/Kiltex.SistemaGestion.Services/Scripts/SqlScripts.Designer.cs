@@ -136,20 +136,44 @@ namespace Kiltex.SistemaGestion.Services.Scripts {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a SELECT TOP (10) [e].[id]
-        ///      ,[e].[dni]
-        ///      ,[e].[cuit]
-        ///      ,[e].[name]
-        ///      ,[e].[address]
-        ///      ,[e].[isInactive]
-        ///  FROM [entity] [e]
-        ///  INNER JOIN [customer] [c] ON [c].[id] = [e].[id]
-        ///  WHERE [e].[isInactive] = 0
-        ///  AND [e].[cuit] like @cuit + &apos;%&apos;;.
+        ///   Busca una cadena traducida similar a WITH EntityCustomer AS (
+        ///    SELECT 
+        ///        [e].[id],
+        ///        [e].[dni],
+        ///        [e].[cuit],
+        ///        REPLACE([e].[cuit], &apos;-&apos;, &apos;&apos;) AS CuitNormalized,
+        ///        [e].[name],
+        ///        [e].[address],
+        ///        [ee].[email]
+        ///    FROM entity e
+        ///    INNER JOIN customer c ON c.[id] = [e].[id]
+        ///    OUTER APPLY (
+        ///        SELECT TOP 1 email
+        ///        FROM email_entity ee
+        ///        WHERE ee.entity_id = c.id
+        ///        ORDER BY ee.id
+        ///    ) ee
+        ///    WHERE [e].[isInactive] = 0
+        ///)
+        ///SELECT TOP (10) [ec].[id]
+        ///      ,[ec].[d [resto de la cadena truncado]&quot;;.
         /// </summary>
         internal static string GetCustomerByCUIT {
             get {
                 return ResourceManager.GetString("GetCustomerByCUIT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Busca una cadena traducida similar a SELECT TOP(1)
+        ///	[e].[id]
+        ///    FROM entity e
+        ///    INNER JOIN customer c ON c.[id] = [e].[id]
+        ///    WHERE [e].[id] = @id AND REPLACE([e].[cuit], &apos;-&apos;, &apos;&apos;) = @cuit;.
+        /// </summary>
+        internal static string GetCustomerByCuitAndId {
+            get {
+                return ResourceManager.GetString("GetCustomerByCuitAndId", resourceCulture);
             }
         }
         

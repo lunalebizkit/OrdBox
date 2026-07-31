@@ -1,5 +1,4 @@
-﻿using System;
-using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
+﻿using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
 
 namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest
 {
@@ -18,6 +17,8 @@ namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest
         public string CustomerCuit { get; set; }
 
         public string CustomerAddress { get; set; }
+
+        public string? CustomerEmail { get; set; }
 
         public string? Observation { get; set; }
 

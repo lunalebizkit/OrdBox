@@ -579,13 +579,18 @@ namespace Kiltex.SistemaGestion.Services.Services
             }
         }
 
+        /// <summary>
+        /// Retorna Listado de Cuits para busqueda predictiva en New-Invoice
+        /// </summary>
+        /// <param name="Cuit"></param>
+        /// <returns></returns>
         public async Task<OperationResponse<List<DtoEntity>>> GetCustomersByCuit(string Cuit)
         {
             try
             {
                 using (var connection = new SqlConnection(ConnectionString))
                 {
-                  var customers =await connection.QueryAsync<DtoEntity>(SqlScripts.GetCustomerByCUIT, new { @cuit = NormalizeCuit(Cuit) });                        
+                  var customers =await connection.QueryAsync<DtoEntity>(SqlScripts.GetCustomerByCUIT, new { @cuit = Cuit });                        
                     
                     return new OperationResponse<List<DtoEntity>>(customers.ToList());
                 }
@@ -597,25 +602,136 @@ namespace Kiltex.SistemaGestion.Services.Services
             }
         }
 
+        public async Task<OperationResponse<IdResponse<long>>> SaveCustomerFromInvoice(DtoEntity model, long? id = default, CancellationToken ct = default)
+        {
+            try
+            {
+                var entityModel = _mapper.Map<Customer>(model);
+
+                var email = new EmailEntity();
+                var phones = new PhoneEntity();
+
+                if (id != null)
+                {
+                    var customer = GetCustomersByCuitAndId(model.Cuit, id.Value);
+
+                    if (customer != null)
+                    {
+                        return Ok(new IdResponse<long>(customer.Value));
+                    }
+                    if (model.EmailEntity != null)
+                    {
+                        foreach (var newEmail in model.EmailEntity)
+                        {
+                            var emails = new EmailEntity()
+                            {
+                                Email = newEmail,
+                                Entity = entityModel
+                            };
+                            entityModel.EmailEntities.Add(emails);
+                        }
+
+                    }
+
+                    if (model.PhoneEntity != null)
+                    {
+                        foreach (var newPhone in model.PhoneEntity)
+                        {
+
+                            phones = new PhoneEntity()
+                            {
+                                Entity = entityModel,
+                                PhoneNumber = newPhone
+                            };
+                            entityModel.PhoneEntities.Add(phones);
+
+                        }
+                    }
+
+                    await _contextSql.Customers.AddAsync(entityModel, ct).ConfigureAwait(false);
+                    await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
+
+                    return Ok(new IdResponse<long>(entityModel.Id));
+                }
+                else
+                {
+                    if (model.EmailEntity != null)
+                    {
+                        foreach (var newEmail in model.EmailEntity)
+                        {
+                            var emails = new EmailEntity()
+                            {
+                                Email = newEmail,
+                                Entity = entityModel
+                            };
+                            entityModel.EmailEntities.Add(emails);
+                        }
+
+                    }
+
+                    if (model.PhoneEntity != null)
+                    {
+                        foreach (var newPhone in model.PhoneEntity)
+                        {
+
+                            phones = new PhoneEntity()
+                            {
+                                Entity = entityModel,
+                                PhoneNumber = newPhone
+                            };
+                            entityModel.PhoneEntities.Add(phones);
+
+                        }
+                    }
+
+                    await _contextSql.Customers.AddAsync(entityModel, ct).ConfigureAwait(false);
+                    await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
+
+                    return Ok(new IdResponse<long>(entityModel.Id));
+
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
+                throw;
+            }
+        }
+
         #region Private Methods
-        private string NormalizeCuit(string cuit)
+        private static string NormalizeCuit(string cuit)
         {
             var limpio = cuit.Replace("-", "");
 
             if (string.IsNullOrEmpty(limpio))
                 return string.Empty;
 
-            // Hasta 2 dígitos → tal cual
             if (limpio.Length <= 2)
                 return limpio;
 
-            // Entre 3 y 10 dígitos → insertar guion después de los primeros 2
             if (limpio.Length <= 10)
                 return $"{limpio.Substring(0, 2)}-{limpio.Substring(2)}";
 
-            // 11 dígitos → formato completo XX-XXXXXXXX-X
             return $"{limpio.Substring(0, 2)}-{limpio.Substring(2, 8)}-{limpio.Substring(10, 1)}";
         }
+
+
+        private long? GetCustomersByCuitAndId(string Cuit, long Id)
+        {
+            try
+            {
+                using (var connection = new SqlConnection(ConnectionString))
+                {
+                    return connection.Query<long?>(SqlScripts.GetCustomerByCuitAndId, new { @cuit = Cuit, @id = Id }).FirstOrDefault();                   
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
+                throw;
+            }
+        }
+
         #endregion
 
     }

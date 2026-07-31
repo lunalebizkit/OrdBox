@@ -12,14 +12,18 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Invoice
     public class InvoiceController : ApiBaseController
     {
         private readonly InvoiceService _service;
+        private readonly PdfService _pdfService;
+        private readonly EmailService _emailService;
         private readonly IArcaIntegracion _arcaIntegracionService;
         private readonly IConfiguration _settingConfiguration;
 
-        public InvoiceController(InvoiceService service, IArcaIntegracion arcaIntegracionService, IConfiguration configuration)
+        public InvoiceController(InvoiceService service, IArcaIntegracion arcaIntegracionService, IConfiguration configuration, PdfService pdfService, EmailService emailSerice)
         {
             _service = service;
             _arcaIntegracionService = arcaIntegracionService;
             _settingConfiguration = configuration;
+            _pdfService = pdfService;
+            _emailService = emailSerice;
         }
 
         /// <summary>
@@ -208,7 +212,13 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Invoice
 
                 if (!string.IsNullOrEmpty(responseCAE.Cae) || responseCAE.InvoiceNumber > 0)
                 {
-                  return Return(await _service.Update(invoice.Data, responseCAE).ConfigureAwait(false));
+                    var result = await _service.Update(invoice.Data, responseCAE).ConfigureAwait(false);
+
+                    if (result.Success) {
+                        var document = await _service.GetDocumentById(invoiceId);
+                        var content = await _pdfService.PrintInvoiceARCA(document.Data);
+                        return Return(await _emailService.SendEmailInvoice(invoice.Data.CustomerEmail, content.Data));
+                    }
                 }
             }
             return BadRequest("No se encontro número de factura");

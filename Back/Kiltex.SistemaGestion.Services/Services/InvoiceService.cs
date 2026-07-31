@@ -27,12 +27,14 @@ namespace Kiltex.SistemaGestion.Services.Services
     {
         private readonly IPrinter _printer;
         private readonly IConfiguration _settingConfiguration;
+        private readonly EntityService _entityService;
 
-        public InvoiceService(ErrorManager logger, DBContext context, IMapper maper, IPrinter printer, PrinterStatus config, IConfiguration configuration) :
+        public InvoiceService(ErrorManager logger, DBContext context, IMapper maper, IPrinter printer, PrinterStatus config, IConfiguration configuration, EntityService entityService) :
             base(logger, context, maper, configuration)
         {
             _printer = printer;
             _settingConfiguration = configuration;
+            _entityService = entityService;
         }
         public async Task<OperationResponse<DtoRequestInvoice>> GetById(long id)
         {
@@ -41,6 +43,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                 var factura = await _contextSql
                                    .Invoices
                                    .Include(x => x.InvoiceDetails)
+                                   .Include(y => y.Customer).ThenInclude(y => y.EmailEntities)
                                    .AsNoTracking()
                                    .FirstOrDefaultAsync(p => p.Id == id)
                                    .ConfigureAwait(false);
@@ -168,7 +171,20 @@ namespace Kiltex.SistemaGestion.Services.Services
 
                     if (invoiceModel.CustomerId == 0)
                     {
-                        invoiceModel.CustomerId = GetUserAdminId();
+                        DtoEntity newCustomer = new DtoEntity()
+                        {
+                            Id = 0,
+                            Dni = null,
+                            Cuit = invoiceModel.CustomerCuit,
+                            Address = invoiceModel.CustomerAddress,
+                            Name = invoiceModel.CustomerName,
+                            PhoneEntity = new List<string>(),
+                            EmailEntity = new List<string>() { model.CustomerEmail?.Trim() },
+                        };
+
+                        var customerid = await _entityService.SaveCustomerFromInvoice(newCustomer, model.CustomerId > 0 ? model.CustomerId : null).ConfigureAwait(false);
+
+                        invoiceModel.CustomerId = customerid.Data.Id;
                     }
 
                     foreach (var detail in invoiceModel.InvoiceDetails)
@@ -243,12 +259,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             try
             {
                 if (invoiceModel.Id != 0)
-                {  
-                    if (invoiceModel.CustomerId == 0)
-                    {
-                        invoiceModel.CustomerId = GetUserAdminId();
-                    }      
-                    
+                {                    
                     Invoice invoice = await _contextSql.Invoices.FirstAsync(p => p.Id == invoiceModel.Id).ConfigureAwait(false);
 
                     invoiceModel.CAE = string.IsNullOrEmpty(responseARCAInvoice.Cae) ? null : responseARCAInvoice.Cae;
