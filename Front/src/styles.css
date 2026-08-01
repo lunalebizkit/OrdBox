@@ -109,3 +109,7 @@ nz-footer {
     justify-content: flex-end;
     padding-right: 16px;
 }
+
+label{
+    font-size: 12px!important;
+}

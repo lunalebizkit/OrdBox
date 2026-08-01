@@ -68,9 +68,9 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
   formInvoice!: FormGroup;
   formProductSearch!: FormGroup;
   formProduct!: FormGroup;
-  formCustomerSearch!: FormGroup;
   formInvoiceModel!: FormGroup;
   editProductId: number = 0;
+  patternCuit: string = '^[0-9]{11}$';
 
   name: string = environment.name;
   date = Date.now();
@@ -83,7 +83,8 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
  */
   customer: CustomerModel[] = [];
   invoiceDetailsList: InvoiceDetailList[] = [];
-  invoiceDetails: InvoiceDetails[] = []
+  invoiceDetails: InvoiceDetails[] = [];
+  customerSelected!: any;
 
   /*
   **Variables de la tabla detalle
@@ -94,7 +95,6 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
 ** Parametros de busqueda
 */
   paymentSelected: any;
-  cuit!: string;
   product!: string;
   customerId!: number;
   ivaTotal: number = 0;
@@ -114,13 +114,13 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
     pageSize: 10
   };
 
-  selectedDni: boolean = false;
   dni: any;
   iva21Undefined!: number;
   iva27Undefined!: number;
   iva10Undefined!: number;
   editIdProductName: number | null = null;
   editIdProductPrice: number | null = null;
+  entityList: CustomerModel[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -144,13 +144,12 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
       type: [1, Validators.required],
       payment: [eInvoiceType.A, Validators.required],
       address: ['',],
-      customerCuit: ['', [Validators.required, Validators.pattern(/^\d{11}$/)]],
-      customerDni: ['',],
+      customerCuit: ['', [Validators.required]],
       customerName: ['',],
+      customerEmail: [null, [Validators.email]],
       observation: [''],
       ivaCondition: [eIvaCondition.RespInscrip, Validators.required]
-    });
-    this.formCustomerSearch = this.fb.group({})
+    });    
     this.formProductSearch = this.fb.group({
       productSearchFilter: ['']
     })
@@ -173,7 +172,15 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
         this.showMessageError('No se encontro período activo');
       }
 
-    })
+    });
+
+    this.formInvoice.get('customerCuit')?.valueChanges.subscribe(value => {
+      if (typeof value === 'string') {
+        this.customerId = 0;
+        this.formInvoice.get('customerCuit')?.clearValidators();
+      }
+    });
+    this.formInvoice.get('ivaCondition')?.valueChanges.subscribe(() => this.updatePattern());
   }
 
   typeSelectedChange(id: eInvoiceType): void {
@@ -188,11 +195,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
     }));
 
       this.formInvoice.controls['ivaCondition'].setValue(null);
-      if (!this.selectedDni){
-        this.formInvoice.controls['customerDni'].setValue('');
-        this.formInvoice.controls['customerDni'].setValidators([]);
-        this.formInvoice.controls['customerDni'].updateValueAndValidity();
-      }
+     
       // validacion para CUIT
       this.formInvoice.get('customerCuit')?.reset();
       this.formInvoice.get('customerCuit')?.clearValidators();
@@ -209,12 +212,9 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
       // validacion para CUIT
       this.formInvoice.get('customerCuit')?.reset();
       this.formInvoice.get('customerCuit')?.clearValidators();
-      this.formInvoice.get('customerCuit')?.updateValueAndValidity();
-      if (!this.selectedDni){
-        this.formInvoice.get('customerCuit')?.setValidators([Validators.required, Validators.pattern(/^\d{11}$/)]);
-      }else{        
-        this.formInvoice.get('customerCuit')?.setValidators([]);
-      }
+      this.formInvoice.get('customerCuit')?.updateValueAndValidity();        
+      this.formInvoice.get('customerCuit')?.setValidators([Validators.required, Validators.pattern(/^\d{11}$/)]);
+      
       this.formInvoice.get('customerCuit')?.updateValueAndValidity();
     }
     
@@ -225,32 +225,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
     this.paymentSelected = Object.entries(ePayment).find(([key, value]) => value === paymentName)?.[0];
     this.updatePriceByPaymentSelectedChange();
   }
-  
-  openComponentCustomer(): void {
-    const drawerRefCustomer = this.drawerService.create<InvoiceCustomerSearchComponent, {}, CustomerModel>({
-      nzTitle: 'Cliente',
-      nzContent: InvoiceCustomerSearchComponent,
-      nzSize: 'large',
-      nzWidth: '90%',
-      nzClosable: false
-    });
-    drawerRefCustomer.afterClose.subscribe({
-      next: (data) => {
-        if (data != undefined) {
-          this.customerId = data.id;
-          this.formInvoice.controls['address'].setValue(data.address);
-          this.formInvoice.controls['customerCuit'].setValue(!isNil(data.cuit) ? data.cuit.replace(/[^a-zA-Z0-9 ]/g, '') : null);
-          this.formInvoice.controls['customerName'].setValue(data.name);
-          this.formInvoice.controls['customerDni'].setValue(data.dni)
-        }
-      },
-      error: () => {
-
-      }
-
-    })
-  };
-
+    
   openComponentProduct(): void {
 
     if (this.isValidPayment()) {
@@ -314,25 +289,25 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
     }
   };
 
-  searchCustomer(): void {
-    this.cuit =
-      this.formInvoice.controls['customerCuit'].value;
-    if (this.cuit === '00') {
+  searchCustomer(data: string): void {
+    let cuit = this.clearCuitString(data);
+    if (cuit === '00') {
       this.formInvoice.controls['address'].setValue('-');
       this.formInvoice.controls['customerCuit'].setValue('99999999995');
       this.formInvoice.controls['customerName'].setValue('-');
       this.customerId = 0;
       return;
     } else {
-      if (this.cuit.length >= 6) {
-        this.serviceEntity.getByCuit(this.cuit).subscribe({
+      if (cuit.length >= 3) {
+        this.serviceEntity.getCustomersByCuit(cuit).subscribe({
           next: (data) => {
-            this.formInvoice.controls['address'].setValue(data.address);
-            this.formInvoice.controls['customerCuit'].setValue(data.cuit);
-            this.formInvoice.controls['customerName'].setValue(data.name);
-            this.formInvoice.controls['customerDni'].setValue(data.dni)
+            if (data && data.length > 0) {
+              this.entityList = data;
+            }else{
+              this.entityList = [];
+            }            
           },
-          error: () => { this.showMessageError('No se encontro Cliente'); }
+          error: () => { this.showMessageError('No se encontro resultado'); }
         });
       }
     }
@@ -492,8 +467,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
         return;
       }
 
-      if (this.isValidForm(this.formInvoice) &&
-        this.isValidForm(this.formCustomerSearch) && this.isValidForm(this.formProductSearch)) {
+      if (this.isValidForm(this.formInvoice) && this.isValidForm(this.formProductSearch)) {
         this.popComponent.showConfirmation()
       }
     } catch (error) {
@@ -503,11 +477,6 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
 
   save(): void {
     if (this.isValidForm(this.formInvoice)) {
-
-      if (this.selectedDni && this.formInvoice.controls['customerDni'].value.length < 8) {
-        return this.showMessageError('DNI Invalido');
-      };
-
 
       if (this.invoiceDetails.length == 0) {
         this.showMessageError('No hay Productos Seleccionados');
@@ -523,8 +492,9 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
           invoiceNumber: this.totalItems,
           cae: null,
           customerName: this.formInvoice.controls['customerName'].value,
-          customerCuit: this.selectedDni ? this.formInvoice.controls['customerDni'].value : this.formInvoice.controls['customerCuit'].value,
+          customerCuit: this.formInvoice.controls['customerCuit'].value,
           customerAddress: this.formInvoice.controls['address'].value,
+          customerEmail: this.formInvoice.controls['customerEmail'].value,
           observation: this.formInvoice.controls['observation'].value,
           dateTime: this.formInvoice.controls['dateTime'].value,
           iva21: this.iva21Undefined,
@@ -554,7 +524,8 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
                 `Comprobante creado correctamente`
               );
               this.isSaving = false;
-              this.router.navigate(['/home/invoices/invoices-sale']);
+              this.popComponent.isConfirmationvisible = false;
+              this.router.navigate(['/home/invoices/invoices-sale']);              
             },
             error: (r) => {
               this.isSaving = false;
@@ -584,7 +555,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
   }
   stopEdit(): void {
     this.editId = null;
-  };
+  }
   stopEditIva(): void {
     this.editIdIva = null;
   }
@@ -644,24 +615,7 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
   formaterDate(date: string | number | Date): string {
     return formatDate(date, 'MM/dd/YYYY', this.locale);
   }
-
-  select(e: any) {
-    this.selectedDni = !this.selectedDni;
-    if (this.selectedDni) {      
-      this.formInvoice.controls['customerDni'].setValidators([Validators.required, Validators.minLength(8), Validators.maxLength(8)]);
-      this.formInvoice.controls['customerDni'].updateValueAndValidity();
-
-      this.formInvoice.get('customerCuit')?.setValidators([]);
-      this.formInvoice.get('customerCuit')?.updateValueAndValidity();
-    } else {
-      this.formInvoice.controls['customerDni'].setValue('');
-      this.formInvoice.controls['customerDni'].setValidators([]);
-      this.formInvoice.controls['customerDni'].updateValueAndValidity();
-
-      this.formInvoice.get('customerCuit')?.setValidators([Validators.required, Validators.pattern(/^\d{11}$/)]);
-      this.formInvoice.get('customerCuit')?.updateValueAndValidity();
-    }
-  }
+  
   direction() {
     this.router.navigate(['/home/invoices/invoices-sale']);
   }
@@ -746,7 +700,6 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
   }
 
   updatePriceByPaymentSelectedChange(): void {
-
     if (this.invoiceDetails.length > 0) {
       
       this.isLoading = true;
@@ -792,5 +745,41 @@ export class InvoicesEditComponent extends BaseComponent implements OnInit {
     };
   }
 
-}
+  onChange(customer: CustomerModel) {
+    if (typeof customer == "string")
+    { 
+      this.customerId = 0;
+      return
+    }
+    if (customer != null)
+    {
+      this.formInvoice.patchValue({
+        address: customer.address,
+        customerCuit: this.clearCuitString(customer.cuit),
+        customerName: customer.name,
+        customerEmail: customer.email
+      },{ emitEvent: false });
+      this.customerId = customer.id;
+    }
+  }
 
+  clearCuitString(data: string): string{
+    return data.replace(/\D/g, '');
+  }
+
+  updatePattern(): void {
+  const type = this.formInvoice.get('type')?.value;
+  const ivaCondition = this.formInvoice.get('ivaCondition')?.value;
+  const cuitControl = this.formInvoice.get('customerCuit');
+
+  cuitControl?.clearValidators();
+
+  if (type === 2 && ivaCondition === eIvaCondition.ConsFinal) {        
+    cuitControl?.setValidators([Validators.required, Validators.pattern(/^\d{8}$/)]);
+  } else {
+    cuitControl?.setValidators([Validators.required, Validators.pattern(/^\d{11}$/)]);
+  }
+
+  cuitControl?.updateValueAndValidity({emitEvent: false});
+}
+}

@@ -96,4 +96,13 @@ export class EntityService {
   public deleteCustomer(id: number): Observable<any> {
     return this.api.delete(`entity/${id}`, false);
   }
+
+  /**
+   * Obtiene un Proveedor por Cuit
+   * @param cuit
+   * @returns
+   */
+  public getCustomersByCuit(cuit: string): Observable<any> {
+    return this.api.get(`Entity/getcustomersbycuit?cuit=${cuit}`, false);
+  }
 }

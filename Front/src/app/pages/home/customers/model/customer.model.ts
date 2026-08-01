@@ -6,5 +6,6 @@ export interface CustomerModel {
     address: string,
     observation: string,
     phoneEntity: String,
-    emailEntity:string
+    emailEntity:string,
+    email: string | null
 }
