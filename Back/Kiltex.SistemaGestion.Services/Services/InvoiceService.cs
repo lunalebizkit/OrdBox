@@ -182,7 +182,7 @@ namespace Kiltex.SistemaGestion.Services.Services
                             EmailEntity = new List<string>() { model.CustomerEmail?.Trim() },
                         };
 
-                        var customerid = await _entityService.SaveCustomerFromInvoice(newCustomer, model.CustomerId > 0 ? model.CustomerId : null).ConfigureAwait(false);
+                        var customerid = await _entityService.SaveCustomerFromInvoice(newCustomer).ConfigureAwait(false);
 
                         invoiceModel.CustomerId = customerid.Data.Id;
                     }

@@ -590,7 +590,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             {
                 using (var connection = new SqlConnection(ConnectionString))
                 {
-                  var customers =await connection.QueryAsync<DtoEntity>(SqlScripts.GetCustomerByCUIT, new { @cuit = Cuit });                        
+                  var customers =await connection.QueryAsync<DtoEntity>(SqlScripts.GetCustomersByCUIT, new { @cuit = Cuit });                        
                     
                     return new OperationResponse<List<DtoEntity>>(customers.ToList());
                 }
@@ -602,7 +602,13 @@ namespace Kiltex.SistemaGestion.Services.Services
             }
         }
 
-        public async Task<OperationResponse<IdResponse<long>>> SaveCustomerFromInvoice(DtoEntity model, long? id = default, CancellationToken ct = default)
+        /// <summary>
+        /// Salva un cliente desde la factura si no existe, y retorna el Id del cliente
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="ct"></param>
+        /// <returns></returns>
+        public async Task<OperationResponse<IdResponse<long>>> SaveCustomerFromInvoice(DtoEntity model, CancellationToken ct = default)
         {
             try
             {
@@ -611,85 +617,32 @@ namespace Kiltex.SistemaGestion.Services.Services
                 var email = new EmailEntity();
                 var phones = new PhoneEntity();
 
-                if (id != null)
+                var customer = GetCustomerByCUIT(model.Cuit);
+
+                if (customer != null)
                 {
-                    var customer = GetCustomersByCuitAndId(model.Cuit, id.Value);
-
-                    if (customer != null)
-                    {
-                        return Ok(new IdResponse<long>(customer.Value));
-                    }
-                    if (model.EmailEntity != null)
-                    {
-                        foreach (var newEmail in model.EmailEntity)
-                        {
-                            var emails = new EmailEntity()
-                            {
-                                Email = newEmail,
-                                Entity = entityModel
-                            };
-                            entityModel.EmailEntities.Add(emails);
-                        }
-
-                    }
-
-                    if (model.PhoneEntity != null)
-                    {
-                        foreach (var newPhone in model.PhoneEntity)
-                        {
-
-                            phones = new PhoneEntity()
-                            {
-                                Entity = entityModel,
-                                PhoneNumber = newPhone
-                            };
-                            entityModel.PhoneEntities.Add(phones);
-
-                        }
-                    }
-
-                    await _contextSql.Customers.AddAsync(entityModel, ct).ConfigureAwait(false);
-                    await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
-
-                    return Ok(new IdResponse<long>(entityModel.Id));
+                    return Ok(new IdResponse<long>(customer.Value));
                 }
-                else
+
+                if (model.EmailEntity != null)
                 {
-                    if (model.EmailEntity != null)
+                    foreach (var newEmail in model.EmailEntity)
                     {
-                        foreach (var newEmail in model.EmailEntity)
+                        var emails = new EmailEntity()
                         {
-                            var emails = new EmailEntity()
-                            {
-                                Email = newEmail,
-                                Entity = entityModel
-                            };
-                            entityModel.EmailEntities.Add(emails);
-                        }
-
+                            Email = newEmail,
+                            Entity = entityModel
+                        };
+                        entityModel.EmailEntities.Add(emails);
                     }
-
-                    if (model.PhoneEntity != null)
-                    {
-                        foreach (var newPhone in model.PhoneEntity)
-                        {
-
-                            phones = new PhoneEntity()
-                            {
-                                Entity = entityModel,
-                                PhoneNumber = newPhone
-                            };
-                            entityModel.PhoneEntities.Add(phones);
-
-                        }
-                    }
-
-                    await _contextSql.Customers.AddAsync(entityModel, ct).ConfigureAwait(false);
-                    await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
-
-                    return Ok(new IdResponse<long>(entityModel.Id));
 
                 }
+
+                await _contextSql.Customers.AddAsync(entityModel, ct).ConfigureAwait(false);
+                await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
+
+                return Ok(new IdResponse<long>(entityModel.Id));
+                
             }
             catch (Exception ex)
             {
@@ -715,14 +668,18 @@ namespace Kiltex.SistemaGestion.Services.Services
             return $"{limpio.Substring(0, 2)}-{limpio.Substring(2, 8)}-{limpio.Substring(10, 1)}";
         }
 
-
-        private long? GetCustomersByCuitAndId(string Cuit, long Id)
+        /// <summary>
+        /// GetCustomerByCUIT: Retorna el Id del cliente si existe, sino retorna null
+        /// </summary>
+        /// <param name="Cuit"></param>
+        /// <returns></returns>
+        private long? GetCustomerByCUIT(string Cuit)
         {
             try
             {
                 using (var connection = new SqlConnection(ConnectionString))
                 {
-                    return connection.Query<long?>(SqlScripts.GetCustomerByCuitAndId, new { @cuit = Cuit, @id = Id }).FirstOrDefault();                   
+                    return connection.Query<long?>(SqlScripts.GetCustomerByCUIT, new { @cuit = Cuit}).FirstOrDefault();                   
                 }
             }
             catch (Exception ex)

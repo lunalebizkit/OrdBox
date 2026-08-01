@@ -214,7 +214,7 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Invoice
                 {
                     var result = await _service.Update(invoice.Data, responseCAE).ConfigureAwait(false);
 
-                    if (result.Success) {
+                    if (result.Success && !string.IsNullOrEmpty(invoice.Data.CustomerEmail)) {
                         var document = await _service.GetDocumentById(invoiceId);
                         var content = await _pdfService.PrintInvoiceARCA(document.Data);
                         return Return(await _emailService.SendEmailInvoice(invoice.Data.CustomerEmail, content.Data));
