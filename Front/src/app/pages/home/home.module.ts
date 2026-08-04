@@ -13,6 +13,7 @@ import { InfiniteScrollModule } from "ngx-infinite-scroll";
 import { UsuariosModule } from './users/users.module';
 import { NzPageHeaderModule } from 'ng-zorro-antd/page-header';
 import { NzImageModule } from 'ng-zorro-antd/image';
+import { AppCommonModule } from "src/app/common/app.common.module";
 
 @NgModule({
   declarations: [
@@ -25,14 +26,15 @@ import { NzImageModule } from 'ng-zorro-antd/image';
     NzDropDownModule,
     NzAvatarModule,
     NzMenuModule,
-    IconsProviderModule,    
+    IconsProviderModule,
     NzDividerModule,
     AgGridModule,
     InfiniteScrollModule,
     UsuariosModule,
     NzPageHeaderModule,
-    NzImageModule
-  ],
+    NzImageModule,
+    AppCommonModule
+],
   exports: [HomeComponent]
 })
 export class HomeModule { }
