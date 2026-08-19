@@ -1,11 +1,8 @@
-﻿using Kiltex.SistemaGestion.Services.Common;
-using Kiltex.SistemaGestion.Services.Services;
-using Kiltex.SistemaGestion.Api.Controllers;
-using Microsoft.AspNetCore.Mvc;
-using Kiltex.SistemaGestion.Api.Filter;
+﻿using Kiltex.SistemaGestion.Api.Filter;
 using Kiltex.SistemaGestion.Domain.Enum;
-using Kiltex.SistemaGestion.Domain.Model;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
+using Kiltex.SistemaGestion.Services.Services;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Kiltex.SistemaGestion.Api.Controllers.Entity
 {
@@ -63,6 +60,19 @@ namespace Kiltex.SistemaGestion.Api.Controllers.Entity
         public async Task<IActionResult> DeleteEntity(long id)
         {
             return Return(await _service.DeleteEntity(id).ConfigureAwait(false));
+        }
+
+        /// <summary>
+        /// Return customer´s list searched by CUIT 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("getcustomersbycuit")]
+        [AllowAccess(Permission = new EPermission[] { EPermission.ViewEntity })]
+        public async Task<IActionResult> GetCustomersByCuit([FromQuery] string cuit)
+        {
+            return Return(await _service.GetCustomersByCuit(cuit).ConfigureAwait(false));
         }
     }
 }

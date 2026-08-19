@@ -28,6 +28,7 @@ export interface InvoiceModel {
     customerName: string;
     customerCuit: string;
     customerAddress: string;
+    customerEmail: string | null;
     observation: string;
     dateTime: Date;
     iva21: number;

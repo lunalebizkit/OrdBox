@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-
-namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest
+﻿namespace Kiltex.SistemaGestion.Services.Models.Dtos.DtoRequest
 {
     public class DtoRequestIntegrationLog
     {

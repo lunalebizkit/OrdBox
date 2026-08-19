@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { NzModalRef, NzModalService, NzModalModule } from 'ng-zorro-antd/modal';
 import { AuthService } from 'src/app/common/auth/interceptors/auth.service';
-import { RolesConst } from 'src/app/common/auth/models/permission-rol.enum';
 
 @Component({
   selector: 'app-home',
@@ -9,24 +10,30 @@ import { RolesConst } from 'src/app/common/auth/models/permission-rol.enum';
   styleUrls: ['./home.component.css'],
 })
 export class HomeComponent implements OnInit {
-
+  @ViewChild('modalContent', { static: true }) modalContent!: TemplateRef<any>;
+  
   usuario!: string;
   permiso:any;
   color!: string;
+  formModal!: FormGroup;
+  
   colorList: string[] = ['#f56a00', '#7265e6', '#ffbf00', '#00a2ae', '#1112EC', '#11EC17',
 '#E9EC11', '#ECA911', '#C811EC'];
-
-  constRol: RolesConst = new RolesConst();
 
   constructor(
     public token: AuthService,
     private router: Router,
-    private route: ActivatedRoute
-  ) {}
+    private route: ActivatedRoute,
+    private modalService: NzModalService,
+    private fb: FormBuilder
+  ) {
+    this.formModal = this.fb.group({
+      number: ['', Validators.required]})
+  }
 
   ngOnInit() {    
     this.color= this.colorList[Math.floor(Math.random() * 10)];
-    this.getUser();    
+    this.getUser();
   }
 
   getYear() {
@@ -41,4 +48,28 @@ export class HomeComponent implements OnInit {
     this.token.logout();
     this.router.navigate(['/auth/login'], { relativeTo: this.route });
   }
+
+  createModal(): void {
+    const modalRef = this.modalService.create({
+    nzTitle: 'Abrir Whatsapp',
+    nzContent: this.modalContent,
+    nzClosable: false,
+    nzOkDisabled: true,
+    nzOnOk: () => {
+      const phoneNumber = this.formModal.controls['number'].value;
+      window.open(`https://wa.me/549${phoneNumber}`, '_blank');
+      this.formModal.reset();
+    },
+    nzOnCancel: () => {
+      this.formModal.reset();
+    }
+  });
+
+  this.formModal.valueChanges.subscribe(() => {
+    modalRef.updateConfig({
+      nzOkDisabled: this.formModal.invalid || !this.formModal.get('number')?.value
+    });
+  });
+  }
+  
 }

@@ -1,9 +1,13 @@
 ﻿using AutoMapper;
+using Dapper;
+using DocumentFormat.OpenXml.Office2010.Excel;
 using Kiltex.SistemaGestion.Domain;
 using Kiltex.SistemaGestion.Domain.Model;
 using Kiltex.SistemaGestion.SDK.Error;
 using Kiltex.SistemaGestion.Services.Common;
 using Kiltex.SistemaGestion.Services.Models.Dtos.DtoResponse;
+using Kiltex.SistemaGestion.Services.Scripts;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
@@ -574,6 +578,118 @@ namespace Kiltex.SistemaGestion.Services.Services
                 throw;
             }
         }
+
+        /// <summary>
+        /// Retorna Listado de Cuits para busqueda predictiva en New-Invoice
+        /// </summary>
+        /// <param name="Cuit"></param>
+        /// <returns></returns>
+        public async Task<OperationResponse<List<DtoEntity>>> GetCustomersByCuit(string Cuit)
+        {
+            try
+            {
+                using (var connection = new SqlConnection(ConnectionString))
+                {
+                  var customers =await connection.QueryAsync<DtoEntity>(SqlScripts.GetCustomersByCUIT, new { @cuit = Cuit });                        
+                    
+                    return new OperationResponse<List<DtoEntity>>(customers.ToList());
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Salva un cliente desde la factura si no existe, y retorna el Id del cliente
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="ct"></param>
+        /// <returns></returns>
+        public async Task<OperationResponse<IdResponse<long>>> SaveCustomerFromInvoice(DtoEntity model, CancellationToken ct = default)
+        {
+            try
+            {
+                var entityModel = _mapper.Map<Customer>(model);
+
+                var email = new EmailEntity();
+                var phones = new PhoneEntity();
+
+                var customer = GetCustomerByCUIT(model.Cuit);
+
+                if (customer != null)
+                {
+                    return Ok(new IdResponse<long>(customer.Value));
+                }
+
+                if (model.EmailEntity != null)
+                {
+                    foreach (var newEmail in model.EmailEntity)
+                    {
+                        var emails = new EmailEntity()
+                        {
+                            Email = newEmail,
+                            Entity = entityModel
+                        };
+                        entityModel.EmailEntities.Add(emails);
+                    }
+
+                }
+
+                await _contextSql.Customers.AddAsync(entityModel, ct).ConfigureAwait(false);
+                await _contextSql.SaveChangesAsync(ct).ConfigureAwait(false);
+
+                return Ok(new IdResponse<long>(entityModel.Id));
+                
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
+                throw;
+            }
+        }
+
+        #region Private Methods
+        private static string NormalizeCuit(string cuit)
+        {
+            var limpio = cuit.Replace("-", "");
+
+            if (string.IsNullOrEmpty(limpio))
+                return string.Empty;
+
+            if (limpio.Length <= 2)
+                return limpio;
+
+            if (limpio.Length <= 10)
+                return $"{limpio.Substring(0, 2)}-{limpio.Substring(2)}";
+
+            return $"{limpio.Substring(0, 2)}-{limpio.Substring(2, 8)}-{limpio.Substring(10, 1)}";
+        }
+
+        /// <summary>
+        /// GetCustomerByCUIT: Retorna el Id del cliente si existe, sino retorna null
+        /// </summary>
+        /// <param name="Cuit"></param>
+        /// <returns></returns>
+        private long? GetCustomerByCUIT(string Cuit)
+        {
+            try
+            {
+                using (var connection = new SqlConnection(ConnectionString))
+                {
+                    return connection.Query<long?>(SqlScripts.GetCustomerByCUIT, new { @cuit = Cuit}).FirstOrDefault();                   
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ErrorsMessages.GetMessage(ErrorsCodes.C_000_MENSAJE_INVALIDO), ex: ex);
+                throw;
+            }
+        }
+
+        #endregion
 
     }
 }

@@ -130,6 +130,10 @@
             <span nz-icon [nzType]="'setting'" [nzTheme]="'twotone'"> </span>
             <a routerLink="/home/print/settings" style="padding-left: 5%;">Impresora fiscal</a>
           </li>         
+          <li nz-menu-item style="padding-left: 5%;" (click)="createModal()">
+            <span nz-icon nzType="whats-app" nzTheme="outline" style="color: #25D366"> </span>
+            <a style="padding-left: 5%;">Whatsapp</a>
+          </li>         
           <li nz-menu-item (click)="logOut()" style="padding-left: 5%;">
             <span nz-icon [nzType]="'api'" [nzTheme]="'twotone'" [nzTwotoneColor]="'#eb2f96'"> </span>
             Salir del Sistema
@@ -148,8 +152,16 @@
     <router-outlet></router-outlet>
     <div *ngIf="this.permiso.length == 0" style="height: 25em; position: absolute; width: 100vh;"></div>
 
-
     <nz-footer></nz-footer>
-  </nz-page-header-content>
-
+  </nz-page-header-content>  
 </nz-page-header>
+<ng-template #modalContent>
+    <form [formGroup]="formModal">
+     <span>Ingrese código de área seguido de número sin 15</span>
+    <div style="margin: 10px;">
+      <input nz-input value="+54 9" disabled [style.width.%]="20" />
+      <input nz-input id="nombre" formControlName="number" onkeypress="if (!(/[0-9]/.test(String.fromCharCode(event.keyCode)))) return false" [style.width.%]="80" />
+    </div>
+    </form>
+</ng-template>
+
