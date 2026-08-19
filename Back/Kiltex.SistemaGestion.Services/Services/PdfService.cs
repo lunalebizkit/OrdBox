@@ -92,7 +92,7 @@ namespace Kiltex.SistemaGestion.Services.Services
             }
         }       
         
-        public async Task<OperationResponse<byte[]>> Imprimir(Paragraph paragraph)
+        public async Task<OperationResponse<byte[]>> Imprimir(Paragraph paragraph, bool showFooter = false)
         {
             using (MemoryStream stream = new MemoryStream())
             {
@@ -109,6 +109,11 @@ namespace Kiltex.SistemaGestion.Services.Services
                 try
                 {
                     PdfWriter writer = PdfWriter.GetInstance(document, stream);
+
+                    if (showFooter)
+                    {
+                        writer.PageEvent = new FooterDocumentEvent("RETIRO DE MERCADERIA EN CONDICIONES, UNA VEZ FIRMADO ESTE REMITO NO TIENE DERECHO A RECLAMO NI DEVOLUCIÓN.");
+                    }
 
                     document.Open();
                     document.Add(paragraph);
