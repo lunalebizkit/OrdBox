@@ -628,12 +628,15 @@ namespace Kiltex.SistemaGestion.Services.Services
                 {
                     foreach (var newEmail in model.EmailEntity)
                     {
-                        var emails = new EmailEntity()
+                        if (!string.IsNullOrEmpty(newEmail))
                         {
-                            Email = newEmail,
-                            Entity = entityModel
-                        };
-                        entityModel.EmailEntities.Add(emails);
+                            var emails = new EmailEntity()
+                            {
+                                Email = newEmail,
+                                Entity = entityModel
+                            };
+                            entityModel.EmailEntities.Add(emails);
+                        }
                     }
 
                 }
